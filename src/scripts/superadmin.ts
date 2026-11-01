@@ -1,4 +1,5 @@
 export {};
+import { getModalService, type ConfirmModalOptions } from './services/modal.service';
 
 interface BillingInfo {
     expiresAt?: string | null;
@@ -715,7 +716,16 @@ if (tbody) {
             const tenantId = select.dataset.tenantId;
             if (!tenantId) return;
             const newPlan = select.value;
-            if (!confirm(`¿Cambiar el plan de la tienda "${tenantId}" a ${newPlan.toUpperCase()}?`)) {
+            const confirmed = await showSuperAdminConfirmModal({
+                title: '¿Cambiar plan de la tienda?',
+                subtitle: `Tienda: ${tenantId}`,
+                message: `¿Cambiar el plan de la tienda "${tenantId}" a ${newPlan.toUpperCase()}? Se ajustarán los límites correspondientes.`,
+                confirmText: 'Cambiar Plan',
+                cancelText: 'Cancelar',
+                variant: 'warning',
+                icon: 'zap',
+            });
+            if (!confirmed) {
                 loadTenants();
                 return;
             }
@@ -734,7 +744,16 @@ if (tbody) {
             const newStatus = Number(btnSuspend.dataset.status);
             if (!tenantId) return;
             const actionText = newStatus === 1 ? 'ACTIVAR' : 'SUSPENDER';
-            if (!confirm(`¿Estás seguro que deseas ${actionText} a la tienda "${tenantId}"?`)) return;
+            const confirmed = await showSuperAdminConfirmModal({
+                title: newStatus === 1 ? '¿Activar tienda?' : '¿Suspender tienda?',
+                subtitle: `Tienda: ${tenantId}`,
+                message: `¿Estás seguro que deseas ${actionText.toLowerCase()} a la tienda "${tenantId}"? ${newStatus === 1 ? 'El catálogo y pedidos volverán a estar disponibles.' : 'El acceso a la tienda y catálogo quedará bloqueado temporalmente.'}`,
+                confirmText: newStatus === 1 ? 'Activar Tienda' : 'Suspender Tienda',
+                cancelText: 'Cancelar',
+                variant: newStatus === 1 ? 'primary' : 'danger',
+                icon: newStatus === 1 ? 'power' : 'ban',
+            });
+            if (!confirmed) return;
             await updateTenant(tenantId, 'toggle_status', newStatus);
             return;
         }
@@ -866,15 +885,30 @@ modalSaveBtn?.addEventListener('click', async () => {
 });
 
 // -------------------------------------------------------------
+// Universal Interactive Confirmation Modal
+// -------------------------------------------------------------
+
+const saConfirmService = getModalService('sa-confirm-modal');
+
+function showSuperAdminConfirmModal(options: ConfirmModalOptions): Promise<boolean> {
+    return saConfirmService.confirm(options);
+}
+
+// -------------------------------------------------------------
 // Maintenance / Cleanup Endpoint Call
 // -------------------------------------------------------------
 
 cleanupBtn?.addEventListener('click', async () => {
-    if (
-        !confirm(
-            '¿Deseas ejecutar el mantenimiento del sistema (purga de sesiones inactivas y limpieza de rate-limits)?',
-        )
-    ) {
+    const confirmed = await showSuperAdminConfirmModal({
+        title: 'Mantenimiento del Sistema',
+        subtitle: 'Cloudflare Edge Maintenance',
+        message: '¿Deseas ejecutar el mantenimiento del sistema (purga de sesiones inactivas y limpieza de rate-limits)?',
+        confirmText: 'Ejecutar Mantenimiento',
+        cancelText: 'Cancelar',
+        variant: 'warning',
+        icon: 'refresh-cw',
+    });
+    if (!confirmed) {
         return;
     }
 

@@ -1,0 +1,273 @@
+---
+// src/components/common/Modal.astro
+// Componente Base Modal Altamente Reutilizable y Escalable (Estándar y Confirmación)
+import Icon from './Icon.astro';
+import '../../styles/modal.css';
+
+export interface Props {
+  /** Tipo de modal: 'default' (contenido/formulario estándar) o 'confirm' (diálogo interactivo de confirmación) */
+  type?: 'default' | 'confirm';
+  /** ID del contenedor modal (usado por selectores de scripts y accesibilidad) */
+  id: string;
+  /** Título del modal para encabezados estándar */
+  title?: string;
+  /** ID opcional para el elemento h3 del título */
+  titleId?: string;
+  /** Subtítulo descriptivo */
+  subtitle?: string;
+  /** ID opcional para el elemento de subtítulo */
+  subtitleId?: string;
+  /** Mensaje descriptivo principal (usado en type='confirm') */
+  message?: string;
+  /** Texto del botón de confirmación (usado en type='confirm') */
+  confirmText?: string;
+  /** Texto del botón de cancelación (usado en type='confirm') */
+  cancelText?: string;
+  /** Variante semántica de color e intención (usado en type='confirm') */
+  variant?: 'danger' | 'warning' | 'primary' | 'success';
+  /** Nombre del ícono predeterminado (usado en type='confirm') */
+  icon?: string;
+  /** Tamaño del contenido: 'sm' (440px), 'md' (600px), 'lg' (800px), '460' (460px) o 'none' */
+  size?: 'sm' | 'md' | 'lg' | '460' | 'none';
+  /** Clases CSS adicionales para la tarjeta (.modal-content / .sa-modal-card) */
+  contentClass?: string;
+  /** Clases CSS para el encabezado (.modal-header / .sa-modal-header) */
+  headerClass?: string;
+  /** ID opcional para el cuerpo (.modal-body / .sa-modal-body) */
+  bodyId?: string;
+  /** Clases CSS adicionales para el cuerpo (.modal-body / .sa-modal-body) */
+  bodyClass?: string;
+  /** Clases CSS adicionales para el pie (.modal-footer / .sa-modal-footer) */
+  footerClass?: string;
+  /** Si debe incluir encabezado */
+  hasHeader?: boolean;
+  /** Si debe incluir botón de cierre en el encabezado */
+  hasCloseBtn?: boolean;
+  /** ID del botón de cierre (por defecto btn-close-${id}) */
+  closeBtnId?: string;
+  /** Clases adicionales para el botón de cierre */
+  closeBtnClass?: string;
+  /** Si debe incluir pie de modal */
+  hasFooter?: boolean;
+  /** Si el cuerpo y pie están envueltos en un <form> */
+  formId?: string;
+  /** Clases para el formulario si formId está definido */
+  formClass?: string;
+  /** Clases para el overlay exterior */
+  class?: string;
+  /** Rol accesible (por defecto 'dialog', o 'alertdialog' para confirmaciones) */
+  role?: astroHTML.JSX.AriaRole;
+  /** Aria-labelledby personalizado */
+  ariaLabelledBy?: string;
+  /** Tema visual: 'admin' (panel de tienda estándar), 'superadmin' / 'dark' (backoffice oscuro) o 'auto' */
+  theme?: 'admin' | 'superadmin' | 'dark' | 'auto';
+}
+
+const {
+  type = 'default',
+  id,
+  title = type === 'confirm' ? 'Confirmar Acción' : undefined,
+  titleId,
+  subtitle = type === 'confirm' ? 'Esta acción requiere tu validación' : undefined,
+  subtitleId,
+  message = '',
+  confirmText = 'Confirmar',
+  cancelText = 'Cancelar',
+  variant = 'danger',
+  icon = 'alert-triangle',
+  size = 'none',
+  contentClass = '',
+  headerClass = '',
+  bodyId,
+  bodyClass = '',
+  footerClass = '',
+  hasHeader = true,
+  hasCloseBtn = true,
+  closeBtnId,
+  closeBtnClass = '',
+  hasFooter = true,
+  formId,
+  formClass = '',
+  class: overlayClass = '',
+  theme = 'admin',
+  role = type === 'confirm' ? 'alertdialog' : 'dialog',
+  ariaLabelledBy = titleId || (title ? `${id}-title` : undefined),
+} = Astro.props;
+
+const isSuperAdmin = theme === 'superadmin' || theme === 'dark';
+const isConfirm = type === 'confirm';
+
+// Definición de clases para modales estándar
+const baseOverlayClass = isSuperAdmin ? 'sa-modal-overlay hidden' : 'modal';
+const baseCardClass = isSuperAdmin ? 'sa-modal-card' : 'modal-content';
+const baseHeaderClass = isSuperAdmin ? 'sa-modal-header' : 'modal-header';
+const baseTitleClass = isSuperAdmin ? 'sa-modal-title' : '';
+const baseSubtitleClass = isSuperAdmin ? 'sa-modal-subtitle' : 'modal-subtitle';
+const baseCloseBtnClass = isSuperAdmin ? 'sa-modal-close-btn' : 'modal-close';
+const baseBodyClass = isSuperAdmin ? 'sa-modal-body' : 'modal-body';
+const baseFooterClass = isSuperAdmin ? 'sa-modal-footer' : 'modal-footer';
+
+const sizeClass = size !== 'none' ? `modal-${size}` : '';
+const finalOverlayClass = `${baseOverlayClass} ${overlayClass}`.trim();
+const finalContentClass = `${baseCardClass} ${sizeClass} ${contentClass}`.trim();
+const finalCloseId = closeBtnId || `btn-close-${id}`;
+const finalTitleId = titleId || (title ? `${id}-title` : undefined);
+---
+
+{isConfirm ? (
+  <div
+    id={id}
+    class={`app-confirm-overlay hidden ${theme !== 'auto' ? `theme-${theme}` : ''} ${overlayClass}`.trim()}
+    role={role}
+    aria-modal="true"
+    aria-labelledby={`${id}-title`}
+    aria-describedby={`${id}-desc`}
+    tabindex="-1"
+    data-confirm-modal
+  >
+    <div class={`app-confirm-card modal-confirm-card variant-${variant} ${contentClass}`.trim()}>
+      <div class="app-confirm-layout">
+        <!-- Caja de Ícono de Alerta / Contexto -->
+        <div class={`app-confirm-icon-box variant-${variant}`} id={`${id}-icon-box`}>
+          <span id={`${id}-icon-slot`} class="app-confirm-icon-wrap">
+            <slot name="icon">
+              <Icon name={icon} class="app-confirm-icon" />
+            </slot>
+          </span>
+        </div>
+
+        <!-- Contenido Principal -->
+        <div class="app-confirm-content">
+          {hasHeader && (
+            <div class={`app-confirm-header ${headerClass}`.trim()}>
+              <div class="app-confirm-titles">
+                <slot name="title">
+                  <h3 id={`${id}-title`} class="app-confirm-title">{title}</h3>
+                </slot>
+                <slot name="subtitle">
+                  {subtitle && <p id={`${id}-subtitle`} class="app-confirm-subtitle">{subtitle}</p>}
+                </slot>
+              </div>
+              {hasCloseBtn && (
+                <button
+                  type="button"
+                  class={`app-confirm-close-btn modal-close ${closeBtnClass}`.trim()}
+                  id={closeBtnId || `${id}-close`}
+                  title="Cerrar ventana"
+                  aria-label="Cerrar modal"
+                >
+                  <slot name="close-icon">
+                    <Icon name="x" class="app-confirm-close-icon" />
+                  </slot>
+                </button>
+              )}
+            </div>
+          )}
+
+          <div class={`app-confirm-body ${bodyClass}`.trim()} id={bodyId}>
+            <slot name="body">
+              <slot>
+                <p id={`${id}-desc`} class="app-confirm-desc">{message}</p>
+              </slot>
+            </slot>
+          </div>
+
+          {hasFooter && (
+            <div class={`app-confirm-footer ${footerClass}`.trim()}>
+              <slot name="footer">
+                <button
+                  type="button"
+                  class="app-confirm-btn app-confirm-btn-cancel"
+                  id={`${id}-cancel`}
+                >
+                  {cancelText}
+                </button>
+                <button
+                  type="button"
+                  class={`app-confirm-btn app-confirm-btn-accept variant-${variant}`}
+                  id={`${id}-accept`}
+                >
+                  <span id={`${id}-accept-text`}>{confirmText}</span>
+                </button>
+              </slot>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+) : (
+  <div
+    class={finalOverlayClass}
+    id={id}
+    role={role}
+    aria-modal="true"
+    aria-labelledby={ariaLabelledBy}
+    tabindex="-1"
+  >
+    <div class={finalContentClass}>
+      {hasHeader && (
+        <div class={`${baseHeaderClass} ${headerClass}`.trim()}>
+          <slot name="header">
+            {Astro.slots.has('title') ? (
+              <slot name="title" />
+            ) : title ? (
+              <div>
+                <h3 id={finalTitleId} class={baseTitleClass || undefined}>{title}</h3>
+                {subtitle && <p id={subtitleId} class={baseSubtitleClass}>{subtitle}</p>}
+              </div>
+            ) : null}
+          </slot>
+
+          {hasCloseBtn && (
+            <button
+              type="button"
+              class={`${baseCloseBtnClass} ${closeBtnClass}`.trim()}
+              id={finalCloseId}
+              title="Cerrar ventana"
+              aria-label="Cerrar modal"
+            >
+              <slot name="close-icon">
+                {isSuperAdmin ? (
+                  <Icon name="x" class="sa-icon" />
+                ) : (
+                  <i data-lucide="x"></i>
+                )}
+              </slot>
+            </button>
+          )}
+        </div>
+      )}
+
+      {formId ? (
+        <form id={formId} class={formClass}>
+          <div class={`${baseBodyClass} ${bodyClass}`.trim()} id={bodyId}>
+            <slot name="body">
+              <slot />
+            </slot>
+          </div>
+
+          {hasFooter && Astro.slots.has('footer') && (
+            <div class={`${baseFooterClass} ${footerClass}`.trim()}>
+              <slot name="footer" />
+            </div>
+          )}
+        </form>
+      ) : (
+        <>
+          <div class={`${baseBodyClass} ${bodyClass}`.trim()} id={bodyId}>
+            <slot name="body">
+              <slot />
+            </slot>
+          </div>
+
+          {hasFooter && Astro.slots.has('footer') && (
+            <div class={`${baseFooterClass} ${footerClass}`.trim()}>
+              <slot name="footer" />
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  </div>
+)}

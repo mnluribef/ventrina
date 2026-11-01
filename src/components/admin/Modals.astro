@@ -1,737 +1,552 @@
 ---
 // src/components/admin/Modals.astro
+// Centralizador de Modales del Panel Administrativo Ventrina
+import Modal from '../common/Modal.astro';
 ---
-<!-- Modal Detalles Pedido -->
-<div class="modal" id="order-detail-modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="modal-order-title">
-                Detalles del Pedido
-            </h3>
-            <button class="modal-close" id="btn-close-modal">
-                <i data-lucide="x"></i>
-            </button>
+
+<!-- 1. Modal Detalles Pedido -->
+<Modal
+    id="order-detail-modal"
+    title="Detalles del Pedido"
+    titleId="modal-order-title"
+    closeBtnId="btn-close-modal"
+    bodyId="modal-order-body"
+    footerClass="modal-footer-split"
+>
+    <!-- Información del Cliente -->
+    <div class="order-meta-info">
+        <div>
+            <p>Cliente</p>
+            <strong id="modal-client-name">-</strong>
         </div>
-
-        <div class="modal-body" id="modal-order-body">
-            <!-- Información del Cliente -->
-            <div class="order-meta-info">
-                <div>
-                    <p>Cliente</p>
-                    <strong id="modal-client-name">-</strong>
-                </div>
-                <div>
-                    <p>Contacto WhatsApp</p>
-                    <strong id="modal-client-phone">-</strong>
-                </div>
-                <div>
-                    <p>Fecha de Solicitud</p>
-                    <strong id="modal-order-date">-</strong>
-                </div>
-                <div>
-                    <p>Estado del Pedido</p>
-                    <strong>
-                        <span
-                            id="modal-order-status"
-                            class="status-badge pendiente"
-                        >
-                            Pendiente
-                        </span>
-                    </strong>
-                </div>
-                <div>
-                    <p>Total del Pedido</p>
-                    <strong
-                        id="modal-order-total"
-                        class="modal-order-total"
-                    >
-                        -
-                    </strong>
-                    <span id="modal-order-total-bs" class="modal-order-total-bs"></span>
-                </div>
-            </div>
-
-            <!-- Información de Entrega -->
-            <h4 class="modal-section-title">
-                Información de Entrega
-            </h4>
-            <div
-                class="order-meta-info order-meta-single"
-            >
-                <div>
-                    <p>Método</p>
-                    <strong id="modal-delivery-type">-</strong>
-                </div>
-                <div
-                    id="modal-delivery-address-container"
-                    class="d-none"
-                >
-                    <p>Dirección</p>
-                    <strong id="modal-delivery-address">-</strong>
-                </div>
-                <div
-                    id="modal-delivery-notes-container"
-                    class="d-none"
-                >
-                    <p>Notas Adicionales</p>
-                    <strong id="modal-delivery-notes">-</strong>
-                </div>
-            </div>
-
-            <!-- Información de Pago -->
-            <h4 class="modal-section-title">
-                Datos de Pago
-            </h4>
-            <div
-                class="order-meta-info order-meta-double"
-                id="modal-payment-info-container"
-            >
-                <div>
-                    <p>Método de Pago</p>
-                    <strong id="modal-payment-method">-</strong>
-                </div>
-                <div>
-                    <p>Referencia</p>
-                    <strong id="modal-payment-reference">-</strong>
-                </div>
-            </div>
-
-            <!-- Comprobante de Pago Adjunto -->
-            <div id="modal-receipt-container" class="receipt-card d-none">
-                <p class="receipt-card-title">
-                    📸 Comprobante de Pago Adjunto:
-                </p>
-                <div class="receipt-card-row">
-                    <img id="modal-receipt-thumb" src="" alt="Comprobante" class="receipt-thumb-img" />
-                    <div>
-                        <button type="button" class="btn-action secondary btn-view-receipt" id="btn-view-receipt-modal">
-                            <i data-lucide="eye"></i> Ver Comprobante Completo
-                        </button>
-                        <span class="field-hint">Click para ampliar captura</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Lista de Artículos -->
-            <h4 class="modal-section-title">
-                Artículos del Pedido
-            </h4>
-            <div id="modal-items-list">
-                <!-- Detalle cargado dinámicamente -->
-            </div>
+        <div>
+            <p>Contacto WhatsApp</p>
+            <strong id="modal-client-phone">-</strong>
         </div>
+        <div>
+            <p>Fecha de Solicitud</p>
+            <strong id="modal-order-date">-</strong>
+        </div>
+        <div>
+            <p>Estado del Pedido</p>
+            <strong>
+                <span id="modal-order-status" class="status-badge pendiente">
+                    Pendiente
+                </span>
+            </strong>
+        </div>
+        <div>
+            <p>Total del Pedido</p>
+            <strong id="modal-order-total" class="modal-order-total">-</strong>
+            <span id="modal-order-total-bs" class="modal-order-total-bs"></span>
+        </div>
+    </div>
 
-        <div class="modal-footer modal-footer-split">
-            <button type="button" class="btn-action secondary" id="btn-print-order-ticket" title="Imprimir ticket para cocina">
-                <i data-lucide="printer"></i> Imprimir Comanda
-            </button>
-            <div class="modal-footer-actions">
-                <button
-                    class="btn-action secondary"
-                    id="btn-modal-close-footer"
-                >
-                Cerrar
-            </button>
-            <a
-                href=""
-                target="_blank"
-                class="btn-action btn-whatsapp"
-                id="btn-modal-chat"
-            >
-                <i data-lucide="message-circle"></i> Chatear por
-                WhatsApp
-            </a>
+    <!-- Información de Entrega -->
+    <h4 class="modal-section-title">Información de Entrega</h4>
+    <div class="order-meta-info order-meta-single">
+        <div>
+            <p>Método</p>
+            <strong id="modal-delivery-type">-</strong>
+        </div>
+        <div id="modal-delivery-address-container" class="d-none">
+            <p>Dirección</p>
+            <strong id="modal-delivery-address">-</strong>
+        </div>
+        <div id="modal-delivery-notes-container" class="d-none">
+            <p>Notas Adicionales</p>
+            <strong id="modal-delivery-notes">-</strong>
+        </div>
+    </div>
+
+    <!-- Información de Pago -->
+    <h4 class="modal-section-title">Datos de Pago</h4>
+    <div class="order-meta-info order-meta-double" id="modal-payment-info-container">
+        <div>
+            <p>Método de Pago</p>
+            <strong id="modal-payment-method">-</strong>
+        </div>
+        <div>
+            <p>Referencia</p>
+            <strong id="modal-payment-reference">-</strong>
+        </div>
+    </div>
+
+    <!-- Comprobante de Pago Adjunto -->
+    <div id="modal-receipt-container" class="receipt-card d-none">
+        <p class="receipt-card-title">📸 Comprobante de Pago Adjunto:</p>
+        <div class="receipt-card-row">
+            <img id="modal-receipt-thumb" src="" alt="Comprobante" class="receipt-thumb-img" />
+            <div>
+                <button type="button" class="btn-action secondary btn-view-receipt" id="btn-view-receipt-modal">
+                    <i data-lucide="eye"></i> Ver Comprobante Completo
+                </button>
+                <span class="field-hint">Click para ampliar captura</span>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Modal Registrar Pago -->
-<div class="modal" id="payment-modal">
-    <div class="modal-content modal-md">
-        <div class="modal-header">
-            <h3>Registrar Pago</h3>
-            <button class="modal-close" id="btn-close-payment-modal">
-                <i data-lucide="x"></i>
-            </button>
-        </div>
-        <form id="payment-form">
-            <div class="modal-body modal-body-compact">
-                <p class="modal-desc">
-                    Pedido:{" "}
-                    <strong
-                        id="payment-modal-order-id"
-                        class="text-primary"
-                    ></strong>
-                </p>
-
-                <!-- Comprobante de Pago Adjunto en Cobro -->
-                <div id="payment-receipt-preview-box" class="receipt-card d-none">
-                    <p class="receipt-card-title">
-                        📸 Comprobante de Pago Adjunto:
-                    </p>
-                    <div class="receipt-card-row">
-                        <img id="payment-receipt-preview-thumb" src="" alt="Comprobante" class="receipt-thumb-img" />
-                        <div>
-                            <button type="button" class="btn-action secondary btn-view-receipt" id="btn-view-payment-receipt">
-                                <i data-lucide="eye"></i> Ver Comprobante Completo
-                            </button>
-                            <span class="field-hint">Verifica el capture antes de confirmar</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="payment-amount">
-                        Monto Cobrado ($)
-                    </label>
-                    <input
-                        type="number"
-                        id="payment-amount"
-                        class="form-control"
-                        placeholder="0.00"
-                        step="0.01"
-                        min="0"
-                        required
-                    />
-                </div>
-                <div class="form-group">
-                    <label for="payment-method-select">
-                        Método de Pago
-                    </label>
-                    <select
-                        id="payment-method-select"
-                        class="form-control"
-                    >
-                        <option value="pago_movil">
-                            📱 Pago Móvil
-                        </option>
-                        <option value="zelle">🇺🇸 Zelle</option>
-                        <option value="efectivo_usd">
-                            💵 Efectivo USD
-                        </option>
-                        <option value="efectivo_bs">
-                            💵 Efectivo Bs
-                        </option>
-                        <option value="punto">💳 Punto de Venta</option>
-                    </select>
-                </div>
-                <div class="form-group" id="reference-group">
-                    <label for="payment-reference">
-                        Referencia / Confirmación
-                    </label>
-                    <input
-                        type="text"
-                        id="payment-reference"
-                        class="form-control"
-                        placeholder="Número de confirmación"
-                    />
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button
-                    type="button"
-                    class="btn-action secondary"
-                    id="btn-cancel-payment-modal"
-                >
-                    Cancelar
-                </button>
-                <button
-                    type="submit"
-                    class="btn-action btn-modal-success"
-                    id="btn-confirm-payment"
-                >
-                    <i data-lucide="check-circle"></i> Confirmar Pago
-                </button>
-            </div>
-        </form>
+    <!-- Lista de Artículos -->
+    <h4 class="modal-section-title">Artículos del Pedido</h4>
+    <div id="modal-items-list">
+        <!-- Detalle cargado dinámicamente -->
     </div>
-</div>
 
-<!-- Modal Cambiar Contraseña -->
-<div class="modal" id="change-password-modal">
-    <div class="modal-content modal-sm">
-        <div class="modal-header">
-            <h3>Cambiar Contraseña</h3>
-            <button class="modal-close" id="btn-close-password-modal">
-                <i data-lucide="x"></i>
-            </button>
-        </div>
-        <form id="change-password-form">
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="current-password-input">
-                        Contraseña Actual
-                    </label>
-                    <input
-                        type="password"
-                        id="current-password-input"
-                        class="form-control"
-                        placeholder="Tu clave actual"
-                        required
-                    />
-                </div>
-                <div class="form-group">
-                    <label for="new-password-input">
-                        Nueva Contraseña (mínimo 6 caracteres)
-                    </label>
-                    <input
-                        type="password"
-                        id="new-password-input"
-                        class="form-control"
-                        placeholder="Nueva contraseña"
-                        minlength="6"
-                        required
-                    />
-                </div>
-                <div class="form-group">
-                    <label for="confirm-password-input">
-                        Confirmar Nueva Contraseña
-                    </label>
-                    <input
-                        type="password"
-                        id="confirm-password-input"
-                        class="form-control"
-                        placeholder="Repite la nueva contraseña"
-                        minlength="6"
-                        required
-                    />
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button
-                    type="button"
-                    class="btn-action secondary"
-                    id="btn-cancel-password-modal"
-                >
-                    Cancelar
-                </button>
-                <button
-                    type="submit"
-                    class="btn-action"
-                    id="btn-submit-change-password"
-                >
-                    <i data-lucide="save"></i> Actualizar Clave
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Modal Visor de Comprobante -->
-<div class="modal" id="receipt-modal">
-    <div class="modal-content modal-receipt-content">
-        <div class="modal-header modal-receipt-header">
-            <h3>Comprobante de Pago</h3>
-            <button class="modal-close" id="btn-close-receipt-modal">
-                <i data-lucide="x"></i>
-            </button>
-        </div>
-        <div class="modal-body modal-receipt-body">
-            <img id="receipt-modal-img" src="" alt="Comprobante Completo" class="modal-receipt-full-img" />
-        </div>
-        <div class="modal-footer modal-receipt-footer">
-            <button type="button" class="btn-action secondary" id="btn-close-receipt-footer">Cerrar</button>
-            <a href="#" id="receipt-download-btn" class="btn-action" target="_blank" download="comprobante.jpg">
-                <i data-lucide="download"></i> Descargar
+    <Fragment slot="footer">
+        <button type="button" class="btn-action secondary" id="btn-print-order-ticket" title="Imprimir ticket para cocina">
+            <i data-lucide="printer"></i> Imprimir Comanda
+        </button>
+        <div class="modal-footer-actions">
+            <button class="btn-action secondary" id="btn-modal-close-footer">Cerrar</button>
+            <a href="" target="_blank" class="btn-action btn-whatsapp" id="btn-modal-chat">
+                <i data-lucide="message-circle"></i> Chatear por WhatsApp
             </a>
         </div>
-    </div>
-</div>
+    </Fragment>
+</Modal>
 
-<!-- Modal Configuración Tasa BCV -->
-<div class="modal" id="bcv-modal">
-    <div class="modal-content modal-460">
-        <div class="modal-header">
-            <div class="bcv-header-title">
-                <i data-lucide="dollar-sign" class="icon-22 text-primary"></i>
-                <h3>Configuración Tasa BCV</h3>
-            </div>
-            <button class="modal-close" id="btn-close-bcv-modal">
-                <i data-lucide="x"></i>
-            </button>
-        </div>
-        <form id="bcv-form">
-            <div class="modal-body">
-                <p class="modal-desc-sm">
-                    Define el valor del dólar oficial utilizado para calcular los montos en Bolívares (Bs) en pedidos y catálogos.
-                </p>
+<!-- 2. Modal Registrar Pago -->
+<Modal
+    id="payment-modal"
+    title="Registrar Pago"
+    closeBtnId="btn-close-payment-modal"
+    size="md"
+    formId="payment-form"
+    bodyClass="modal-body-compact"
+>
+    <p class="modal-desc">
+        Pedido: <strong id="payment-modal-order-id" class="text-primary"></strong>
+    </p>
 
-                <div class="form-group bcv-form-group-spacing">
-                    <label for="bcv-rate-input" class="bcv-label-bold">
-                        Tasa Activa (Bs. / USD)
-                    </label>
-                    <div class="bcv-input-row">
-                        <input
-                            type="number"
-                            id="bcv-rate-input"
-                            class="form-control bcv-rate-input"
-                            step="0.01"
-                            min="0.01"
-                            required
-                            placeholder="Ej: 853.50"
-                        />
-                        <button
-                            type="button"
-                            class="btn-action secondary btn-filter-sync"
-                            id="btn-force-bcv-sync"
-                            title="Sincronizar en vivo con la API oficial del BCV"
-                        >
-                            <i data-lucide="refresh-cw"></i> Sincronizar
-                        </button>
-                    </div>
-                    <span id="bcv-last-sync-label" class="field-hint">
-                        Cargando estado...
-                    </span>
-                </div>
-
-                <div class="form-group bcv-auto-box">
-                    <label class="bcv-checkbox-label">
-                        <input
-                            type="checkbox"
-                            id="bcv-auto-toggle"
-                            class="checkbox-primary"
-                        />
-                        <div>
-                            <span class="bcv-auto-title">
-                                Actualización Automática
-                            </span>
-                            <span class="bcv-auto-sub">
-                                Consulta periódicamente la API oficial para actualizar la tasa sin intervención manual.
-                            </span>
-                        </div>
-                    </label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button
-                    type="button"
-                    class="btn-action secondary"
-                    id="btn-cancel-bcv"
-                >
-                    Cancelar
+    <!-- Comprobante de Pago Adjunto en Cobro -->
+    <div id="payment-receipt-preview-box" class="receipt-card d-none">
+        <p class="receipt-card-title">📸 Comprobante de Pago Adjunto:</p>
+        <div class="receipt-card-row">
+            <img id="payment-receipt-preview-thumb" src="" alt="Comprobante" class="receipt-thumb-img" />
+            <div>
+                <button type="button" class="btn-action secondary btn-view-receipt" id="btn-view-payment-receipt">
+                    <i data-lucide="eye"></i> Ver Comprobante Completo
                 </button>
-                <button
-                    type="submit"
-                    class="btn-action btn-modal-primary"
-                >
-                    <i data-lucide="save"></i> Guardar Configuración
-                </button>
+                <span class="field-hint">Verifica el capture antes de confirmar</span>
             </div>
-        </form>
-    </div>
-</div>
-
-<!-- Modal Edición Rápida de Producto -->
-<div class="modal" id="quick-edit-modal">
-    <div class="modal-content modal-md">
-        <div class="modal-header">
-            <h3>⚡ Edición Rápida de Producto</h3>
-            <button class="modal-close" id="btn-close-quick-edit-modal">
-                <i data-lucide="x"></i>
-            </button>
-        </div>
-        <form id="quick-edit-form">
-            <input type="hidden" id="quick-edit-id" />
-            <div class="modal-body modal-body-compact">
-                <p class="modal-desc">
-                    Producto: <strong id="quick-edit-title" class="text-primary"></strong>
-                </p>
-                <div class="form-grid-auto">
-                    <div class="form-group">
-                        <label for="quick-edit-price">Precio de Venta ($)</label>
-                        <input type="number" id="quick-edit-price" class="form-control" step="0.01" min="0" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="quick-edit-compare-price">Precio Anterior / Oferta ($)</label>
-                        <input type="number" id="quick-edit-compare-price" class="form-control" step="0.01" min="0" placeholder="0.00 (Opcional)" />
-                    </div>
-                </div>
-                <div class="form-grid-auto">
-                    <div class="form-group">
-                        <label for="quick-edit-stock">Stock Disponible</label>
-                        <input type="number" id="quick-edit-stock" class="form-control" min="-1" required />
-                        <span class="field-hint">-1 = Ilimitado</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="quick-edit-active">Disponibilidad</label>
-                        <select id="quick-edit-active" class="form-control">
-                            <option value="1">Disponible (Activo)</option>
-                            <option value="0">Agotado (Pausado)</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-action secondary" id="btn-cancel-quick-edit">
-                    Cancelar
-                </button>
-                <button type="submit" class="btn-action" id="btn-save-quick-edit">
-                    <i data-lucide="save"></i> Guardar Cambios
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Modal Gestor Central de Categorías -->
-<div class="modal" id="categories-modal">
-    <div class="modal-content modal-categories">
-        <div class="modal-header">
-            <div class="modal-title-with-badge">
-                <h3>🏷️ Gestor Central de Categorías</h3>
-                <span class="badge-count" id="categories-count-badge">0 categorías</span>
-            </div>
-            <button class="modal-close" id="btn-close-categories-modal">
-                <i data-lucide="x"></i>
-            </button>
-        </div>
-        <div class="modal-body">
-            <p class="modal-desc">
-                Crea nuevas categorías, renómbralas globalmente en todos tus productos y reasigna inventario en 1 solo clic.
-            </p>
-
-            <!-- Card de Creación de Categoría -->
-            <div class="category-creator-card">
-                <h4 class="creator-card-title">
-                    <i data-lucide="plus-circle" class="icon-16 text-primary"></i> Añadir Nueva Categoría
-                </h4>
-                <form id="form-new-category" class="category-creator-form">
-                    <div class="form-grid-3">
-                        <div class="form-group">
-                            <label for="new-cat-name">Nombre Visible *</label>
-                            <input
-                                type="text"
-                                id="new-cat-name"
-                                class="form-control"
-                                placeholder="Ej: Hamburguesas & Combos 🍔"
-                                required
-                            />
-                        </div>
-                        <div class="form-group">
-                            <label for="new-cat-slug">Slug / Identificador *</label>
-                            <input
-                                type="text"
-                                id="new-cat-slug"
-                                class="form-control"
-                                placeholder="ej: hamburguesas"
-                                required
-                            />
-                            <span class="field-hint">Solo minúsculas, números y guiones</span>
-                        </div>
-                        <div class="form-group">
-                            <label for="new-cat-icon">Icono Lucide</label>
-                            <input
-                                type="text"
-                                id="new-cat-icon"
-                                class="form-control"
-                                placeholder="ej: utensils, tag, package"
-                            />
-                        </div>
-                    </div>
-                    <div class="creator-actions">
-                        <button type="submit" class="btn-action" id="btn-submit-new-cat">
-                            <i data-lucide="plus"></i> Crear Categoría
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Listado de Categorías -->
-            <div class="categories-list-header">
-                <h4>Categorías del Catálogo</h4>
-                <button type="button" class="btn-action secondary btn-compact" id="btn-refresh-categories">
-                    <i data-lucide="refresh-cw" class="icon-14"></i> Actualizar
-                </button>
-            </div>
-
-            <div class="table-responsive category-table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Slug / ID</th>
-                            <th>Nombre Visible</th>
-                            <th>Icono</th>
-                            <th>Productos</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-categories-body">
-                        <tr>
-                            <td colspan="5" class="table-empty-row">
-                                Cargando categorías...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-action secondary" id="btn-close-categories-footer">
-                Cerrar
-            </button>
         </div>
     </div>
-</div>
 
-<!-- Modal Renombrar Categoría -->
-<div class="modal" id="category-rename-modal">
-    <div class="modal-content modal-md">
-        <div class="modal-header">
-            <h3>✏️ Renombrar Categoría Globalmente</h3>
-            <button class="modal-close" id="btn-close-cat-rename-modal">
-                <i data-lucide="x"></i>
+    <div class="form-group">
+        <label for="payment-amount">Monto Cobrado ($)</label>
+        <input type="number" id="payment-amount" class="form-control" placeholder="0.00" step="0.01" min="0" required />
+    </div>
+    <div class="form-group">
+        <label for="payment-method-select">Método de Pago</label>
+        <select id="payment-method-select" class="form-control">
+            <option value="pago_movil">📱 Pago Móvil</option>
+            <option value="zelle">🇺🇸 Zelle</option>
+            <option value="efectivo_usd">💵 Efectivo USD</option>
+            <option value="efectivo_bs">💵 Efectivo Bs</option>
+            <option value="punto">💳 Punto de Venta</option>
+        </select>
+    </div>
+    <div class="form-group" id="reference-group">
+        <label for="payment-reference">Referencia / Confirmación</label>
+        <input type="text" id="payment-reference" class="form-control" placeholder="Número de confirmación" />
+    </div>
+
+    <Fragment slot="footer">
+        <button type="button" class="btn-action secondary" id="btn-cancel-payment-modal">Cancelar</button>
+        <button type="submit" class="btn-action btn-modal-success" id="btn-confirm-payment">
+            <i data-lucide="check-circle"></i> Confirmar Pago
+        </button>
+    </Fragment>
+</Modal>
+
+<!-- 3. Modal Cambiar Contraseña -->
+<Modal
+    id="change-password-modal"
+    title="Cambiar Contraseña"
+    closeBtnId="btn-close-password-modal"
+    size="sm"
+    formId="change-password-form"
+>
+    <div class="form-group">
+        <label for="current-password-input">Contraseña Actual</label>
+        <input type="password" id="current-password-input" class="form-control" placeholder="Tu clave actual" required />
+    </div>
+    <div class="form-group">
+        <label for="new-password-input">Nueva Contraseña (mínimo 6 caracteres)</label>
+        <input type="password" id="new-password-input" class="form-control" placeholder="Nueva contraseña" minlength="6" required />
+    </div>
+    <div class="form-group">
+        <label for="confirm-password-input">Confirmar Nueva Contraseña</label>
+        <input type="password" id="confirm-password-input" class="form-control" placeholder="Repite la nueva contraseña" minlength="6" required />
+    </div>
+
+    <Fragment slot="footer">
+        <button type="button" class="btn-action secondary" id="btn-cancel-password-modal">Cancelar</button>
+        <button type="submit" class="btn-action" id="btn-submit-change-password">
+            <i data-lucide="save"></i> Actualizar Clave
+        </button>
+    </Fragment>
+</Modal>
+
+<!-- 4. Modal Visor de Comprobante -->
+<Modal
+    id="receipt-modal"
+    title="Comprobante de Pago"
+    closeBtnId="btn-close-receipt-modal"
+    contentClass="modal-receipt-content"
+    headerClass="modal-receipt-header"
+    bodyClass="modal-receipt-body"
+    footerClass="modal-receipt-footer"
+>
+    <img id="receipt-modal-img" src="" alt="Comprobante Completo" class="modal-receipt-full-img" />
+
+    <Fragment slot="footer">
+        <button type="button" class="btn-action secondary" id="btn-close-receipt-footer">Cerrar</button>
+        <a href="#" id="receipt-download-btn" class="btn-action" target="_blank" download="comprobante.jpg">
+            <i data-lucide="download"></i> Descargar
+        </a>
+    </Fragment>
+</Modal>
+
+<!-- 5. Modal Configuración Tasa BCV -->
+<Modal
+    id="bcv-modal"
+    closeBtnId="btn-close-bcv-modal"
+    size="460"
+    formId="bcv-form"
+>
+    <div slot="header" class="bcv-header-title">
+        <i data-lucide="dollar-sign" class="icon-22 text-primary"></i>
+        <h3>Configuración Tasa BCV</h3>
+    </div>
+
+    <p class="modal-desc-sm">
+        Define el valor del dólar oficial utilizado para calcular los montos en Bolívares (Bs) en pedidos y catálogos.
+    </p>
+
+    <div class="form-group bcv-form-group-spacing">
+        <label for="bcv-rate-input" class="bcv-label-bold">Tasa Activa (Bs. / USD)</label>
+        <div class="bcv-input-row">
+            <input
+                type="number"
+                id="bcv-rate-input"
+                class="form-control bcv-rate-input"
+                step="0.01"
+                min="0.01"
+                required
+                placeholder="Ej: 853.50"
+            />
+            <button
+                type="button"
+                class="btn-action secondary btn-filter-sync"
+                id="btn-force-bcv-sync"
+                title="Sincronizar en vivo con la API oficial del BCV"
+            >
+                <i data-lucide="refresh-cw"></i> Sincronizar
             </button>
         </div>
-        <form id="form-rename-category">
-            <input type="hidden" id="rename-cat-old-slug" />
-            <div class="modal-body modal-body-compact">
-                <div class="alert-info-box">
-                    <i data-lucide="info" class="icon-18"></i>
-                    <p>
-                        Renombrar el identificador actualizará atómicamente la categoría de todos los productos vinculados sin afectar tus ventas.
-                    </p>
-                </div>
+        <span id="bcv-last-sync-label" class="field-hint">Cargando estado...</span>
+    </div>
+
+    <div class="form-group bcv-auto-box">
+        <label class="bcv-checkbox-label">
+            <input type="checkbox" id="bcv-auto-toggle" class="checkbox-primary" />
+            <div>
+                <span class="bcv-auto-title">Actualización Automática</span>
+                <span class="bcv-auto-sub">
+                    Consulta periódicamente la API oficial para actualizar la tasa sin intervención manual.
+                </span>
+            </div>
+        </label>
+    </div>
+
+    <Fragment slot="footer">
+        <button type="button" class="btn-action secondary" id="btn-cancel-bcv">Cancelar</button>
+        <button type="submit" class="btn-action btn-modal-primary">
+            <i data-lucide="save"></i> Guardar Configuración
+        </button>
+    </Fragment>
+</Modal>
+
+<!-- 6. Modal Edición Rápida de Producto -->
+<Modal
+    id="quick-edit-modal"
+    title="⚡ Edición Rápida de Producto"
+    closeBtnId="btn-close-quick-edit-modal"
+    size="md"
+    formId="quick-edit-form"
+    bodyClass="modal-body-compact"
+>
+    <input type="hidden" id="quick-edit-id" />
+    <p class="modal-desc">
+        Producto: <strong id="quick-edit-title" class="text-primary"></strong>
+    </p>
+    <div class="form-grid-auto">
+        <div class="form-group">
+            <label for="quick-edit-price">Precio de Venta ($)</label>
+            <input type="number" id="quick-edit-price" class="form-control" step="0.01" min="0" required />
+        </div>
+        <div class="form-group">
+            <label for="quick-edit-compare-price">Precio Anterior / Oferta ($)</label>
+            <input type="number" id="quick-edit-compare-price" class="form-control" step="0.01" min="0" placeholder="0.00 (Opcional)" />
+        </div>
+    </div>
+    <div class="form-grid-auto">
+        <div class="form-group">
+            <label for="quick-edit-stock">Stock Disponible</label>
+            <input type="number" id="quick-edit-stock" class="form-control" min="-1" required />
+            <span class="field-hint">-1 = Ilimitado</span>
+        </div>
+        <div class="form-group">
+            <label for="quick-edit-active">Disponibilidad</label>
+            <select id="quick-edit-active" class="form-control">
+                <option value="1">Disponible (Activo)</option>
+                <option value="0">Agotado (Pausado)</option>
+            </select>
+        </div>
+    </div>
+
+    <Fragment slot="footer">
+        <button type="button" class="btn-action secondary" id="btn-cancel-quick-edit">Cancelar</button>
+        <button type="submit" class="btn-action" id="btn-save-quick-edit">
+            <i data-lucide="save"></i> Guardar Cambios
+        </button>
+    </Fragment>
+</Modal>
+
+<!-- 7. Modal Gestor Central de Categorías -->
+<Modal
+    id="categories-modal"
+    closeBtnId="btn-close-categories-modal"
+    contentClass="modal-categories"
+>
+    <div slot="header" class="modal-title-with-badge">
+        <h3>🏷️ Gestor Central de Categorías</h3>
+        <span class="badge-count" id="categories-count-badge">0 categorías</span>
+    </div>
+
+    <p class="modal-desc">
+        Crea nuevas categorías, renómbralas globalmente en todos tus productos y reasigna inventario en 1 solo clic.
+    </p>
+
+    <!-- Card de Creación de Categoría -->
+    <div class="category-creator-card">
+        <h4 class="creator-card-title">
+            <i data-lucide="plus-circle" class="icon-16 text-primary"></i> Añadir Nueva Categoría
+        </h4>
+        <form id="form-new-category" class="category-creator-form">
+            <div class="form-grid-3">
                 <div class="form-group">
-                    <label>Categoría Actual</label>
-                    <div class="current-slug-display" id="rename-cat-current-display">-</div>
-                </div>
-                <div class="form-group">
-                    <label for="rename-cat-name">Nombre Visible *</label>
+                    <label for="new-cat-name">Nombre Visible *</label>
                     <input
                         type="text"
-                        id="rename-cat-name"
+                        id="new-cat-name"
                         class="form-control"
-                        placeholder="Ej: Hamburguesas & Combos"
+                        placeholder="Ej: Hamburguesas & Combos 🍔"
                         required
                     />
                 </div>
                 <div class="form-group">
-                    <label for="rename-cat-new-slug">Nuevo Slug / Identificador *</label>
+                    <label for="new-cat-slug">Slug / Identificador *</label>
                     <input
                         type="text"
-                        id="rename-cat-new-slug"
+                        id="new-cat-slug"
                         class="form-control"
-                        placeholder="ej: hamburguesas-combos"
+                        placeholder="ej: hamburguesas"
                         required
                     />
                     <span class="field-hint">Solo minúsculas, números y guiones</span>
                 </div>
                 <div class="form-group">
-                    <label for="rename-cat-icon">Icono Lucide</label>
+                    <label for="new-cat-icon">Icono Lucide</label>
                     <input
                         type="text"
-                        id="rename-cat-icon"
+                        id="new-cat-icon"
                         class="form-control"
-                        placeholder="ej: utensils"
+                        placeholder="ej: utensils, tag, package"
                     />
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-action secondary" id="btn-cancel-cat-rename">
-                    Cancelar
-                </button>
-                <button type="submit" class="btn-action" id="btn-submit-cat-rename">
-                    <i data-lucide="check"></i> Guardar y Aplicar Globalmente
+            <div class="creator-actions">
+                <button type="submit" class="btn-action" id="btn-submit-new-cat">
+                    <i data-lucide="plus"></i> Crear Categoría
                 </button>
             </div>
         </form>
     </div>
-</div>
 
-<!-- Modal Eliminar / Reasignar Categoría -->
-<div class="modal" id="category-delete-modal">
-    <div class="modal-content modal-md">
-        <div class="modal-header">
-            <h3>🗑️ Eliminar Categoría</h3>
-            <button class="modal-close" id="btn-close-cat-delete-modal">
-                <i data-lucide="x"></i>
-            </button>
-        </div>
-        <form id="form-delete-category">
-            <input type="hidden" id="delete-cat-target-slug" />
-            <div class="modal-body modal-body-compact">
-                <p id="delete-cat-warning-text" class="modal-desc">
-                    ¿Estás seguro de que deseas eliminar esta categoría?
-                </p>
-
-                <div id="delete-cat-reassign-container" class="form-group d-none">
-                    <label for="delete-cat-reassign-select">
-                        Reasignar productos vinculados a:
-                    </label>
-                    <select id="delete-cat-reassign-select" class="form-control">
-                        <!-- Opciones cargadas dinámicamente -->
-                    </select>
-                    <span class="field-hint">
-                        Los productos asociados se moverán a esta categoría automáticamente.
-                    </span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-action secondary" id="btn-cancel-cat-delete">
-                    Cancelar
-                </button>
-                <button type="submit" class="btn-action btn-danger" id="btn-submit-cat-delete">
-                    <i data-lucide="trash-2"></i> Confirmar Eliminación
-                </button>
-            </div>
-        </form>
+    <!-- Listado de Categorías -->
+    <div class="categories-list-header">
+        <h4>Categorías del Catálogo</h4>
+        <button type="button" class="btn-action secondary btn-compact" id="btn-refresh-categories">
+            <i data-lucide="refresh-cw" class="icon-14"></i> Actualizar
+        </button>
     </div>
-</div>
 
-<!-- Modal Código QR de la Tienda -->
-<div class="modal" id="store-qr-modal">
-    <div class="modal-content modal-qr-dialog">
-        <div class="modal-header">
-            <div class="modal-header-info">
-                <h3>
-                    <i data-lucide="qr-code"></i> Código QR de la Tienda
-                </h3>
-                <p class="modal-subtitle">Listo para exhibir en mostrador, mesas o empaques</p>
-            </div>
-            <button type="button" class="modal-close" id="btn-close-qr-modal" title="Cerrar ventana">
-                <i data-lucide="x"></i>
-            </button>
+    <div class="table-responsive category-table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Slug / ID</th>
+                    <th>Nombre Visible</th>
+                    <th>Icono</th>
+                    <th>Productos</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="table-categories-body">
+                <tr>
+                    <td colspan="5" class="table-empty-row">Cargando categorías...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <Fragment slot="footer">
+        <button type="button" class="btn-action secondary" id="btn-close-categories-footer">Cerrar</button>
+    </Fragment>
+</Modal>
+
+<!-- 8. Modal Renombrar Categoría -->
+<Modal
+    id="category-rename-modal"
+    title="✏️ Renombrar Categoría Globalmente"
+    closeBtnId="btn-close-cat-rename-modal"
+    size="md"
+    formId="form-rename-category"
+    bodyClass="modal-body-compact"
+>
+    <input type="hidden" id="rename-cat-old-slug" />
+    <div class="alert-info-box">
+        <i data-lucide="info" class="icon-18"></i>
+        <p>Renombrar el identificador actualizará atómicamente la categoría de todos los productos vinculados sin afectar tus ventas.</p>
+    </div>
+    <div class="form-group">
+        <label>Categoría Actual</label>
+        <div class="current-slug-display" id="rename-cat-current-display">-</div>
+    </div>
+    <div class="form-group">
+        <label for="rename-cat-name">Nombre Visible *</label>
+        <input
+            type="text"
+            id="rename-cat-name"
+            class="form-control"
+            placeholder="Ej: Hamburguesas & Combos"
+            required
+        />
+    </div>
+    <div class="form-group">
+        <label for="rename-cat-new-slug">Nuevo Slug / Identificador *</label>
+        <input
+            type="text"
+            id="rename-cat-new-slug"
+            class="form-control"
+            placeholder="ej: hamburguesas-combos"
+            required
+        />
+        <span class="field-hint">Solo minúsculas, números y guiones</span>
+    </div>
+    <div class="form-group">
+        <label for="rename-cat-icon">Icono Lucide</label>
+        <input
+            type="text"
+            id="rename-cat-icon"
+            class="form-control"
+            placeholder="ej: utensils"
+        />
+    </div>
+
+    <Fragment slot="footer">
+        <button type="button" class="btn-action secondary" id="btn-cancel-cat-rename">Cancelar</button>
+        <button type="submit" class="btn-action" id="btn-submit-cat-rename">
+            <i data-lucide="check"></i> Guardar y Aplicar Globalmente
+        </button>
+    </Fragment>
+</Modal>
+
+<!-- 9. Modal Eliminar / Reasignar Categoría -->
+<Modal
+    id="category-delete-modal"
+    title="🗑️ Eliminar Categoría"
+    closeBtnId="btn-close-cat-delete-modal"
+    size="md"
+    formId="form-delete-category"
+    bodyClass="modal-body-compact"
+>
+    <input type="hidden" id="delete-cat-target-slug" />
+    <p id="delete-cat-warning-text" class="modal-desc">
+        ¿Estás seguro de que deseas eliminar esta categoría?
+    </p>
+
+    <div id="delete-cat-reassign-container" class="form-group d-none">
+        <label for="delete-cat-reassign-select">Reasignar productos vinculados a:</label>
+        <select id="delete-cat-reassign-select" class="form-control">
+            <!-- Opciones cargadas dinámicamente -->
+        </select>
+        <span class="field-hint">
+            Los productos asociados se moverán a esta categoría automáticamente.
+        </span>
+    </div>
+
+    <Fragment slot="footer">
+        <button type="button" class="btn-action secondary" id="btn-cancel-cat-delete">Cancelar</button>
+        <button type="submit" class="btn-action btn-danger" id="btn-submit-cat-delete">
+            <i data-lucide="trash-2"></i> Confirmar Eliminación
+        </button>
+    </Fragment>
+</Modal>
+
+<!-- 10. Modal Código QR de la Tienda -->
+<Modal
+    id="store-qr-modal"
+    closeBtnId="btn-close-qr-modal"
+    contentClass="modal-qr-dialog"
+    bodyClass="modal-qr-body"
+    footerClass="modal-qr-footer"
+>
+    <div slot="header" class="modal-header-info">
+        <h3><i data-lucide="qr-code"></i> Código QR de la Tienda</h3>
+        <p class="modal-subtitle">Listo para exhibir en mostrador, mesas o empaques</p>
+    </div>
+
+    <!-- Stand / Hablador Imprimible -->
+    <div class="qr-printable-stand" id="qr-printable-stand">
+        <div class="qr-stand-header">
+            <span class="qr-stand-badge">✨ Catálogo Digital & Pedidos</span>
+            <h2 class="qr-stand-title" id="modal-qr-business-name">Mi Tienda</h2>
+            <p class="qr-stand-tagline" id="modal-qr-tagline">Escanea con tu cámara y haz tu pedido</p>
         </div>
 
-        <div class="modal-body modal-qr-body">
-            <!-- Stand / Hablador Imprimible -->
-            <div class="qr-printable-stand" id="qr-printable-stand">
-                <div class="qr-stand-header">
-                    <span class="qr-stand-badge">✨ Catálogo Digital & Pedidos</span>
-                    <h2 class="qr-stand-title" id="modal-qr-business-name">Mi Tienda</h2>
-                    <p class="qr-stand-tagline" id="modal-qr-tagline">Escanea con tu cámara y haz tu pedido</p>
-                </div>
-
-                <div class="qr-canvas-box">
-                    <canvas id="modal-qr-canvas" class="modal-qr-canvas" width="260" height="260"></canvas>
-                </div>
-
-                <div class="qr-stand-footer">
-                    <span class="qr-stand-url" id="modal-qr-url-label">https://mitienda.ventrina.app</span>
-                    <span class="qr-stand-subtext">Menú interactivo · Precios actualizados en Bs y USD</span>
-                </div>
-            </div>
-
-            <div class="qr-tips-banner">
-                <i data-lucide="lightbulb" class="qr-tip-icon"></i>
-                <div class="qr-tip-text">
-                    <strong>Consejo para aumentar ventas:</strong>
-                    Imprime este diseño y colócalo en un hablador acrílico en el mostrador o mesas para que tus clientes pidan directamente a tu WhatsApp.
-                </div>
-            </div>
+        <div class="qr-canvas-box">
+            <canvas id="modal-qr-canvas" class="modal-qr-canvas" width="260" height="260"></canvas>
         </div>
 
-        <div class="modal-footer modal-qr-footer">
-            <button type="button" class="btn-action secondary" id="btn-modal-copy-qr-url">
-                <i data-lucide="copy"></i> Copiar Enlace
-            </button>
-            <button type="button" class="btn-action secondary" id="btn-modal-download-qr">
-                <i data-lucide="download"></i> Descargar Imagen (.PNG)
-            </button>
-            <button type="button" class="btn-action" id="btn-modal-print-qr">
-                <i data-lucide="printer"></i> Imprimir Hablador
-            </button>
+        <div class="qr-stand-footer">
+            <span class="qr-stand-url" id="modal-qr-url-label">https://mitienda.ventrina.app</span>
+            <span class="qr-stand-subtext">Menú interactivo · Precios actualizados en Bs y USD</span>
         </div>
     </div>
-</div>
+
+    <div class="qr-tips-banner">
+        <i data-lucide="lightbulb" class="qr-tip-icon"></i>
+        <div class="qr-tip-text">
+            <strong>Consejo para aumentar ventas:</strong>
+            Imprime este diseño y colócalo en un hablador acrílico en el mostrador o mesas para que tus clientes pidan directamente a tu WhatsApp.
+        </div>
+    </div>
+
+    <Fragment slot="footer">
+        <button type="button" class="btn-action secondary" id="btn-modal-copy-qr-url">
+            <i data-lucide="copy"></i> Copiar Enlace
+        </button>
+        <button type="button" class="btn-action secondary" id="btn-modal-download-qr">
+            <i data-lucide="download"></i> Descargar Imagen (.PNG)
+        </button>
+        <button type="button" class="btn-action" id="btn-modal-print-qr">
+            <i data-lucide="printer"></i> Imprimir Hablador
+        </button>
+    </Fragment>
+</Modal>
+
+<!-- 11. Modal de Confirmación Universal Reutilizable (desde Modal.astro) -->
+<Modal id="admin-confirm-modal" type="confirm" theme="admin" />

@@ -1,6 +1,7 @@
 // src/scripts/admin.ts
 // Panel Administrativo - Ventrina SaaS
 import QRCode from 'qrcode';
+import { getModalService, type ConfirmModalOptions } from './services/modal.service';
 
 declare const lucide: any;
 declare const Chart: any;
@@ -171,6 +172,13 @@ function showToast(message: string, type: string = 'success') {
     setTimeout(() => {
         toast.remove();
     }, 4000);
+}
+
+// --- SISTEMA DE DIÁLOGOS DE CONFIRMACIÓN UNIVERSAL ---
+const adminConfirmService = getModalService('admin-confirm-modal');
+
+function showConfirmDialog(options: ConfirmModalOptions): Promise<boolean> {
+    return adminConfirmService.confirm(options);
 }
 
 function getStoreUrl(tenantId: string, customDomain?: string | null): string {
@@ -1403,7 +1411,15 @@ async function updateOrderStatus(orderId: string, newStatus: string) {
         showToast(`Pedido #${orderId} actualizado a "${newStatus.replace('_', ' ')}"`, 'success');
 
         if (resData && (resData as any).whatsappNotificationUrl) {
-            const shouldNotify = confirm(`¿Deseas abrir WhatsApp para notificar al cliente sobre el cambio a "${newStatus.replace('_', ' ')}"?`);
+            const shouldNotify = await showConfirmDialog({
+                title: 'Notificar al Cliente',
+                subtitle: `Pedido #${orderId}`,
+                message: `¿Deseas abrir WhatsApp para notificar al cliente sobre el cambio a "${newStatus.replace('_', ' ')}"?`,
+                confirmText: 'Abrir WhatsApp',
+                cancelText: 'No notificar',
+                variant: 'primary',
+                icon: 'message-circle'
+            });
             if (shouldNotify) {
                 window.open((resData as any).whatsappNotificationUrl, '_blank');
             }
@@ -1417,7 +1433,16 @@ async function updateOrderStatus(orderId: string, newStatus: string) {
 
 // Eliminar un pedido
 async function deleteOrder(orderId: string) {
-    if (!confirm(`¿Estás completamente seguro de eliminar el pedido #${orderId}? Esta acción borrará todos sus detalles permanentemente.`)) {
+    const confirmed = await showConfirmDialog({
+        title: '¿Eliminar pedido?',
+        subtitle: 'Acción permanente y definitiva',
+        message: `¿Estás completamente seguro de eliminar el pedido #${orderId}? Esta acción borrará todos sus detalles permanentemente.`,
+        confirmText: 'Eliminar pedido',
+        cancelText: 'Cancelar',
+        variant: 'danger',
+        icon: 'trash-2'
+    });
+    if (!confirmed) {
         return;
     }
 
@@ -1749,7 +1774,15 @@ if (paymentForm) {
             pendingPaymentStatus = null;
 
             if (resData && (resData as any).whatsappNotificationUrl) {
-                const shouldNotify = confirm(`¿Deseas abrir WhatsApp para enviar la confirmación de pago al cliente?`);
+                const shouldNotify = await showConfirmDialog({
+                    title: 'Enviar Recibo de Pago',
+                    subtitle: `Pedido #${orderId}`,
+                    message: '¿Deseas abrir WhatsApp para enviar la confirmación de pago al cliente?',
+                    confirmText: 'Abrir WhatsApp',
+                    cancelText: 'No notificar',
+                    variant: 'primary',
+                    icon: 'message-circle'
+                });
                 if (shouldNotify) {
                     window.open((resData as any).whatsappNotificationUrl, '_blank');
                 }
@@ -2189,7 +2222,16 @@ if (btnCancelEdit) btnCancelEdit.addEventListener('click', resetProductForm);
 
 // Eliminar un producto
 async function deleteProduct(productId: string) {
-    if (!confirm(`¿Estás seguro de eliminar el producto "${productId}" del catálogo? Se borrará permanentemente de la base de datos.`)) {
+    const confirmed = await showConfirmDialog({
+        title: '¿Eliminar producto?',
+        subtitle: 'Catálogo de la tienda',
+        message: `¿Estás seguro de eliminar el producto "${productId}" del catálogo? Se borrará permanentemente de la base de datos.`,
+        confirmText: 'Eliminar producto',
+        cancelText: 'Cancelar',
+        variant: 'danger',
+        icon: 'trash-2'
+    });
+    if (!confirmed) {
         return;
     }
 
@@ -2382,7 +2424,16 @@ function clearBulkSelection() {
 async function handleBulkActivate(active: number) {
     if (selectedProductIds.size === 0) return;
     const actionLabel = active === 1 ? 'activar' : 'pausar / marcar como agotados';
-    if (!confirm(`¿Deseas ${actionLabel} los ${selectedProductIds.size} productos seleccionados?`)) return;
+    const confirmed = await showConfirmDialog({
+        title: active === 1 ? '¿Activar productos?' : '¿Pausar productos?',
+        subtitle: `${selectedProductIds.size} productos seleccionados`,
+        message: `¿Deseas ${actionLabel} los ${selectedProductIds.size} productos seleccionados?`,
+        confirmText: active === 1 ? 'Activar productos' : 'Pausar productos',
+        cancelText: 'Cancelar',
+        variant: active === 1 ? 'primary' : 'warning',
+        icon: active === 1 ? 'check-circle' : 'pause-circle'
+    });
+    if (!confirmed) return;
 
     showToast(`Actualizando ${selectedProductIds.size} productos...`, 'info');
     let successCount = 0;
@@ -2415,7 +2466,16 @@ async function handleBulkPriceAdjust() {
         return;
     }
 
-    if (!confirm(`¿Confirmas aplicar ${pct > 0 ? '+' : ''}${pct}% a los precios de los ${selectedProductIds.size} productos seleccionados?`)) return;
+    const confirmed = await showConfirmDialog({
+        title: 'Ajuste masivo de precios',
+        subtitle: `${selectedProductIds.size} productos seleccionados`,
+        message: `¿Confirmas aplicar ${pct > 0 ? '+' : ''}${pct}% a los precios de los ${selectedProductIds.size} productos seleccionados?`,
+        confirmText: 'Aplicar precios',
+        cancelText: 'Cancelar',
+        variant: 'warning',
+        icon: 'trending-up'
+    });
+    if (!confirmed) return;
 
     showToast('Aplicando ajuste masivo de precios...', 'info');
     let successCount = 0;
@@ -2447,7 +2507,16 @@ async function handleBulkPriceAdjust() {
 async function handleBulkDelete() {
     if (selectedProductIds.size === 0) return;
     const count = selectedProductIds.size;
-    if (!confirm(`⚠️ ATENCIÓN: ¿Estás seguro de eliminar permanentemente estos ${count} productos del catálogo? Esta acción no se puede deshacer.`)) return;
+    const confirmed = await showConfirmDialog({
+        title: '⚠️ ¿Eliminar productos permanentemente?',
+        subtitle: `${count} productos seleccionados`,
+        message: `¿Estás seguro de eliminar permanentemente estos ${count} productos del catálogo? Esta acción no se puede deshacer.`,
+        confirmText: `Eliminar ${count} productos`,
+        cancelText: 'Cancelar',
+        variant: 'danger',
+        icon: 'trash-2'
+    });
+    if (!confirmed) return;
 
     showToast(`Eliminando ${count} productos...`, 'info');
     try {
@@ -3023,6 +3092,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // Exponer funciones globales para controladores onclick en HTML
+window.showConfirmDialog = showConfirmDialog;
 window.updateOrderStatus = updateOrderStatus;
 window.deleteOrder = deleteOrder;
 window.viewOrderDetails = viewOrderDetails;
@@ -3859,7 +3929,15 @@ function setupProductsCSVImport() {
                 }
 
                 const dataRows = lines.slice(1);
-                const confirmed = confirm(`Se encontraron ${dataRows.length} productos en el archivo CSV. ¿Deseas importarlos/actualizarlos en tu catálogo?`);
+                const confirmed = await showConfirmDialog({
+                    title: 'Importar productos desde CSV',
+                    subtitle: `${dataRows.length} filas detectadas`,
+                    message: `Se encontraron ${dataRows.length} productos en el archivo CSV. ¿Deseas importarlos o actualizarlos en tu catálogo?`,
+                    confirmText: 'Importar productos',
+                    cancelText: 'Cancelar',
+                    variant: 'primary',
+                    icon: 'upload-cloud'
+                });
                 if (!confirmed) return;
 
                 showToast(`Iniciando importación masiva de ${dataRows.length} productos...`, 'info');
@@ -5148,7 +5226,16 @@ async function toggleCouponStatus(couponId: number, currentActive: number) {
 }
 
 async function deleteCoupon(couponId: number) {
-    if (!confirm('¿Seguro que deseas eliminar este cupón de descuento?')) return;
+    const confirmed = await showConfirmDialog({
+        title: '¿Eliminar cupón de descuento?',
+        subtitle: 'Configuración de cupones',
+        message: '¿Seguro que deseas eliminar este cupón de descuento? Dejará de funcionar de inmediato para los clientes.',
+        confirmText: 'Eliminar cupón',
+        cancelText: 'Cancelar',
+        variant: 'danger',
+        icon: 'trash-2'
+    });
+    if (!confirmed) return;
     try {
         const res = await fetch(`/api/coupons?id=${couponId}`, { method: 'DELETE' });
         if (!res.ok) throw new Error('Error al eliminar');
@@ -5498,7 +5585,16 @@ function renderTeamTable() {
 }
 
 async function deleteTeamMember(id: number, email: string) {
-    if (!confirm(`¿Estás seguro de que deseas revocar el acceso a "${email}"? No podrá volver a ingresar al panel.`)) {
+    const confirmed = await showConfirmDialog({
+        title: '¿Revocar acceso al equipo?',
+        subtitle: 'Gestión de colaboradores',
+        message: `¿Estás seguro de que deseas revocar el acceso a "${email}"? No podrá volver a ingresar al panel administrativo.`,
+        confirmText: 'Revocar acceso',
+        cancelText: 'Cancelar',
+        variant: 'danger',
+        icon: 'user-x'
+    });
+    if (!confirmed) {
         return;
     }
 
