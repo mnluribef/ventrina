@@ -1353,13 +1353,22 @@ function createOrderRowMarkup(order: any, includeStatusSelector: boolean = true)
     
     let statusSelector = '';
     if (includeStatusSelector) {
+        const orderIdEsc = escapeHtml(order.id);
+        const currentStatus = order.status || 'pendiente';
         statusSelector = `
-            <select class="status-select" data-action="status-select" data-id="${escapeHtml(order.id)}">
-                <option value="pendiente" ${order.status === 'pendiente' ? 'selected' : ''}>Pendiente</option>
-                <option value="en_produccion" ${order.status === 'en_produccion' ? 'selected' : ''}>En Preparación</option>
-                <option value="listo_entrega" ${order.status === 'listo_entrega' ? 'selected' : ''}>Listo para Entrega</option>
-                <option value="completado" ${order.status === 'completado' ? 'selected' : ''}>Completado</option>
-                <option value="cancelado" ${order.status === 'cancelado' ? 'selected' : ''}>Cancelado</option>
+            <select
+                id="status-select-${orderIdEsc}"
+                name="order_status_${orderIdEsc}"
+                class="status-select status-select-${escapeHtml(currentStatus)}"
+                data-action="status-select"
+                data-id="${orderIdEsc}"
+                aria-label="Estado del pedido #${orderIdEsc}"
+            >
+                <option value="pendiente" ${currentStatus === 'pendiente' ? 'selected' : ''}>🟡 Pendiente</option>
+                <option value="en_produccion" ${currentStatus === 'en_produccion' ? 'selected' : ''}>🔵 En Producción</option>
+                <option value="listo_entrega" ${currentStatus === 'listo_entrega' ? 'selected' : ''}>🟢 Listo para Entrega</option>
+                <option value="completado" ${currentStatus === 'completado' ? 'selected' : ''}>✅ Completado</option>
+                <option value="cancelado" ${currentStatus === 'cancelado' ? 'selected' : ''}>❌ Cancelado</option>
             </select>
         `;
     } else {
@@ -3729,6 +3738,7 @@ document.addEventListener('change', (e) => {
         const orderId = select.getAttribute('data-id');
         const newStatus = select.value;
         if (orderId && newStatus) {
+            select.className = `status-select status-select-${newStatus}`;
             updateOrderStatus(orderId, newStatus);
         }
         return;

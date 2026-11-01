@@ -10,24 +10,26 @@ import Modal from '../common/Modal.astro';
     title="Detalles del Pedido"
     titleId="modal-order-title"
     closeBtnId="btn-close-modal"
+    contentClass="modal-order-detail-dialog"
     bodyId="modal-order-body"
-    footerClass="modal-footer-split"
+    bodyClass="modal-order-body-content"
+    footerClass="modal-footer-split modal-order-footer"
 >
     <!-- Información del Cliente -->
-    <div class="order-meta-info">
-        <div>
+    <div class="order-meta-info order-meta-header-grid">
+        <div class="order-meta-cell">
             <p>Cliente</p>
             <strong id="modal-client-name">-</strong>
         </div>
-        <div>
+        <div class="order-meta-cell">
             <p>Contacto WhatsApp</p>
             <strong id="modal-client-phone">-</strong>
         </div>
-        <div>
+        <div class="order-meta-cell">
             <p>Fecha de Solicitud</p>
             <strong id="modal-order-date">-</strong>
         </div>
-        <div>
+        <div class="order-meta-cell">
             <p>Estado del Pedido</p>
             <strong>
                 <span id="modal-order-status" class="status-badge pendiente">
@@ -35,7 +37,7 @@ import Modal from '../common/Modal.astro';
                 </span>
             </strong>
         </div>
-        <div>
+        <div class="order-meta-cell order-meta-total-cell">
             <p>Total del Pedido</p>
             <strong id="modal-order-total" class="modal-order-total">-</strong>
             <span id="modal-order-total-bs" class="modal-order-total-bs"></span>
@@ -93,13 +95,13 @@ import Modal from '../common/Modal.astro';
     </div>
 
     <Fragment slot="footer">
-        <button type="button" class="btn-action secondary" id="btn-print-order-ticket" title="Imprimir ticket para cocina">
-            <i data-lucide="printer"></i> Imprimir Comanda
+        <button type="button" class="btn-action secondary btn-order-print" id="btn-print-order-ticket" title="Imprimir ticket para cocina">
+            <i data-lucide="printer"></i> <span>Imprimir Comanda</span>
         </button>
-        <div class="modal-footer-actions">
-            <button class="btn-action secondary" id="btn-modal-close-footer">Cerrar</button>
-            <a href="" target="_blank" class="btn-action btn-whatsapp" id="btn-modal-chat">
-                <i data-lucide="message-circle"></i> Chatear por WhatsApp
+        <div class="modal-footer-actions modal-order-footer-actions">
+            <button class="btn-action secondary btn-order-close" id="btn-modal-close-footer">Cerrar</button>
+            <a href="" target="_blank" class="btn-action btn-whatsapp btn-order-chat" id="btn-modal-chat">
+                <i data-lucide="message-circle"></i> <span>Chatear por WhatsApp</span>
             </a>
         </div>
     </Fragment>
