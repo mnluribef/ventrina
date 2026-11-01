@@ -669,7 +669,11 @@ let currentTenantHasAnalytics: boolean = true;
 
 async function loadBillingData() {
     try {
-        const res = await fetch('/api/billing');
+        const headers: Record<string, string> = { 'X-Requested-With': 'fetch' };
+        if (activeTenantId) {
+            headers['X-Tenant-Id'] = activeTenantId;
+        }
+        const res = await fetch('/api/billing', { headers });
         if (res.ok) {
             const data = (await res.json()) as any;
             
@@ -718,9 +722,14 @@ async function loadBillingData() {
                 const pz = document.getElementById('pay-zelle'); if (pz) pz.textContent = data.billing.zelle;
                 const pa = document.getElementById('pay-amount'); if (pa) pa.textContent = data.billing.monthlyPriceUsd;
             }
+        } else {
+            currentTenantPlanKey = 'basic';
+            currentTenantHasAnalytics = false;
         }
     } catch (e) {
         console.error("Error cargando billing:", e);
+        currentTenantPlanKey = 'basic';
+        currentTenantHasAnalytics = false;
     }
 }
 
@@ -859,7 +868,11 @@ async function loadSales(dateFrom: string | null = null, dateTo: string | null =
 let salesChartInstance: any = null;
 async function loadStats() {
     try {
-        const res = await fetch('/api/sales?stats=true');
+        const headers: Record<string, string> = { 'X-Requested-With': 'fetch' };
+        if (activeTenantId) {
+            headers['X-Tenant-Id'] = activeTenantId;
+        }
+        const res = await fetch('/api/sales?stats=true', { headers });
         if (!res.ok) throw new Error('No autorizado');
         const data = (await res.json()) as any;
         
@@ -951,7 +964,12 @@ async function loadAnalytics() {
             return;
         }
 
-        const res = await fetch('/api/analytics');
+        const headers: Record<string, string> = { 'X-Requested-With': 'fetch' };
+        if (activeTenantId) {
+            headers['X-Tenant-Id'] = activeTenantId;
+        }
+
+        const res = await fetch('/api/analytics', { headers });
         if (!res.ok) {
             if (res.status === 403) {
                 currentTenantHasAnalytics = false;
@@ -1410,11 +1428,17 @@ async function updateOrderStatus(orderId: string, newStatus: string) {
 
         const response = await fetch('/api/orders', {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: orderId, status: newStatus, paymentMethod: null })
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'fetch'
+            },
+            body: JSON.stringify({ id: orderId, status: newStatus })
         });
 
-        if (!response.ok) throw new Error('Error al actualizar estado');
+        if (!response.ok) {
+            const errJson = (await response.json().catch(() => null)) as any;
+            throw new Error(errJson?.error || 'Error al actualizar estado');
+        }
         const resData = await response.json();
         
         showToast(`Pedido #${orderId} actualizado a "${newStatus.replace('_', ' ')}"`, 'success');
@@ -1434,9 +1458,18 @@ async function updateOrderStatus(orderId: string, newStatus: string) {
             }
         }
         refreshAllData();
-    } catch (err) {
-        console.error(err);
-        showToast('Error al actualizar el estado del pedido.', 'error');
+    } catch (err: any) {
+        console.error('Error al actualizar pedido:', err);
+        showToast(err?.message || 'Error al actualizar el estado del pedido.', 'error');
+        // Revertir selector al estado previo en caso de error
+        const select = document.getElementById(`status-select-${orderId}`) as HTMLSelectElement | null;
+        if (select) {
+            const targetOrder = ordersList.find(o => o.id === orderId);
+            if (targetOrder) {
+                select.value = targetOrder.status;
+                select.className = `status-select status-select-${targetOrder.status}`;
+            }
+        }
     }
 }
 
@@ -1764,11 +1797,17 @@ if (paymentForm) {
         try {
             const response = await fetch('/api/orders', {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'fetch'
+                },
                 body: JSON.stringify(payload)
             });
 
-            if (!response.ok) throw new Error('Error al actualizar estado');
+            if (!response.ok) {
+                const errJson = (await response.json().catch(() => null)) as any;
+                throw new Error(errJson?.error || 'Error al actualizar estado');
+            }
             
             const resData = await response.json().catch(() => null);
             showToast(`Pedido #${orderId} completado y venta registrada.`, 'success');

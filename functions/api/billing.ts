@@ -1,7 +1,7 @@
 // functions/api/billing.ts
 // Endpoint para que cada tenant consulte su plan, límites, consumo actual e info de pago
 import { verifySession, unauthorizedResponse } from "./_auth";
-import { resolveTenant, tenantNotFoundResponse } from "./_tenant";
+import { resolveTenant, tenantNotFoundResponse, getTenantByIdCached } from "./_tenant";
 import { PLANS, checkProductLimit, checkOrderLimit } from "./_plans";
 import { getDB, jsonResponse } from "./_helpers";
 import type { Env, PagesHandler } from '../types';
@@ -9,15 +9,46 @@ import type { Env, PagesHandler } from '../types';
 export const onRequestGet: PagesHandler<Env> = async (context) => {
     const { env, request } = context;
     const db = getDB(env);
-    const { id: tenantId, tenant } = await resolveTenant(request, db);
+    let { id: tenantId, tenant } = await resolveTenant(request, db, env.KV);
+
+    // Solo los administradores del tenant pueden ver esta info
+    const user = await verifySession(context, (tenantId && tenantId !== 'demo') ? tenantId : undefined);
+    if (!user) return unauthorizedResponse();
+
+    // Si resolveTenant no encontró el tenant o resolvió demo por defecto, pero el usuario tiene tenant_id:
+    if ((!tenant || tenantId === 'demo') && user.tenant_id && user.tenant_id !== 'demo') {
+        const userTenant = await getTenantByIdCached(db, user.tenant_id, env.KV);
+        if (userTenant) {
+            tenant = userTenant;
+            tenantId = user.tenant_id;
+        }
+    }
+
+    // Fallback defensivo para entorno de demostración
+    if (!tenant && (tenantId === 'demo' || user.tenant_id === 'demo')) {
+        const demoTenant = await getTenantByIdCached(db, 'demo', env.KV);
+        if (demoTenant) {
+            tenant = demoTenant;
+        } else {
+            tenant = {
+                id: 'demo',
+                name: 'Ventrina Demo Store',
+                plan: 'pro',
+                template: 'restaurant',
+                config_json: '{}',
+                domain: 'demo.ventrina.app',
+                whatsapp: null,
+                active: 1,
+                deleted_at: null,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            };
+        }
+    }
 
     if (!tenant) {
         return tenantNotFoundResponse();
     }
-
-    // Solo los administradores del tenant pueden ver esta info
-    const user = await verifySession(context, tenantId);
-    if (!user) return unauthorizedResponse();
 
     try {
         const productStats = await checkProductLimit(db, tenant);

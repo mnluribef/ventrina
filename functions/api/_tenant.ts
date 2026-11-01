@@ -162,6 +162,11 @@ export async function resolveTenant(request: Request, db: D1Database, kv?: KVNam
             if (sessionRow && sessionRow.tenant_id) {
                 const tenant = await getTenantByIdCached(db, sessionRow.tenant_id, kv);
                 if (tenant) return { id: sessionRow.tenant_id, tenant };
+                if (sessionRow.tenant_id === 'demo') {
+                    const demoTenant = await getTenantByIdCached(db, 'demo', kv);
+                    return { id: 'demo', tenant: demoTenant };
+                }
+                return { id: sessionRow.tenant_id, tenant: null };
             }
         } catch {
             // Ignore session errors during tenant lookup
@@ -169,7 +174,8 @@ export async function resolveTenant(request: Request, db: D1Database, kv?: KVNam
     }
 
     // 5. Fallback al tenant demo
-    return { id: 'demo', tenant: null };
+    const demoTenant = db ? await getTenantByIdCached(db, 'demo', kv) : null;
+    return { id: 'demo', tenant: demoTenant };
 }
 
 /**

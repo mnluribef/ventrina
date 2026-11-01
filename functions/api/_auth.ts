@@ -86,9 +86,9 @@ export async function verifySession(
         const now = Math.floor(Date.now() / 1000);
         let session: SessionRow | null = null;
         try {
-            let query = `SELECT s.username, s.tenant_id, s.ip, s.ua_hash, s.expires_at, u.role, u.email 
+            let query = `SELECT s.username, s.tenant_id, s.ip, s.ua_hash, s.expires_at, COALESCE(u.role, 'admin') as role, COALESCE(u.email, s.username) as email 
                  FROM sessions s
-                 JOIN users u ON (s.username = u.email OR s.username = u.username) AND s.tenant_id = u.tenant_id
+                 LEFT JOIN users u ON (s.username = u.email OR s.username = u.username) AND s.tenant_id = u.tenant_id
                  WHERE s.token = ? AND s.expires_at > ?`;
             const bindings: (string | number)[] = [token, now];
 
@@ -100,9 +100,9 @@ export async function verifySession(
             session = await db.prepare(query).bind(...bindings).first<SessionRow>();
         } catch {
             // Fallback defensivo si la tabla sessions no tiene ip o ua_hash
-            let fallbackQuery = `SELECT s.username, s.tenant_id, s.expires_at, u.role, u.email 
+            let fallbackQuery = `SELECT s.username, s.tenant_id, s.expires_at, COALESCE(u.role, 'admin') as role, COALESCE(u.email, s.username) as email 
                  FROM sessions s
-                 JOIN users u ON (s.username = u.email OR s.username = u.username) AND s.tenant_id = u.tenant_id
+                 LEFT JOIN users u ON (s.username = u.email OR s.username = u.username) AND s.tenant_id = u.tenant_id
                  WHERE s.token = ? AND s.expires_at > ?`;
             const fallbackBindings: (string | number)[] = [token, now];
 

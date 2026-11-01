@@ -41,9 +41,9 @@ export type CreateOrderInput = z.infer<typeof createOrderSchema>;
 export const updateOrderStatusSchema = z.object({
     id: z.string().min(1),
     status: z.enum(['pendiente', 'en_produccion', 'listo_entrega', 'completado', 'cancelado']),
-    paymentMethod: z.string().optional(),
-    paymentAmount: z.number().min(0).or(z.string().transform(v => parseFloat(v))).optional(),
-    note: z.string().max(500).optional()
+    paymentMethod: z.string().optional().nullable(),
+    paymentAmount: z.number().min(0).or(z.string().transform(v => parseFloat(v))).optional().nullable(),
+    note: z.string().max(500).optional().nullable()
 });
 
 export type UpdateOrderStatusInput = z.infer<typeof updateOrderStatusSchema>;
@@ -253,9 +253,9 @@ export const onRequestPut: PagesHandler<Env> = async (context) => {
             tenantId,
             status,
             user.username,
-            note,
-            paymentMethod,
-            paymentAmount !== undefined ? Number(paymentAmount) : undefined
+            note ?? undefined,
+            paymentMethod ?? undefined,
+            (paymentAmount !== undefined && paymentAmount !== null) ? Number(paymentAmount) : undefined
         );
 
         if (!updateRes.ok) {
@@ -301,7 +301,7 @@ export const onRequestPut: PagesHandler<Env> = async (context) => {
                     newStatus: status,
                     totalPrice: orderData.total_price,
                     totalBs: orderData.total_bs,
-                    note
+                    note: note ?? undefined
                 }).catch(e => console.error("Error al enviar email de estado de pedido:", e))
             );
         }
