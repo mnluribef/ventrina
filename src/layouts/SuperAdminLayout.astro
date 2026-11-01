@@ -1,0 +1,43 @@
+---
+// src/layouts/SuperAdminLayout.astro
+// Dedicated Layout for Ventrina SaaS SuperAdmin Console
+import '../styles/superadmin.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Super Admin | Ventrina HQ",
+  description = "Consola Central de Operaciones y Control Maestro SaaS"
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" class="sa-html-root">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <link rel="apple-touch-icon" href="/assets/favicon.svg" />
+
+    <!-- Google Fonts: Outfit (Titulares) & Inter (Data / UI) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="sa-body">
+    <div class="sa-app-wrapper">
+      <slot />
+    </div>
+  </body>
+</html>
