@@ -18,32 +18,104 @@ export interface EmailSendResult {
     error?: string;
 }
 
+interface ResendPayload {
+    from: string;
+    to: string[];
+    subject: string;
+    html: string;
+    text: string;
+    simulationPrefix?: string;
+    simulationLog?: string;
+}
+
+/**
+ * Escapa caracteres HTML especiales para prevenir XSS en plantillas de email (S-06)
+ */
+export function escapeHtml(str: string): string {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 /**
  * Mapeo legible de las plantillas de negocio
  */
 function getTemplateFriendlyName(template: string): string {
     switch (template) {
-        case 'restaurant':
-            return 'Restaurante / Comida';
-        case 'hardware':
-            return 'Ferretería / Herramientas';
-        case 'autoparts':
-            return 'Repuestos Automotrices';
-        case 'fashion':
-            return 'Ropa / Moda';
-        case 'tech':
-            return 'Tecnología / Gadgets';
-        default:
-            return 'Comercio Digital';
+        case 'restaurant':  return 'Restaurante / Comida';
+        case 'hardware':    return 'Ferretería / Herramientas';
+        case 'autoparts':   return 'Repuestos Automotrices';
+        case 'fashion':     return 'Ropa / Moda';
+        case 'tech':        return 'Tecnología / Gadgets';
+        default:            return 'Comercio Digital';
     }
 }
 
 /**
- * Genera el cuerpo en texto plano para clientes de correo sin soporte HTML y prevención de spam
+ * Núcleo de envío: realiza la llamada HTTP a Resend o simula en modo dev (DRY — SRP)
+ */
+async function sendViaResend(
+    apiKey: string | undefined,
+    from: string,
+    payload: ResendPayload
+): Promise<EmailSendResult> {
+    if (!apiKey) {
+        if (payload.simulationLog) {
+            console.log(payload.simulationLog);
+        } else {
+            console.log(`[EmailService] Clave RESEND_API_KEY no configurada. Simulando envío a: ${payload.to.join(', ')}`);
+        }
+        console.log(`[EmailService] Asunto: ${payload.subject}`);
+        const prefix = payload.simulationPrefix || 'simulated-';
+        return { success: true, mocked: true, messageId: `${prefix}${Date.now()}` };
+    }
+
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ...payload, from })
+        });
+
+        if (!response.ok) {
+            const errBody = await response.text();
+            console.error(`[EmailService] Error Resend (${response.status}):`, errBody);
+            return { success: false, error: `Resend error ${response.status}: ${errBody}` };
+        }
+
+        const resData = (await response.json()) as { id?: string };
+        console.log(`[EmailService] Email enviado a ${payload.to.join(', ')}. MessageId: ${resData.id}`);
+        return { success: true, messageId: resData.id };
+    } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error('[EmailService] Excepción de red:', msg);
+        return { success: false, error: msg };
+    }
+}
+
+/**
+ * Resuelve la API key y el from desde env (con fallback a process.env para tests locales)
+ */
+function resolveEmailConfig(env: Env, defaultFrom: string): { apiKey: string | undefined; from: string } {
+    const nodeEnv = (globalThis as unknown as { process?: { env?: Record<string, string | undefined> } }).process?.env;
+    const apiKey = env.RESEND_API_KEY || nodeEnv?.RESEND_API_KEY;
+    const from = env.EMAIL_FROM || nodeEnv?.EMAIL_FROM || defaultFrom;
+    return { apiKey, from };
+}
+
+// ─── EMAIL DE BIENVENIDA ────────────────────────────────────────────────────
+
+/**
+ * Genera el cuerpo en texto plano para clientes de correo sin soporte HTML
  */
 export function generateWelcomeEmailText(data: WelcomeEmailData): string {
     const templateLabel = getTemplateFriendlyName(data.template);
-
     return `¡Felicitaciones! Tu tienda online "${data.tenantName}" ya está activa en Ventrina.
 
 Detalles de tu cuenta:
@@ -81,10 +153,16 @@ https://ventrina.app
 }
 
 /**
- * Genera la plantilla de correo HTML moderna, responsive y libre de atributos de estilo inline
+ * Genera la plantilla de correo HTML moderna, responsive, con escapeHtml en datos dinámicos (S-06)
  */
 export function generateWelcomeEmailHtml(data: WelcomeEmailData): string {
     const templateLabel = getTemplateFriendlyName(data.template);
+    const safeName      = escapeHtml(data.tenantName);
+    const safeSlug      = escapeHtml(data.tenantSlug);
+    const safeTo        = escapeHtml(data.to);
+    const safeLabel     = escapeHtml(templateLabel);
+    const safeStoreUrl  = escapeHtml(data.storeUrl);
+    const safeAdminUrl  = escapeHtml(data.adminUrl);
 
     return `<!DOCTYPE html>
 <html lang="es">
@@ -146,9 +224,7 @@ export function generateWelcomeEmailHtml(data: WelcomeEmailData): string {
     color: rgba(255, 255, 255, 0.9);
     line-height: 1.5;
   }
-  .email-body {
-    padding: 32px 28px;
-  }
+  .email-body { padding: 32px 28px; }
   .summary-box {
     background-color: #f8fafc;
     border: 1px solid #e2e8f0;
@@ -170,20 +246,14 @@ export function generateWelcomeEmailHtml(data: WelcomeEmailData): string {
     line-height: 1.5;
     color: #334155;
   }
-  .summary-label {
-    font-weight: 600;
-    color: #0f172a;
-  }
+  .summary-label { font-weight: 600; color: #0f172a; }
   .summary-link {
     color: #4f46e5;
     font-weight: 600;
     text-decoration: underline;
     word-break: break-all;
   }
-  .cta-section {
-    text-align: center;
-    margin: 28px 0 34px;
-  }
+  .cta-section { text-align: center; margin: 28px 0 34px; }
   .btn-primary-email {
     display: inline-block;
     background-color: #4f46e5;
@@ -204,14 +274,8 @@ export function generateWelcomeEmailHtml(data: WelcomeEmailData): string {
     border-bottom: 2px solid #f1f5f9;
     padding-bottom: 8px;
   }
-  .step-list {
-    margin: 0 0 28px;
-    padding: 0;
-    list-style: none;
-  }
-  .step-item {
-    margin-bottom: 18px;
-  }
+  .step-list { margin: 0 0 28px; padding: 0; list-style: none; }
+  .step-item { margin-bottom: 18px; }
   .step-badge {
     display: inline-block;
     width: 26px;
@@ -225,26 +289,10 @@ export function generateWelcomeEmailHtml(data: WelcomeEmailData): string {
     border-radius: 50%;
     margin-right: 8px;
   }
-  .step-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: #1e293b;
-  }
-  .step-desc {
-    margin: 6px 0 0 34px;
-    font-size: 14px;
-    color: #64748b;
-    line-height: 1.5;
-  }
-  .secondary-link-wrap {
-    text-align: center;
-    margin-top: 10px;
-  }
-  .secondary-link {
-    color: #64748b;
-    font-size: 14px;
-    text-decoration: underline;
-  }
+  .step-title { font-size: 15px; font-weight: 700; color: #1e293b; }
+  .step-desc { margin: 6px 0 0 34px; font-size: 14px; color: #64748b; line-height: 1.5; }
+  .secondary-link-wrap { text-align: center; margin-top: 10px; }
+  .secondary-link { color: #64748b; font-size: 14px; text-decoration: underline; }
   .email-footer {
     background-color: #f8fafc;
     border-top: 1px solid #e2e8f0;
@@ -254,14 +302,8 @@ export function generateWelcomeEmailHtml(data: WelcomeEmailData): string {
     color: #94a3b8;
     line-height: 1.6;
   }
-  .footer-links {
-    margin-bottom: 8px;
-  }
-  .footer-link {
-    color: #64748b;
-    text-decoration: none;
-    margin: 0 6px;
-  }
+  .footer-links { margin-bottom: 8px; }
+  .footer-link { color: #64748b; text-decoration: none; margin: 0 6px; }
 </style>
 </head>
 <body>
@@ -277,27 +319,27 @@ export function generateWelcomeEmailHtml(data: WelcomeEmailData): string {
       <div class="summary-box">
         <div class="summary-title">Detalles de tu nueva tienda</div>
         <div class="summary-row">
-          <span class="summary-label">Nombre del negocio:</span> ${data.tenantName}
+          <span class="summary-label">Nombre del negocio:</span> ${safeName}
         </div>
         <div class="summary-row">
-          <span class="summary-label">Plantilla activada:</span> ${templateLabel}
+          <span class="summary-label">Plantilla activada:</span> ${safeLabel}
         </div>
         <div class="summary-row">
-          <span class="summary-label">Enlace público:</span> 
-          <a class="summary-link" href="${data.storeUrl}" target="_blank" rel="noopener">${data.storeUrl}</a>
+          <span class="summary-label">Enlace público:</span>
+          <a class="summary-link" href="${safeStoreUrl}" target="_blank" rel="noopener">${safeStoreUrl}</a>
         </div>
         <div class="summary-row">
-          <span class="summary-label">Correo de administrador:</span> ${data.to}
+          <span class="summary-label">Correo de administrador:</span> ${safeTo}
         </div>
       </div>
 
       <div class="cta-section">
-        <a class="btn-primary-email" href="${data.adminUrl}" target="_blank" rel="noopener">
+        <a class="btn-primary-email" href="${safeAdminUrl}" target="_blank" rel="noopener">
           Acceder a mi Panel de Control
         </a>
         <div class="secondary-link-wrap">
-          <a class="secondary-link" href="${data.storeUrl}" target="_blank" rel="noopener">
-            Ver tienda en vivo (${data.tenantSlug}.ventrina.app)
+          <a class="secondary-link" href="${safeStoreUrl}" target="_blank" rel="noopener">
+            Ver tienda en vivo (${safeSlug}.ventrina.app)
           </a>
         </div>
       </div>
@@ -349,68 +391,21 @@ export function generateWelcomeEmailHtml(data: WelcomeEmailData): string {
 /**
  * Envía el correo electrónico de bienvenida mediante Resend o lo simula si no hay clave configurada
  */
-export async function sendWelcomeEmail(
-    env: Env,
-    data: WelcomeEmailData
-): Promise<EmailSendResult> {
+export async function sendWelcomeEmail(env: Env, data: WelcomeEmailData): Promise<EmailSendResult> {
     const subject = `¡Bienvenido a Ventrina! Tu tienda "${data.tenantName}" ya está lista 🚀`;
-    const html = generateWelcomeEmailHtml(data);
-    const text = generateWelcomeEmailText(data);
-    const nodeEnv = (globalThis as unknown as { process?: { env?: Record<string, string | undefined> } }).process?.env;
-    const apiKey = env.RESEND_API_KEY || nodeEnv?.RESEND_API_KEY;
-    const from = env.EMAIL_FROM || nodeEnv?.EMAIL_FROM || 'Ventrina <onboarding@ventrina.app>';
-
-    // Modo simulación defensivo si no hay clave API configurada (desarrollo local / staging / tests)
-    if (!apiKey) {
-        console.log(`[EmailService] Clave RESEND_API_KEY no configurada. Simulando envío de bienvenida a: ${data.to}`);
-        console.log(`[EmailService] Asunto: ${subject}`);
-        console.log(`[EmailService] Enlace Tienda: ${data.storeUrl} | Admin: ${data.adminUrl}`);
-        return {
-            success: true,
-            mocked: true,
-            messageId: `simulated-${Date.now()}`
-        };
-    }
-
-    try {
-        const response = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                from,
-                to: [data.to],
-                subject,
-                html,
-                text
-            })
-        });
-
-        if (!response.ok) {
-            const errBody = await response.text();
-            console.error(`[EmailService] Error al enviar email vía Resend (${response.status}):`, errBody);
-            return {
-                success: false,
-                error: `Resend error ${response.status}: ${errBody}`
-            };
-        }
-
-        const resData = (await response.json()) as { id?: string };
-        console.log(`[EmailService] Email de bienvenida enviado con éxito a ${data.to}. MessageId: ${resData.id}`);
-        return {
-            success: true,
-            messageId: resData.id
-        };
-    } catch (err: any) {
-        console.error('[EmailService] Excepción de red al enviar correo de bienvenida:', err);
-        return {
-            success: false,
-            error: err?.message || String(err)
-        };
-    }
+    const { apiKey, from } = resolveEmailConfig(env, 'Ventrina <onboarding@ventrina.app>');
+    return sendViaResend(apiKey, from, {
+        from,
+        to: [data.to],
+        subject,
+        html: generateWelcomeEmailHtml(data),
+        text: generateWelcomeEmailText(data),
+        simulationPrefix: 'simulated-',
+        simulationLog: `[EmailService] Clave RESEND_API_KEY no configurada. Simulando envío de bienvenida a: ${data.to}`
+    });
 }
+
+// ─── EMAIL DE ESTADO DE PEDIDO ──────────────────────────────────────────────
 
 export interface OrderStatusEmailData {
     to: string;
@@ -426,20 +421,13 @@ export interface OrderStatusEmailData {
 
 export function getStatusFriendlyLabel(status: string): string {
     switch (status) {
-        case 'pendiente':
-            return 'Pendiente de confirmación';
-        case 'confirmado':
-            return 'Confirmado y en preparación';
-        case 'en_camino':
-            return 'En camino / Despachado';
-        case 'listo_entrega':
-            return 'Listo para entrega / retiro';
-        case 'completado':
-            return 'Completado con éxito';
-        case 'cancelado':
-            return 'Cancelado';
-        default:
-            return status;
+        case 'pendiente':      return 'Pendiente de confirmación';
+        case 'confirmado':     return 'Confirmado y en preparación';
+        case 'en_camino':      return 'En camino / Despachado';
+        case 'listo_entrega':  return 'Listo para entrega / retiro';
+        case 'completado':     return 'Completado con éxito';
+        case 'cancelado':      return 'Cancelado';
+        default:               return status;
     }
 }
 
@@ -460,13 +448,20 @@ Gracias por tu compra en ${data.tenantName}.
 }
 
 export function generateOrderStatusEmailHtml(data: OrderStatusEmailData): string {
-    const statusLabel = getStatusFriendlyLabel(data.newStatus);
+    const statusLabel    = getStatusFriendlyLabel(data.newStatus);
+    const safeName       = escapeHtml(data.tenantName);
+    const safeClient     = escapeHtml(data.clientName);
+    const safeOrderId    = escapeHtml(data.orderId);
+    const safeStatus     = escapeHtml(statusLabel);
+    const safeNote       = data.note ? escapeHtml(data.note) : null;
+    const safeStoreUrl   = data.storeUrl ? escapeHtml(data.storeUrl) : null;
+
     return `<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Actualización de tu pedido #${data.orderId}</title>
+<title>Actualización de tu pedido #${safeOrderId}</title>
 <style>
   body {
     margin: 0;
@@ -475,11 +470,7 @@ export function generateOrderStatusEmailHtml(data: OrderStatusEmailData): string
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: #1e293b;
   }
-  .order-wrapper {
-    width: 100%;
-    padding: 30px 15px;
-    background-color: #f8fafc;
-  }
+  .order-wrapper { width: 100%; padding: 30px 15px; background-color: #f8fafc; }
   .order-container {
     max-width: 580px;
     margin: 0 auto;
@@ -488,25 +479,10 @@ export function generateOrderStatusEmailHtml(data: OrderStatusEmailData): string
     overflow: hidden;
     border: 1px solid #e2e8f0;
   }
-  .order-header {
-    background-color: #4f46e5;
-    padding: 28px 24px;
-    text-align: center;
-    color: #ffffff;
-  }
-  .order-header h1 {
-    margin: 0 0 6px;
-    font-size: 20px;
-    font-weight: 700;
-  }
-  .order-header p {
-    margin: 0;
-    font-size: 14px;
-    opacity: 0.9;
-  }
-  .order-body {
-    padding: 24px;
-  }
+  .order-header { background-color: #4f46e5; padding: 28px 24px; text-align: center; color: #ffffff; }
+  .order-header h1 { margin: 0 0 6px; font-size: 20px; font-weight: 700; }
+  .order-header p { margin: 0; font-size: 14px; opacity: 0.9; }
+  .order-body { padding: 24px; }
   .status-box {
     background-color: #f1f5f9;
     border-radius: 8px;
@@ -514,26 +490,10 @@ export function generateOrderStatusEmailHtml(data: OrderStatusEmailData): string
     text-align: center;
     margin-bottom: 20px;
   }
-  .status-label {
-    font-size: 13px;
-    color: #64748b;
-    text-transform: uppercase;
-    font-weight: 600;
-  }
-  .status-value {
-    font-size: 18px;
-    font-weight: 700;
-    color: #4f46e5;
-    margin-top: 4px;
-  }
-  .details-table {
-    width: 100%;
-    margin-bottom: 20px;
-  }
-  .details-row {
-    padding: 8px 0;
-    border-bottom: 1px solid #f1f5f9;
-  }
+  .status-label { font-size: 13px; color: #64748b; text-transform: uppercase; font-weight: 600; }
+  .status-value { font-size: 18px; font-weight: 700; color: #4f46e5; margin-top: 4px; }
+  .details-table { width: 100%; margin-bottom: 20px; }
+  .details-row { padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
   .order-footer {
     background-color: #f8fafc;
     border-top: 1px solid #e2e8f0;
@@ -542,20 +502,22 @@ export function generateOrderStatusEmailHtml(data: OrderStatusEmailData): string
     font-size: 12px;
     color: #94a3b8;
   }
+  .store-link-wrap { text-align: center; margin-top: 15px; }
+  .store-link { color: #4f46e5; text-decoration: underline; }
 </style>
 </head>
 <body>
 <div class="order-wrapper">
   <div class="order-container">
     <div class="order-header">
-      <h1>${data.tenantName}</h1>
-      <p>Actualización de tu pedido #${data.orderId}</p>
+      <h1>${safeName}</h1>
+      <p>Actualización de tu pedido #${safeOrderId}</p>
     </div>
     <div class="order-body">
-      <p>Hola <strong>${data.clientName}</strong>,</p>
+      <p>Hola <strong>${safeClient}</strong>,</p>
       <div class="status-box">
         <div class="status-label">Nuevo estado de tu orden</div>
-        <div class="status-value">${statusLabel}</div>
+        <div class="status-value">${safeStatus}</div>
       </div>
       <table class="details-table">
         <tr class="details-row">
@@ -566,12 +528,13 @@ export function generateOrderStatusEmailHtml(data: OrderStatusEmailData): string
           <td><strong>Total Bs:</strong></td>
           <td>Bs. ${data.totalBs.toFixed(2)}</td>
         </tr>
-        ${data.note ? `<tr class="details-row"><td><strong>Nota:</strong></td><td>${data.note}</td></tr>` : ''}
+        ${safeNote ? `<tr class="details-row"><td><strong>Nota:</strong></td><td>${safeNote}</td></tr>` : ''}
       </table>
       <p>Si tienes preguntas, puedes contactarnos directamente por WhatsApp.</p>
+      ${safeStoreUrl ? `<p class="store-link-wrap"><a href="${safeStoreUrl}" class="store-link">Ver mi pedido en la tienda</a></p>` : ''}
     </div>
     <div class="order-footer">
-      <p>${data.tenantName} · Impulsado por Ventrina SaaS</p>
+      <p>${safeName} · Impulsado por Ventrina SaaS</p>
     </div>
   </div>
 </div>
@@ -582,64 +545,17 @@ export function generateOrderStatusEmailHtml(data: OrderStatusEmailData): string
 /**
  * Envía el correo electrónico de cambio de estado de pedido al cliente
  */
-export async function sendOrderStatusEmail(
-    env: Env,
-    data: OrderStatusEmailData
-): Promise<EmailSendResult> {
+export async function sendOrderStatusEmail(env: Env, data: OrderStatusEmailData): Promise<EmailSendResult> {
     const statusLabel = getStatusFriendlyLabel(data.newStatus);
-    const subject = `Actualización de pedido #${data.orderId}: ${statusLabel} (${data.tenantName})`;
-    const html = generateOrderStatusEmailHtml(data);
-    const text = generateOrderStatusEmailText(data);
-    const nodeEnv = (globalThis as unknown as { process?: { env?: Record<string, string | undefined> } }).process?.env;
-    const apiKey = env.RESEND_API_KEY || nodeEnv?.RESEND_API_KEY;
-    const from = env.EMAIL_FROM || nodeEnv?.EMAIL_FROM || 'Ventrina <pedidos@ventrina.app>';
-
-    if (!apiKey) {
-        console.log(`[EmailService] Clave RESEND_API_KEY no configurada. Simulando notificación de estado a: ${data.to}`);
-        console.log(`[EmailService] Pedido #${data.orderId} -> Estado: ${statusLabel}`);
-        return {
-            success: true,
-            mocked: true,
-            messageId: `simulated-order-${Date.now()}`
-        };
-    }
-
-    try {
-        const response = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                from,
-                to: [data.to],
-                subject,
-                html,
-                text
-            })
-        });
-
-        if (!response.ok) {
-            const errBody = await response.text();
-            console.error(`[EmailService] Error al enviar email de pedido (${response.status}):`, errBody);
-            return {
-                success: false,
-                error: `Resend error ${response.status}: ${errBody}`
-            };
-        }
-
-        const resData = (await response.json()) as { id?: string };
-        return {
-            success: true,
-            messageId: resData.id
-        };
-    } catch (err: any) {
-        console.error('[EmailService] Excepción al enviar correo de pedido:', err);
-        return {
-            success: false,
-            error: err?.message || String(err)
-        };
-    }
+    const subject     = `Actualización de pedido #${data.orderId}: ${statusLabel} (${data.tenantName})`;
+    const { apiKey, from } = resolveEmailConfig(env, 'Ventrina <pedidos@ventrina.app>');
+    return sendViaResend(apiKey, from, {
+        from,
+        to: [data.to],
+        subject,
+        html: generateOrderStatusEmailHtml(data),
+        text: generateOrderStatusEmailText(data),
+        simulationPrefix: 'simulated-order-',
+        simulationLog: `[EmailService] Clave RESEND_API_KEY no configurada. Simulando notificación de estado a: ${data.to}`
+    });
 }
-

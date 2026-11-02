@@ -1,10 +1,11 @@
 // functions/api/billing.ts
 // Endpoint para que cada tenant consulte su plan, límites, consumo actual e info de pago
 import { verifySession, unauthorizedResponse } from "./_auth";
-import { resolveTenant, tenantNotFoundResponse, getTenantByIdCached } from "./_tenant";
+import { resolveTenant, tenantNotFoundResponse } from "./_tenant";
 import { PLANS, checkProductLimit, checkOrderLimit } from "./_plans";
 import { getDB, jsonResponse } from "./_helpers";
-import type { Env, PagesHandler } from '../types';
+import { resolveAuthenticatedTenant } from "./_guards";
+import { type Env, type PagesHandler, extractPaymentConfig } from '../types';
 
 export const onRequestGet: PagesHandler<Env> = async (context) => {
     const { env, request } = context;
@@ -15,36 +16,8 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
     const user = await verifySession(context, (tenantId && tenantId !== 'demo') ? tenantId : undefined);
     if (!user) return unauthorizedResponse();
 
-    // Si resolveTenant no encontró el tenant o resolvió demo por defecto, pero el usuario tiene tenant_id:
-    if ((!tenant || tenantId === 'demo') && user.tenant_id && user.tenant_id !== 'demo') {
-        const userTenant = await getTenantByIdCached(db, user.tenant_id, env.KV);
-        if (userTenant) {
-            tenant = userTenant;
-            tenantId = user.tenant_id;
-        }
-    }
-
-    // Fallback defensivo para entorno de demostración
-    if (!tenant && (tenantId === 'demo' || user.tenant_id === 'demo')) {
-        const demoTenant = await getTenantByIdCached(db, 'demo', env.KV);
-        if (demoTenant) {
-            tenant = demoTenant;
-        } else {
-            tenant = {
-                id: 'demo',
-                name: 'Ventrina Demo Store',
-                plan: 'pro',
-                template: 'restaurant',
-                config_json: '{}',
-                domain: 'demo.ventrina.app',
-                whatsapp: null,
-                active: 1,
-                deleted_at: null,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-            };
-        }
-    }
+    // Resolución correcta del tenant para usuarios autenticados (DRY — fix #5)
+    ({ tenantId, tenant } = await resolveAuthenticatedTenant(db, env.KV, tenantId, tenant, user));
 
     if (!tenant) {
         return tenantNotFoundResponse();
@@ -57,18 +30,9 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
         const planKey = tenant.plan || 'basic';
         const planDetails = PLANS[planKey] || PLANS['basic'];
 
-        // Datos para Pagos Manuales (B2B Venezuela)
+        // Datos para Pagos Manuales (B2B Venezuela) extraídos mediante ISP
         const paymentInfo = {
-            method: env.PAYMENT_METHOD || "Transferencia Bancaria / Pago Móvil",
-            bank: env.PAYMENT_BANK || "Banesco (0134)",
-            phone: env.PAYMENT_PHONE || "0412-4756191",
-            id: env.PAYMENT_ID || "J-50123984",
-            binancePay: env.PAYMENT_BINANCE || "pagos@ventrina.app",
-            binancePayId: env.PAYMENT_BINANCE_PAY_ID || "284719302",
-            binanceMerchant: env.PAYMENT_BINANCE_MERCHANT || "VentrinaSaaS",
-            binanceQr: env.PAYMENT_BINANCE_QR || "",
-            zelle: env.PAYMENT_ZELLE || "pagos@ventrina.app",
-            zelleTitular: env.PAYMENT_ZELLE_TITULAR || "Ventrina Software C.A.",
+            ...extractPaymentConfig(env),
             monthlyPriceUsd: planDetails.monthlyPriceUsd
         };
 

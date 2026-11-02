@@ -5,3 +5,4 @@ export * from './product.service';
 export * from './settings.service';
 export * from './coupon.service';
 export * from './email.service';
+export * from './webhook.service';

@@ -1,42 +1,53 @@
 // functions/api/cleanup.ts
-// Tarea de mantenimiento: Purga de rate limits expirados y sesiones inactivas (Fix #8)
-import { getDB, jsonResponse } from "./_helpers";
-import { purgeExpiredRateLimits } from "./auth";
+// Endpoint de limpieza programada: sesiones expiradas y registros obsoletos de rate limiting
+// Protegido por SUPERADMIN_KEY — llamable desde cron externo o Cloudflare Scheduled Workers
+import { getDB, jsonResponse } from './_helpers';
 import type { Env, PagesHandler } from '../types';
 
-export const onRequestPost: PagesHandler<Env> = async (context) => {
-    const { request, env } = context;
-    const db = getDB(env);
+/**
+ * GET /api/cleanup — Purga sesiones expiradas y registros obsoletos.
+ * Requiere cabecera X-Superadmin-Key para ejecutarse.
+ */
+export const onRequestGet: PagesHandler<Env> = async (context) => {
+    const { env, request } = context;
 
-    // Protección de endpoint de mantenimiento: requiere SUPERADMIN_KEY o autorización de Worker/Cron
-    const authKey = request.headers.get("X-Superadmin-Key") || request.headers.get("Authorization")?.replace("Bearer ", "");
-    if (!env.SUPERADMIN_KEY || authKey !== env.SUPERADMIN_KEY) {
-        return jsonResponse({ error: "No autorizado para ejecutar tareas de mantenimiento." }, 401);
+    const key = request.headers.get('X-Superadmin-Key');
+    if (!key || key !== env.SUPERADMIN_KEY) {
+        return jsonResponse({ error: 'No autorizado.' }, 401);
     }
 
+    const db = getDB(env);
+    const now = Math.floor(Date.now() / 1000);
+    const nowMs = Date.now();
+
     try {
-        const nowSec = Math.floor(Date.now() / 1000);
+        const [sessionsResult, rateLimitsResult] = await Promise.all([
+            db.prepare('DELETE FROM sessions WHERE expires_at < ?')
+                .bind(now)
+                .run(),
+            db.prepare('DELETE FROM rate_limits WHERE lockout_until < ? AND lockout_until != 0')
+                .bind(nowMs)
+                .run()
+        ]);
 
-        // 1. Purgar rate limits expirados
-        const purgedRateLimits = await purgeExpiredRateLimits(db);
+        const deletedSessions   = sessionsResult?.meta?.changes ?? 0;
+        const deletedRateLimits = rateLimitsResult?.meta?.changes ?? 0;
 
-        // 2. Purgar sesiones expiradas
-        const sessionRes = await db.prepare(
-            "DELETE FROM sessions WHERE expires_at < ?"
-        ).bind(nowSec).run();
-        const purgedSessions = sessionRes?.meta?.changes ?? 0;
+        console.log(JSON.stringify({
+            type: 'cleanup_run',
+            deletedSessions,
+            deletedRateLimits,
+            timestamp: new Date().toISOString()
+        }));
 
         return jsonResponse({
             success: true,
-            purged: {
-                rateLimits: purgedRateLimits,
-                sessions: purgedSessions
-            },
+            deletedSessions,
+            deletedRateLimits,
             timestamp: new Date().toISOString()
         });
-
     } catch (err) {
-        console.error("Error en mantenimiento de base de datos:", err);
-        return jsonResponse({ error: "Error interno al ejecutar purga." }, 500);
+        console.error('[Cleanup] Error durante limpieza:', err);
+        return jsonResponse({ error: 'Error durante limpieza.' }, 500);
     }
 };

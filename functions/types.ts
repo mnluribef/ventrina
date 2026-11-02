@@ -29,6 +29,37 @@ export interface Env {
     ASSETS?: { fetch: typeof fetch };
 }
 
+/**
+ * ISP: Interface Segregation para la configuración de pagos del SaaS
+ */
+export interface PaymentEnvConfig {
+    method: string;
+    bank: string;
+    phone: string;
+    id: string;
+    binancePay: string;
+    binancePayId: string;
+    binanceMerchant: string;
+    binanceQr: string;
+    zelle: string;
+    zelleTitular: string;
+}
+
+export function extractPaymentConfig(env: Env): PaymentEnvConfig {
+    return {
+        method: env.PAYMENT_METHOD || "Transferencia Bancaria / Pago Móvil",
+        bank: env.PAYMENT_BANK || "Banesco (0134)",
+        phone: env.PAYMENT_PHONE || "0412-4756191",
+        id: env.PAYMENT_ID || "J-50123984",
+        binancePay: env.PAYMENT_BINANCE || "pagos@ventrina.app",
+        binancePayId: env.PAYMENT_BINANCE_PAY_ID || "284719302",
+        binanceMerchant: env.PAYMENT_BINANCE_MERCHANT || "VentrinaSaaS",
+        binanceQr: env.PAYMENT_BINANCE_QR || "",
+        zelle: env.PAYMENT_ZELLE || "pagos@ventrina.app",
+        zelleTitular: env.PAYMENT_ZELLE_TITULAR || "Ventrina Software C.A."
+    };
+}
+
 export interface PagesContext<E = Env, P extends string = string> {
     request: Request;
     env: E & {

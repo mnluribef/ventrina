@@ -1,5 +1,5 @@
 // functions/api/_middleware.ts
-// Middleware global para toda la API (/api/*): Manejo dinámico de CORS y Preflights OPTIONS (S-01)
+// Middleware global para toda la API (/api/*): CORS dinámico, security headers y telemetría (S-01, S-07)
 import type { PagesContext } from '../types';
 
 const ALLOWED_ORIGIN_PATTERNS = [
@@ -19,11 +19,8 @@ export function getAllowedOrigin(origin: string | null): string | null {
     try {
         const url = new URL(origin);
         const originClean = url.origin;
-
         for (const pattern of ALLOWED_ORIGIN_PATTERNS) {
-            if (pattern.test(originClean)) {
-                return originClean;
-            }
+            if (pattern.test(originClean)) return originClean;
         }
     } catch {
         return null;
@@ -50,6 +47,24 @@ export function buildCorsHeaders(origin: string | null): Record<string, string> 
 }
 
 /**
+ * Cabeceras de seguridad HTTP estándar para toda la API (S-07)
+ */
+function buildSecurityHeaders(): Record<string, string> {
+    return {
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+        'Content-Security-Policy': [
+            "default-src 'none'",
+            "script-src 'none'",
+            "object-src 'none'",
+            "frame-ancestors 'none'",
+        ].join('; ')
+    };
+}
+
+/**
  * Responde a las peticiones preflight OPTIONS con 204 No Content y cabeceras CORS dinámicas
  */
 export async function onRequestOptions(context: PagesContext): Promise<Response> {
@@ -63,7 +78,7 @@ export async function onRequestOptions(context: PagesContext): Promise<Response>
 }
 
 /**
- * Intercepta todas las peticiones a /api/* y asegura cabeceras CORS, X-Request-Id y telemetría de latencia (M-04, O-02)
+ * Intercepta todas las peticiones a /api/* y asegura cabeceras CORS, seguridad, X-Request-Id y telemetría (M-04, O-02, S-07)
  */
 export async function onRequest(context: PagesContext): Promise<Response> {
     const start = performance.now();
@@ -82,10 +97,7 @@ export async function onRequest(context: PagesContext): Promise<Response> {
         const optionsResponse = await onRequestOptions(context);
         const headers = new Headers(optionsResponse.headers);
         headers.set('X-Request-Id', requestId);
-        return new Response(null, {
-            status: 204,
-            headers
-        });
+        return new Response(null, { status: 204, headers });
     }
 
     const response = await context.next();
@@ -93,13 +105,18 @@ export async function onRequest(context: PagesContext): Promise<Response> {
 
     const origin = context.request.headers.get('Origin');
     const corsHeaders = buildCorsHeaders(origin);
+    const securityHeaders = buildSecurityHeaders();
 
-    // Copiar y agregar las cabeceras CORS sin alterar el body ni el status original
+    // Copiar y agregar cabeceras sin alterar el body ni el status original
     const newHeaders = new Headers(response.headers);
+
     for (const [key, value] of Object.entries(corsHeaders)) {
-        if (!newHeaders.has(key)) {
-            newHeaders.set(key, value);
-        }
+        if (!newHeaders.has(key)) newHeaders.set(key, value);
+    }
+
+    // S-07: Aplicar security headers (no sobreescribir si el handler ya los definió)
+    for (const [key, value] of Object.entries(securityHeaders)) {
+        if (!newHeaders.has(key)) newHeaders.set(key, value);
     }
 
     // U-02: Información de versionado de API en todas las respuestas
@@ -130,4 +147,3 @@ export async function onRequest(context: PagesContext): Promise<Response> {
         headers: newHeaders,
     });
 }
-

@@ -19,8 +19,12 @@ export function normalizeImageUrl(url: string | null | undefined): string {
 export class ProductService {
     private repo: ProductRepository;
 
-    constructor(private db: D1Database) {
-        this.repo = new ProductRepository(db);
+    /**
+     * DIP fix #12: El repositorio puede inyectarse desde fuera (útil para tests unitarios con mocks).
+     * Por defecto crea una instancia interna si no se provee (retrocompatible).
+     */
+    constructor(private db: D1Database, repo?: ProductRepository) {
+        this.repo = repo ?? new ProductRepository(db);
     }
 
     /**

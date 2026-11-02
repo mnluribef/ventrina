@@ -5,7 +5,8 @@ import { verifySession, unauthorizedResponse } from "./_auth";
 import { resolveTenant } from "./_tenant";
 import { getDB, jsonResponse, compressedJsonResponse } from "./_helpers";
 import { requireAdmin, requireStaffOrAdmin } from "./_guards";
-import { OrderService, generateWebhookSignature } from "./_services/order.service";
+import { OrderService } from "./_services/order.service";
+import { dispatchWebhookIfConfigured } from "./_services/webhook.service";
 import { sendOrderStatusEmail } from "./_services/email.service";
 import type { Env, PagesHandler, OrderRow } from '../types';
 
@@ -178,36 +179,17 @@ export const onRequestPost: PagesHandler<Env> = async (context) => {
             } catch {}
         }
 
-        // Disparo asíncrono de webhook si está configurado
-        if (env.WEBHOOK_URL && env.WEBHOOK_SECRET) {
-            try {
-                const webhookPayload = JSON.stringify({
-                    event: 'new_order_created',
-                    orderId: orderData.orderId,
-                    tenantId,
-                    clientName: data.clientName,
-                    totalPrice: orderData.totalPrice,
-                    totalBs: orderData.totalBs,
-                    discountAmount: orderData.discountAmount,
-                    appliedCoupon: orderData.appliedCoupon,
-                    timestamp: new Date().toISOString()
-                });
-                const signature = await generateWebhookSignature(webhookPayload, env.WEBHOOK_SECRET);
-
-                context.waitUntil?.(
-                    fetch(env.WEBHOOK_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Ventrina-Signature': `sha256=${signature}`
-                        },
-                        body: webhookPayload
-                    }).catch(e => console.error("Error en webhook de nuevo pedido:", e))
-                );
-            } catch (whErr) {
-                console.error("Fallo al preparar webhook:", whErr);
-            }
-        }
+        // Despacho asíncrono de webhook si está configurado (SRP fix #9)
+        dispatchWebhookIfConfigured(env.WEBHOOK_URL, env.WEBHOOK_SECRET, {
+            event: 'new_order_created',
+            orderId: orderData.orderId,
+            tenantId,
+            clientName: data.clientName,
+            totalPrice: orderData.totalPrice,
+            totalBs: orderData.totalBs,
+            discountAmount: orderData.discountAmount,
+            appliedCoupon: orderData.appliedCoupon,
+        }, context.waitUntil?.bind(context));
 
         return jsonResponse({
             success: true,
@@ -262,32 +244,13 @@ export const onRequestPut: PagesHandler<Env> = async (context) => {
             return jsonResponse({ error: updateRes.error }, updateRes.code || 404);
         }
 
-        // Fix #16: Webhook solo si WEBHOOK_SECRET está configurado explícitamente
-        if (env.WEBHOOK_URL && env.WEBHOOK_SECRET) {
-            try {
-                const webhookPayload = JSON.stringify({
-                    event: 'order_status_updated',
-                    orderId: id,
-                    newStatus: status,
-                    tenantId,
-                    timestamp: new Date().toISOString()
-                });
-                const signature = await generateWebhookSignature(webhookPayload, env.WEBHOOK_SECRET);
-
-                context.waitUntil?.(
-                    fetch(env.WEBHOOK_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Ventrina-Signature': `sha256=${signature}`
-                        },
-                        body: webhookPayload
-                    }).catch(e => console.error("Error en webhook de cambio de estado:", e))
-                );
-            } catch (whErr) {
-                console.error("Fallo al preparar webhook de actualización:", whErr);
-            }
-        }
+        // Despacho asíncrono de webhook si está configurado (SRP fix #9)
+        dispatchWebhookIfConfigured(env.WEBHOOK_URL, env.WEBHOOK_SECRET, {
+            event: 'order_status_updated',
+            orderId: id,
+            newStatus: status,
+            tenantId,
+        }, context.waitUntil?.bind(context));
 
         // Fix #18: Notificación por correo electrónico automática si el cliente proporcionó email
         const orderData = updateRes.data.order;

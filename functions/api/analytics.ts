@@ -1,8 +1,9 @@
 // functions/api/analytics.ts
 // Panel de Análisis y Métricas Avanzadas para Tenants (Planes Pro & Enterprise)
 import { verifySession, unauthorizedResponse } from "./_auth";
-import { resolveTenant, getTenantByIdCached } from "./_tenant";
+import { resolveTenant } from "./_tenant";
 import { getDB, jsonResponse } from "./_helpers";
+import { resolveAuthenticatedTenant } from "./_guards";
 import type { Env, PagesHandler } from '../types';
 
 interface TopProductRow {
@@ -38,36 +39,8 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
     const user = await verifySession(context, (tenantId && tenantId !== 'demo') ? tenantId : undefined);
     if (!user) return unauthorizedResponse();
 
-    // Si resolveTenant no encontró el tenant o resolvió demo por defecto, pero el usuario tiene tenant_id:
-    if ((!tenant || tenantId === 'demo') && user.tenant_id && user.tenant_id !== 'demo') {
-        const userTenant = await getTenantByIdCached(db, user.tenant_id, env.KV);
-        if (userTenant) {
-            tenant = userTenant;
-            tenantId = user.tenant_id;
-        }
-    }
-
-    // Fallback defensivo para entorno demo
-    if (!tenant && (tenantId === 'demo' || user.tenant_id === 'demo')) {
-        const demoTenant = await getTenantByIdCached(db, 'demo', env.KV);
-        if (demoTenant) {
-            tenant = demoTenant;
-        } else {
-            tenant = {
-                id: 'demo',
-                name: 'Ventrina Demo Store',
-                plan: 'pro',
-                template: 'restaurant',
-                config_json: '{}',
-                domain: 'demo.ventrina.app',
-                whatsapp: null,
-                active: 1,
-                deleted_at: null,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-            };
-        }
-    }
+    // Resolución correcta del tenant para usuarios autenticados (DRY — fix #5)
+    ({ tenantId, tenant } = await resolveAuthenticatedTenant(db, env.KV, tenantId, tenant, user));
 
     try {
         const url = new URL(request.url);
