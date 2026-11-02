@@ -1,9 +1,9 @@
 // functions/_middleware.ts
 // Middleware raíz de Cloudflare Pages: Detección de subdominios de tenants, enrutamiento dinámico y redirecciones
 import type { D1Database } from '@cloudflare/workers-types';
+import { renderProductPage, renderStoreNotFound, renderStorePage } from './_store';
 import { getDB } from './api/_helpers';
-import { extractSubdomain, getTenantByIdCached, getTenantByDomainCached, SYSTEM_PATHS } from './api/_tenant';
-import { renderStorePage, renderProductPage, renderStoreNotFound } from './_store';
+import { extractSubdomain, getTenantByDomainCached, getTenantByIdCached, SYSTEM_PATHS } from './api/_tenant';
 import type { Env, PagesContext } from './types';
 
 export const onRequest = async (context: PagesContext<Env>): Promise<Response> => {
@@ -134,9 +134,9 @@ export const onRequest = async (context: PagesContext<Env>): Promise<Response> =
                 if (tenant) {
                     const isLocal = host.includes('localhost');
                     const targetHost = isLocal
-                        ? `${tenant.id}.localhost${url.port ? ':' + url.port : ''}`
+                        ? `${tenant.id}.localhost${url.port ? `:${url.port}` : ''}`
                         : `${tenant.id}.ventrina.app`;
-                    const targetProto = isLocal ? (url.protocol.replace(':', '') || 'http') : 'https';
+                    const targetProto = isLocal ? url.protocol.replace(':', '') || 'http' : 'https';
 
                     // Si es /[store]/p/:id o /s/[store]/p/:id -> https://[store].ventrina.app/p/:id
                     if (pathParts.length >= pIndex + 2 && pathParts[pIndex] === 'p') {
@@ -159,15 +159,17 @@ export const onRequest = async (context: PagesContext<Env>): Promise<Response> =
 
     // NF-02: Telemetría de latencia y logging estructurado con Correlation ID (Fix #11)
     try {
-        console.log(JSON.stringify({
-            type: 'root_routing_timing',
-            requestId,
-            method: request.method,
-            path: pathname,
-            host,
-            status: response.status,
-            durationMs
-        }));
+        console.log(
+            JSON.stringify({
+                type: 'root_routing_timing',
+                requestId,
+                method: request.method,
+                path: pathname,
+                host,
+                status: response.status,
+                durationMs,
+            }),
+        );
     } catch {}
 
     if (response.status >= 300 && response.status < 400) {
@@ -183,8 +185,9 @@ export const onRequest = async (context: PagesContext<Env>): Promise<Response> =
         const contentType = response.headers.get('Content-Type') || '';
         if (!contentType.includes('application/json')) {
             // CSP permisivo pero seguro: permite assets propios, CDNs conocidos y eval desactivado
-            newHeaders.set('Content-Security-Policy',
-                "default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https:; frame-src https://challenges.cloudflare.com;"
+            newHeaders.set(
+                'Content-Security-Policy',
+                "default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https:; frame-src https://challenges.cloudflare.com;",
             );
             newHeaders.set('X-Frame-Options', 'SAMEORIGIN');
             newHeaders.set('X-Content-Type-Options', 'nosniff');
@@ -194,7 +197,7 @@ export const onRequest = async (context: PagesContext<Env>): Promise<Response> =
         return new Response(response.body, {
             status: response.status,
             statusText: response.statusText,
-            headers: newHeaders
+            headers: newHeaders,
         });
     } catch {
         return response;

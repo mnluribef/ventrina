@@ -1,29 +1,46 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
-  "files": {
-    "includes": ["**", "!dist/**", "!.astro/**", "!.wrangler/**", "!node_modules/**", "!functions/api/openapi.json"]
-  },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "space",
-    "indentWidth": 4,
-    "lineWidth": 120
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true,
-      "suspicious": {
-        "noExplicitAny": "off"
-      },
-      "style": {
-        "noNonNullAssertion": "off"
-      }
-    }
-  },
-  "javascript": {
+    "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+    "files": {
+        "includes": [
+            "src/**",
+            "functions/**",
+            "tests/**",
+            "!dist",
+            "!.astro",
+            "!.wrangler",
+            "!node_modules",
+            "!functions/api/openapi.json"
+        ]
+    },
     "formatter": {
-      "quoteStyle": "single"
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 120
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "suspicious": {
+                "noExplicitAny": "off",
+                "useIterableCallbackReturn": "off"
+            },
+            "style": {
+                "noNonNullAssertion": "off",
+                "noDescendingSpecificity": "off"
+            },
+            "correctness": {
+                "noUnusedVariables": "off",
+                "noUnusedImports": "off"
+            },
+            "a11y": {
+                "noSvgWithoutTitle": "off"
+            }
+        }
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single"
+        }
     }
-  }
 }

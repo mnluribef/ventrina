@@ -1,10 +1,10 @@
 ---
+import defaultStoreConfig from '../../config/store.config';
 // Hero.astro - Sección Hero y Estadísticas configurable
 import type { StoreConfig } from '../../types/store.types';
-import defaultStoreConfig from '../../config/store.config';
 
 export interface Props {
-  config?: StoreConfig;
+    config?: StoreConfig;
 }
 
 const { config = defaultStoreConfig } = Astro.props;

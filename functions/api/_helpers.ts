@@ -10,7 +10,7 @@ import type { Env } from '../types';
 export function getDB(env: Env): D1Database {
     const db = env.DB || env.ventrina;
     if (!db) {
-        throw new Error("No D1 Database binding found in environment (expected DB or ventrina)");
+        throw new Error('No D1 Database binding found in environment (expected DB or ventrina)');
     }
     return db;
 }
@@ -65,15 +65,15 @@ export function problemResponse(opts: ProblemDetailsOptions, extraHeaders: Recor
         ...(opts.detail ? { detail: opts.detail } : {}),
         ...(opts.instance ? { instance: opts.instance } : {}),
         ...(opts.invalidParams ? { invalidParams: opts.invalidParams } : {}),
-        error: opts.detail || opts.title
+        error: opts.detail || opts.title,
     };
 
     return new Response(JSON.stringify(payload), {
         status: opts.status,
         headers: {
             'Content-Type': 'application/problem+json',
-            ...extraHeaders
-        }
+            ...extraHeaders,
+        },
     });
 }
 
@@ -85,7 +85,7 @@ export function problemResponse(opts: ProblemDetailsOptions, extraHeaders: Recor
 export function compressedJsonResponse(
     body: unknown,
     status = 200,
-    extraHeaders: Record<string, string> = {}
+    extraHeaders: Record<string, string> = {},
 ): Response {
     return jsonResponse(body, status, extraHeaders);
 }

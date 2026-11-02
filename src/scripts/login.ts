@@ -40,15 +40,18 @@ form.addEventListener('submit', async (e) => {
             body: JSON.stringify({ email, password, tenant }),
             credentials: 'include',
         });
-        const data = await res.json() as { success: boolean; tenant?: string; error?: string };
+        const data = (await res.json()) as { success: boolean; tenant?: string; error?: string };
         if (data.success) {
             try {
                 localStorage.setItem('ventrina_last_activity', String(Date.now()));
             } catch {}
             const redirectTenant = data.tenant || tenant;
             const currentHost = window.location.hostname.toLowerCase();
-            const isSubdomain = (currentHost.endsWith('.ventrina.app') && currentHost !== 'ventrina.app' && !currentHost.startsWith('www.')) ||
-                                (currentHost.endsWith('.localhost') && currentHost !== 'localhost');
+            const isSubdomain =
+                (currentHost.endsWith('.ventrina.app') &&
+                    currentHost !== 'ventrina.app' &&
+                    !currentHost.startsWith('www.')) ||
+                (currentHost.endsWith('.localhost') && currentHost !== 'localhost');
 
             if (isSubdomain) {
                 // Ya estamos en el subdominio de la tienda: URL limpia sin parámetros

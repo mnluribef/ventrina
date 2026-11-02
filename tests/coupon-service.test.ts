@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
-import { applyCoupon } from '../functions/api/_services/coupon.service';
 import type { D1Database } from '@cloudflare/workers-types';
+import { describe, expect, it, vi } from 'vitest';
+import { applyCoupon } from '../functions/api/_services/coupon.service';
 
 describe('Coupon Service (coupon.service.ts)', () => {
     it('returns empty result when code is empty', async () => {
@@ -23,10 +23,10 @@ describe('Coupon Service (coupon.service.ts)', () => {
                         max_uses: -1,
                         uses_count: 5,
                         expires_at: null,
-                        active: 1
-                    })
-                })
-            })
+                        active: 1,
+                    }),
+                }),
+            }),
         } as unknown as D1Database;
 
         const result = await applyCoupon(mockDb, 'demo', 'PROMO20', 100);
@@ -48,10 +48,10 @@ describe('Coupon Service (coupon.service.ts)', () => {
                         max_uses: 100,
                         uses_count: 0,
                         expires_at: null,
-                        active: 1
-                    })
-                })
-            })
+                        active: 1,
+                    }),
+                }),
+            }),
         } as unknown as D1Database;
 
         const result = await applyCoupon(mockDb, 'demo', 'REGALO50', 30);
@@ -72,10 +72,10 @@ describe('Coupon Service (coupon.service.ts)', () => {
                         max_uses: -1,
                         uses_count: 0,
                         expires_at: null,
-                        active: 1
-                    })
-                })
-            })
+                        active: 1,
+                    }),
+                }),
+            }),
         } as unknown as D1Database;
 
         const result = await applyCoupon(mockDb, 'demo', 'BIGSPENDER', 25);

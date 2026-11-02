@@ -107,7 +107,11 @@ export class RateLimitService {
         } else {
             const newCount = record.count + 1;
             const lockoutUntil = newCount >= maxAttempts ? now + lockoutMs : 0;
-            await this.putRecord(key, { count: newCount, firstAttempt: record.firstAttempt, lockoutUntil }, lockoutMs || windowMs);
+            await this.putRecord(
+                key,
+                { count: newCount, firstAttempt: record.firstAttempt, lockoutUntil },
+                lockoutMs || windowMs,
+            );
         }
     }
 
@@ -121,7 +125,11 @@ export class RateLimitService {
         if (!record || now - record.firstAttempt > windowMs) {
             await this.putRecord(key, { count: 1, firstAttempt: now, lockoutUntil: 0 }, windowMs);
         } else {
-            await this.putRecord(key, { count: record.count + 1, firstAttempt: record.firstAttempt, lockoutUntil: 0 }, windowMs);
+            await this.putRecord(
+                key,
+                { count: record.count + 1, firstAttempt: record.firstAttempt, lockoutUntil: 0 },
+                windowMs,
+            );
         }
     }
 

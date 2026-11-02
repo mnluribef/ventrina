@@ -1,10 +1,10 @@
 export const DEFAULT_BCV_FALLBACK_RATE = 886.23;
-export const EXTERNAL_BCV_API_URL = "https://ve.dolarapi.com/v1/dolares/oficial";
+export const EXTERNAL_BCV_API_URL = 'https://ve.dolarapi.com/v1/dolares/oficial';
 
 export function formatBsCurrency(amount: number): string {
     return new Intl.NumberFormat('es-VE', {
         minimumFractionDigits: 2,
-        maximumFractionDigits: 2
+        maximumFractionDigits: 2,
     }).format(amount);
 }
 

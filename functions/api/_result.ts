@@ -36,7 +36,9 @@ export function unwrap<T, E>(result: Result<T, E>): T {
     if (result.ok) {
         return result.data;
     }
-    throw new Error(`Called unwrap on Err: ${typeof result.error === 'object' ? JSON.stringify(result.error) : String(result.error)}`);
+    throw new Error(
+        `Called unwrap on Err: ${typeof result.error === 'object' ? JSON.stringify(result.error) : String(result.error)}`,
+    );
 }
 
 /**

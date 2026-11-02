@@ -1,11 +1,12 @@
 // src/scripts/product-page.ts
 // Controlador de la Página Dedicada de Producto
-import type { CatalogProduct } from './types/catalog.types';
-import { ToastService } from './services/toast.service';
+
 import { BcvCurrencyService } from './services/bcv.service';
-import { LocalStorageCartStorage } from './services/storage.service';
 import { CartService } from './services/cart.service';
+import { LocalStorageCartStorage } from './services/storage.service';
 import { syncStoreWithSettings } from './services/store-sync.service';
+import { ToastService } from './services/toast.service';
+import type { CatalogProduct } from './types/catalog.types';
 
 class ProductPageController {
     private toastService: ToastService;
@@ -89,7 +90,7 @@ class ProductPageController {
                 syncStoreWithSettings(config);
                 if (config.business?.name) this.businessName = config.business.name;
                 if (config.contact?.whatsapp) this.whatsappNumber = config.contact.whatsapp;
-            } catch { }
+            } catch {}
         }
     }
 
@@ -137,8 +138,9 @@ class ProductPageController {
         const backText = document.getElementById('pdp-back-text');
         const errBackBtn = document.getElementById('pdp-error-back-btn') as HTMLAnchorElement | null;
 
-        const isSubdomain = window.location.hostname.endsWith('.ventrina.app') || window.location.hostname.endsWith('.localhost');
-        const storeUrl = isSubdomain ? '/' : (this.tenantId ? `/${this.tenantId}` : `/demo/${this.template}`);
+        const isSubdomain =
+            window.location.hostname.endsWith('.ventrina.app') || window.location.hostname.endsWith('.localhost');
+        const storeUrl = isSubdomain ? '/' : this.tenantId ? `/${this.tenantId}` : `/demo/${this.template}`;
         const storeLabel = this.businessName ? `Volver a ${this.businessName}` : 'Volver a la Tienda';
 
         if (backLink) {
@@ -201,7 +203,9 @@ class ProductPageController {
         const imgEl = document.getElementById('pdp-img') as HTMLImageElement | null;
         if (imgEl) {
             imgEl.src = product.image_url
-                ? (product.image_url.startsWith('http') || product.image_url.startsWith('/') ? product.image_url : `/${product.image_url}`)
+                ? product.image_url.startsWith('http') || product.image_url.startsWith('/')
+                    ? product.image_url
+                    : `/${product.image_url}`
                 : '/assets/favicon.svg';
             imgEl.alt = product.name;
         }
@@ -215,7 +219,7 @@ class ProductPageController {
                     destacado: '⭐ Más Vendido',
                     oferta: '🔥 Oferta Especial',
                     nuevo: '✨ Nuevo Ingreso',
-                    liquidacion: '🏷️ Liquidación'
+                    liquidacion: '🏷️ Liquidación',
                 };
                 const label = promoLabels[product.badge] || product.badge;
                 bHtml += `<span class="promo-badge ${product.badge}">${label}</span> `;
@@ -247,7 +251,8 @@ class ProductPageController {
         // Precios y Descuento
         const priceUsdEl = document.getElementById('pdp-price-usd');
         if (priceUsdEl) {
-            priceUsdEl.textContent = product.price > 0 ? `$${parseFloat(String(product.price)).toFixed(2)}` : 'A consultar';
+            priceUsdEl.textContent =
+                product.price > 0 ? `$${parseFloat(String(product.price)).toFixed(2)}` : 'A consultar';
         }
 
         const priceOrigEl = document.getElementById('pdp-price-original');
@@ -294,7 +299,8 @@ class ProductPageController {
         // Descripción
         const descEl = document.getElementById('pdp-desc');
         if (descEl) {
-            descEl.textContent = product.description || 'Este producto no cuenta con descripción detallada en este momento.';
+            descEl.textContent =
+                product.description || 'Este producto no cuenta con descripción detallada en este momento.';
         }
 
         // Variantes y Atributos con valor visible en label
@@ -302,31 +308,48 @@ class ProductPageController {
         if (attrsBox) {
             let html = '';
             if (product.attributes && product.attributes.length > 0) {
-                html = product.attributes.map(attr => {
-                    const firstVal = attr.values[0] || '';
-                    const opts = attr.type === 'color_swatch'
-                        ? `<div class="color-swatch-container" data-attribute="${attr.key}" data-label="${attr.label}">${attr.values.map((val: string, idx: number) => {
-                            const slug = val.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
-                            return `<button type="button" class="color-swatch-btn color-swatch-${slug} ${idx === 0 ? 'active' : ''}" data-value="${val}" title="${val}"></button>`;
-                        }).join('')}</div>`
-                        : `<div class="attribute-selector" data-attribute="${attr.key}" data-label="${attr.label}">${attr.values.map((val: string, idx: number) => {
-                            return `<button type="button" class="attribute-btn ${idx === 0 ? 'active' : ''}" data-value="${val}">${val}</button>`;
-                        }).join('')}</div>`;
-                    return `<div class="attribute-options-group"><label>${attr.label}: <strong class="attr-selected-value">${firstVal}</strong></label>${opts}</div>`;
-                }).join('');
+                html = product.attributes
+                    .map((attr) => {
+                        const firstVal = attr.values[0] || '';
+                        const opts =
+                            attr.type === 'color_swatch'
+                                ? `<div class="color-swatch-container" data-attribute="${attr.key}" data-label="${attr.label}">${attr.values
+                                      .map((val: string, idx: number) => {
+                                          const slug = val
+                                              .toLowerCase()
+                                              .trim()
+                                              .replace(/[^a-z0-9]/g, '');
+                                          return `<button type="button" class="color-swatch-btn color-swatch-${slug} ${idx === 0 ? 'active' : ''}" data-value="${val}" title="${val}"></button>`;
+                                      })
+                                      .join('')}</div>`
+                                : `<div class="attribute-selector" data-attribute="${attr.key}" data-label="${attr.label}">${attr.values
+                                      .map((val: string, idx: number) => {
+                                          return `<button type="button" class="attribute-btn ${idx === 0 ? 'active' : ''}" data-value="${val}">${val}</button>`;
+                                      })
+                                      .join('')}</div>`;
+                        return `<div class="attribute-options-group"><label>${attr.label}: <strong class="attr-selected-value">${firstVal}</strong></label>${opts}</div>`;
+                    })
+                    .join('');
             } else if (product.sizes) {
-                const sizesList = product.sizes.split(',').map(s => s.trim()).filter(Boolean);
+                const sizesList = product.sizes
+                    .split(',')
+                    .map((s) => s.trim())
+                    .filter(Boolean);
                 const firstSize = sizesList[0] || '';
                 html = `<div class="attribute-options-group"><label>Opciones: <strong class="attr-selected-value">${firstSize}</strong></label><div class="attribute-selector" data-attribute="opcion" data-label="Opción">${sizesList.map((size: string, idx: number) => `<button type="button" class="attribute-btn ${idx === 0 ? 'active' : ''}" data-value="${size}">${size}</button>`).join('')}</div></div>`;
             }
             attrsBox.innerHTML = html;
 
             attrsBox.addEventListener('click', (e) => {
-                const btn = (e.target as HTMLElement).closest('.attribute-btn, .color-swatch-btn') as HTMLElement | null;
+                const btn = (e.target as HTMLElement).closest(
+                    '.attribute-btn, .color-swatch-btn',
+                ) as HTMLElement | null;
                 if (!btn) return;
                 const parent = btn.parentElement;
                 if (!parent) return;
-                parent.querySelectorAll('.attribute-btn, .color-swatch-btn').forEach(b => b.classList.remove('active'));
+                parent
+                    .querySelectorAll('.attribute-btn, .color-swatch-btn')
+                    .forEach((b) => b.classList.remove('active'));
                 btn.classList.add('active');
 
                 // Actualizar valor en label
@@ -343,19 +366,19 @@ class ProductPageController {
         const qtyIn = document.getElementById('pdp-qty-input') as HTMLInputElement | null;
         if (qtyIn) {
             qtyIn.value = '1';
-            qtyIn.max = String((product.stock !== undefined && product.stock > 0) ? product.stock : 99);
+            qtyIn.max = String(product.stock !== undefined && product.stock > 0 ? product.stock : 99);
         }
 
         document.getElementById('pdp-qty-minus')?.addEventListener('click', () => {
             if (!qtyIn) return;
-            let v = parseInt(qtyIn.value) || 1;
+            const v = parseInt(qtyIn.value, 10) || 1;
             if (v > 1) qtyIn.value = String(v - 1);
         });
 
         document.getElementById('pdp-qty-plus')?.addEventListener('click', () => {
             if (!qtyIn) return;
-            let v = parseInt(qtyIn.value) || 1;
-            const max = parseInt(qtyIn.max) || 99;
+            const v = parseInt(qtyIn.value, 10) || 1;
+            const max = parseInt(qtyIn.max, 10) || 99;
             if (v < max) qtyIn.value = String(v + 1);
         });
 
@@ -378,7 +401,7 @@ class ProductPageController {
                         url: shareUrl,
                     });
                     return;
-                } catch { }
+                } catch {}
             }
 
             try {
@@ -395,7 +418,7 @@ class ProductPageController {
         const stickyBtn = document.getElementById('pdp-sticky-btn') as HTMLButtonElement | null;
 
         const handleAddToCartAction = () => {
-            const qty = qtyIn ? parseInt(qtyIn.value) || 1 : 1;
+            const qty = qtyIn ? parseInt(qtyIn.value, 10) || 1 : 1;
             const options: Record<string, string> = {};
             const optionLabels: Record<string, string> = {};
 
@@ -410,10 +433,18 @@ class ProductPageController {
                 }
             });
 
-            this.cartService.addItem(product.id, product.name, product.price, qty, product.icon || 'package', options, optionLabels);
+            this.cartService.addItem(
+                product.id,
+                product.name,
+                product.price,
+                qty,
+                product.icon || 'package',
+                options,
+                optionLabels,
+            );
             const optList = Object.values(options).filter(Boolean);
             this.toastService.show(
-                `¡Añadido ${qty}x ${product.name}${optList.length ? ` (${optList.join(', ')})` : ''} al pedido!`
+                `¡Añadido ${qty}x ${product.name}${optList.length ? ` (${optList.join(', ')})` : ''} al pedido!`,
             );
 
             // Feedback visual en botón principal
@@ -463,27 +494,34 @@ class ProductPageController {
         if (!stickyBar || !buyButton) return;
 
         if (typeof IntersectionObserver !== 'undefined') {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    // Si el botón principal no está visible en el viewport y está por encima de la pantalla
-                    if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        // Si el botón principal no está visible en el viewport y está por encima de la pantalla
+                        if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+                            stickyBar.classList.add('is-visible');
+                        } else {
+                            stickyBar.classList.remove('is-visible');
+                        }
+                    });
+                },
+                { threshold: 0.1 },
+            );
+
+            observer.observe(buyButton);
+        } else {
+            window.addEventListener(
+                'scroll',
+                () => {
+                    const rect = buyButton.getBoundingClientRect();
+                    if (rect.bottom < 0) {
                         stickyBar.classList.add('is-visible');
                     } else {
                         stickyBar.classList.remove('is-visible');
                     }
-                });
-            }, { threshold: 0.1 });
-
-            observer.observe(buyButton);
-        } else {
-            window.addEventListener('scroll', () => {
-                const rect = buyButton.getBoundingClientRect();
-                if (rect.bottom < 0) {
-                    stickyBar.classList.add('is-visible');
-                } else {
-                    stickyBar.classList.remove('is-visible');
-                }
-            }, { passive: true });
+                },
+                { passive: true },
+            );
         }
     }
 
@@ -501,25 +539,36 @@ class ProductPageController {
             const allProducts: CatalogProduct[] = Array.isArray(responseData) ? responseData : responseData?.data || [];
 
             const related = allProducts
-                .filter(p => p.id !== currentProduct.id && (p.category === currentProduct.category || p.type_id === currentProduct.type_id))
+                .filter(
+                    (p) =>
+                        p.id !== currentProduct.id &&
+                        (p.category === currentProduct.category || p.type_id === currentProduct.type_id),
+                )
                 .slice(0, 3);
 
             if (related.length === 0) return;
 
             const currentRate = this.currencyService.getRate();
 
-            relatedGrid.innerHTML = related.map(p => {
-                const img = p.image_url
-                    ? (p.image_url.startsWith('http') || p.image_url.startsWith('/') ? p.image_url : `/${p.image_url}`)
-                    : '/assets/favicon.svg';
-                const price = p.price > 0 ? `$${parseFloat(String(p.price)).toFixed(2)}` : 'A consultar';
-                const bcvPrice = p.price > 0 ? `(~Bs. ${(p.price * currentRate).toFixed(2)})` : '';
-                const isSubdomain = window.location.hostname.endsWith('.ventrina.app') || window.location.hostname.endsWith('.localhost');
-                const pUrl = isSubdomain
-                    ? `/p/${encodeURIComponent(p.id)}`
-                    : (this.tenantId ? `/${this.tenantId}/p/${encodeURIComponent(p.id)}` : `/producto?id=${encodeURIComponent(p.id)}&template=${this.template}`);
+            relatedGrid.innerHTML = related
+                .map((p) => {
+                    const img = p.image_url
+                        ? p.image_url.startsWith('http') || p.image_url.startsWith('/')
+                            ? p.image_url
+                            : `/${p.image_url}`
+                        : '/assets/favicon.svg';
+                    const price = p.price > 0 ? `$${parseFloat(String(p.price)).toFixed(2)}` : 'A consultar';
+                    const bcvPrice = p.price > 0 ? `(~Bs. ${(p.price * currentRate).toFixed(2)})` : '';
+                    const isSubdomain =
+                        window.location.hostname.endsWith('.ventrina.app') ||
+                        window.location.hostname.endsWith('.localhost');
+                    const pUrl = isSubdomain
+                        ? `/p/${encodeURIComponent(p.id)}`
+                        : this.tenantId
+                          ? `/${this.tenantId}/p/${encodeURIComponent(p.id)}`
+                          : `/producto?id=${encodeURIComponent(p.id)}&template=${this.template}`;
 
-                return `
+                    return `
                     <div class="product-card">
                         <a href="${pUrl}" class="product-img">
                             <img src="${img}" alt="${p.name}" loading="lazy">
@@ -533,10 +582,11 @@ class ProductPageController {
                         </div>
                     </div>
                 `;
-            }).join('');
+                })
+                .join('');
 
             relatedSection.classList.remove('store-meta-hidden');
-        } catch { }
+        } catch {}
     }
 }
 

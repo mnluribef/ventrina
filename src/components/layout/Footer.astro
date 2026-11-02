@@ -1,11 +1,11 @@
 ---
+import defaultStoreConfig from '../../config/store.config';
 // Footer.astro - Pie de página configurable
 import type { StoreConfig } from '../../types/store.types';
-import defaultStoreConfig from '../../config/store.config';
 import '../../styles/footer.css';
 
 export interface Props {
-  config?: StoreConfig;
+    config?: StoreConfig;
 }
 
 const { config = defaultStoreConfig } = Astro.props;

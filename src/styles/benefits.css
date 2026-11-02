@@ -24,7 +24,10 @@
     border-radius: var(--radius-lg, 18px);
     text-align: center;
     border: 1px solid var(--border-subtle);
-    transition: transform 0.4s var(--ease-bounce), box-shadow 0.4s var(--ease-smooth), border-color 0.3s;
+    transition:
+        transform 0.4s var(--ease-bounce),
+        box-shadow 0.4s var(--ease-smooth),
+        border-color 0.3s;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -33,9 +36,11 @@
 }
 
 .benefit-card::before {
-    content: '';
+    content: "";
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 3px;
     background: var(--grad-cta);
     transform: scaleX(0);
@@ -76,7 +81,7 @@
 }
 
 .benefit-card h3 {
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
     font-size: 1.15rem;
     font-weight: 600;
     color: var(--text-heading);

@@ -1,7 +1,8 @@
 // tests/onboarding.test.ts
-import { describe, it, expect, vi } from 'vitest';
-import { onboardingSchema } from '../functions/api/onboarding';
+
 import type { D1Database } from '@cloudflare/workers-types';
+import { describe, expect, it, vi } from 'vitest';
+import { onboardingSchema } from '../functions/api/onboarding';
 import type { Env, PagesContext } from '../functions/types';
 
 describe('Onboarding & Account Registration (onboarding.ts)', () => {
@@ -14,7 +15,7 @@ describe('Onboarding & Account Registration (onboarding.ts)', () => {
                 email: 'admin@mitienda.com',
                 password: 'Password123!',
                 whatsapp: '+584141234567',
-                acceptTerms: true
+                acceptTerms: true,
             };
             const result = onboardingSchema.safeParse(validData);
             expect(result.success).toBe(true);
@@ -28,7 +29,7 @@ describe('Onboarding & Account Registration (onboarding.ts)', () => {
                 email: 'contacto@bodegon.com',
                 password: 'Password123!',
                 whatsapp: '+584241234567',
-                acceptTerms: true
+                acceptTerms: true,
             };
             const result = onboardingSchema.safeParse(validGrocery);
             expect(result.success).toBe(true);
@@ -41,7 +42,7 @@ describe('Onboarding & Account Registration (onboarding.ts)', () => {
                 template: 'restaurant' as const,
                 username: 'superadmin',
                 password: 'Password123!',
-                acceptTerms: true
+                acceptTerms: true,
             };
             const result = onboardingSchema.safeParse(legacyData);
             expect(result.success).toBe(false);
@@ -53,7 +54,7 @@ describe('Onboarding & Account Registration (onboarding.ts)', () => {
                 tenantSlug: 'mitienda',
                 template: 'restaurant' as const,
                 password: 'Password123!',
-                acceptTerms: true
+                acceptTerms: true,
             };
             const result = onboardingSchema.safeParse(invalidData);
             expect(result.success).toBe(false);
@@ -66,7 +67,7 @@ describe('Onboarding & Account Registration (onboarding.ts)', () => {
                 template: 'restaurant' as const,
                 email: 'not-an-email',
                 password: 'Password123!',
-                acceptTerms: true
+                acceptTerms: true,
             };
             const result = onboardingSchema.safeParse(invalidEmail);
             expect(result.success).toBe(false);
@@ -82,7 +83,7 @@ describe('Onboarding & Account Registration (onboarding.ts)', () => {
                 { name: 'username' },
                 { name: 'password_hash' },
                 { name: 'role' },
-                { name: 'tenant_id' }
+                { name: 'tenant_id' },
                 // email column absent initially
             ];
 
@@ -101,7 +102,7 @@ describe('Onboarding & Account Registration (onboarding.ts)', () => {
                             }
                             return { results: [] };
                         }),
-                        run: vi.fn().mockResolvedValue({ success: true })
+                        run: vi.fn().mockResolvedValue({ success: true }),
                     })),
                     all: vi.fn().mockImplementation(async () => {
                         if (query.includes('PRAGMA table_info(users)')) {
@@ -109,9 +110,9 @@ describe('Onboarding & Account Registration (onboarding.ts)', () => {
                         }
                         return { results: [] };
                     }),
-                    run: vi.fn().mockResolvedValue({ success: true })
+                    run: vi.fn().mockResolvedValue({ success: true }),
                 })),
-                batch: vi.fn().mockResolvedValue([])
+                batch: vi.fn().mockResolvedValue([]),
             } as unknown as D1Database;
 
             const context = {
@@ -124,13 +125,13 @@ describe('Onboarding & Account Registration (onboarding.ts)', () => {
                         template: 'restaurant',
                         email: 'owner@tiendatest.com',
                         password: 'Password123!',
-                        acceptTerms: true
-                    })
+                        acceptTerms: true,
+                    }),
                 }),
                 env: {
-                    DB: mockDb
+                    DB: mockDb,
                 },
-                waitUntil: vi.fn()
+                waitUntil: vi.fn(),
             } as unknown as PagesContext<Env>;
 
             const response = await onRequestPost(context);

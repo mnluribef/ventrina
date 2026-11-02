@@ -11,7 +11,7 @@ export function initScrollReveal(selector = '.reveal', threshold = 0.15): void {
                 }
             });
         },
-        { threshold }
+        { threshold },
     );
 
     reveals.forEach((el) => observer.observe(el));

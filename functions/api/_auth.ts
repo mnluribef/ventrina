@@ -1,21 +1,22 @@
 // functions/api/_auth.ts
 // Auxiliar de Autenticación para API de Ventrina SaaS
-import { getDB, parseCookies } from './_helpers';
+
 import type { Env, UserSession } from '../types';
+import { getDB, parseCookies } from './_helpers';
 
 /**
  * Obtiene el token de la sesión desde las Cookies o el encabezado Authorization
  */
 function getTokenFromRequest(request: Request): string | null {
     // 1. Intentar desde el encabezado Authorization: Bearer <token>
-    const authHeader = request.headers.get("Authorization");
-    if (authHeader && authHeader.startsWith("Bearer ")) {
+    const authHeader = request.headers.get('Authorization');
+    if (authHeader?.startsWith('Bearer ')) {
         return authHeader.substring(7);
     }
 
     // 2. Intentar desde las Cookies: ventrina_session=<token>
-    const cookies = parseCookies(request.headers.get("Cookie"));
-    return cookies["ventrina_session"] || null;
+    const cookies = parseCookies(request.headers.get('Cookie'));
+    return cookies.ventrina_session || null;
 }
 
 interface SessionRow {
@@ -49,7 +50,7 @@ export function validateCsrf(request: Request, tenantDomain?: string | null): bo
     // validar si tiene Authorization header
     if (!source) {
         const authHeader = request.headers.get('Authorization');
-        return Boolean(authHeader && authHeader.startsWith('Bearer '));
+        return Boolean(authHeader?.startsWith('Bearer '));
     }
 
     try {
@@ -61,7 +62,11 @@ export function validateCsrf(request: Request, tenantDomain?: string | null): bo
         if (sourceHost === 'localhost' || sourceHost === '127.0.0.1') return true;
         if (sourceHost === 'ventrina.app' || sourceHost.endsWith('.ventrina.app')) return true;
         if (sourceHost.endsWith('.pages.dev')) return true;
-        if (tenantDomain && (sourceHost === tenantDomain.toLowerCase() || sourceHost.endsWith(`.${tenantDomain.toLowerCase()}`))) return true;
+        if (
+            tenantDomain &&
+            (sourceHost === tenantDomain.toLowerCase() || sourceHost.endsWith(`.${tenantDomain.toLowerCase()}`))
+        )
+            return true;
 
         return false;
     } catch {
@@ -74,7 +79,7 @@ export function validateCsrf(request: Request, tenantDomain?: string | null): bo
  */
 export async function verifySession(
     context: { request: Request; env: Env },
-    tenantId: string | null = null
+    tenantId: string | null = null,
 ): Promise<UserSession | null> {
     const { request, env } = context;
     const db = getDB(env);
@@ -97,7 +102,10 @@ export async function verifySession(
                 bindings.push(tenantId);
             }
 
-            session = await db.prepare(query).bind(...bindings).first<SessionRow>();
+            session = await db
+                .prepare(query)
+                .bind(...bindings)
+                .first<SessionRow>();
         } catch {
             // Fallback defensivo si la tabla sessions no tiene ip o ua_hash
             let fallbackQuery = `SELECT s.username, s.tenant_id, s.expires_at, COALESCE(u.role, 'admin') as role, COALESCE(u.email, s.username) as email 
@@ -111,7 +119,10 @@ export async function verifySession(
                 fallbackBindings.push(tenantId);
             }
 
-            session = await db.prepare(fallbackQuery).bind(...fallbackBindings).first<SessionRow>();
+            session = await db
+                .prepare(fallbackQuery)
+                .bind(...fallbackBindings)
+                .first<SessionRow>();
         }
 
         if (session) {
@@ -120,14 +131,16 @@ export async function verifySession(
                 const clientUa = request.headers.get('User-Agent') || 'unknown';
                 const currentUaHash = (await hashSHA256(clientUa)).slice(0, 32);
                 if (session.ua_hash !== currentUaHash) {
-                    console.warn(`[Security] Posible secuestro de sesión detectado para usuario ${session.email || session.username}`);
+                    console.warn(
+                        `[Security] Posible secuestro de sesión detectado para usuario ${session.email || session.username}`,
+                    );
                     return null;
                 }
             }
 
             // S-03: Sliding expiration - Extender expiración si restan menos de 12 horas
-            if (session.expires_at && (session.expires_at - now < 43200)) {
-                const extendedExpiresAt = now + (7 * 24 * 60 * 60);
+            if (session.expires_at && session.expires_at - now < 43200) {
+                const extendedExpiresAt = now + 7 * 24 * 60 * 60;
                 db.prepare('UPDATE sessions SET expires_at = ? WHERE token = ?')
                     .bind(extendedExpiresAt, token)
                     .run()
@@ -143,7 +156,7 @@ export async function verifySession(
             };
         }
     } catch (err) {
-        console.error("Error verificando sesión:", err);
+        console.error('Error verificando sesión:', err);
     }
 
     return null;
@@ -164,7 +177,9 @@ export function hexToBytes(hex: string): Uint8Array {
  * Convierte un Uint8Array a un string hexadecimal
  */
 export function bytesToHex(bytes: Uint8Array): string {
-    return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    return Array.from(bytes)
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
 }
 
 /**
@@ -191,22 +206,18 @@ export function generateSalt(): string {
  */
 export async function hashPasswordPBKDF2(password: string, saltHex: string): Promise<string> {
     const encoder = new TextEncoder();
-    const passwordKey = await crypto.subtle.importKey(
-        "raw",
-        encoder.encode(password),
-        { name: "PBKDF2" },
-        false,
-        ["deriveBits"]
-    );
+    const passwordKey = await crypto.subtle.importKey('raw', encoder.encode(password), { name: 'PBKDF2' }, false, [
+        'deriveBits',
+    ]);
     const derivedKeyBits = await crypto.subtle.deriveBits(
         {
-            name: "PBKDF2",
+            name: 'PBKDF2',
             salt: hexToBytes(saltHex) as any,
             iterations: 100000,
-            hash: "SHA-256"
+            hash: 'SHA-256',
         },
         passwordKey,
-        256
+        256,
     );
     return bytesToHex(new Uint8Array(derivedKeyBits));
 }
@@ -214,24 +225,24 @@ export async function hashPasswordPBKDF2(password: string, saltHex: string): Pro
 /**
  * Retorna una respuesta de error 401 Unauthorized
  */
-export function unauthorizedResponse(message = "No autorizado. Sesión inválida o expirada."): Response {
+export function unauthorizedResponse(message = 'No autorizado. Sesión inválida o expirada.'): Response {
     return new Response(JSON.stringify({ error: message }), {
         status: 401,
         headers: {
-            "Content-Type": "application/json"
-        }
+            'Content-Type': 'application/json',
+        },
     });
 }
 
 /**
  * Retorna una respuesta de error 403 Forbidden
  */
-export function forbiddenResponse(message = "Prohibido. No tienes permisos para realizar esta acción."): Response {
+export function forbiddenResponse(message = 'Prohibido. No tienes permisos para realizar esta acción.'): Response {
     return new Response(JSON.stringify({ error: message }), {
         status: 403,
         headers: {
-            "Content-Type": "application/json"
-        }
+            'Content-Type': 'application/json',
+        },
     });
 }
 
@@ -259,4 +270,3 @@ export function buildSessionCookie(token: string, requestOrHost: Request | strin
     const domainAttr = isVentrinaApp ? '; Domain=.ventrina.app' : '';
     return `ventrina_session=${token}; Path=/${domainAttr}; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`;
 }
-

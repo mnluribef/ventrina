@@ -1,13 +1,14 @@
 // tests/audit-improvements.test.ts
-import { describe, it, expect, vi } from 'vitest';
-import { CategoryRepository } from '../functions/api/_repositories/category.repo';
-import { RateLimitService } from '../functions/api/_services/rate-limit.service';
-import { getStarterProducts } from '../src/config/starter-products';
-import { checkProductLimit } from '../functions/api/_plans';
-import { resolveBcvRate } from '../functions/api/_services/order.service';
-import { generateSessionToken, buildSessionCookie, validateCsrf } from '../functions/api/_auth';
+
 import type { D1Database, KVNamespace } from '@cloudflare/workers-types';
+import { describe, expect, it, vi } from 'vitest';
+import { buildSessionCookie, generateSessionToken, validateCsrf } from '../functions/api/_auth';
+import { checkProductLimit } from '../functions/api/_plans';
+import { CategoryRepository } from '../functions/api/_repositories/category.repo';
+import { resolveBcvRate } from '../functions/api/_services/order.service';
+import { RateLimitService } from '../functions/api/_services/rate-limit.service';
 import type { TenantRow } from '../functions/types';
+import { getStarterProducts } from '../src/config/starter-products';
 
 describe('Audit Plan Improvements Verification', () => {
     describe('S-04 & Session Helpers (_auth.ts)', () => {
@@ -38,19 +39,19 @@ describe('Audit Plan Improvements Verification', () => {
         it('restricts X-Requested-With header to known safe values (S-05)', () => {
             const validReqXml = new Request('https://ventrina.app/api/orders', {
                 method: 'POST',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
             });
             expect(validateCsrf(validReqXml)).toBe(true);
 
             const validReqFetch = new Request('https://ventrina.app/api/orders', {
                 method: 'POST',
-                headers: { 'X-Requested-With': 'fetch' }
+                headers: { 'X-Requested-With': 'fetch' },
             });
             expect(validateCsrf(validReqFetch)).toBe(true);
 
             const invalidReq = new Request('https://ventrina.app/api/orders', {
                 method: 'POST',
-                headers: { 'X-Requested-With': 'malicious-agent' }
+                headers: { 'X-Requested-With': 'malicious-agent' },
             });
             expect(validateCsrf(invalidReq)).toBe(false);
         });
@@ -61,7 +62,7 @@ describe('Audit Plan Improvements Verification', () => {
             const products = getStarterProducts('demo-store', 'restaurant');
             expect(products.length).toBeGreaterThan(0);
             expect(products[0].id).toContain('demo-store-');
-            expect(products.some(p => p.category === 'principales')).toBe(true);
+            expect(products.some((p) => p.category === 'principales')).toBe(true);
         });
 
         it('falls back to default template for unknown templates without error', () => {
@@ -76,11 +77,19 @@ describe('Audit Plan Improvements Verification', () => {
             const mockDb = {
                 batch: vi.fn().mockResolvedValue([
                     { results: [{ category: 'hamburguesas', count: 5 }] },
-                    { results: [{ data_json: JSON.stringify([{ id: 'hamburguesas', name: 'Hamburguesas Gourmet', icon: 'burger' }]) }] }
+                    {
+                        results: [
+                            {
+                                data_json: JSON.stringify([
+                                    { id: 'hamburguesas', name: 'Hamburguesas Gourmet', icon: 'burger' },
+                                ]),
+                            },
+                        ],
+                    },
                 ]),
                 prepare: vi.fn().mockReturnValue({
-                    bind: vi.fn().mockReturnValue({})
-                })
+                    bind: vi.fn().mockReturnValue({}),
+                }),
             } as unknown as D1Database;
 
             const repo = new CategoryRepository(mockDb);
@@ -97,9 +106,9 @@ describe('Audit Plan Improvements Verification', () => {
             const mockDb = {
                 prepare: vi.fn().mockReturnValue({
                     bind: vi.fn().mockReturnValue({
-                        run: runMock
-                    })
-                })
+                        run: runMock,
+                    }),
+                }),
             } as unknown as D1Database;
 
             const repo = new CategoryRepository(mockDb);
@@ -109,10 +118,12 @@ describe('Audit Plan Improvements Verification', () => {
                 template: 'restaurant',
                 plan: 'pro',
                 active: 1,
-                config_json: JSON.stringify({ business: { name: 'Tienda 1' } })
+                config_json: JSON.stringify({ business: { name: 'Tienda 1' } }),
             };
 
-            await repo.saveCustomCategories('t1', tenant, [{ id: 'pizzas', name: 'Pizzas Artesanales', icon: 'pizza' }]);
+            await repo.saveCustomCategories('t1', tenant, [
+                { id: 'pizzas', name: 'Pizzas Artesanales', icon: 'pizza' },
+            ]);
             expect(runMock).toHaveBeenCalled();
         });
     });
@@ -123,10 +134,10 @@ describe('Audit Plan Improvements Verification', () => {
                 get: vi.fn().mockResolvedValue({
                     count: 5,
                     firstAttempt: Date.now() - 5000,
-                    lockoutUntil: 0
+                    lockoutUntil: 0,
                 }),
                 put: vi.fn().mockResolvedValue(undefined),
-                delete: vi.fn().mockResolvedValue(undefined)
+                delete: vi.fn().mockResolvedValue(undefined),
             } as unknown as KVNamespace;
 
             const service = new RateLimitService(mockKv);
@@ -140,10 +151,10 @@ describe('Audit Plan Improvements Verification', () => {
                 get: vi.fn().mockResolvedValue({
                     count: 5,
                     firstAttempt: Date.now() - 5000,
-                    lockoutUntil: Date.now() + 10 * 60 * 1000 // 10 mins lockout
+                    lockoutUntil: Date.now() + 10 * 60 * 1000, // 10 mins lockout
                 }),
                 put: vi.fn().mockResolvedValue(undefined),
-                delete: vi.fn().mockResolvedValue(undefined)
+                delete: vi.fn().mockResolvedValue(undefined),
             } as unknown as KVNamespace;
 
             const service = new RateLimitService(mockKv);
@@ -161,10 +172,10 @@ describe('Audit Plan Improvements Verification', () => {
                     capturedQuery = q;
                     return {
                         bind: vi.fn().mockReturnValue({
-                            first: vi.fn().mockResolvedValue({ total: 10 })
-                        })
+                            first: vi.fn().mockResolvedValue({ total: 10 }),
+                        }),
                     };
-                })
+                }),
             } as unknown as D1Database;
 
             const tenant: TenantRow = { id: 't1', name: 'Tienda', template: 'restaurant', plan: 'basic', active: 1 };
@@ -180,11 +191,11 @@ describe('Audit Plan Improvements Verification', () => {
     describe('P-02: BCV Rate Caching (order.service.ts)', () => {
         it('resolves BCV rate directly from cached tenant config_json without D1 query', async () => {
             const mockDb = {
-                prepare: vi.fn()
+                prepare: vi.fn(),
             } as unknown as D1Database;
 
             const configJson = JSON.stringify({
-                bcvRate: 865.25
+                bcvRate: 865.25,
             });
 
             const res = await resolveBcvRate(mockDb, 'tienda1', undefined, configJson);
@@ -196,13 +207,13 @@ describe('Audit Plan Improvements Verification', () => {
             const mockDb = {
                 prepare: vi.fn().mockReturnValue({
                     bind: vi.fn().mockReturnValue({
-                        first: vi.fn().mockResolvedValue({ value: '870.50' })
-                    })
-                })
+                        first: vi.fn().mockResolvedValue({ value: '870.50' }),
+                    }),
+                }),
             } as unknown as D1Database;
 
             const res = await resolveBcvRate(mockDb, 'tienda1', undefined, '{}');
-            expect(res.rate).toBe(870.50);
+            expect(res.rate).toBe(870.5);
             expect(mockDb.prepare).toHaveBeenCalled();
         });
     });
@@ -220,7 +231,7 @@ describe('Audit Plan Improvements Verification', () => {
                                     username: 'admin@tienda.com',
                                     role: 'admin',
                                     tenant_id: 'mitienda',
-                                    expires_at: Math.floor(Date.now() / 1000) + 100000
+                                    expires_at: Math.floor(Date.now() / 1000) + 100000,
                                 };
                             }
                             if (query.includes('FROM tenants')) {
@@ -228,29 +239,29 @@ describe('Audit Plan Improvements Verification', () => {
                                     id: 'mitienda',
                                     name: 'Mi Tienda',
                                     plan: 'basic',
-                                    active: 1
+                                    active: 1,
                                 };
                             }
                             return null;
                         }),
                         all: vi.fn().mockResolvedValue({ results: [] }),
-                        run: vi.fn().mockResolvedValue({ success: true })
-                    })
-                }))
+                        run: vi.fn().mockResolvedValue({ success: true }),
+                    }),
+                })),
             };
 
             const mockContext: any = {
                 request: new Request('https://ventrina.app/api/analytics?tenant=mitienda', {
-                    headers: { 'Cookie': 'ventrina_session=dummy-token' }
+                    headers: { Cookie: 'ventrina_session=dummy-token' },
                 }),
                 env: {
-                    DB: mockDb
-                }
+                    DB: mockDb,
+                },
             };
 
             const res = await onRequestGet(mockContext);
             expect(res.status).toBe(403);
-            const data = await res.json() as any;
+            const data = (await res.json()) as any;
             expect(data.upgradeRequired).toBe(true);
         });
     });
@@ -262,7 +273,7 @@ describe('Audit Plan Improvements Verification', () => {
             let capturedQuery = '';
             const mockDb = {
                 prepare: vi.fn().mockImplementation((query: string) => {
-                    capturedQuery += query + ' ';
+                    capturedQuery += `${query} `;
                     return {
                         bind: vi.fn().mockReturnValue({
                             first: vi.fn().mockImplementation(async () => {
@@ -271,38 +282,37 @@ describe('Audit Plan Improvements Verification', () => {
                                         username: 'admin@tienda.com',
                                         role: 'admin',
                                         tenant_id: 'mitienda',
-                                        expires_at: Math.floor(Date.now() / 1000) + 100000
+                                        expires_at: Math.floor(Date.now() / 1000) + 100000,
                                     };
                                 }
                                 if (query.includes('FROM tenants')) {
                                     return { id: 'mitienda', name: 'Mi Tienda', active: 1 };
                                 }
                                 if (query.includes('SUM(total_price)')) {
-                                    return { total_ingresos: 150.00 };
+                                    return { total_ingresos: 150.0 };
                                 }
                                 return null;
                             }),
-                            all: vi.fn().mockResolvedValue({ results: [{ date: '2026-10-23', total: 150 }] })
-                        })
+                            all: vi.fn().mockResolvedValue({ results: [{ date: '2026-10-23', total: 150 }] }),
+                        }),
                     };
-                })
+                }),
             };
 
             const mockContext: any = {
                 request: new Request('https://ventrina.app/api/sales?stats=true&tenant=mitienda', {
-                    headers: { 'Cookie': 'ventrina_session=dummy-token' }
+                    headers: { Cookie: 'ventrina_session=dummy-token' },
                 }),
-                env: { DB: mockDb }
+                env: { DB: mockDb },
             };
 
             const res = await onRequestGet(mockContext);
             expect(res.status).toBe(200);
-            const data = await res.json() as any;
+            const data = (await res.json()) as any;
             expect(data.revenueToday).toBe(150);
-            expect(capturedQuery).toContain("FROM orders");
+            expect(capturedQuery).toContain('FROM orders');
             expect(capturedQuery).toContain("status = 'completado'");
-            expect(capturedQuery).not.toContain("FROM sales");
+            expect(capturedQuery).not.toContain('FROM sales');
         });
     });
 });
-

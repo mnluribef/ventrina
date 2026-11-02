@@ -1,7 +1,8 @@
 // functions/api/health.ts
 // O-03: Health Check extendido con latencias de subsistemas (D1, KV, Storage)
-import { getDB, jsonResponse } from "./_helpers";
+
 import type { Env, PagesHandler } from '../types';
+import { getDB, jsonResponse } from './_helpers';
 
 export interface SubsystemCheck {
     status: 'ok' | 'degraded' | 'error' | 'not_configured';
@@ -39,7 +40,7 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
         }
     } catch (e: unknown) {
         dbStatus = 'error';
-        console.error("Fallo de salud en base de datos D1:", e);
+        console.error('Fallo de salud en base de datos D1:', e);
     }
 
     // 2. Chequeo de Cloudflare KV (Caché de tenants y sesiones)
@@ -54,7 +55,7 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
             kvStatus = kvLatencyMs > 500 ? 'degraded' : 'ok';
         } catch (e: unknown) {
             kvStatus = 'error';
-            console.error("Fallo de salud en Cloudflare KV:", e);
+            console.error('Fallo de salud en Cloudflare KV:', e);
         }
     }
 
@@ -71,7 +72,7 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
             storageStatus = storageLatencyMs > 500 ? 'degraded' : 'ok';
         } catch (e: unknown) {
             storageStatus = 'error';
-            console.error("Fallo de salud en almacenamiento R2:", e);
+            console.error('Fallo de salud en almacenamiento R2:', e);
         }
     }
 
@@ -79,19 +80,19 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
     // Base de datos caída = unhealthy (503 Service Unavailable)
     // Latencia elevada o fallos en servicios auxiliares = degraded (200 OK para no disparar alertas de caída total)
     const isUnhealthy = dbStatus === 'error';
-    const isDegraded = !isUnhealthy && (
-        dbStatus === 'degraded' ||
-        kvStatus === 'degraded' ||
-        kvStatus === 'error' ||
-        storageStatus === 'degraded' ||
-        storageStatus === 'error'
-    );
+    const isDegraded =
+        !isUnhealthy &&
+        (dbStatus === 'degraded' ||
+            kvStatus === 'degraded' ||
+            kvStatus === 'error' ||
+            storageStatus === 'degraded' ||
+            storageStatus === 'error');
 
-    const overallStatus: 'healthy' | 'degraded' | 'unhealthy' = isUnhealthy 
-        ? 'unhealthy' 
-        : isDegraded 
-            ? 'degraded' 
-            : 'healthy';
+    const overallStatus: 'healthy' | 'degraded' | 'unhealthy' = isUnhealthy
+        ? 'unhealthy'
+        : isDegraded
+          ? 'degraded'
+          : 'healthy';
 
     const httpStatusCode = isUnhealthy ? 503 : 200;
 
@@ -103,12 +104,12 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
         checks: {
             database: { status: dbStatus, latencyMs: dbLatencyMs },
             kv: { status: kvStatus, latencyMs: kvLatencyMs },
-            storage: { status: storageStatus, latencyMs: storageLatencyMs }
+            storage: { status: storageStatus, latencyMs: storageLatencyMs },
         },
-        database: { status: dbStatus, latencyMs: dbLatencyMs }
+        database: { status: dbStatus, latencyMs: dbLatencyMs },
     };
 
     return jsonResponse(payload, httpStatusCode, {
-        "Cache-Control": "no-store, no-cache, must-revalidate"
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
     });
 };

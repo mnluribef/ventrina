@@ -4,30 +4,30 @@
    Identidad: Violet × Amber — Design System Centralizado
    ===================================================== */
 
-@import './tokens.css';
+@import "./tokens.css";
 
 :root {
-    --legal-bg:           var(--light-bg);
-    --legal-card-bg:      var(--light-bg-card);
-    --legal-border:       var(--light-border);
-    --legal-text:         var(--light-text-body);
-    --legal-text-muted:   var(--light-text-muted);
+    --legal-bg: var(--light-bg);
+    --legal-card-bg: var(--light-bg-card);
+    --legal-border: var(--light-border);
+    --legal-text: var(--light-text-body);
+    --legal-text-muted: var(--light-text-muted);
     --legal-text-heading: var(--light-text-heading);
-    --legal-primary:      var(--color-primary);
+    --legal-primary: var(--color-primary);
     --legal-primary-glow: var(--color-primary-glow);
-    --legal-danger:       var(--color-danger);
-    --legal-danger-bg:    var(--color-danger-bg);
-    --legal-warning:      var(--color-warning);
-    --legal-warning-bg:   var(--color-warning-bg);
-    --legal-success:      var(--color-success);
-    --legal-success-bg:   var(--color-success-bg);
+    --legal-danger: var(--color-danger);
+    --legal-danger-bg: var(--color-danger-bg);
+    --legal-warning: var(--color-warning);
+    --legal-warning-bg: var(--color-warning-bg);
+    --legal-success: var(--color-success);
+    --legal-success-bg: var(--color-success-bg);
     --legal-radius: var(--radius-md);
 }
 
 body.legal-body {
     background-color: var(--legal-bg);
     color: var(--legal-text);
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
     line-height: 1.7;
     margin: 0;
     padding: 0;
@@ -49,7 +49,12 @@ body.legal-body {
     transform: translateX(-50%);
     width: 1000px;
     height: 500px;
-    background: radial-gradient(ellipse at top, rgba(124, 58, 237, 0.10) 0%, rgba(245, 158, 11, 0.04) 45%, transparent 70%);
+    background: radial-gradient(
+        ellipse at top,
+        rgba(124, 58, 237, 0.1) 0%,
+        rgba(245, 158, 11, 0.04) 45%,
+        transparent 70%
+    );
     pointer-events: none;
     z-index: 0;
 }

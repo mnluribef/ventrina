@@ -14,16 +14,18 @@ footer {
 }
 
 footer::before {
-    content: '';
+    content: "";
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 1px;
     background: linear-gradient(to right, transparent, var(--gold), transparent);
 }
 
 /* Decoración de fondo */
 footer::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -1.5rem;
     right: 3%;
@@ -102,12 +104,12 @@ footer::after {
 
 .footer-links h4,
 .footer-links .footer-col-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
     font-size: 0.82rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    color: #FFFFFF;
+    color: #ffffff;
     margin-bottom: 1.25rem;
     position: relative;
     display: inline-block;
@@ -115,13 +117,13 @@ footer::after {
 
 .footer-links h4::after,
 .footer-links .footer-col-title::after {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     bottom: -6px;
     width: 22px;
     height: 2px;
-    background: var(--rose, #FFFFFF);
+    background: var(--rose, #ffffff);
     border-radius: 2px;
 }
 
@@ -132,13 +134,15 @@ footer::after {
 .footer-links ul li a {
     font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.85);
-    transition: color 0.25s, transform 0.25s;
+    transition:
+        color 0.25s,
+        transform 0.25s;
     display: inline-block;
     text-decoration: none;
 }
 
 .footer-links ul li a:hover {
-    color: #FFFFFF;
+    color: #ffffff;
     transform: translateX(4px);
 }
 
@@ -148,12 +152,14 @@ footer::after {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    transition: color 0.25s, transform 0.25s;
+    transition:
+        color 0.25s,
+        transform 0.25s;
     text-decoration: none;
 }
 
 a.footer-contact-link:hover {
-    color: #FFFFFF;
+    color: #ffffff;
     transform: translateX(3px);
 }
 

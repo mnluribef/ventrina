@@ -1,10 +1,11 @@
 // functions/api/analytics.ts
 // Panel de Análisis y Métricas Avanzadas para Tenants (Planes Pro & Enterprise)
-import { verifySession, unauthorizedResponse } from "./_auth";
-import { resolveTenant } from "./_tenant";
-import { getDB, jsonResponse } from "./_helpers";
-import { resolveAuthenticatedTenant } from "./_guards";
+
 import type { Env, PagesHandler } from '../types';
+import { unauthorizedResponse, verifySession } from './_auth';
+import { resolveAuthenticatedTenant } from './_guards';
+import { getDB, jsonResponse } from './_helpers';
+import { resolveTenant } from './_tenant';
 
 interface TopProductRow {
     product_name: string;
@@ -36,7 +37,7 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
     const db = getDB(env);
     let { id: tenantId, tenant } = await resolveTenant(request, db, env.KV);
 
-    const user = await verifySession(context, (tenantId && tenantId !== 'demo') ? tenantId : undefined);
+    const user = await verifySession(context, tenantId && tenantId !== 'demo' ? tenantId : undefined);
     if (!user) return unauthorizedResponse();
 
     // Resolución correcta del tenant para usuarios autenticados (DRY — fix #5)
@@ -49,38 +50,40 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
         // F-02: Las analíticas avanzadas están restringidas a planes Pro y Enterprise
         const hasAnalyticsFeature = ['pro', 'enterprise', 'demo'].includes(planKey);
         if (!hasAnalyticsFeature) {
-            return jsonResponse({
-                error: 'Las analíticas avanzadas requieren plan Pro o Enterprise.',
-                upgradeRequired: true,
-                currentPlan: planKey
-            }, 403);
+            return jsonResponse(
+                {
+                    error: 'Las analíticas avanzadas requieren plan Pro o Enterprise.',
+                    upgradeRequired: true,
+                    currentPlan: planKey,
+                },
+                403,
+            );
         }
 
         // Fix #16: Soporte para rangos de fecha personalizados
-        const fromDate = url.searchParams.get("from"); // formato YYYY-MM-DD
-        const toDate = url.searchParams.get("to");     // formato YYYY-MM-DD
+        const fromDate = url.searchParams.get('from'); // formato YYYY-MM-DD
+        const toDate = url.searchParams.get('to'); // formato YYYY-MM-DD
         const hasDateRange = Boolean(fromDate && toDate);
 
         // Fix #17: Límite configurable para top productos (default 5, min 1, max 50)
-        const limitParam = parseInt(url.searchParams.get("limit") || "5", 10);
-        const topLimit = Math.max(1, Math.min(50, isNaN(limitParam) ? 5 : limitParam));
+        const limitParam = parseInt(url.searchParams.get('limit') || '5', 10);
+        const topLimit = Math.max(1, Math.min(50, Number.isNaN(limitParam) ? 5 : limitParam));
 
         // Fix #6: Ejecución en paralelo con Promise.all()
         if (hasDateRange) {
-            const [
-                revRangeRow,
-                topProductsResult,
-                statusCountsResult,
-                paymentMethodsResult,
-                deliveryTypesResult
-            ] = await Promise.all([
-                db.prepare(`
+            const [revRangeRow, topProductsResult, statusCountsResult, paymentMethodsResult, deliveryTypesResult] =
+                await Promise.all([
+                    db
+                        .prepare(`
                     SELECT COALESCE(SUM(total_price), 0) as total, COUNT(*) as count 
                     FROM orders 
                     WHERE tenant_id = ? AND status = 'completado' AND date(created_at) >= date(?) AND date(created_at) <= date(?)
-                `).bind(tenantId, fromDate, toDate).first<{ total: number; count: number }>(),
+                `)
+                        .bind(tenantId, fromDate, toDate)
+                        .first<{ total: number; count: number }>(),
 
-                db.prepare(`
+                    db
+                        .prepare(`
                     SELECT oi.product_name, SUM(oi.quantity) as total_qty, SUM(oi.quantity * oi.unit_price) as total_revenue
                     FROM order_items oi
                     JOIN orders o ON oi.order_id = o.id
@@ -88,61 +91,72 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
                     GROUP BY oi.product_name
                     ORDER BY total_qty DESC
                     LIMIT ?
-                `).bind(tenantId, fromDate, toDate, topLimit).all<TopProductRow>(),
+                `)
+                        .bind(tenantId, fromDate, toDate, topLimit)
+                        .all<TopProductRow>(),
 
-                db.prepare(`
+                    db
+                        .prepare(`
                     SELECT status, COUNT(*) as count
                     FROM orders
                     WHERE tenant_id = ? AND date(created_at) >= date(?) AND date(created_at) <= date(?)
                     GROUP BY status
-                `).bind(tenantId, fromDate, toDate).all<StatusCountRow>(),
+                `)
+                        .bind(tenantId, fromDate, toDate)
+                        .all<StatusCountRow>(),
 
-                db.prepare(`
+                    db
+                        .prepare(`
                     SELECT COALESCE(payment_method, 'No especificado') as payment_method, COUNT(*) as count, COALESCE(SUM(total_price), 0) as total
                     FROM orders
                     WHERE tenant_id = ? AND date(created_at) >= date(?) AND date(created_at) <= date(?)
                     GROUP BY payment_method
-                `).bind(tenantId, fromDate, toDate).all<PaymentBreakdownRow>(),
+                `)
+                        .bind(tenantId, fromDate, toDate)
+                        .all<PaymentBreakdownRow>(),
 
-                db.prepare(`
+                    db
+                        .prepare(`
                     SELECT delivery_type, COUNT(*) as count
                     FROM orders
                     WHERE tenant_id = ? AND date(created_at) >= date(?) AND date(created_at) <= date(?)
                     GROUP BY delivery_type
-                `).bind(tenantId, fromDate, toDate).all<DeliveryBreakdownRow>()
-            ]);
+                `)
+                        .bind(tenantId, fromDate, toDate)
+                        .all<DeliveryBreakdownRow>(),
+                ]);
 
             const revRange = revRangeRow?.total ?? 0;
             const salesCount = revRangeRow?.count ?? 0;
             const averageTicket = salesCount > 0 ? Math.round((revRange / salesCount) * 100) / 100 : 0;
 
-            return jsonResponse({
-                plan: planKey,
-                range: { from: fromDate, to: toDate },
-                summary: {
-                    totalRevenue: revRange,
-                    salesCount,
-                    averageTicket
+            return jsonResponse(
+                {
+                    plan: planKey,
+                    range: { from: fromDate, to: toDate },
+                    summary: {
+                        totalRevenue: revRange,
+                        salesCount,
+                        averageTicket,
+                    },
+                    topProducts: topProductsResult.results || [],
+                    ordersByStatus: statusCountsResult.results || [],
+                    paymentMethods: paymentMethodsResult.results || [],
+                    deliveryTypes: deliveryTypesResult.results || [],
                 },
-                topProducts: topProductsResult.results || [],
-                ordersByStatus: statusCountsResult.results || [],
-                paymentMethods: paymentMethodsResult.results || [],
-                deliveryTypes: deliveryTypesResult.results || []
-            }, 200, {
-                // Fix #6: Caché privada de 5 minutos en borde y navegador
-                "Cache-Control": "private, max-age=300, stale-while-revalidate=60"
-            });
+                200,
+                {
+                    // Fix #6: Caché privada de 5 minutos en borde y navegador
+                    'Cache-Control': 'private, max-age=300, stale-while-revalidate=60',
+                },
+            );
         }
 
         // Modo predeterminado (mes actual vs mes anterior) optimizado en una sola query agregada (P-03)
-        const [
-            salesComparisonRow,
-            topProductsResult,
-            statusCountsResult,
-            paymentMethodsResult,
-            deliveryTypesResult
-        ] = await Promise.all([
-            db.prepare(`
+        const [salesComparisonRow, topProductsResult, statusCountsResult, paymentMethodsResult, deliveryTypesResult] =
+            await Promise.all([
+                db
+                    .prepare(`
                 SELECT 
                     COALESCE(SUM(CASE WHEN strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now') THEN total_price ELSE 0 END), 0) as total_this_month,
                     COUNT(CASE WHEN strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now') THEN 1 END) as count_this_month,
@@ -150,14 +164,17 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
                     COUNT(CASE WHEN strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now', '-1 month') THEN 1 END) as count_last_month
                 FROM orders 
                 WHERE tenant_id = ? AND status = 'completado'
-            `).bind(tenantId).first<{
-                total_this_month: number;
-                count_this_month: number;
-                total_last_month: number;
-                count_last_month: number;
-            }>(),
+            `)
+                    .bind(tenantId)
+                    .first<{
+                        total_this_month: number;
+                        count_this_month: number;
+                        total_last_month: number;
+                        count_last_month: number;
+                    }>(),
 
-            db.prepare(`
+                db
+                    .prepare(`
                 SELECT oi.product_name, SUM(oi.quantity) as total_qty, SUM(oi.quantity * oi.unit_price) as total_revenue
                 FROM order_items oi
                 JOIN orders o ON oi.order_id = o.id
@@ -165,30 +182,40 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
                 GROUP BY oi.product_name
                 ORDER BY total_qty DESC
                 LIMIT ?
-            `).bind(tenantId, topLimit).all<TopProductRow>(),
+            `)
+                    .bind(tenantId, topLimit)
+                    .all<TopProductRow>(),
 
-            db.prepare(`
+                db
+                    .prepare(`
                 SELECT status, COUNT(*) as count
                 FROM orders
                 WHERE tenant_id = ? AND strftime('%Y', created_at) = strftime('%Y', 'now')
                 GROUP BY status
-            `).bind(tenantId).all<StatusCountRow>(),
+            `)
+                    .bind(tenantId)
+                    .all<StatusCountRow>(),
 
-            db.prepare(`
+                db
+                    .prepare(`
                 SELECT COALESCE(payment_method, 'No especificado') as payment_method, COUNT(*) as count, COALESCE(SUM(total_price), 0) as total
                 FROM orders
                 WHERE tenant_id = ? AND strftime('%Y', created_at) = strftime('%Y', 'now')
                 GROUP BY payment_method
-            `).bind(tenantId).all<PaymentBreakdownRow>(),
+            `)
+                    .bind(tenantId)
+                    .all<PaymentBreakdownRow>(),
 
-            db.prepare(`
+                db
+                    .prepare(`
                 SELECT delivery_type, COUNT(*) as count
                 FROM orders
                 WHERE tenant_id = ? AND strftime('%Y', created_at) = strftime('%Y', 'now')
                 GROUP BY delivery_type
-            `).bind(tenantId).all<DeliveryBreakdownRow>()
-
-        ]);
+            `)
+                    .bind(tenantId)
+                    .all<DeliveryBreakdownRow>(),
+            ]);
 
         const revThisMonth = salesComparisonRow?.total_this_month ?? 0;
         const revLastMonth = salesComparisonRow?.total_last_month ?? 0;
@@ -201,28 +228,32 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
             growthPercentage = 100;
         }
 
-        const averageTicket = salesCountThisMonth > 0 ? Math.round((revThisMonth / salesCountThisMonth) * 100) / 100 : 0;
+        const averageTicket =
+            salesCountThisMonth > 0 ? Math.round((revThisMonth / salesCountThisMonth) * 100) / 100 : 0;
 
-        return jsonResponse({
-            plan: planKey,
-            summary: {
-                revenueThisMonth: revThisMonth,
-                revenueLastMonth: revLastMonth,
-                monthlyGrowthPercentage: growthPercentage,
-                salesCountThisMonth,
-                averageTicket
+        return jsonResponse(
+            {
+                plan: planKey,
+                summary: {
+                    revenueThisMonth: revThisMonth,
+                    revenueLastMonth: revLastMonth,
+                    monthlyGrowthPercentage: growthPercentage,
+                    salesCountThisMonth,
+                    averageTicket,
+                },
+                topProducts: topProductsResult.results || [],
+                ordersByStatus: statusCountsResult.results || [],
+                paymentMethods: paymentMethodsResult.results || [],
+                deliveryTypes: deliveryTypesResult.results || [],
             },
-            topProducts: topProductsResult.results || [],
-            ordersByStatus: statusCountsResult.results || [],
-            paymentMethods: paymentMethodsResult.results || [],
-            deliveryTypes: deliveryTypesResult.results || []
-        }, 200, {
-            // Fix #6: Caché de 5 minutos
-            "Cache-Control": "private, max-age=300, stale-while-revalidate=60"
-        });
-
+            200,
+            {
+                // Fix #6: Caché de 5 minutos
+                'Cache-Control': 'private, max-age=300, stale-while-revalidate=60',
+            },
+        );
     } catch (err) {
-        console.error("Error en GET /api/analytics:", err);
-        return jsonResponse({ error: "Error interno al calcular analíticas." }, 500);
+        console.error('Error en GET /api/analytics:', err);
+        return jsonResponse({ error: 'Error interno al calcular analíticas.' }, 500);
     }
 };

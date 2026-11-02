@@ -1,9 +1,10 @@
 // tests/auth-email.test.ts
-import { describe, it, expect, vi } from 'vitest';
+
+import type { D1Database } from '@cloudflare/workers-types';
+import { describe, expect, it, vi } from 'vitest';
+import { generateSalt, hashPasswordPBKDF2 } from '../functions/api/_auth';
 import { loginSchema, onRequestPost } from '../functions/api/auth';
 import { createUserSchema } from '../functions/api/users';
-import { hashPasswordPBKDF2, generateSalt } from '../functions/api/_auth';
-import type { D1Database } from '@cloudflare/workers-types';
 import type { Env, PagesContext } from '../functions/types';
 
 describe('Strict Email-Only Authentication (no username backwards compatibility)', () => {
@@ -12,7 +13,7 @@ describe('Strict Email-Only Authentication (no username backwards compatibility)
             const valid = {
                 email: 'admin@ventrina.app',
                 password: 'Password123!',
-                tenant: 'mitienda'
+                tenant: 'mitienda',
             };
             const result = loginSchema.safeParse(valid);
             expect(result.success).toBe(true);
@@ -22,19 +23,19 @@ describe('Strict Email-Only Authentication (no username backwards compatibility)
             const legacy = {
                 username: 'superadmin',
                 password: 'Password123!',
-                tenant: 'mitienda'
+                tenant: 'mitienda',
             };
             const result = loginSchema.safeParse(legacy);
             expect(result.success).toBe(false);
             if (!result.success) {
-                expect(result.error.issues.some(i => i.path.includes('email'))).toBe(true);
+                expect(result.error.issues.some((i) => i.path.includes('email'))).toBe(true);
             }
         });
 
         it('rejects invalid email formats in login', () => {
             const invalid = {
                 email: 'not-an-email',
-                password: 'Password123!'
+                password: 'Password123!',
             };
             const result = loginSchema.safeParse(invalid);
             expect(result.success).toBe(false);
@@ -42,7 +43,7 @@ describe('Strict Email-Only Authentication (no username backwards compatibility)
 
         it('rejects login without password', () => {
             const noPass = {
-                email: 'admin@ventrina.app'
+                email: 'admin@ventrina.app',
             };
             const result = loginSchema.safeParse(noPass);
             expect(result.success).toBe(false);
@@ -54,7 +55,7 @@ describe('Strict Email-Only Authentication (no username backwards compatibility)
             const valid = {
                 email: 'staff@ventrina.app',
                 password: 'SecurePassword123!',
-                role: 'staff' as const
+                role: 'staff' as const,
             };
             const result = createUserSchema.safeParse(valid);
             expect(result.success).toBe(true);
@@ -64,12 +65,12 @@ describe('Strict Email-Only Authentication (no username backwards compatibility)
             const legacy = {
                 username: 'staffuser',
                 password: 'SecurePassword123!',
-                role: 'staff' as const
+                role: 'staff' as const,
             };
             const result = createUserSchema.safeParse(legacy);
             expect(result.success).toBe(false);
             if (!result.success) {
-                expect(result.error.issues.some(i => i.path.includes('email'))).toBe(true);
+                expect(result.error.issues.some((i) => i.path.includes('email'))).toBe(true);
             }
         });
     });
@@ -87,7 +88,7 @@ describe('Strict Email-Only Authentication (no username backwards compatibility)
                 password_hash: hash,
                 password_salt: salt,
                 role: 'admin',
-                tenant_id: 'mystore'
+                tenant_id: 'mystore',
             };
 
             const mockDb = {
@@ -99,10 +100,10 @@ describe('Strict Email-Only Authentication (no username backwards compatibility)
                             return null;
                         }),
                         all: vi.fn().mockResolvedValue({ results: [] }),
-                        run: vi.fn().mockResolvedValue({ success: true, meta: { changes: 1 } })
+                        run: vi.fn().mockResolvedValue({ success: true, meta: { changes: 1 } }),
                     })),
-                    run: vi.fn().mockResolvedValue({ success: true })
-                }))
+                    run: vi.fn().mockResolvedValue({ success: true }),
+                })),
             } as unknown as D1Database;
 
             const context = {
@@ -112,13 +113,13 @@ describe('Strict Email-Only Authentication (no username backwards compatibility)
                     body: JSON.stringify({
                         email: 'owner@store.com',
                         password: 'Password123!',
-                        tenant: 'mystore'
-                    })
+                        tenant: 'mystore',
+                    }),
                 }),
                 env: {
-                    DB: mockDb
+                    DB: mockDb,
                 },
-                waitUntil: vi.fn()
+                waitUntil: vi.fn(),
             } as unknown as PagesContext<Env>;
 
             const response = await onRequestPost(context);
@@ -138,9 +139,9 @@ describe('Strict Email-Only Authentication (no username backwards compatibility)
                 prepare: vi.fn().mockImplementation(() => ({
                     bind: vi.fn().mockReturnValue({
                         first: vi.fn().mockResolvedValue(null),
-                        run: vi.fn().mockResolvedValue({ success: true })
-                    })
-                }))
+                        run: vi.fn().mockResolvedValue({ success: true }),
+                    }),
+                })),
             } as unknown as D1Database;
 
             const context = {
@@ -150,13 +151,13 @@ describe('Strict Email-Only Authentication (no username backwards compatibility)
                     body: JSON.stringify({
                         username: 'owner@store.com', // old field, should fail validation
                         password: 'Password123!',
-                        tenant: 'mystore'
-                    })
+                        tenant: 'mystore',
+                    }),
                 }),
                 env: {
-                    DB: mockDb
+                    DB: mockDb,
                 },
-                waitUntil: vi.fn()
+                waitUntil: vi.fn(),
             } as unknown as PagesContext<Env>;
 
             const response = await onRequestPost(context);

@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
-import { resolveTenant, SYSTEM_PATHS, SYSTEM_SUBDOMAINS } from '../functions/api/_tenant';
 import type { D1Database } from '@cloudflare/workers-types';
+import { describe, expect, it, vi } from 'vitest';
+import { resolveTenant, SYSTEM_PATHS, SYSTEM_SUBDOMAINS } from '../functions/api/_tenant';
 
 describe('Tenant Resolution Logic (_tenant.ts)', () => {
     const mockDb = {
@@ -8,14 +8,14 @@ describe('Tenant Resolution Logic (_tenant.ts)', () => {
             bind: vi.fn().mockReturnValue({
                 first: vi.fn().mockImplementation(async () => {
                     return { id: 'fogon', name: 'El Fogón Criollo', active: 1 };
-                })
-            })
-        })
+                }),
+            }),
+        }),
     } as unknown as D1Database;
 
     it('resolves tenant via X-Tenant-Id header', async () => {
         const req = new Request('https://ventrina.app/api/products', {
-            headers: { 'X-Tenant-Id': 'fogon' }
+            headers: { 'X-Tenant-Id': 'fogon' },
         });
         const result = await resolveTenant(req, mockDb);
         expect(result.id).toBe('fogon');
@@ -25,8 +25,8 @@ describe('Tenant Resolution Logic (_tenant.ts)', () => {
     it('ignores Referer header to prevent tenant spoofing (Fix #3)', async () => {
         const req = new Request('https://ventrina.app/api/orders', {
             headers: {
-                'Referer': 'https://ventrina.app/s/spoofed-tenant'
-            }
+                Referer: 'https://ventrina.app/s/spoofed-tenant',
+            },
         });
         const result = await resolveTenant(req, mockDb);
         // Debe caer en demo o resolución segura de la URL, no del Referer
@@ -83,9 +83,9 @@ describe('Tenant Resolution Logic (_tenant.ts)', () => {
         const emptyDb = {
             prepare: vi.fn().mockReturnValue({
                 bind: vi.fn().mockReturnValue({
-                    first: vi.fn().mockResolvedValue(null)
-                })
-            })
+                    first: vi.fn().mockResolvedValue(null),
+                }),
+            }),
         } as unknown as D1Database;
 
         const req = new Request('https://ventrina.app/api/orders');
@@ -99,17 +99,17 @@ describe('Tenant Resolution Logic (_tenant.ts)', () => {
                 bind: vi.fn().mockReturnValue({
                     first: vi.fn().mockImplementation(async () => {
                         return { tenant_id: 'tenant-activo', id: 'tenant-activo', active: 1 };
-                    })
-                })
-            })
+                    }),
+                }),
+            }),
         } as unknown as D1Database;
 
         it('resolves to demo when X-Tenant-Id is demo despite active tenant session cookie', async () => {
             const req = new Request('https://ventrina.app/api/products', {
                 headers: {
-                    'Cookie': 'ventrina_session=session_token_123',
-                    'X-Tenant-Id': 'demo'
-                }
+                    Cookie: 'ventrina_session=session_token_123',
+                    'X-Tenant-Id': 'demo',
+                },
             });
             const result = await resolveTenant(req, sessionDb);
             expect(result.id).toBe('demo');
@@ -118,8 +118,8 @@ describe('Tenant Resolution Logic (_tenant.ts)', () => {
         it('resolves to demo when query param tenant=demo is present despite active tenant session cookie', async () => {
             const req = new Request('https://ventrina.app/api/products?tenant=demo', {
                 headers: {
-                    'Cookie': 'ventrina_session=session_token_123'
-                }
+                    Cookie: 'ventrina_session=session_token_123',
+                },
             });
             const result = await resolveTenant(req, sessionDb);
             expect(result.id).toBe('demo');
@@ -128,9 +128,9 @@ describe('Tenant Resolution Logic (_tenant.ts)', () => {
         it('resolves to demo when Referer is a /demo/ page despite active tenant session cookie', async () => {
             const req = new Request('https://ventrina.app/api/products?template=restaurant', {
                 headers: {
-                    'Cookie': 'ventrina_session=session_token_123',
-                    'Referer': 'https://ventrina.app/demo/restaurant/'
-                }
+                    Cookie: 'ventrina_session=session_token_123',
+                    Referer: 'https://ventrina.app/demo/restaurant/',
+                },
             });
             const result = await resolveTenant(req, sessionDb);
             expect(result.id).toBe('demo');
@@ -145,15 +145,15 @@ describe('Tenant Resolution Logic (_tenant.ts)', () => {
                                 return { id: 'fogon', name: 'El Fogón', active: 1 };
                             }
                             return { tenant_id: 'otro-tenant', id: 'otro-tenant', active: 1 };
-                        })
-                    }))
-                })
+                        }),
+                    })),
+                }),
             } as unknown as D1Database;
 
             const req = new Request('https://fogon.ventrina.app/api/products', {
                 headers: {
-                    'Cookie': 'ventrina_session=session_token_123'
-                }
+                    Cookie: 'ventrina_session=session_token_123',
+                },
             });
             const result = await resolveTenant(req, subdomainDb);
             expect(result.id).toBe('fogon');
@@ -184,31 +184,27 @@ describe('Tenant Resolution Logic (_tenant.ts)', () => {
             const { getTenantByIdCached } = await import('../functions/api/_tenant');
             const mockKv = {
                 get: vi.fn().mockResolvedValue(null),
-                put: vi.fn().mockResolvedValue(undefined)
+                put: vi.fn().mockResolvedValue(undefined),
             } as any;
 
             const enterpriseDb = {
                 prepare: vi.fn().mockReturnValue({
                     bind: vi.fn().mockReturnValue({
-                        first: vi.fn().mockResolvedValue({ id: 'ent-store', plan: 'enterprise', active: 1 })
-                    })
-                })
+                        first: vi.fn().mockResolvedValue({ id: 'ent-store', plan: 'enterprise', active: 1 }),
+                    }),
+                }),
             } as unknown as D1Database;
 
             const tenant = await getTenantByIdCached(enterpriseDb, 'ent-store', mockKv);
             expect(tenant?.id).toBe('ent-store');
             expect(mockKv.get).toHaveBeenCalledWith('v1:ent-store:tenant', 'json');
-            expect(mockKv.put).toHaveBeenCalledWith(
-                'v1:ent-store:tenant',
-                expect.any(String),
-                { expirationTtl: 1800 }
-            );
+            expect(mockKv.put).toHaveBeenCalledWith('v1:ent-store:tenant', expect.any(String), { expirationTtl: 1800 });
         });
 
         it('invalidates both structured and legacy KV keys', async () => {
             const { invalidateTenantCache } = await import('../functions/api/_tenant');
             const mockKv = {
-                delete: vi.fn().mockResolvedValue(undefined)
+                delete: vi.fn().mockResolvedValue(undefined),
             } as any;
 
             await invalidateTenantCache(mockKv, 'fogon', 'fogon.com');
@@ -219,4 +215,3 @@ describe('Tenant Resolution Logic (_tenant.ts)', () => {
         });
     });
 });
-

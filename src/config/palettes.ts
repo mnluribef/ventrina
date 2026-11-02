@@ -18,7 +18,7 @@ export interface PaletteDefinition {
 }
 
 export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
-    'default': {
+    default: {
         id: 'default',
         name: 'Plantilla por Defecto',
         description: 'Conserva la combinación de colores oficial diseñada para la plantilla seleccionada.',
@@ -27,8 +27,8 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             primary: '#E25822',
             accent: '#D4AF37',
             bgPage: '#FFFDF9',
-            text: '#1C0A00'
-        }
+            text: '#1C0A00',
+        },
         // Sin theme override; hereda directamente el base.theme de la plantilla
     },
     'amber-gold': {
@@ -40,7 +40,7 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             primary: '#D97706',
             accent: '#F59E0B',
             bgPage: '#FFFDF7',
-            text: '#451A03'
+            text: '#451A03',
         },
         theme: {
             primaryColor: '#D97706',
@@ -65,19 +65,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(217, 119, 6, 0.22)',
             badgeBg: 'rgba(245, 158, 11, 0.18)',
             badgeBorder: 'rgba(217, 119, 6, 0.35)',
-            badgeText: '#B45309'
-        }
+            badgeText: '#B45309',
+        },
     },
     'emerald-mint': {
         id: 'emerald-mint',
         name: 'Esmeralda Puro & Menta Fresca',
-        description: 'Verde esmeralda profundo con destellos menta y blanco puro. Ideal para bienestar, salud, botánica y frescura.',
+        description:
+            'Verde esmeralda profundo con destellos menta y blanco puro. Ideal para bienestar, salud, botánica y frescura.',
         category: 'fresco',
         preview: {
             primary: '#059669',
             accent: '#10B981',
             bgPage: '#FBFDFB',
-            text: '#064E3B'
+            text: '#064E3B',
         },
         theme: {
             primaryColor: '#059669',
@@ -102,19 +103,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(5, 150, 105, 0.2)',
             badgeBg: 'rgba(16, 185, 129, 0.18)',
             badgeBorder: 'rgba(5, 150, 105, 0.35)',
-            badgeText: '#047857'
-        }
+            badgeText: '#047857',
+        },
     },
     'sapphire-ocean': {
         id: 'sapphire-ocean',
         name: 'Azul Zafiro & Océano Profundo',
-        description: 'Azul zafiro de alta confianza con acentos aqua y fondo despejado. Ideal para tecnología, servicios, repuestos y ferretería.',
+        description:
+            'Azul zafiro de alta confianza con acentos aqua y fondo despejado. Ideal para tecnología, servicios, repuestos y ferretería.',
         category: 'tecnológico',
         preview: {
             primary: '#2563EB',
             accent: '#06B6D4',
             bgPage: '#F8FAFC',
-            text: '#0F172A'
+            text: '#0F172A',
         },
         theme: {
             primaryColor: '#2563EB',
@@ -139,19 +141,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(37, 99, 235, 0.2)',
             badgeBg: 'rgba(6, 182, 212, 0.18)',
             badgeBorder: 'rgba(37, 99, 235, 0.35)',
-            badgeText: '#1E40AF'
-        }
+            badgeText: '#1E40AF',
+        },
     },
     'cyber-violet': {
         id: 'cyber-violet',
         name: 'Violeta Eléctrico & Fucsia Neón',
-        description: 'Vibrante violeta cósmico y fucsia de alto impacto. Ideal para gaming, periféricos, electrónica moderna y cultura pop.',
+        description:
+            'Vibrante violeta cósmico y fucsia de alto impacto. Ideal para gaming, periféricos, electrónica moderna y cultura pop.',
         category: 'tecnológico',
         preview: {
             primary: '#7C3AED',
             accent: '#EC4899',
             bgPage: '#FAFAFE',
-            text: '#2E1065'
+            text: '#2E1065',
         },
         theme: {
             primaryColor: '#7C3AED',
@@ -176,19 +179,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(124, 58, 237, 0.22)',
             badgeBg: 'rgba(236, 72, 153, 0.18)',
             badgeBorder: 'rgba(124, 58, 237, 0.35)',
-            badgeText: '#5B21B6'
-        }
+            badgeText: '#5B21B6',
+        },
     },
     'crimson-ruby': {
         id: 'crimson-ruby',
         name: 'Rubí Carmesí & Fuego Intenso',
-        description: 'Rojo carmesí atrevido con destellos naranja y excelente contraste. Ideal para comida rápida, carnicería, hamburgueserías y deportes.',
+        description:
+            'Rojo carmesí atrevido con destellos naranja y excelente contraste. Ideal para comida rápida, carnicería, hamburgueserías y deportes.',
         category: 'cálido',
         preview: {
             primary: '#DC2626',
             accent: '#EA580C',
             bgPage: '#FFFBFB',
-            text: '#450A0A'
+            text: '#450A0A',
         },
         theme: {
             primaryColor: '#DC2626',
@@ -213,19 +217,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(220, 38, 38, 0.2)',
             badgeBg: 'rgba(234, 88, 12, 0.18)',
             badgeBorder: 'rgba(220, 38, 38, 0.35)',
-            badgeText: '#991B1B'
-        }
+            badgeText: '#991B1B',
+        },
     },
     'rose-boutique': {
         id: 'rose-boutique',
         name: 'Rosa Velvet & Champagne Gold',
-        description: 'Paleta chic de rosa empolvado con oro champagne. Creada para moda femenina, alta costura, calzado y cosmética de lujo.',
+        description:
+            'Paleta chic de rosa empolvado con oro champagne. Creada para moda femenina, alta costura, calzado y cosmética de lujo.',
         category: 'elegante',
         preview: {
             primary: '#E11D48',
             accent: '#D97706',
             bgPage: '#FFFDFD',
-            text: '#4C0519'
+            text: '#4C0519',
         },
         theme: {
             primaryColor: '#E11D48',
@@ -250,19 +255,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(225, 29, 72, 0.2)',
             badgeBg: 'rgba(217, 119, 6, 0.18)',
             badgeBorder: 'rgba(225, 29, 72, 0.35)',
-            badgeText: '#9F1239'
-        }
+            badgeText: '#9F1239',
+        },
     },
     'obsidian-slate': {
         id: 'obsidian-slate',
         name: 'Obsidiana & Titanio Minimalista',
-        description: 'Monocromo elegante en negro azabache, gris pizarra y azul titanio. Diseñado para marcas sobrias, premium y automotriz.',
+        description:
+            'Monocromo elegante en negro azabache, gris pizarra y azul titanio. Diseñado para marcas sobrias, premium y automotriz.',
         category: 'minimalista',
         preview: {
             primary: '#0F172A',
             accent: '#3B82F6',
             bgPage: '#F8FAFC',
-            text: '#020617'
+            text: '#020617',
         },
         theme: {
             primaryColor: '#0F172A',
@@ -287,19 +293,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(15, 23, 42, 0.18)',
             badgeBg: 'rgba(59, 130, 246, 0.18)',
             badgeBorder: 'rgba(15, 23, 42, 0.35)',
-            badgeText: '#0F172A'
-        }
+            badgeText: '#0F172A',
+        },
     },
     'terracotta-sunset': {
         id: 'terracotta-sunset',
         name: 'Terracota Artesanal & Atardecer',
-        description: 'Cálido marrón rojizo con ocre brillante y fondo marfil. Ideal para ferretería rústica, cuero, decoración y artesanía.',
+        description:
+            'Cálido marrón rojizo con ocre brillante y fondo marfil. Ideal para ferretería rústica, cuero, decoración y artesanía.',
         category: 'cálido',
         preview: {
             primary: '#C2410C',
             accent: '#D97706',
             bgPage: '#FFFCF9',
-            text: '#431407'
+            text: '#431407',
         },
         theme: {
             primaryColor: '#C2410C',
@@ -324,19 +331,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(194, 65, 12, 0.2)',
             badgeBg: 'rgba(217, 119, 6, 0.18)',
             badgeBorder: 'rgba(194, 65, 12, 0.35)',
-            badgeText: '#7C2D12'
-        }
+            badgeText: '#7C2D12',
+        },
     },
     'midnight-gold': {
         id: 'midnight-gold',
         name: 'Midnight Luxury & Oro Imperial',
-        description: 'Lujo sobrio en negro carbón con acentos en oro imperial pulido y champagne. Ideal para joyería, relojes, licores finos y alta gama.',
+        description:
+            'Lujo sobrio en negro carbón con acentos en oro imperial pulido y champagne. Ideal para joyería, relojes, licores finos y alta gama.',
         category: 'elegante',
         preview: {
             primary: '#D4AF37',
             accent: '#F3E5AB',
             bgPage: '#FAF9F6',
-            text: '#111217'
+            text: '#111217',
         },
         theme: {
             primaryColor: '#D4AF37',
@@ -361,19 +369,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(212, 175, 55, 0.22)',
             badgeBg: 'rgba(212, 175, 55, 0.15)',
             badgeBorder: 'rgba(212, 175, 55, 0.40)',
-            badgeText: '#997A15'
-        }
+            badgeText: '#997A15',
+        },
     },
     'nordic-sage': {
         id: 'nordic-sage',
         name: 'Nordic Sage & Terracota Suave',
-        description: 'Verde salvia escandinavo y arcilla suave sobre marfil lino. Ideal para interiorismo, cosmética botánica, cerámica y bienestar.',
+        description:
+            'Verde salvia escandinavo y arcilla suave sobre marfil lino. Ideal para interiorismo, cosmética botánica, cerámica y bienestar.',
         category: 'fresco',
         preview: {
             primary: '#2D5A46',
             accent: '#E07A5F',
             bgPage: '#FBF9F5',
-            text: '#14261C'
+            text: '#14261C',
         },
         theme: {
             primaryColor: '#2D5A46',
@@ -398,19 +407,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(45, 90, 70, 0.18)',
             badgeBg: 'rgba(224, 122, 95, 0.15)',
             badgeBorder: 'rgba(224, 122, 95, 0.38)',
-            badgeText: '#C96348'
-        }
+            badgeText: '#C96348',
+        },
     },
     'sunset-coral': {
         id: 'sunset-coral',
         name: 'Sunset Coral & Melocotón Tropical',
-        description: 'Coral cálido y luminoso con destellos de melocotón y mango dorado. Creado para ropa playera, heladerías, smoothies y marcas juveniles.',
+        description:
+            'Coral cálido y luminoso con destellos de melocotón y mango dorado. Creado para ropa playera, heladerías, smoothies y marcas juveniles.',
         category: 'cálido',
         preview: {
             primary: '#FF5E3A',
             accent: '#FFA534',
             bgPage: '#FFFDFB',
-            text: '#3D1508'
+            text: '#3D1508',
         },
         theme: {
             primaryColor: '#FF5E3A',
@@ -435,19 +445,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(255, 94, 58, 0.22)',
             badgeBg: 'rgba(255, 165, 52, 0.18)',
             badgeBorder: 'rgba(255, 94, 58, 0.35)',
-            badgeText: '#B83414'
-        }
+            badgeText: '#B83414',
+        },
     },
     'aqua-lagoon': {
         id: 'aqua-lagoon',
         name: 'Aqua Lagoon & Turquesa Caribe',
-        description: 'Turquesa oceánico cristalino con acentos en arena dorada y fondo despejado. Ideal para turismo, piscinas, spas, playa y bebidas refrescantes.',
+        description:
+            'Turquesa oceánico cristalino con acentos en arena dorada y fondo despejado. Ideal para turismo, piscinas, spas, playa y bebidas refrescantes.',
         category: 'fresco',
         preview: {
             primary: '#0D9488',
             accent: '#F59E0B',
             bgPage: '#F7FDFE',
-            text: '#042F2E'
+            text: '#042F2E',
         },
         theme: {
             primaryColor: '#0D9488',
@@ -472,19 +483,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(13, 148, 136, 0.20)',
             badgeBg: 'rgba(245, 158, 11, 0.18)',
             badgeBorder: 'rgba(13, 148, 136, 0.35)',
-            badgeText: '#0F766E'
-        }
+            badgeText: '#0F766E',
+        },
     },
     'caramel-mocha': {
         id: 'caramel-mocha',
         name: 'Caramel Mocha & Café Espresso',
-        description: 'Caramelo toffee tostado con moca profundo y crema vainilla. Ideal para cafeterías de especialidad, pastelería fina, chocolaterías y postres.',
+        description:
+            'Caramelo toffee tostado con moca profundo y crema vainilla. Ideal para cafeterías de especialidad, pastelería fina, chocolaterías y postres.',
         category: 'cálido',
         preview: {
             primary: '#854D0E',
             accent: '#D48B38',
             bgPage: '#FCF9F5',
-            text: '#2E1805'
+            text: '#2E1805',
         },
         theme: {
             primaryColor: '#854D0E',
@@ -509,19 +521,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(133, 77, 14, 0.22)',
             badgeBg: 'rgba(212, 139, 56, 0.18)',
             badgeBorder: 'rgba(133, 77, 14, 0.35)',
-            badgeText: '#713F12'
-        }
+            badgeText: '#713F12',
+        },
     },
     'cyber-lime': {
         id: 'cyber-lime',
         name: 'Cyber Lime & Neón Matrix',
-        description: 'Verde lima ácido y de alto octanaje con acentos cian láser. Creado para suplementación, crossfit, gaming pro y tecnología de vanguardia.',
+        description:
+            'Verde lima ácido y de alto octanaje con acentos cian láser. Creado para suplementación, crossfit, gaming pro y tecnología de vanguardia.',
         category: 'tecnológico',
         preview: {
             primary: '#65A30D',
             accent: '#06B6D4',
             bgPage: '#FAFCFA',
-            text: '#0F1F0A'
+            text: '#0F1F0A',
         },
         theme: {
             primaryColor: '#65A30D',
@@ -546,19 +559,20 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(101, 163, 13, 0.22)',
             badgeBg: 'rgba(6, 182, 212, 0.18)',
             badgeBorder: 'rgba(101, 163, 13, 0.38)',
-            badgeText: '#365314'
-        }
+            badgeText: '#365314',
+        },
     },
     'indigo-ochre': {
         id: 'indigo-ochre',
         name: 'Índigo Denim & Ocre Urbano',
-        description: 'Azul índigo contemporáneo con acentos en ocre tostado y fondo despejado. Creado para moda urbana, denim, calzado y estudios creativos.',
+        description:
+            'Azul índigo contemporáneo con acentos en ocre tostado y fondo despejado. Creado para moda urbana, denim, calzado y estudios creativos.',
         category: 'elegante',
         preview: {
             primary: '#4338CA',
             accent: '#EAB308',
             bgPage: '#FAF9FE',
-            text: '#1E1B4B'
+            text: '#1E1B4B',
         },
         theme: {
             primaryColor: '#4338CA',
@@ -583,9 +597,9 @@ export const COLOR_PALETTES: Record<string, PaletteDefinition> = {
             shadowColor: 'rgba(67, 56, 202, 0.22)',
             badgeBg: 'rgba(234, 179, 8, 0.18)',
             badgeBorder: 'rgba(67, 56, 202, 0.35)',
-            badgeText: '#3730A3'
-        }
-    }
+            badgeText: '#3730A3',
+        },
+    },
 };
 
 /**
@@ -609,7 +623,7 @@ export function getAllPalettes(): PaletteDefinition[] {
 export function generatePaletteCss(paletteId?: string | null): string {
     if (!paletteId || paletteId === 'default') return '';
     const pal = getPalette(paletteId);
-    if (!pal || !pal.theme) return '';
+    if (!pal?.theme) return '';
 
     const theme = pal.theme;
     const themePrimary = theme.primaryColor || '#D97706';
@@ -636,10 +650,13 @@ export function generatePaletteCss(paletteId?: string | null): string {
     const themeTextLight = theme.textLight || '#A67C65';
 
     const themeHeroBg = theme.heroBg || '#0A1120';
-    const themeHeroOverlay = theme.heroOverlay || 'linear-gradient(to bottom right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)';
+    const themeHeroOverlay =
+        theme.heroOverlay ||
+        'linear-gradient(to bottom right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)';
     const themeHeroFade = theme.heroFadeBottom || `linear-gradient(to top, ${themeBgPage} 0%, transparent 100%)`;
 
-    const themeGradHero = theme.gradHero || `linear-gradient(135deg, ${themePrimaryHover} 0%, ${themePrimary} 55%, ${themeAccent} 100%)`;
+    const themeGradHero =
+        theme.gradHero || `linear-gradient(135deg, ${themePrimaryHover} 0%, ${themePrimary} 55%, ${themeAccent} 100%)`;
     const themeGradCta = theme.gradCta || `linear-gradient(135deg, ${themePrimaryHover} 0%, ${themePrimary} 100%)`;
     const themeGradSection = theme.gradSection || `linear-gradient(160deg, ${themeBgPage} 0%, ${themeBgSection} 100%)`;
     const themeGradAccent = theme.gradAccent || `linear-gradient(135deg, ${themeAccentHover} 0%, ${themeAccent} 100%)`;
@@ -725,4 +742,3 @@ export function generatePaletteCss(paletteId?: string | null): string {
   --grad-gold: ${themeGradAccent} !important;
 }`;
 }
-

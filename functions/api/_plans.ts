@@ -18,27 +18,27 @@ export interface PlanConfig {
  * La lógica de negocio en checkProductLimit/checkOrderLimit no requiere modificación (OCP).
  */
 export const PLANS: Record<string, PlanConfig> = {
-    'basic': {
+    basic: {
         name: 'Básico',
         monthlyPriceUsd: 15,
         maxProducts: 30,
         maxOrdersPerMonth: 100,
-        features: ['catalog', 'whatsapp_orders']
+        features: ['catalog', 'whatsapp_orders'],
     },
-    'pro': {
+    pro: {
         name: 'Profesional',
         monthlyPriceUsd: 30,
         maxProducts: 200,
         maxOrdersPerMonth: 1000,
-        features: ['catalog', 'whatsapp_orders', 'inventory', 'analytics']
+        features: ['catalog', 'whatsapp_orders', 'inventory', 'analytics'],
     },
-    'enterprise': {
+    enterprise: {
         name: 'Empresarial',
         monthlyPriceUsd: 99,
         maxProducts: 999999,
         maxOrdersPerMonth: 999999,
-        features: ['catalog', 'whatsapp_orders', 'inventory', 'analytics', 'api', 'custom_domain']
-    }
+        features: ['catalog', 'whatsapp_orders', 'inventory', 'analytics', 'api', 'custom_domain'],
+    },
 };
 
 /** Plan por defecto cuando el tenant no tiene uno asignado */
@@ -62,46 +62,42 @@ export interface LimitCheckResult {
 /**
  * Verifica si un tenant ha excedido su límite de productos.
  */
-export async function checkProductLimit(
-    db: D1Database,
-    tenant: TenantRow | null
-): Promise<LimitCheckResult> {
+export async function checkProductLimit(db: D1Database, tenant: TenantRow | null): Promise<LimitCheckResult> {
     const plan = resolvePlan(tenant?.plan);
 
-    const row = await db.prepare(
-        'SELECT COUNT(*) as total FROM products WHERE tenant_id = ? AND active = 1'
-    ).bind(tenant?.id || 'demo').first<{ total: number }>();
+    const row = await db
+        .prepare('SELECT COUNT(*) as total FROM products WHERE tenant_id = ? AND active = 1')
+        .bind(tenant?.id || 'demo')
+        .first<{ total: number }>();
 
     const total = row?.total ?? 0;
 
     return {
         allowed: total < plan.maxProducts,
         limit: plan.maxProducts,
-        current: total
+        current: total,
     };
 }
 
 /**
  * Verifica si un tenant ha excedido su límite de pedidos en el mes actual.
  */
-export async function checkOrderLimit(
-    db: D1Database,
-    tenant: TenantRow | null
-): Promise<LimitCheckResult> {
+export async function checkOrderLimit(db: D1Database, tenant: TenantRow | null): Promise<LimitCheckResult> {
     const plan = resolvePlan(tenant?.plan);
 
     const date = new Date();
     const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).toISOString();
 
-    const row = await db.prepare(
-        'SELECT COUNT(*) as total FROM orders WHERE tenant_id = ? AND created_at >= ?'
-    ).bind(tenant?.id || 'demo', firstDayOfMonth).first<{ total: number }>();
+    const row = await db
+        .prepare('SELECT COUNT(*) as total FROM orders WHERE tenant_id = ? AND created_at >= ?')
+        .bind(tenant?.id || 'demo', firstDayOfMonth)
+        .first<{ total: number }>();
 
     const total = row?.total ?? 0;
 
     return {
         allowed: total < plan.maxOrdersPerMonth,
         limit: plan.maxOrdersPerMonth,
-        current: total
+        current: total,
     };
 }

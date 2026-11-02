@@ -1,7 +1,7 @@
 /* src/styles/404.css - Página 404 Institucional de Ventrina */
 /* Identidad: Violet × Amber — Design System Centralizado */
 
-@import './tokens.css';
+@import "./tokens.css";
 
 :root {
     --e404-bg: var(--light-bg);

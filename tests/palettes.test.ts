@@ -1,6 +1,6 @@
 // tests/palettes.test.ts
-import { describe, it, expect } from 'vitest';
-import { getPalette, getAllPalettes, generatePaletteCss } from '../src/config/palettes';
+import { describe, expect, it } from 'vitest';
+import { generatePaletteCss, getAllPalettes, getPalette } from '../src/config/palettes';
 import { createStoreConfig } from '../src/config/store.config';
 
 describe('Color Palettes Engine (src/config/palettes.ts)', () => {
@@ -8,7 +8,7 @@ describe('Color Palettes Engine (src/config/palettes.ts)', () => {
         const palettes = getAllPalettes();
         expect(palettes.length).toBe(16);
 
-        const ids = palettes.map(p => p.id);
+        const ids = palettes.map((p) => p.id);
         expect(ids).toContain('default');
         expect(ids).toContain('amber-gold');
         expect(ids).toContain('emerald-mint');
@@ -69,8 +69,8 @@ describe('Color Palettes Engine (src/config/palettes.ts)', () => {
                 googleFontsUrl: '',
                 primaryHover: '#880000',
                 primaryLight: '#ffeeee',
-                accentColor: '#00ff00'
-            }
+                accentColor: '#00ff00',
+            },
         });
 
         expect(custom.palette).toBe('amber-gold');
@@ -98,7 +98,7 @@ describe('Color Palettes Engine (src/config/palettes.ts)', () => {
     });
 
     it('ensures all non-default palettes define a dark heroBg so header and footer do not turn white', () => {
-        const palettes = getAllPalettes().filter(p => p.id !== 'default');
+        const palettes = getAllPalettes().filter((p) => p.id !== 'default');
         expect(palettes.length).toBe(15);
 
         for (const p of palettes) {

@@ -2,27 +2,27 @@
 /* Ventrina SaaS - Hoja de Estilos Centralizada del Panel Administrativo */
 /* Identidad: Violet × Amber — Design System Centralizado */
 
-@import './tokens.css';
+@import "./tokens.css";
 
 :root {
-    --primary:       var(--color-primary);
+    --primary: var(--color-primary);
     --primary-hover: var(--color-primary-hover);
     --primary-light: var(--color-primary-light);
-    --primary-glow:  var(--color-primary-glow);
-    --accent:        var(--color-accent);
-    --accent-hover:  var(--color-accent-hover);
-    --accent-light:  var(--color-accent-light);
-    --yellow:        var(--gold-400);
+    --primary-glow: var(--color-primary-glow);
+    --accent: var(--color-accent);
+    --accent-hover: var(--color-accent-hover);
+    --accent-light: var(--color-accent-light);
+    --yellow: var(--gold-400);
     /* fondos y bordes del modo claro */
-    --card-bg:       var(--light-bg-card);
-    --border-color:  var(--light-border);
-    --text-primary:  var(--light-text-heading);
-    --text-secondary:var(--light-text-muted);
+    --card-bg: var(--light-bg-card);
+    --border-color: var(--light-border);
+    --text-primary: var(--light-text-heading);
+    --text-secondary: var(--light-text-muted);
     --white: #ffffff;
     --success: var(--color-success);
     --warning: var(--color-warning);
-    --danger:  var(--color-danger);
-    --info:    var(--color-info);
+    --danger: var(--color-danger);
+    --info: var(--color-info);
     --transition: all 0.3s var(--ease-smooth);
 }
 
@@ -129,11 +129,7 @@ body {
 }
 
 .sidebar-link.active {
-    background: linear-gradient(
-        135deg,
-        rgba(124, 58, 237, 0.12) 0%,
-        rgba(245, 158, 11, 0.06) 100%
-    );
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.12) 0%, rgba(245, 158, 11, 0.06) 100%);
     border-left: 3px solid var(--primary);
     color: var(--color-primary);
 }
@@ -153,7 +149,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
     font-weight: 700;
 }
 
@@ -192,7 +188,7 @@ body {
 }
 
 .btn-whatsapp {
-    background: #25D366;
+    background: #25d366;
     color: white;
     box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
 }
@@ -691,7 +687,7 @@ select option {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(28, 25, 23, 0.50);
+    background: rgba(28, 25, 23, 0.5);
     backdrop-filter: blur(8px);
     display: flex;
     justify-content: center;
@@ -820,7 +816,7 @@ select option {
 }
 
 .modal-section-title::after {
-    content: '';
+    content: "";
     flex: 1;
     height: 1px;
     background: var(--border-color);
@@ -911,7 +907,9 @@ select option {
     background: var(--light-bg-card);
     border: 1px solid var(--border-color);
     gap: 1rem;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease;
 }
 
 .detail-item:hover {
@@ -1293,7 +1291,7 @@ select option {
         padding: 1.25rem;
     }
     .btn-sidebar-toggle {
-        display: inline-flex !important;
+        display: inline-flex;
     }
 }
 
@@ -1340,29 +1338,118 @@ select option {
     margin-bottom: 0.75rem;
 }
 
-.billing-icon-primary { color: var(--primary); }
-.billing-icon-info { color: var(--info); }
-.billing-icon-warning { color: var(--warning); }
-.billing-icon-success { color: var(--success); }
-.stat-limit { font-size: 1.1rem; color: var(--text-secondary); }
-.stat-domain-badge { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.4rem; font-family: monospace; }
-.billing-status-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-secondary); }
-.progress-track { margin-top: 1rem; background: var(--light-border); border-radius: 8px; height: 8px; overflow: hidden; }
-.progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 8px; }
-.progress-info { background: var(--info); }
-.progress-warning { background: var(--warning); }
-.progress-percent { text-align: right; font-size: 0.78rem; margin-top: 0.4rem; color: var(--text-secondary); }
-.billing-payment-section { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); }
-.billing-section-title h3 { font-size: 1.15rem; color: var(--light-text-heading); font-family: 'Outfit', sans-serif; }
-.billing-section-title p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
-.billing-methods-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
-.billing-method-title { font-size: 0.95rem; font-weight: 600; color: var(--light-text-heading); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
-.billing-info-list { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.8; }
-.billing-info-list strong { color: var(--light-text-heading); }
-.billing-price-box { font-size: 2.5rem; font-weight: 800; color: var(--light-text-heading); font-family: 'Outfit', sans-serif; }
-.billing-price-period { font-size: 1rem; font-weight: 400; color: var(--text-secondary); }
-.billing-price-note { font-size: 0.82rem; color: var(--text-secondary); margin: 0.5rem 0 1.25rem 0; }
-.btn-full-width { width: 100%; justify-content: center; }
+.billing-icon-primary {
+    color: var(--primary);
+}
+.billing-icon-info {
+    color: var(--info);
+}
+.billing-icon-warning {
+    color: var(--warning);
+}
+.billing-icon-success {
+    color: var(--success);
+}
+.stat-limit {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+}
+.stat-domain-badge {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.4rem;
+    font-family: monospace;
+}
+.billing-status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+.progress-track {
+    margin-top: 1rem;
+    background: var(--light-border);
+    border-radius: 8px;
+    height: 8px;
+    overflow: hidden;
+}
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.5s ease;
+    border-radius: 8px;
+}
+.progress-info {
+    background: var(--info);
+}
+.progress-warning {
+    background: var(--warning);
+}
+.progress-percent {
+    text-align: right;
+    font-size: 0.78rem;
+    margin-top: 0.4rem;
+    color: var(--text-secondary);
+}
+.billing-payment-section {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+.billing-section-title h3 {
+    font-size: 1.15rem;
+    color: var(--light-text-heading);
+    font-family: "Outfit", sans-serif;
+}
+.billing-section-title p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+.billing-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+.billing-method-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--light-text-heading);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.billing-info-list {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+.billing-info-list strong {
+    color: var(--light-text-heading);
+}
+.billing-price-box {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--light-text-heading);
+    font-family: "Outfit", sans-serif;
+}
+.billing-price-period {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+.billing-price-note {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    margin: 0.5rem 0 1.25rem 0;
+}
+.btn-full-width {
+    width: 100%;
+    justify-content: center;
+}
 
 .billing-copy-btn {
     display: inline-flex;
@@ -1445,7 +1532,7 @@ select option {
 }
 
 .file-input-hidden {
-    display: none !important;
+    display: none;
 }
 
 .field-hint {
@@ -1459,16 +1546,16 @@ select option {
 
 /* Utilidades de Display */
 .d-none {
-    display: none !important;
+    display: none;
 }
 .d-block {
-    display: block !important;
+    display: block;
 }
 .d-flex {
-    display: flex !important;
+    display: flex;
 }
 .d-inline-flex {
-    display: inline-flex !important;
+    display: inline-flex;
 }
 
 /* Header & Barra Superior */
@@ -1693,7 +1780,7 @@ select option {
 }
 
 .form-collapsible-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
     font-size: 1.1rem;
     margin-bottom: 1.5rem;
     color: var(--primary);
@@ -1730,12 +1817,12 @@ select option {
 }
 
 .input-auto-width {
-    width: auto !important;
+    width: auto;
 }
 
 .input-compact {
-    padding: 0.35rem 0.6rem !important;
-    font-size: 0.85rem !important;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.85rem;
 }
 
 .checkbox-primary {
@@ -1918,7 +2005,7 @@ select option {
 }
 
 .modal-section-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
     font-size: 1rem;
     color: var(--light-text-heading);
     margin-top: 0.5rem;
@@ -2103,7 +2190,7 @@ select option {
 }
 
 .mb-4 {
-    margin-bottom: 1.5rem !important;
+    margin-bottom: 1.5rem;
 }
 
 .btn-modal-primary {
@@ -2170,8 +2257,13 @@ select option {
 }
 
 @keyframes pulse-soft {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.75; }
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.75;
+    }
 }
 
 /* --- FILTROS RÁPIDOS DE STOCK --- */
@@ -2261,8 +2353,14 @@ select option {
 }
 
 @keyframes slide-down {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .bulk-toolbar-info {
@@ -2684,7 +2782,10 @@ select option {
     justify-content: space-between;
     align-items: center;
     box-shadow: var(--light-shadow-sm);
-    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .team-summary-card:hover {
@@ -2851,7 +2952,9 @@ select option {
 
 /* --- MODO IMPRESIÓN (PRINT) --- */
 @media print {
-    @page { margin: 0; }
+    @page {
+        margin: 0;
+    }
     body * {
         visibility: hidden;
     }
@@ -2875,17 +2978,20 @@ select option {
     }
     .modal-close,
     .modal-footer {
-        display: none !important;
+        display: none;
     }
     .order-meta-info {
         background: white;
         border: 1px solid #ccc;
         border-radius: 0;
     }
-    .order-meta-info p strong, .order-meta-info > div > strong,
-    .detail-item-name h4, .detail-item-name span, .detail-item-qty,
+    .order-meta-info p strong,
+    .order-meta-info > div > strong,
+    .detail-item-name h4,
+    .detail-item-name span,
+    .detail-item-qty,
     .order-meta-info p {
-        color: black !important;
+        color: black;
     }
     .detail-item {
         border-bottom: 1px solid #ddd;

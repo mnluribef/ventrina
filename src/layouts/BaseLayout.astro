@@ -1,20 +1,20 @@
 ---
+import defaultStoreConfig from '../config/store.config';
 // BaseLayout.astro - Layout principal configurable
 import type { StoreConfig } from '../types/store.types';
-import defaultStoreConfig from '../config/store.config';
 
 export interface Props {
-  title?: string;
-  description?: string;
-  ogImage?: string;
-  config?: StoreConfig;
+    title?: string;
+    description?: string;
+    ogImage?: string;
+    config?: StoreConfig;
 }
 
 const {
-  config = defaultStoreConfig,
-  title = config.seo.title,
-  description = config.seo.description,
-  ogImage = config.business.ogImage,
+    config = defaultStoreConfig,
+    title = config.seo.title,
+    description = config.seo.description,
+    ogImage = config.business.ogImage,
 } = Astro.props;
 
 const siteUrl = config.business.siteUrl || 'https://ventrina.pages.dev';
@@ -23,23 +23,23 @@ const fullOgImage = ogImage.startsWith('http') ? ogImage : new URL(ogImage, site
 
 // Generar Schema.org dinámico según el tipo de tienda
 const schemaOrgData = {
-  "@context": "https://schema.org",
-  "@type": config.seo.schemaType || "Store",
-  "name": config.business.name,
-  "description": config.business.description,
-  "url": siteUrl,
-  "telephone": config.contact.phone || `+${config.contact.whatsapp}`,
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": config.contact.address,
-    "addressLocality": config.contact.addressLocality || "La Victoria",
-    "addressRegion": config.contact.addressRegion || "Aragua",
-    "addressCountry": config.contact.addressCountry || "VE"
-  },
-  "openingHours": config.contact.hours,
-  "priceRange": config.seo.priceRange || "$$",
-  ...(config.seo.servesCuisine ? { "servesCuisine": config.seo.servesCuisine } : {}),
-  ...(config.template === 'restaurant' ? { "hasMenu": `${siteUrl}#menu` } : {})
+    '@context': 'https://schema.org',
+    '@type': config.seo.schemaType || 'Store',
+    name: config.business.name,
+    description: config.business.description,
+    url: siteUrl,
+    telephone: config.contact.phone || `+${config.contact.whatsapp}`,
+    address: {
+        '@type': 'PostalAddress',
+        streetAddress: config.contact.address,
+        addressLocality: config.contact.addressLocality || 'La Victoria',
+        addressRegion: config.contact.addressRegion || 'Aragua',
+        addressCountry: config.contact.addressCountry || 'VE',
+    },
+    openingHours: config.contact.hours,
+    priceRange: config.seo.priceRange || '$$',
+    ...(config.seo.servesCuisine ? { servesCuisine: config.seo.servesCuisine } : {}),
+    ...(config.template === 'restaurant' ? { hasMenu: `${siteUrl}#menu` } : {}),
 };
 
 // Generar CSS con todas las variables del tema de forma directa y garantizada
@@ -66,13 +66,17 @@ const themeTextMuted = theme.textMuted || '#7A523B';
 const themeTextLight = theme.textLight || '#A67C65';
 
 const themeHeroBg = theme.heroBg || '#1A0B02';
-const themeHeroOverlay = theme.heroOverlay || 'linear-gradient(to bottom right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)';
+const themeHeroOverlay =
+    theme.heroOverlay || 'linear-gradient(to bottom right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)';
 const themeHeroFade = theme.heroFadeBottom || `linear-gradient(to top, ${themeBgPage} 0%, transparent 100%)`;
 
-const themeGradHero = theme.gradHero || `linear-gradient(135deg, ${themePrimaryHover} 0%, ${theme.primaryColor} 55%, ${theme.accentColor} 100%)`;
+const themeGradHero =
+    theme.gradHero ||
+    `linear-gradient(135deg, ${themePrimaryHover} 0%, ${theme.primaryColor} 55%, ${theme.accentColor} 100%)`;
 const themeGradCta = theme.gradCta || `linear-gradient(135deg, ${themePrimaryHover} 0%, ${theme.primaryColor} 100%)`;
 const themeGradSection = theme.gradSection || `linear-gradient(160deg, ${themeBgPage} 0%, ${themeBgSection} 100%)`;
-const themeGradAccent = theme.gradAccent || `linear-gradient(135deg, ${themeAccentHover} 0%, ${theme.accentColor} 100%)`;
+const themeGradAccent =
+    theme.gradAccent || `linear-gradient(135deg, ${themeAccentHover} 0%, ${theme.accentColor} 100%)`;
 
 const themeShadow = `0 12px 36px ${theme.shadowColor || 'rgba(0,0,0,0.18)'}`;
 const themeShadowCard = theme.shadowCard || '0 4px 20px rgba(0, 0, 0, 0.06)';

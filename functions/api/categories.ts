@@ -1,11 +1,11 @@
 // functions/api/categories.ts
 // Gestor Central de Categorías del Catálogo - Ventrina SaaS (DIP, S-06, P-01)
-import { z } from "zod";
-import { verifySession, unauthorizedResponse, forbiddenResponse, validateCsrf } from "./_auth";
-import { resolveTenant } from "./_tenant";
-import { getDB, jsonResponse } from "./_helpers";
-import { CategoryRepository } from "./_repositories";
+import { z } from 'zod';
 import type { Env, PagesHandler } from '../types';
+import { forbiddenResponse, unauthorizedResponse, validateCsrf, verifySession } from './_auth';
+import { getDB, jsonResponse } from './_helpers';
+import { CategoryRepository } from './_repositories';
+import { resolveTenant } from './_tenant';
 
 export interface CategoryItem {
     id: string;
@@ -15,27 +15,35 @@ export interface CategoryItem {
 }
 
 const createCategorySchema = z.object({
-    id: z.string().min(2, "El slug debe tener al menos 2 caracteres").max(80).regex(/^[a-z0-9_-]+$/, "El slug solo puede contener letras minúsculas, números y guiones."),
-    name: z.string().min(2, "El nombre visible debe tener al menos 2 caracteres").max(100),
-    icon: z.string().max(50).optional().default("tag")
+    id: z
+        .string()
+        .min(2, 'El slug debe tener al menos 2 caracteres')
+        .max(80)
+        .regex(/^[a-z0-9_-]+$/, 'El slug solo puede contener letras minúsculas, números y guiones.'),
+    name: z.string().min(2, 'El nombre visible debe tener al menos 2 caracteres').max(100),
+    icon: z.string().max(50).optional().default('tag'),
 });
 
 const renameCategorySchema = z.object({
-    oldCategory: z.string().min(1, "Categoría actual requerida"),
-    newCategory: z.string().min(2, "El nuevo slug debe tener al menos 2 caracteres").max(80).regex(/^[a-z0-9_-]+$/, "El slug solo puede contener letras minúsculas, números y guiones."),
-    name: z.string().min(2, "El nombre visible debe tener al menos 2 caracteres").max(100).optional(),
-    icon: z.string().max(50).optional()
+    oldCategory: z.string().min(1, 'Categoría actual requerida'),
+    newCategory: z
+        .string()
+        .min(2, 'El nuevo slug debe tener al menos 2 caracteres')
+        .max(80)
+        .regex(/^[a-z0-9_-]+$/, 'El slug solo puede contener letras minúsculas, números y guiones.'),
+    name: z.string().min(2, 'El nombre visible debe tener al menos 2 caracteres').max(100).optional(),
+    icon: z.string().max(50).optional(),
 });
 
 const deleteCategorySchema = z.object({
-    category: z.string().min(1, "Categoría a eliminar requerida"),
-    reassignTo: z.string().optional()
+    category: z.string().min(1, 'Categoría a eliminar requerida'),
+    reassignTo: z.string().optional(),
 });
 
 function formatCategoryName(slug: string): string {
     return slug
         .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
 }
 
@@ -73,8 +81,8 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
 
         const customMap = new Map<string, { id: string; name: string; icon?: string }>();
         if (Array.isArray(customCategories)) {
-            customCategories.forEach(c => {
-                if (c && c.id) {
+            customCategories.forEach((c) => {
+                if (c?.id) {
                     customMap.set(c.id.toLowerCase().trim(), c);
                 }
             });
@@ -91,7 +99,7 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
                     id: slug,
                     name: custom?.name || formatCategoryName(slug),
                     icon: custom?.icon || 'tag',
-                    count: Number(pc.count) || 0
+                    count: Number(pc.count) || 0,
                 });
             }
         }
@@ -103,7 +111,7 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
                     id: slug,
                     name: custom.name || formatCategoryName(slug),
                     icon: custom.icon || 'tag',
-                    count: 0
+                    count: 0,
                 });
             }
         }
@@ -116,18 +124,21 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
         // F-05: Caché pública en CDN y navegador para storefront (120s), evitando queries recurrentes a D1
         const authUser = await verifySession(context, tenantId);
         const cacheControl = authUser
-            ? "no-store, no-cache, must-revalidate"
-            : "public, max-age=120, stale-while-revalidate=60";
+            ? 'no-store, no-cache, must-revalidate'
+            : 'public, max-age=120, stale-while-revalidate=60';
 
-        return jsonResponse({
-            success: true,
-            tenantId,
-            categories
-        }, 200, { "Cache-Control": cacheControl });
-
+        return jsonResponse(
+            {
+                success: true,
+                tenantId,
+                categories,
+            },
+            200,
+            { 'Cache-Control': cacheControl },
+        );
     } catch (err: unknown) {
-        console.error("Error en GET /api/categories:", err);
-        return jsonResponse({ error: "Error al obtener las categorías del catálogo." }, 500);
+        console.error('Error en GET /api/categories:', err);
+        return jsonResponse({ error: 'Error al obtener las categorías del catálogo.' }, 500);
     }
 };
 
@@ -142,7 +153,7 @@ export const onRequestPost: PagesHandler<Env> = async (context) => {
 
     // S-02: Protección CSRF en mutaciones desde el navegador
     if (!validateCsrf(request, tenant?.domain)) {
-        return forbiddenResponse("Verificación de seguridad CSRF fallida.");
+        return forbiddenResponse('Verificación de seguridad CSRF fallida.');
     }
 
     const user = await verifySession(context, tenantId);
@@ -153,7 +164,7 @@ export const onRequestPost: PagesHandler<Env> = async (context) => {
         const body = await request.json();
         const parseResult = createCategorySchema.safeParse(body);
         if (!parseResult.success) {
-            return jsonResponse({ error: "Datos inválidos", details: parseResult.error.issues }, 400);
+            return jsonResponse({ error: 'Datos inválidos', details: parseResult.error.issues }, 400);
         }
 
         const { id, name, icon } = parseResult.data;
@@ -171,7 +182,7 @@ export const onRequestPost: PagesHandler<Env> = async (context) => {
 
         if (!Array.isArray(customCategories)) customCategories = [];
 
-        const existingIdx = customCategories.findIndex(c => c.id === slug);
+        const existingIdx = customCategories.findIndex((c) => c.id === slug);
         if (existingIdx >= 0) {
             customCategories[existingIdx] = { id: slug, name, icon: icon || 'tag' };
         } else {
@@ -180,15 +191,17 @@ export const onRequestPost: PagesHandler<Env> = async (context) => {
 
         await categoryRepo.saveCustomCategories(tenantId, tenant, customCategories);
 
-        return jsonResponse({
-            success: true,
-            message: `Categoría "${name}" creada con éxito.`,
-            category: { id: slug, name, icon: icon || 'tag', count: 0 }
-        }, 201);
-
+        return jsonResponse(
+            {
+                success: true,
+                message: `Categoría "${name}" creada con éxito.`,
+                category: { id: slug, name, icon: icon || 'tag', count: 0 },
+            },
+            201,
+        );
     } catch (err: unknown) {
-        console.error("Error en POST /api/categories:", err);
-        return jsonResponse({ error: "Error al crear la categoría." }, 500);
+        console.error('Error en POST /api/categories:', err);
+        return jsonResponse({ error: 'Error al crear la categoría.' }, 500);
     }
 };
 
@@ -203,7 +216,7 @@ export const onRequestPut: PagesHandler<Env> = async (context) => {
 
     // S-02: Protección CSRF en mutaciones desde el navegador
     if (!validateCsrf(request, tenant?.domain)) {
-        return forbiddenResponse("Verificación de seguridad CSRF fallida.");
+        return forbiddenResponse('Verificación de seguridad CSRF fallida.');
     }
 
     const user = await verifySession(context, tenantId);
@@ -214,7 +227,7 @@ export const onRequestPut: PagesHandler<Env> = async (context) => {
         const body = await request.json();
         const parseResult = renameCategorySchema.safeParse(body);
         if (!parseResult.success) {
-            return jsonResponse({ error: "Datos inválidos", details: parseResult.error.issues }, 400);
+            return jsonResponse({ error: 'Datos inválidos', details: parseResult.error.issues }, 400);
         }
 
         const { oldCategory, newCategory, name, icon } = parseResult.data;
@@ -238,33 +251,35 @@ export const onRequestPut: PagesHandler<Env> = async (context) => {
 
         if (!Array.isArray(customCategories)) customCategories = [];
 
-        const oldIdx = customCategories.findIndex(c => c.id === oldSlug);
+        const oldIdx = customCategories.findIndex((c) => c.id === oldSlug);
         if (oldIdx >= 0) {
             customCategories[oldIdx] = {
                 id: newSlug,
                 name: displayName,
-                icon: icon || customCategories[oldIdx].icon || 'tag'
+                icon: icon || customCategories[oldIdx].icon || 'tag',
             };
         } else {
             customCategories.push({
                 id: newSlug,
                 name: displayName,
-                icon: icon || 'tag'
+                icon: icon || 'tag',
             });
         }
 
         await categoryRepo.saveCustomCategories(tenantId, tenant, customCategories);
 
-        return jsonResponse({
-            success: true,
-            message: `Categoría actualizada a "${displayName}". Se actualizaron ${affectedCount} producto(s).`,
-            affectedProducts: affectedCount,
-            category: { id: newSlug, name: displayName, icon: icon || 'tag' }
-        }, 200);
-
+        return jsonResponse(
+            {
+                success: true,
+                message: `Categoría actualizada a "${displayName}". Se actualizaron ${affectedCount} producto(s).`,
+                affectedProducts: affectedCount,
+                category: { id: newSlug, name: displayName, icon: icon || 'tag' },
+            },
+            200,
+        );
     } catch (err: unknown) {
-        console.error("Error en PUT /api/categories:", err);
-        return jsonResponse({ error: "Error al actualizar la categoría." }, 500);
+        console.error('Error en PUT /api/categories:', err);
+        return jsonResponse({ error: 'Error al actualizar la categoría.' }, 500);
     }
 };
 
@@ -279,7 +294,7 @@ export const onRequestDelete: PagesHandler<Env> = async (context) => {
 
     // S-02: Protección CSRF en mutaciones desde el navegador
     if (!validateCsrf(request, tenant?.domain)) {
-        return forbiddenResponse("Verificación de seguridad CSRF fallida.");
+        return forbiddenResponse('Verificación de seguridad CSRF fallida.');
     }
 
     const user = await verifySession(context, tenantId);
@@ -290,7 +305,7 @@ export const onRequestDelete: PagesHandler<Env> = async (context) => {
         const body = await request.json();
         const parseResult = deleteCategorySchema.safeParse(body);
         if (!parseResult.success) {
-            return jsonResponse({ error: "Datos inválidos", details: parseResult.error.issues }, 400);
+            return jsonResponse({ error: 'Datos inválidos', details: parseResult.error.issues }, 400);
         }
 
         const { category, reassignTo } = parseResult.data;
@@ -303,9 +318,12 @@ export const onRequestDelete: PagesHandler<Env> = async (context) => {
 
         if (productCount > 0) {
             if (!fallbackSlug || fallbackSlug === targetSlug) {
-                return jsonResponse({
-                    error: `La categoría "${targetSlug}" tiene ${productCount} producto(s) asignado(s). Selecciona una categoría de destino para reasignarlos antes de eliminarla.`
-                }, 400);
+                return jsonResponse(
+                    {
+                        error: `La categoría "${targetSlug}" tiene ${productCount} producto(s) asignado(s). Selecciona una categoría de destino para reasignarlos antes de eliminarla.`,
+                    },
+                    400,
+                );
             }
 
             // Reasignar productos a la categoría destino
@@ -322,20 +340,23 @@ export const onRequestDelete: PagesHandler<Env> = async (context) => {
         }
 
         if (Array.isArray(customCategories)) {
-            customCategories = customCategories.filter(c => c.id !== targetSlug);
+            customCategories = customCategories.filter((c) => c.id !== targetSlug);
             await categoryRepo.saveCustomCategories(tenantId, tenant, customCategories);
         }
 
-        return jsonResponse({
-            success: true,
-            message: productCount > 0 
-                ? `Categoría eliminada. Se reasignaron ${productCount} producto(s) a "${fallbackSlug}".`
-                : `Categoría eliminada con éxito.`,
-            reassignedCount: productCount
-        }, 200);
-
+        return jsonResponse(
+            {
+                success: true,
+                message:
+                    productCount > 0
+                        ? `Categoría eliminada. Se reasignaron ${productCount} producto(s) a "${fallbackSlug}".`
+                        : `Categoría eliminada con éxito.`,
+                reassignedCount: productCount,
+            },
+            200,
+        );
     } catch (err: unknown) {
-        console.error("Error en DELETE /api/categories:", err);
-        return jsonResponse({ error: "Error al eliminar la categoría." }, 500);
+        console.error('Error en DELETE /api/categories:', err);
+        return jsonResponse({ error: 'Error al eliminar la categoría.' }, 500);
     }
 };

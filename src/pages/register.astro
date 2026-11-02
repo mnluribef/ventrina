@@ -1,23 +1,23 @@
 ---
-// src/pages/register.astro
-import Layout from '../layouts/BaseLayout.astro';
 import { createStoreConfig } from '../config/store.config';
 import { techTemplate } from '../config/templates/tech';
+import Layout from '../layouts/BaseLayout.astro';
 
 // Tema premium claro para el onboarding SaaS
 const config = createStoreConfig('tech', {
     business: {
         ...techTemplate.business,
         name: 'Ventrina SaaS',
-        description: 'Crea tu tienda online en minutos.'
+        description: 'Crea tu tienda online en minutos.',
     },
     theme: {
         ...techTemplate.theme,
         primaryColor: '#6366f1',
         accentColor: '#10b981',
         bgPage: '#f8fafc',
-    }
+    },
 });
+
 import '../styles/register.css';
 ---
 

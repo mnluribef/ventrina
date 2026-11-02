@@ -1,7 +1,7 @@
 // functions/api/_repositories/order.repo.ts
 // Acceso a datos y consultas D1 para pedidos, items, eventos de auditoría y ventas (M-01)
 import type { D1Database, D1PreparedStatement, D1Response } from '@cloudflare/workers-types';
-import type { OrderRow, OrderEventRow } from '../../types';
+import type { OrderEventRow, OrderRow } from '../../types';
 
 export interface OrderItemRow {
     id?: number;
@@ -42,6 +42,17 @@ export interface ProductShortRow {
     stock: number;
 }
 
+export interface ProductVariantRow {
+    id: number;
+    product_id: string;
+    sku: string | null;
+    label: string;
+    price_delta: number;
+    stock: number;
+    active: number;
+    tenant_id: string;
+}
+
 export class OrderRepository {
     constructor(private db: D1Database) {}
 
@@ -50,9 +61,10 @@ export class OrderRepository {
      */
     async findCursorRow(afterId: string, tenantId: string): Promise<{ created_at: string; id: string } | null> {
         try {
-            return await this.db.prepare(
-                "SELECT created_at, id FROM orders WHERE id = ? AND tenant_id = ?"
-            ).bind(afterId, tenantId).first<{ created_at: string; id: string }>();
+            return await this.db
+                .prepare('SELECT created_at, id FROM orders WHERE id = ? AND tenant_id = ?')
+                .bind(afterId, tenantId)
+                .first<{ created_at: string; id: string }>();
         } catch {
             return null;
         }
@@ -63,33 +75,34 @@ export class OrderRepository {
      */
     async listOrdersKeyset(params: ListOrdersParams): Promise<KeysetPaginationResult> {
         const { tenantId, status, limit, after } = params;
-        const conditions: string[] = ["tenant_id = ?"];
+        const conditions: string[] = ['tenant_id = ?'];
         const bindParams: (string | number)[] = [tenantId];
 
-        if (status && status !== "all") {
-            conditions.push("status = ?");
+        if (status && status !== 'all') {
+            conditions.push('status = ?');
             bindParams.push(status);
         }
 
         if (after) {
             const cursorRow = await this.findCursorRow(after, tenantId);
             if (cursorRow) {
-                conditions.push("(created_at < ? OR (created_at = ? AND id < ?))");
+                conditions.push('(created_at < ? OR (created_at = ? AND id < ?))');
                 bindParams.push(cursorRow.created_at, cursorRow.created_at, cursorRow.id);
             } else {
-                conditions.push("created_at < (SELECT created_at FROM orders WHERE id = ?)");
+                conditions.push('created_at < (SELECT created_at FROM orders WHERE id = ?)');
                 bindParams.push(after);
             }
         }
 
-        const whereClause = `WHERE ${conditions.join(" AND ")}`;
-        const { results: rawOrders } = await this.db.prepare(
-            `SELECT * FROM orders ${whereClause} ORDER BY created_at DESC, id DESC LIMIT ?`
-        ).bind(...bindParams, limit + 1).all<OrderRow>();
+        const whereClause = `WHERE ${conditions.join(' AND ')}`;
+        const { results: rawOrders } = await this.db
+            .prepare(`SELECT * FROM orders ${whereClause} ORDER BY created_at DESC, id DESC LIMIT ?`)
+            .bind(...bindParams, limit + 1)
+            .all<OrderRow>();
 
         const hasMore = Boolean(rawOrders && rawOrders.length > limit);
-        const orders = hasMore ? rawOrders.slice(0, limit) : (rawOrders || []);
-        const nextCursor = (hasMore && orders.length > 0) ? orders[orders.length - 1].id : null;
+        const orders = hasMore ? rawOrders.slice(0, limit) : rawOrders || [];
+        const nextCursor = hasMore && orders.length > 0 ? orders[orders.length - 1].id : null;
 
         return { orders, hasMore, nextCursor };
     }
@@ -101,30 +114,32 @@ export class OrderRepository {
         const { tenantId, status, limit, page = 1 } = params;
         const offset = (page - 1) * limit;
 
-        const conditions: string[] = ["tenant_id = ?"];
+        const conditions: string[] = ['tenant_id = ?'];
         const bindParams: (string | number)[] = [tenantId];
 
-        if (status && status !== "all") {
-            conditions.push("status = ?");
+        if (status && status !== 'all') {
+            conditions.push('status = ?');
             bindParams.push(status);
         }
 
-        const whereClause = `WHERE ${conditions.join(" AND ")}`;
-        const countRow = await this.db.prepare(
-            `SELECT COUNT(*) as total FROM orders ${whereClause}`
-        ).bind(...bindParams).first<{ total: number }>();
+        const whereClause = `WHERE ${conditions.join(' AND ')}`;
+        const countRow = await this.db
+            .prepare(`SELECT COUNT(*) as total FROM orders ${whereClause}`)
+            .bind(...bindParams)
+            .first<{ total: number }>();
         const total = countRow?.total ?? 0;
 
-        const { results: orders } = await this.db.prepare(
-            `SELECT * FROM orders ${whereClause} ORDER BY created_at DESC LIMIT ? OFFSET ?`
-        ).bind(...bindParams, limit, offset).all<OrderRow>();
+        const { results: orders } = await this.db
+            .prepare(`SELECT * FROM orders ${whereClause} ORDER BY created_at DESC LIMIT ? OFFSET ?`)
+            .bind(...bindParams, limit, offset)
+            .all<OrderRow>();
 
         return {
             orders: orders || [],
             total,
             page,
             limit,
-            totalPages: Math.ceil(total / limit)
+            totalPages: Math.ceil(total / limit),
         };
     }
 
@@ -132,18 +147,17 @@ export class OrderRepository {
      * Busca un pedido individual por ID y tenant_id
      */
     async findById(orderId: string, tenantId: string): Promise<OrderRow | null> {
-        return await this.db.prepare(
-            "SELECT * FROM orders WHERE id = ? AND tenant_id = ?"
-        ).bind(orderId, tenantId).first<OrderRow>();
+        return await this.db
+            .prepare('SELECT * FROM orders WHERE id = ? AND tenant_id = ?')
+            .bind(orderId, tenantId)
+            .first<OrderRow>();
     }
 
     /**
      * Verifica si existe un pedido con el ID especificado
      */
     async exists(orderId: string): Promise<boolean> {
-        const row = await this.db.prepare(
-            "SELECT id FROM orders WHERE id = ?"
-        ).bind(orderId).first<{ id: string }>();
+        const row = await this.db.prepare('SELECT id FROM orders WHERE id = ?').bind(orderId).first<{ id: string }>();
         return Boolean(row);
     }
 
@@ -155,9 +169,10 @@ export class OrderRepository {
         if (ids.length === 0) return [];
         // D1 no soporta arrays nativos en bind; usamos placeholders dinámicos
         const placeholders = ids.map(() => '?').join(',');
-        const { results } = await this.db.prepare(
-            `SELECT id, name, price, stock FROM products WHERE tenant_id = ? AND id IN (${placeholders})`
-        ).bind(tenantId, ...ids).all<ProductShortRow>();
+        const { results } = await this.db
+            .prepare(`SELECT id, name, price, stock FROM products WHERE tenant_id = ? AND id IN (${placeholders})`)
+            .bind(tenantId, ...ids)
+            .all<ProductShortRow>();
         return results || [];
     }
 
@@ -166,19 +181,46 @@ export class OrderRepository {
      * Preferir findTenantProductsByIds en el flujo de checkout.
      */
     async findTenantProducts(tenantId: string): Promise<ProductShortRow[]> {
-        const { results } = await this.db.prepare(
-            "SELECT id, name, price, stock FROM products WHERE tenant_id = ?"
-        ).bind(tenantId).all<ProductShortRow>();
+        const { results } = await this.db
+            .prepare('SELECT id, name, price, stock FROM products WHERE tenant_id = ?')
+            .bind(tenantId)
+            .all<ProductShortRow>();
         return results || [];
+    }
+
+    /**
+     * Obtiene las variantes activas asociadas a una lista de IDs de productos (Fix Oportunidad 2)
+     */
+    async findVariantsByProductIds(tenantId: string, productIds: string[]): Promise<ProductVariantRow[]> {
+        if (productIds.length === 0) return [];
+        const placeholders = productIds.map(() => '?').join(',');
+        const { results } = await this.db
+            .prepare(
+                `SELECT * FROM product_variants WHERE tenant_id = ? AND product_id IN (${placeholders}) AND active = 1`,
+            )
+            .bind(tenantId, ...productIds)
+            .all<ProductVariantRow>();
+        return results || [];
+    }
+
+    /**
+     * Busca una variante individual por ID y tenant
+     */
+    async findVariantById(tenantId: string, variantId: number | string): Promise<ProductVariantRow | null> {
+        return await this.db
+            .prepare('SELECT * FROM product_variants WHERE tenant_id = ? AND id = ?')
+            .bind(tenantId, Number(variantId))
+            .first<ProductVariantRow>();
     }
 
     /**
      * Obtiene los items asociados a un pedido
      */
     async findItems(orderId: string): Promise<OrderItemRow[]> {
-        const { results } = await this.db.prepare(
-            "SELECT * FROM order_items WHERE order_id = ?"
-        ).bind(orderId).all<OrderItemRow>();
+        const { results } = await this.db
+            .prepare('SELECT * FROM order_items WHERE order_id = ?')
+            .bind(orderId)
+            .all<OrderItemRow>();
         return results || [];
     }
 
@@ -186,9 +228,10 @@ export class OrderRepository {
      * Obtiene los eventos de auditoría de un pedido ordenados cronológicamente
      */
     async findEvents(orderId: string): Promise<OrderEventRow[]> {
-        const { results } = await this.db.prepare(
-            "SELECT * FROM order_events WHERE order_id = ? ORDER BY created_at ASC"
-        ).bind(orderId).all<OrderEventRow>();
+        const { results } = await this.db
+            .prepare('SELECT * FROM order_events WHERE order_id = ? ORDER BY created_at ASC')
+            .bind(orderId)
+            .all<OrderEventRow>();
         return results || [];
     }
 
@@ -199,14 +242,14 @@ export class OrderRepository {
         orderId: string,
         tenantId: string,
         statements: D1PreparedStatement[],
-        stockUpdateIndices: Array<{ statementIdx: number; productName: string }>
+        stockUpdateIndices: Array<{ statementIdx: number; productName: string }>,
     ): Promise<{ success: boolean; stockExhaustedProduct?: string }> {
         const batchResults: D1Response[] = await this.db.batch(statements);
 
         let stockExhaustedProduct: string | null = null;
         for (const updateCheck of stockUpdateIndices) {
             const res = batchResults[updateCheck.statementIdx];
-            if (res && res.meta && res.meta.changes === 0) {
+            if (res?.meta && res.meta.changes === 0) {
                 stockExhaustedProduct = updateCheck.productName;
                 break;
             }
@@ -215,8 +258,8 @@ export class OrderRepository {
         if (stockExhaustedProduct) {
             // Revertir atómicamente el pedido insertado
             await this.db.batch([
-                this.db.prepare("DELETE FROM order_items WHERE order_id = ?").bind(orderId),
-                this.db.prepare("DELETE FROM orders WHERE id = ? AND tenant_id = ?").bind(orderId, tenantId)
+                this.db.prepare('DELETE FROM order_items WHERE order_id = ?').bind(orderId),
+                this.db.prepare('DELETE FROM orders WHERE id = ? AND tenant_id = ?').bind(orderId, tenantId),
             ]);
             return { success: false, stockExhaustedProduct };
         }
@@ -235,43 +278,60 @@ export class OrderRepository {
         actor: string,
         note?: string,
         paymentMethod?: string,
-        paymentAmount?: number
+        paymentAmount?: number,
     ): Promise<void> {
         const statements: D1PreparedStatement[] = [
-            this.db.prepare(
-                "UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND tenant_id = ?"
-            ).bind(newStatus, orderId, tenantId),
-            this.db.prepare(
-                "INSERT INTO order_events (order_id, tenant_id, from_status, to_status, actor, note) VALUES (?, ?, ?, ?, ?, ?)"
-            ).bind(orderId, tenantId, order.status, newStatus, actor, note || `Cambio de estado a ${newStatus}`)
+            this.db
+                .prepare('UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND tenant_id = ?')
+                .bind(newStatus, orderId, tenantId),
+            this.db
+                .prepare(
+                    'INSERT INTO order_events (order_id, tenant_id, from_status, to_status, actor, note) VALUES (?, ?, ?, ?, ?, ?)',
+                )
+                .bind(orderId, tenantId, order.status, newStatus, actor, note || `Cambio de estado a ${newStatus}`),
         ];
 
         // Fix #20: La orden completada es la única fuente de verdad contable (tabla sales eliminada)
         if (paymentMethod) {
             statements.push(
-                this.db.prepare(
-                    "UPDATE orders SET payment_method = ? WHERE id = ? AND tenant_id = ?"
-                ).bind(paymentMethod, orderId, tenantId)
+                this.db
+                    .prepare('UPDATE orders SET payment_method = ? WHERE id = ? AND tenant_id = ?')
+                    .bind(paymentMethod, orderId, tenantId),
             );
         }
 
         if (paymentAmount !== undefined && !Number.isNaN(Number(paymentAmount)) && Number(paymentAmount) >= 0) {
             statements.push(
-                this.db.prepare(
-                    "UPDATE orders SET total_price = ? WHERE id = ? AND tenant_id = ?"
-                ).bind(Number(paymentAmount), orderId, tenantId)
+                this.db
+                    .prepare('UPDATE orders SET total_price = ? WHERE id = ? AND tenant_id = ?')
+                    .bind(Number(paymentAmount), orderId, tenantId),
             );
         }
 
-        if (newStatus === "cancelado" && order.status !== "cancelado") {
+        if (newStatus === 'cancelado' && order.status !== 'cancelado') {
             // Efecto secundario: restituir stock de los productos asociados al pedido cancelado
             const items = await this.findItems(orderId);
             for (const item of items) {
                 statements.push(
-                    this.db.prepare(
-                        "UPDATE products SET stock = stock + ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND tenant_id = ? AND stock != -1"
-                    ).bind(item.quantity, item.product_id, tenantId)
+                    this.db
+                        .prepare(
+                            'UPDATE products SET stock = stock + ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND tenant_id = ? AND stock != -1',
+                        )
+                        .bind(item.quantity, item.product_id, tenantId),
                 );
+
+                // Restituir stock a nivel de variante si el item incluía variante
+                if (item.size) {
+                    const parsedVariantId = parseInt(item.size, 10);
+                    const variantIdParam = Number.isNaN(parsedVariantId) ? -1 : parsedVariantId;
+                    statements.push(
+                        this.db
+                            .prepare(
+                                'UPDATE product_variants SET stock = stock + ? WHERE product_id = ? AND (label = ? OR id = ?) AND tenant_id = ? AND stock != -1',
+                            )
+                            .bind(item.quantity, item.product_id, item.size, variantIdParam, tenantId),
+                    );
+                }
             }
         }
 
@@ -286,8 +346,8 @@ export class OrderRepository {
         if (!order) return false;
 
         await this.db.batch([
-            this.db.prepare("DELETE FROM order_items WHERE order_id = ?").bind(orderId),
-            this.db.prepare("DELETE FROM orders WHERE id = ? AND tenant_id = ?").bind(orderId, tenantId)
+            this.db.prepare('DELETE FROM order_items WHERE order_id = ?').bind(orderId),
+            this.db.prepare('DELETE FROM orders WHERE id = ? AND tenant_id = ?').bind(orderId, tenantId),
         ]);
         return true;
     }

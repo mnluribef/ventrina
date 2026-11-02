@@ -1,5 +1,4 @@
-export {};
-import { getModalService, type ConfirmModalOptions } from './services/modal.service';
+import { type ConfirmModalOptions, getModalService } from './services/modal.service';
 
 interface BillingInfo {
     expiresAt?: string | null;
@@ -128,12 +127,12 @@ async function handleLogin() {
             showDashboard();
             return;
         }
-        
+
         if (res.status === 503) {
             showError('El sistema Superadmin no está configurado (SUPERADMIN_KEY ausente).');
             return;
         }
-        
+
         if (res.status === 401) {
             showError('Contraseña maestra incorrecta.');
             masterToken = '';
@@ -141,7 +140,10 @@ async function handleLogin() {
         }
 
         // Si estamos en servidor estático sin backend Pages Functions (HTTP 404)
-        if (res.status === 404 && (pass === 'demo' || pass === 'admin' || pass === 'cambia_esto_por_una_clave_segura_de_64_chars')) {
+        if (
+            res.status === 404 &&
+            (pass === 'demo' || pass === 'admin' || pass === 'cambia_esto_por_una_clave_segura_de_64_chars')
+        ) {
             sessionStorage.setItem('sa_token', masterToken);
             if (errorMsg) errorMsg.classList.add('hidden');
             showDashboard();
@@ -203,7 +205,7 @@ const DEMO_MOCK_TENANTS: TenantItem[] = [
         owner_email: 'fogon@ventrina.app',
         product_count: 84,
         order_count_month: 230,
-        revenue_month: 4620.50,
+        revenue_month: 4620.5,
         billing: {
             expiresAt: '2026-11-25T00:00:00.000Z',
             paymentStatus: 'active',
@@ -222,7 +224,7 @@ const DEMO_MOCK_TENANTS: TenantItem[] = [
         owner_email: 'ventas@ferremax.com.ve',
         product_count: 185,
         order_count_month: 94,
-        revenue_month: 3150.00,
+        revenue_month: 3150.0,
         billing: {
             expiresAt: '2026-11-03T00:00:00.000Z',
             paymentStatus: 'active',
@@ -241,7 +243,7 @@ const DEMO_MOCK_TENANTS: TenantItem[] = [
         owner_email: 'contacto@modachic.ve',
         product_count: 142,
         order_count_month: 62,
-        revenue_month: 1890.00,
+        revenue_month: 1890.0,
         billing: {
             expiresAt: '2026-10-31T00:00:00.000Z',
             paymentStatus: 'pending',
@@ -260,7 +262,7 @@ const DEMO_MOCK_TENANTS: TenantItem[] = [
         owner_email: 'soporte@cybertech.store',
         product_count: 310,
         order_count_month: 115,
-        revenue_month: 6420.00,
+        revenue_month: 6420.0,
         billing: {
             expiresAt: '2026-12-10T00:00:00.000Z',
             paymentStatus: 'active',
@@ -279,7 +281,7 @@ const DEMO_MOCK_TENANTS: TenantItem[] = [
         owner_email: 'gerencia@autopartesaragua.com',
         product_count: 28,
         order_count_month: 12,
-        revenue_month: 420.00,
+        revenue_month: 420.0,
         billing: {
             expiresAt: '2026-10-15T00:00:00.000Z',
             paymentStatus: 'overdue',
@@ -298,7 +300,7 @@ const DEMO_MOCK_TENANTS: TenantItem[] = [
         owner_email: 'admin@bodegonlavictoria.com',
         product_count: 198,
         order_count_month: 180,
-        revenue_month: 5120.00,
+        revenue_month: 5120.0,
         billing: {
             expiresAt: '2026-11-28T00:00:00.000Z',
             paymentStatus: 'active',
@@ -350,7 +352,7 @@ async function loadTenants() {
         }
 
         throw new Error(`Error HTTP: ${res.status}`);
-    } catch (err) {
+    } catch (_err) {
         // En preview estático o sin conexión, cargar mock enriquecido
         loadDemoTenants();
     }
@@ -902,7 +904,8 @@ cleanupBtn?.addEventListener('click', async () => {
     const confirmed = await showSuperAdminConfirmModal({
         title: 'Mantenimiento del Sistema',
         subtitle: 'Cloudflare Edge Maintenance',
-        message: '¿Deseas ejecutar el mantenimiento del sistema (purga de sesiones inactivas y limpieza de rate-limits)?',
+        message:
+            '¿Deseas ejecutar el mantenimiento del sistema (purga de sesiones inactivas y limpieza de rate-limits)?',
         confirmText: 'Ejecutar Mantenimiento',
         cancelText: 'Cancelar',
         variant: 'warning',

@@ -2,285 +2,301 @@
 import type { StoreConfig } from '../../types/store.types';
 
 export const restaurantTemplate: StoreConfig = {
-  template: 'restaurant',
-  business: {
-    name: 'FOGÓN',
-    shortName: 'FOGÓN',
-    tagline: 'Restaurante Venezolano · Sabor a Hogar',
-    description: 'FOGÓN: Tu restaurante venezolano de confianza en La Victoria, Aragua. Pabellón criollo, carnes a la parrilla, postres artesanales y más. Delivery y retiro en local. Pedidos fáciles por WhatsApp.',
-    logoTextPrimary: 'FOG',
-    logoTextSecondary: 'ÓN',
-    siteUrl: 'https://fogon.pages.dev',
-    ogImage: '/assets/og_image.webp',
-  },
-  contact: {
-    whatsapp: '584241230046',
-    whatsappDisplay: '+58 424-1230046',
-    phone: '+58 424-1230046',
-    email: 'contacto@fogon.ve',
-    instagram: 'https://www.instagram.com/fogon.ve/',
-    instagramHandle: '@fogon.ve',
-    address: 'La Victoria, Estado Aragua, Venezuela',
-    addressLocality: 'La Victoria',
-    addressRegion: 'Aragua',
-    addressCountry: 'VE',
-    hours: 'Lun – Dom: 11:00 AM – 10:00 PM',
-  },
-  theme: {
-    // Primario: Naranja Fuego Vivo & Brasas
-    primaryColor: '#E65100',
-    primaryHover: '#C43D00',
-    primaryDeep: '#9C2C00',
-    primaryLight: 'rgba(230, 81, 0, 0.12)',
-    primaryPale: '#FFF3EC',
-
-    // Acento: Dorado Maíz & Ámbar Tostado
-    accentColor: '#D4AF37',
-    accentHover: '#B8942A',
-    accentLight: 'rgba(212, 175, 55, 0.18)',
-    accentPale: '#FFFDF5',
-
-    // Superficies y Fondos Cálidos
-    bgPage: '#FFFDF9',     // Crema cálido base
-    bgSection: '#FFF5EE',  // Melocotón crema para secciones
-    bgCard: '#FFFFFF',
-    borderSubtle: 'rgba(230, 81, 0, 0.10)',
-    borderFocus: '#E65100',
-
-    // Tipografía & Contrastes
-    textHeading: '#1C0A00', // Marrón café espresso
-    textBody: '#3D2214',    // Marrón oscuro
-    textMuted: '#7A523B',
-    textLight: '#A67C65',
-
-    // Hero & Overlays
-    heroBg: '#1A0B02',
-    heroOverlay: 'linear-gradient(to bottom right, rgba(28, 10, 0, 0.90) 0%, rgba(65, 22, 6, 0.65) 40%, rgba(0, 0, 0, 0.18) 75%, rgba(212, 175, 55, 0.15) 100%)',
-    heroFadeBottom: 'linear-gradient(to top, #FFFDF9 0%, transparent 100%)',
-
-    // Gradientes & Sombras
-    gradHero: 'linear-gradient(135deg, #C43D00 0%, #E65100 55%, #D4AF37 100%)',
-    gradCta: 'linear-gradient(135deg, #C43D00 0%, #E65100 100%)',
-    gradSection: 'linear-gradient(160deg, #FFFDF9 0%, #FFF5EE 60%, #FFFDF5 100%)',
-    gradAccent: 'linear-gradient(135deg, #B8942A 0%, #D4AF37 100%)',
-    shadowColor: 'rgba(230, 81, 0, 0.20)',
-    shadowCard: '0 4px 20px rgba(60, 20, 0, 0.06)',
-
-    // Badges & Pastillas
-    badgeBg: 'rgba(212, 175, 55, 0.16)',
-    badgeBorder: 'rgba(212, 175, 55, 0.40)',
-    badgeText: '#FBBF24',
-
-    // Fuentes
-    fontHeading: "'Playfair Display', serif",
-    fontBody: "'Outfit', 'Inter', sans-serif",
-    googleFontsUrl: 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap',
-  },
-  landing: {
-    hero: {
-      badgeText: '🔥 Restaurante Venezolano · La Victoria, Aragua',
-      headline: 'Sabor que te',
-      headlineHighlight: 'lleva a casa.',
-      subheadline: 'Cocina venezolana con el alma de la abuela y el fuego del fogón. Delivery y retiro en local — pedidos fáciles por WhatsApp. ¡Come rico hoy!',
-      ctaPrimaryText: 'Ver Menú',
-      ctaPrimaryLink: '#menu',
-      ctaSecondaryText: 'Hacer Pedido',
-      ctaSecondaryLink: 'https://wa.me/584241230046',
-      slides: [
-        { image: '/assets/hero_main.webp', alt: 'Pabellón Criollo FOGÓN' },
-        { image: '/assets/hero_grill.webp', alt: 'Parrilla y Carnes al Fogón' },
-        { image: '/assets/hero_postres.webp', alt: 'Postres Artesanales FOGÓN' },
-      ],
-      stats: [
-        { value: '+800', label: 'Pedidos Entregados' },
-        { value: '⭐ 4.9', label: 'Calificación Promedio' },
-        { value: '🚀 Rápido', label: 'Delivery Express' },
-      ],
+    template: 'restaurant',
+    business: {
+        name: 'FOGÓN',
+        shortName: 'FOGÓN',
+        tagline: 'Restaurante Venezolano · Sabor a Hogar',
+        description:
+            'FOGÓN: Tu restaurante venezolano de confianza en La Victoria, Aragua. Pabellón criollo, carnes a la parrilla, postres artesanales y más. Delivery y retiro en local. Pedidos fáciles por WhatsApp.',
+        logoTextPrimary: 'FOG',
+        logoTextSecondary: 'ÓN',
+        siteUrl: 'https://fogon.pages.dev',
+        ogImage: '/assets/og_image.webp',
     },
-    benefits: {
-      title: '¿Por qué pedir en',
-      titleHighlight: 'FOGÓN',
-      subtitle: 'Cocinamos con ingredientes frescos del día, sazón de verdad y el cariño de siempre. Tu satisfacción es nuestra mayor recompensa.',
-      items: [
-        {
-          icon: 'flame',
-          title: 'Cocina Artesanal',
-          description: 'Recetas tradicionales venezolanas preparadas con ingredientes frescos y el amor de siempre. Cada plato cuenta una historia.',
-        },
-        {
-          icon: 'zap',
-          title: 'Delivery Express',
-          description: 'Tu pedido llega caliente y a tiempo. Cubrimos toda La Victoria y zonas aledañas. ¡Rastreamos tu orden en tiempo real!',
-        },
-        {
-          icon: 'message-circle',
-          title: 'Pedido Fácil por WhatsApp',
-          description: 'Sin apps engorrosas, sin complicaciones. Elige tu plato en el menú, envíanos el pedido por WhatsApp y listo. ¡Así de simple!',
-        },
-      ],
+    contact: {
+        whatsapp: '584241230046',
+        whatsappDisplay: '+58 424-1230046',
+        phone: '+58 424-1230046',
+        email: 'contacto@fogon.ve',
+        instagram: 'https://www.instagram.com/fogon.ve/',
+        instagramHandle: '@fogon.ve',
+        address: 'La Victoria, Estado Aragua, Venezuela',
+        addressLocality: 'La Victoria',
+        addressRegion: 'Aragua',
+        addressCountry: 'VE',
+        hours: 'Lun – Dom: 11:00 AM – 10:00 PM',
     },
-    catalog: {
-      title: 'Nuestro',
-      titleHighlight: 'Menú',
-      subtitle: 'Cada plato, preparado con amor y sazón de verdad. Entradas, platos principales, combos, postres y bebidas para toda la familia.',
-      searchPlaceholder: 'Buscar platillos (ej. pabellón, pollo, combo...)',
-      emptyMessage: 'No encontramos platillos con esa búsqueda. ¡Prueba con otra palabra!',
-      addToCartText: 'Agregar al Pedido',
+    theme: {
+        // Primario: Naranja Fuego Vivo & Brasas
+        primaryColor: '#E65100',
+        primaryHover: '#C43D00',
+        primaryDeep: '#9C2C00',
+        primaryLight: 'rgba(230, 81, 0, 0.12)',
+        primaryPale: '#FFF3EC',
+
+        // Acento: Dorado Maíz & Ámbar Tostado
+        accentColor: '#D4AF37',
+        accentHover: '#B8942A',
+        accentLight: 'rgba(212, 175, 55, 0.18)',
+        accentPale: '#FFFDF5',
+
+        // Superficies y Fondos Cálidos
+        bgPage: '#FFFDF9', // Crema cálido base
+        bgSection: '#FFF5EE', // Melocotón crema para secciones
+        bgCard: '#FFFFFF',
+        borderSubtle: 'rgba(230, 81, 0, 0.10)',
+        borderFocus: '#E65100',
+
+        // Tipografía & Contrastes
+        textHeading: '#1C0A00', // Marrón café espresso
+        textBody: '#3D2214', // Marrón oscuro
+        textMuted: '#7A523B',
+        textLight: '#A67C65',
+
+        // Hero & Overlays
+        heroBg: '#1A0B02',
+        heroOverlay:
+            'linear-gradient(to bottom right, rgba(28, 10, 0, 0.90) 0%, rgba(65, 22, 6, 0.65) 40%, rgba(0, 0, 0, 0.18) 75%, rgba(212, 175, 55, 0.15) 100%)',
+        heroFadeBottom: 'linear-gradient(to top, #FFFDF9 0%, transparent 100%)',
+
+        // Gradientes & Sombras
+        gradHero: 'linear-gradient(135deg, #C43D00 0%, #E65100 55%, #D4AF37 100%)',
+        gradCta: 'linear-gradient(135deg, #C43D00 0%, #E65100 100%)',
+        gradSection: 'linear-gradient(160deg, #FFFDF9 0%, #FFF5EE 60%, #FFFDF5 100%)',
+        gradAccent: 'linear-gradient(135deg, #B8942A 0%, #D4AF37 100%)',
+        shadowColor: 'rgba(230, 81, 0, 0.20)',
+        shadowCard: '0 4px 20px rgba(60, 20, 0, 0.06)',
+
+        // Badges & Pastillas
+        badgeBg: 'rgba(212, 175, 55, 0.16)',
+        badgeBorder: 'rgba(212, 175, 55, 0.40)',
+        badgeText: '#FBBF24',
+
+        // Fuentes
+        fontHeading: "'Playfair Display', serif",
+        fontBody: "'Outfit', 'Inter', sans-serif",
+        googleFontsUrl:
+            'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap',
     },
-    process: {
-      title: '¿Cómo hacer tu',
-      titleHighlight: 'pedido?',
-      subtitle: 'Proceso sencillo en 4 pasos. Tu comida lista en minutos, entregada en tu puerta o lista para retirar.',
-      steps: [
-        {
-          number: 1,
-          title: 'Elige tu Plato',
-          description: 'Explora nuestro menú, selecciona tus platillos favoritos y personaliza con proteína, tamaño o acompañantes.',
+    landing: {
+        hero: {
+            badgeText: '🔥 Restaurante Venezolano · La Victoria, Aragua',
+            headline: 'Sabor que te',
+            headlineHighlight: 'lleva a casa.',
+            subheadline:
+                'Cocina venezolana con el alma de la abuela y el fuego del fogón. Delivery y retiro en local — pedidos fáciles por WhatsApp. ¡Come rico hoy!',
+            ctaPrimaryText: 'Ver Menú',
+            ctaPrimaryLink: '#menu',
+            ctaSecondaryText: 'Hacer Pedido',
+            ctaSecondaryLink: 'https://wa.me/584241230046',
+            slides: [
+                { image: '/assets/hero_main.webp', alt: 'Pabellón Criollo FOGÓN' },
+                { image: '/assets/hero_grill.webp', alt: 'Parrilla y Carnes al Fogón' },
+                { image: '/assets/hero_postres.webp', alt: 'Postres Artesanales FOGÓN' },
+            ],
+            stats: [
+                { value: '+800', label: 'Pedidos Entregados' },
+                { value: '⭐ 4.9', label: 'Calificación Promedio' },
+                { value: '🚀 Rápido', label: 'Delivery Express' },
+            ],
         },
-        {
-          number: 2,
-          title: 'Arma tu Pedido',
-          description: 'Añade todo lo que quieras al carrito. Puedes combinar entradas, platos, postres y bebidas.',
+        benefits: {
+            title: '¿Por qué pedir en',
+            titleHighlight: 'FOGÓN',
+            subtitle:
+                'Cocinamos con ingredientes frescos del día, sazón de verdad y el cariño de siempre. Tu satisfacción es nuestra mayor recompensa.',
+            items: [
+                {
+                    icon: 'flame',
+                    title: 'Cocina Artesanal',
+                    description:
+                        'Recetas tradicionales venezolanas preparadas con ingredientes frescos y el amor de siempre. Cada plato cuenta una historia.',
+                },
+                {
+                    icon: 'zap',
+                    title: 'Delivery Express',
+                    description:
+                        'Tu pedido llega caliente y a tiempo. Cubrimos toda La Victoria y zonas aledañas. ¡Rastreamos tu orden en tiempo real!',
+                },
+                {
+                    icon: 'message-circle',
+                    title: 'Pedido Fácil por WhatsApp',
+                    description:
+                        'Sin apps engorrosas, sin complicaciones. Elige tu plato en el menú, envíanos el pedido por WhatsApp y listo. ¡Así de simple!',
+                },
+            ],
         },
-        {
-          number: 3,
-          title: 'Envía por WhatsApp',
-          description: 'Con un clic enviamos tu pedido formateado. Te confirmamos en minutos e indicamos tiempo de entrega.',
+        catalog: {
+            title: 'Nuestro',
+            titleHighlight: 'Menú',
+            subtitle:
+                'Cada plato, preparado con amor y sazón de verdad. Entradas, platos principales, combos, postres y bebidas para toda la familia.',
+            searchPlaceholder: 'Buscar platillos (ej. pabellón, pollo, combo...)',
+            emptyMessage: 'No encontramos platillos con esa búsqueda. ¡Prueba con otra palabra!',
+            addToCartText: 'Agregar al Pedido',
         },
-        {
-          number: 4,
-          title: '¡Disfruta!',
-          description: 'Te entregamos en tu puerta calientito o lo retiras en local. ¡Bon appétit!',
+        process: {
+            title: '¿Cómo hacer tu',
+            titleHighlight: 'pedido?',
+            subtitle:
+                'Proceso sencillo en 4 pasos. Tu comida lista en minutos, entregada en tu puerta o lista para retirar.',
+            steps: [
+                {
+                    number: 1,
+                    title: 'Elige tu Plato',
+                    description:
+                        'Explora nuestro menú, selecciona tus platillos favoritos y personaliza con proteína, tamaño o acompañantes.',
+                },
+                {
+                    number: 2,
+                    title: 'Arma tu Pedido',
+                    description:
+                        'Añade todo lo que quieras al carrito. Puedes combinar entradas, platos, postres y bebidas.',
+                },
+                {
+                    number: 3,
+                    title: 'Envía por WhatsApp',
+                    description:
+                        'Con un clic enviamos tu pedido formateado. Te confirmamos en minutos e indicamos tiempo de entrega.',
+                },
+                {
+                    number: 4,
+                    title: '¡Disfruta!',
+                    description: 'Te entregamos en tu puerta calientito o lo retiras en local. ¡Bon appétit!',
+                },
+            ],
         },
-      ],
+        testimonials: {
+            title: 'Lo que dicen',
+            titleHighlight: 'nuestros clientes',
+            subtitle:
+                'Cada plato cuenta una historia. Lee lo que dicen quienes ya han probado el sabor auténtico de FOGÓN.',
+            items: [
+                {
+                    name: 'María González',
+                    role: 'Cliente frecuente',
+                    review: '"El pabellón criollo llegó perfectamente caliente y listo para comer. La carne mechada estaba jugosa y con sazón de verdad. ¡Definitivamente el mejor delivery de la zona!"',
+                    avatar: '/assets/client_maria.webp',
+                    rating: 5,
+                },
+                {
+                    name: 'Ana Pérez',
+                    role: 'Madre de familia',
+                    review: '"El churrasco es INCREÍBLE. Las porciones son generosas, el precio justo y el delivery súper rápido. Ya pedimos para la familia entera y todos quedaron felices. 100% recomendado."',
+                    avatar: '/assets/client_ana.webp',
+                    rating: 5,
+                },
+                {
+                    name: 'Carlos Rodríguez',
+                    role: 'Empresario',
+                    review: '"Los tequeños y el quesillo son de otro nivel. Pedimos para la oficina y todos querían el contacto de FOGÓN. El proceso por WhatsApp fue facilísimo. ¡Gracias por tanto!"',
+                    avatar: '/assets/client_jose.webp',
+                    rating: 5,
+                },
+            ],
+        },
+        faq: {
+            title: 'Preguntas',
+            titleHighlight: 'Frecuentes',
+            subtitle: 'Todo lo que necesitas saber antes de ordenar',
+            items: [
+                {
+                    q: '¿Hacen delivery a domicilio?',
+                    a: 'Sí, hacemos delivery en La Victoria y zonas aledañas. El tiempo de entrega promedio es de 30-45 minutos. El costo varía según la distancia. Consúltanos por WhatsApp para confirmar cobertura en tu zona.',
+                },
+                {
+                    q: '¿Puedo personalizar mi pedido?',
+                    a: 'Por supuesto. Puedes elegir el punto de cocción de las carnes, cambiar acompañantes o pedir sin algún ingrediente. Solo indícanos al hacer el pedido y lo preparamos a tu gusto.',
+                },
+                {
+                    q: '¿Cuáles son los métodos de pago?',
+                    a: 'Aceptamos pago móvil (Bancamóvil), transferencias bancarias, efectivo en Bs. y $, Zelle y Binance Pay. Coordinamos el pago al confirmar tu pedido por WhatsApp.',
+                },
+                {
+                    q: '¿Cuáles son los horarios de atención?',
+                    a: 'Atendemos de Lunes a Domingo de 11:00 AM a 10:00 PM. Los pedidos para delivery se reciben hasta las 9:30 PM. Para pedidos grandes o eventos, contáctanos con anticipación.',
+                },
+                {
+                    q: '¿Hacen pedidos para grupos o eventos?',
+                    a: 'Sí, con gusto atendemos pedidos corporativos, cumpleaños y eventos. Ofrecemos bandejas familiares y menús especiales para grupos. Contáctanos con al menos 24 horas de anticipación.',
+                },
+            ],
+        },
     },
-    testimonials: {
-      title: 'Lo que dicen',
-      titleHighlight: 'nuestros clientes',
-      subtitle: 'Cada plato cuenta una historia. Lee lo que dicen quienes ya han probado el sabor auténtico de FOGÓN.',
-      items: [
-        {
-          name: 'María González',
-          role: 'Cliente frecuente',
-          review: '"El pabellón criollo llegó perfectamente caliente y listo para comer. La carne mechada estaba jugosa y con sazón de verdad. ¡Definitivamente el mejor delivery de la zona!"',
-          avatar: '/assets/client_maria.webp',
-          rating: 5,
-        },
-        {
-          name: 'Ana Pérez',
-          role: 'Madre de familia',
-          review: '"El churrasco es INCREÍBLE. Las porciones son generosas, el precio justo y el delivery súper rápido. Ya pedimos para la familia entera y todos quedaron felices. 100% recomendado."',
-          avatar: '/assets/client_ana.webp',
-          rating: 5,
-        },
-        {
-          name: 'Carlos Rodríguez',
-          role: 'Empresario',
-          review: '"Los tequeños y el quesillo son de otro nivel. Pedimos para la oficina y todos querían el contacto de FOGÓN. El proceso por WhatsApp fue facilísimo. ¡Gracias por tanto!"',
-          avatar: '/assets/client_jose.webp',
-          rating: 5,
-        },
-      ],
+    nav: {
+        links: [
+            { label: 'NUESTRA COCINA', href: '#nosotros' },
+            { label: 'MENÚ', href: '#menu' },
+            { label: 'CÓMO PEDIR', href: '#como-pedir' },
+            { label: 'RESEÑAS', href: '#testimonios' },
+            { label: 'PREGUNTAS', href: '#faq' },
+        ],
     },
-    faq: {
-      title: 'Preguntas',
-      titleHighlight: 'Frecuentes',
-      subtitle: 'Todo lo que necesitas saber antes de ordenar',
-      items: [
-        {
-          q: '¿Hacen delivery a domicilio?',
-          a: 'Sí, hacemos delivery en La Victoria y zonas aledañas. El tiempo de entrega promedio es de 30-45 minutos. El costo varía según la distancia. Consúltanos por WhatsApp para confirmar cobertura en tu zona.',
-        },
-        {
-          q: '¿Puedo personalizar mi pedido?',
-          a: 'Por supuesto. Puedes elegir el punto de cocción de las carnes, cambiar acompañantes o pedir sin algún ingrediente. Solo indícanos al hacer el pedido y lo preparamos a tu gusto.',
-        },
-        {
-          q: '¿Cuáles son los métodos de pago?',
-          a: 'Aceptamos pago móvil (Bancamóvil), transferencias bancarias, efectivo en Bs. y $, Zelle y Binance Pay. Coordinamos el pago al confirmar tu pedido por WhatsApp.',
-        },
-        {
-          q: '¿Cuáles son los horarios de atención?',
-          a: 'Atendemos de Lunes a Domingo de 11:00 AM a 10:00 PM. Los pedidos para delivery se reciben hasta las 9:30 PM. Para pedidos grandes o eventos, contáctanos con anticipación.',
-        },
-        {
-          q: '¿Hacen pedidos para grupos o eventos?',
-          a: 'Sí, con gusto atendemos pedidos corporativos, cumpleaños y eventos. Ofrecemos bandejas familiares y menús especiales para grupos. Contáctanos con al menos 24 horas de anticipación.',
-        },
-      ],
+    seo: {
+        title: 'FOGÓN | Restaurante Venezolano | Delivery y Retiro en Local · La Victoria',
+        description:
+            'FOGÓN: Tu restaurante venezolano de confianza en La Victoria, Aragua. Pabellón criollo, carnes a la parrilla, postres artesanales y más. Delivery y retiro en local. Pedidos fáciles por WhatsApp.',
+        keywords:
+            'restaurante venezolano, delivery comida, pabellón criollo, carnes a la parrilla, empanadas, tequeños, postres, La Victoria Aragua, comida a domicilio Venezuela',
+        schemaType: 'Restaurant',
+        priceRange: '$$',
+        servesCuisine: 'Venezuelan',
     },
-  },
-  nav: {
-    links: [
-      { label: 'NUESTRA COCINA', href: '#nosotros' },
-      { label: 'MENÚ', href: '#menu' },
-      { label: 'CÓMO PEDIR', href: '#como-pedir' },
-      { label: 'RESEÑAS', href: '#testimonios' },
-      { label: 'PREGUNTAS', href: '#faq' },
+    features: {
+        showBcvRate: true,
+        showSearch: true,
+        showCart: true,
+        orderViaWhatsapp: true,
+        deliveryOptions: true,
+        currencySymbol: '$',
+        currencyCode: 'USD',
+        allowCustomNotes: true,
+    },
+    storePrefix: 'FOG',
+    payment: {
+        pagoMovil: {
+            banco: 'Banesco (0134)',
+            telefono: '0412-4756191',
+            cedula: 'V-12345678',
+            titular: 'FOGÓN C.A.',
+        },
+        pagoMovilAccounts: [
+            {
+                id: 'pm-1',
+                banco: 'Banesco (0134)',
+                telefono: '0412-4756191',
+                cedula: 'V-12345678',
+                titular: 'FOGÓN C.A.',
+                isDefault: true,
+            },
+        ],
+        zelle: {
+            email: 'contacto@fogon.ve',
+            titular: 'FOGÓN C.A.',
+        },
+        binancePay: {
+            payId: '891024561',
+            merchantName: 'FogonRestaurant',
+            email: 'binance@fogon.ve',
+        },
+        efectivo: true,
+        punto: true,
+    },
+    labels: {
+        itemNounSingular: 'Platillo',
+        itemNounPlural: 'Platillos',
+        emptyCartEmoji: '🍽️',
+        cartTitle: '🛒 Tu Pedido',
+        deliveryOptionName: 'Delivery',
+        deliveryOptionPrice: 5,
+        pickupOptionName: 'Retiro en local',
+    },
+    categories: [
+        { id: 'entradas', name: 'Entradas', icon: 'utensils' },
+        { id: 'principales', name: 'Platos Principales', icon: 'flame' },
+        { id: 'combos', name: 'Combos', icon: 'users' },
+        { id: 'postres', name: 'Postres', icon: 'cake' },
+        { id: 'bebidas', name: 'Bebidas', icon: 'cup-soda' },
     ],
-  },
-  seo: {
-    title: 'FOGÓN | Restaurante Venezolano | Delivery y Retiro en Local · La Victoria',
-    description: 'FOGÓN: Tu restaurante venezolano de confianza en La Victoria, Aragua. Pabellón criollo, carnes a la parrilla, postres artesanales y más. Delivery y retiro en local. Pedidos fáciles por WhatsApp.',
-    keywords: 'restaurante venezolano, delivery comida, pabellón criollo, carnes a la parrilla, empanadas, tequeños, postres, La Victoria Aragua, comida a domicilio Venezuela',
-    schemaType: 'Restaurant',
-    priceRange: '$$',
-    servesCuisine: 'Venezuelan',
-  },
-  features: {
-    showBcvRate: true,
-    showSearch: true,
-    showCart: true,
-    orderViaWhatsapp: true,
-    deliveryOptions: true,
-    currencySymbol: '$',
-    currencyCode: 'USD',
-    allowCustomNotes: true,
-  },
-  storePrefix: 'FOG',
-  payment: {
-    pagoMovil: {
-      banco: 'Banesco (0134)',
-      telefono: '0412-4756191',
-      cedula: 'V-12345678',
-      titular: 'FOGÓN C.A.',
-    },
-    pagoMovilAccounts: [
-      {
-        id: 'pm-1',
-        banco: 'Banesco (0134)',
-        telefono: '0412-4756191',
-        cedula: 'V-12345678',
-        titular: 'FOGÓN C.A.',
-        isDefault: true,
-      }
-    ],
-    zelle: {
-      email: 'contacto@fogon.ve',
-      titular: 'FOGÓN C.A.',
-    },
-    binancePay: {
-      payId: '891024561',
-      merchantName: 'FogonRestaurant',
-      email: 'binance@fogon.ve',
-    },
-    efectivo: true,
-    punto: true,
-  },
-  labels: {
-    itemNounSingular: 'Platillo',
-    itemNounPlural: 'Platillos',
-    emptyCartEmoji: '🍽️',
-    cartTitle: '🛒 Tu Pedido',
-    deliveryOptionName: 'Delivery',
-    deliveryOptionPrice: 5,
-    pickupOptionName: 'Retiro en local',
-  },
-  categories: [
-    { id: 'entradas', name: 'Entradas', icon: 'utensils' },
-    { id: 'principales', name: 'Platos Principales', icon: 'flame' },
-    { id: 'combos', name: 'Combos', icon: 'users' },
-    { id: 'postres', name: 'Postres', icon: 'cake' },
-    { id: 'bebidas', name: 'Bebidas', icon: 'cup-soda' },
-  ],
 };

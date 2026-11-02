@@ -31,13 +31,23 @@ export class ModalService {
             modal,
             title: document.getElementById(`${id}-title`),
             subtitle: document.getElementById(`${id}-subtitle`),
-            message: document.getElementById(`${id}-desc`) || document.getElementById('admin-confirm-message') || document.getElementById('sa-confirm-msg'),
+            message:
+                document.getElementById(`${id}-desc`) ||
+                document.getElementById('admin-confirm-message') ||
+                document.getElementById('sa-confirm-msg'),
             iconBox: document.getElementById(`${id}-icon-box`),
             iconSlot: document.getElementById(`${id}-icon-slot`) || document.getElementById('sa-confirm-icon'),
-            acceptBtn: (document.getElementById(`${id}-accept`) || document.getElementById('btn-accept-admin-confirm') || document.getElementById('sa-confirm-accept-btn')) as HTMLButtonElement | null,
-            acceptText: document.getElementById(`${id}-accept-text`) || document.getElementById('sa-confirm-accept-text'),
-            cancelBtn: (document.getElementById(`${id}-cancel`) || document.getElementById('btn-cancel-admin-confirm') || document.getElementById('sa-confirm-cancel-btn')) as HTMLButtonElement | null,
-            closeBtn: (document.getElementById(`${id}-close`) || document.getElementById('btn-close-admin-confirm') || document.getElementById('sa-confirm-close')) as HTMLButtonElement | null,
+            acceptBtn: (document.getElementById(`${id}-accept`) ||
+                document.getElementById('btn-accept-admin-confirm') ||
+                document.getElementById('sa-confirm-accept-btn')) as HTMLButtonElement | null,
+            acceptText:
+                document.getElementById(`${id}-accept-text`) || document.getElementById('sa-confirm-accept-text'),
+            cancelBtn: (document.getElementById(`${id}-cancel`) ||
+                document.getElementById('btn-cancel-admin-confirm') ||
+                document.getElementById('sa-confirm-cancel-btn')) as HTMLButtonElement | null,
+            closeBtn: (document.getElementById(`${id}-close`) ||
+                document.getElementById('btn-close-admin-confirm') ||
+                document.getElementById('sa-confirm-close')) as HTMLButtonElement | null,
         };
     }
 
@@ -101,7 +111,8 @@ export class ModalService {
      */
     public confirm(options: ConfirmModalOptions): Promise<boolean> {
         this.bindEvents();
-        const { modal, title, subtitle, message, iconBox, iconSlot, acceptBtn, acceptText, cancelBtn } = this.getElements();
+        const { modal, title, subtitle, message, iconBox, iconSlot, acceptBtn, acceptText, cancelBtn } =
+            this.getElements();
 
         if (!modal) {
             return Promise.resolve(window.confirm(options.message));
@@ -111,8 +122,12 @@ export class ModalService {
         const confirmText = options.confirmText || (variant === 'danger' ? 'Eliminar' : 'Confirmar');
         const cancelText = options.cancelText || 'Cancelar';
         const titleText = options.title || (variant === 'danger' ? '¿Estás seguro?' : 'Confirmar acción');
-        const subtitleText = options.subtitle || (variant === 'danger' ? 'Esta acción no se puede deshacer' : 'Por favor verifica la información');
-        const iconName = options.icon || (variant === 'danger' ? 'alert-triangle' : variant === 'warning' ? 'alert-circle' : 'help-circle');
+        const subtitleText =
+            options.subtitle ||
+            (variant === 'danger' ? 'Esta acción no se puede deshacer' : 'Por favor verifica la información');
+        const iconName =
+            options.icon ||
+            (variant === 'danger' ? 'alert-triangle' : variant === 'warning' ? 'alert-circle' : 'help-circle');
 
         if (title) title.textContent = titleText;
         if (subtitle) subtitle.textContent = subtitleText;
@@ -127,7 +142,8 @@ export class ModalService {
         }
 
         if (acceptBtn) {
-            acceptBtn.className = `app-confirm-btn app-confirm-btn-accept variant-${variant} btn-action ${variant === 'danger' ? 'btn-danger sa-btn-danger' : variant === 'warning' ? 'btn-warning-action sa-btn-warning' : 'sa-btn-primary'}`.trim();
+            acceptBtn.className =
+                `app-confirm-btn app-confirm-btn-accept variant-${variant} btn-action ${variant === 'danger' ? 'btn-danger sa-btn-danger' : variant === 'warning' ? 'btn-warning-action sa-btn-warning' : 'sa-btn-primary'}`.trim();
         }
         if (acceptText) {
             acceptText.textContent = confirmText;

@@ -1,20 +1,27 @@
 // functions/api/_services/order.service.ts
 // Lógica de negocio pura para procesamiento, creación, auditoría y ciclo de vida de pedidos (M-01)
 import type { D1Database, D1PreparedStatement } from '@cloudflare/workers-types';
+import type { OrderEventRow, OrderRow, TenantRow } from '../../types';
 import { bytesToHex } from '../_auth';
-import { applyCoupon } from './coupon.service';
 import { checkOrderLimit } from '../_plans';
-import { OrderRepository, type ListOrdersParams, type KeysetPaginationResult, type OffsetPaginationResult, type ProductShortRow } from '../_repositories/order.repo';
+import {
+    type KeysetPaginationResult,
+    type ListOrdersParams,
+    type OffsetPaginationResult,
+    OrderRepository,
+    type ProductShortRow,
+    type ProductVariantRow,
+} from '../_repositories/order.repo';
+import { err, ok, type Result } from '../_result';
 import { buildOrderStatusWhatsAppUrl } from '../_whatsapp';
-import { ok, err, type Result } from '../_result';
-import type { OrderRow, OrderEventRow, TenantRow } from '../../types';
+import { applyCoupon } from './coupon.service';
 
 /**
  * Genera un ID de pedido legible con prefijo y caracteres aleatorios
  */
-export function generateOrderId(prefix = "ORD"): string {
-    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    let randomPart = "";
+export function generateOrderId(prefix = 'ORD'): string {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let randomPart = '';
     const randomBytes = new Uint8Array(5);
     crypto.getRandomValues(randomBytes);
     for (let i = 0; i < 5; i++) {
@@ -26,12 +33,7 @@ export function generateOrderId(prefix = "ORD"): string {
 /**
  * Valida un token de Cloudflare Turnstile CAPTCHA
  */
-export async function verifyTurnstile(
-    token: string,
-    secret: string,
-    ip: string,
-    isTest = false
-): Promise<boolean> {
+export async function verifyTurnstile(token: string, secret: string, ip: string, isTest = false): Promise<boolean> {
     if (isTest || token === 'TEST_PASS_TOKEN') return true;
     if (!secret || !token) return false;
 
@@ -43,9 +45,9 @@ export async function verifyTurnstile(
     try {
         const result = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
             body: formData,
-            method: 'POST'
+            method: 'POST',
         });
-        const outcome = await result.json() as { success: boolean };
+        const outcome = (await result.json()) as { success: boolean };
         return Boolean(outcome.success);
     } catch {
         return false;
@@ -58,13 +60,7 @@ export async function verifyTurnstile(
 export async function generateWebhookSignature(payload: string, secret: string): Promise<string> {
     const encoder = new TextEncoder();
     const keyData = encoder.encode(secret);
-    const key = await crypto.subtle.importKey(
-        'raw',
-        keyData,
-        { name: 'HMAC', hash: 'SHA-256' },
-        false,
-        ['sign']
-    );
+    const key = await crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
     const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(payload));
     return bytesToHex(new Uint8Array(signature));
 }
@@ -76,23 +72,24 @@ export async function resolveBcvRate(
     db: D1Database,
     tenantId: string,
     clientRate?: number,
-    tenantConfigJson?: string | null
+    tenantConfigJson?: string | null,
 ): Promise<{ rate: number; error?: string }> {
     // P-02: Intentar resolver la tasa directamente desde el config_json cacheado del tenant para evitar roundtrip a D1
     if (tenantConfigJson) {
         try {
             const config = JSON.parse(tenantConfigJson);
             const tenantRate = parseFloat(config?.bcvRate || config?.labels?.bcvRate || config?.bcv_rate);
-            if (!isNaN(tenantRate) && tenantRate > 0) {
+            if (!Number.isNaN(tenantRate) && tenantRate > 0) {
                 return { rate: tenantRate };
             }
         } catch {}
     }
 
     try {
-        const bcvSetting = await db.prepare(
-            "SELECT value FROM settings WHERE key = 'bcv_rate' AND tenant_id = ?"
-        ).bind(tenantId).first<{ value: string }>();
+        const bcvSetting = await db
+            .prepare("SELECT value FROM settings WHERE key = 'bcv_rate' AND tenant_id = ?")
+            .bind(tenantId)
+            .first<{ value: string }>();
 
         if (bcvSetting && parseFloat(bcvSetting.value) > 0) {
             return { rate: parseFloat(bcvSetting.value) };
@@ -105,7 +102,7 @@ export async function resolveBcvRate(
 
     return {
         rate: 0,
-        error: 'No se ha configurado la tasa oficial BCV para esta tienda y no se proporcionó una tasa válida.'
+        error: 'No se ha configurado la tasa oficial BCV para esta tienda y no se proporcionó una tasa válida.',
     };
 }
 
@@ -125,18 +122,18 @@ export function calculateOrderTotals(
     discountAmount: number,
     deliveryType: 'delivery' | 'pickup' | string,
     deliveryPrice: number,
-    bcvRate: number
+    bcvRate: number,
 ): OrderTotals {
     const effectiveDelivery = deliveryType === 'delivery' ? deliveryPrice : 0;
     const finalTotalPrice = Math.max(0, Math.round((itemsTotal - discountAmount + effectiveDelivery) * 100) / 100);
-    const totalBs = Math.round((finalTotalPrice * bcvRate) * 100) / 100;
+    const totalBs = Math.round(finalTotalPrice * bcvRate * 100) / 100;
 
     return {
         itemsTotal,
         discountAmount,
         deliveryPrice: effectiveDelivery,
         finalTotalPrice,
-        totalBs
+        totalBs,
     };
 }
 
@@ -147,6 +144,40 @@ export interface CreateOrderItemInput {
     price: number;
     qty: number;
     options?: Record<string, unknown> | null;
+    variantId?: number | string | null;
+}
+
+/**
+ * Determina si un item del pedido corresponde a una variante específica del producto (Oportunidad 2)
+ */
+export function resolveItemVariant(
+    item: CreateOrderItemInput,
+    productId: string,
+    variants: ProductVariantRow[],
+): ProductVariantRow | undefined {
+    // 1. Si viene variantId explícito en el item o en options
+    const explicitVariantId = item.variantId ?? item.options?.variantId ?? item.options?.variant_id;
+    if (explicitVariantId !== undefined && explicitVariantId !== null && explicitVariantId !== '') {
+        const found = variants.find((v) => v.product_id === productId && String(v.id) === String(explicitVariantId));
+        if (found) return found;
+    }
+
+    // 2. Si vienen opciones con talla / variante / label
+    if (item.options && typeof item.options === 'object') {
+        const candidateValues = Object.entries(item.options)
+            .filter(([k]) => k !== 'variantId' && k !== 'variant_id')
+            .map(([_, v]) => String(v).trim().toLowerCase());
+
+        const matched = variants.find(
+            (v) =>
+                v.product_id === productId &&
+                (candidateValues.includes(v.label.trim().toLowerCase()) ||
+                    (v.sku && candidateValues.includes(v.sku.trim().toLowerCase()))),
+        );
+        if (matched) return matched;
+    }
+
+    return undefined;
 }
 
 export interface CreateOrderServiceInput {
@@ -222,15 +253,12 @@ export class OrderService {
             return err('Pedido no encontrado.', 404);
         }
 
-        const [items, events] = await Promise.all([
-            this.repo.findItems(orderId),
-            this.repo.findEvents(orderId)
-        ]);
+        const [items, events] = await Promise.all([this.repo.findItems(orderId), this.repo.findEvents(orderId)]);
 
         return ok({
             ...order,
             items,
-            events
+            events,
         });
     }
 
@@ -258,7 +286,7 @@ export class OrderService {
             template,
             couponCode,
             clientRate,
-            items
+            items,
         } = input;
 
         // 1. Verificación de límite de pedidos mensuales
@@ -266,35 +294,30 @@ export class OrderService {
         if (!limitCheck.allowed) {
             return err(
                 `El negocio ha alcanzado su límite de ${limitCheck.limit} pedidos permitidos este mes. Por favor, comunícate con el administrador.`,
-                403
+                403,
             );
         }
 
         // 2. Validación de Turnstile CAPTCHA
         if (!turnstileSecretKey && !isTestEnv) {
-            return err("Error de configuración del servidor (seguridad).", 500);
+            return err('Error de configuración del servidor (seguridad).', 500);
         }
 
         if (!turnstileToken && !isTestEnv) {
-            return err("Verificación de seguridad requerida.", 400);
+            return err('Verificación de seguridad requerida.', 400);
         }
 
-        const isHuman = await verifyTurnstile(
-            turnstileToken || '',
-            turnstileSecretKey || '',
-            clientIp,
-            isTestEnv
-        );
+        const isHuman = await verifyTurnstile(turnstileToken || '', turnstileSecretKey || '', clientIp, isTestEnv);
         if (!isHuman) {
-            return err("No se pudo verificar que eres humano.", 403);
+            return err('No se pudo verificar que eres humano.', 403);
         }
 
         if (deliveryType === 'delivery' && !deliveryAddress) {
-            return err("La dirección es requerida para el delivery.", 400);
+            return err('La dirección es requerida para el delivery.', 400);
         }
 
         // 3. Generación de Order ID único con reintentos
-        const prefix = (storePrefix || "ORD").toUpperCase();
+        const prefix = (storePrefix || 'ORD').toUpperCase();
         let orderId = generateOrderId(prefix);
         let isUnique = false;
         let attempts = 0;
@@ -310,26 +333,44 @@ export class OrderService {
 
         // 4. Cargar solo los productos referenciados en el carrito (Fix #10: evita cargar todo el catálogo en memoria)
         // Intentamos resolver por id, key o nombre; priorizamos id/key para la query.
-        const requestedIds = items
-            .flatMap(item => [item.id, item.key].filter(Boolean) as string[]);
-        const dbProducts = requestedIds.length > 0
-            ? await this.repo.findTenantProductsByIds(tenantId, requestedIds)
-            : await this.repo.findTenantProducts(tenantId); // fallback si solo vienen nombres
-        const productMap = new Map(dbProducts.map(p => [p.id, p]));
+        const requestedIds = items.flatMap((item) => [item.id, item.key].filter(Boolean) as string[]);
+        const dbProducts =
+            requestedIds.length > 0
+                ? await this.repo.findTenantProductsByIds(tenantId, requestedIds)
+                : await this.repo.findTenantProducts(tenantId); // fallback si solo vienen nombres
+        const productMap = new Map(dbProducts.map((p) => [p.id, p]));
 
-        // Pre-validación de stock (Fix #4: es una optimización de UX, no una garantía atómica.
-        // La garantía real la provee el WHERE stock >= ? en el batch de D1).
+        // Cargar variantes asociadas a los productos del carrito (Oportunidad 2)
+        const allProductIds = dbProducts.map((p) => p.id);
+        const dbVariants =
+            allProductIds.length > 0 ? await this.repo.findVariantsByProductIds(tenantId, allProductIds) : [];
+
+        // Pre-validación de stock (Fix #4: optimización de UX a nivel de producto base y variante)
         for (const item of items) {
             let matchedProduct: ProductShortRow | undefined;
             if (item.id && productMap.has(item.id)) matchedProduct = productMap.get(item.id);
             else if (item.key && productMap.has(item.key)) matchedProduct = productMap.get(item.key);
-            else matchedProduct = dbProducts.find(p => p.name === item.name);
+            else matchedProduct = dbProducts.find((p) => p.name === item.name);
 
+            const prodId = matchedProduct ? matchedProduct.id : item.id || item.key || '';
+            const matchedVariant = prodId ? resolveItemVariant(item, prodId, dbVariants) : undefined;
+
+            // Pre-validación de stock a nivel de variante
+            if (matchedVariant && matchedVariant.stock !== null && matchedVariant.stock !== -1) {
+                if (matchedVariant.stock < item.qty) {
+                    return err(
+                        `Stock insuficiente para "${matchedProduct?.name || item.name} (${matchedVariant.label})". Disponible: ${matchedVariant.stock}, Solicitado: ${item.qty}.`,
+                        400,
+                    );
+                }
+            }
+
+            // Pre-validación de stock a nivel de producto base
             if (matchedProduct && matchedProduct.stock !== null && matchedProduct.stock !== -1) {
                 if (matchedProduct.stock < item.qty) {
                     return err(
                         `Stock insuficiente para "${matchedProduct.name}". Disponible: ${matchedProduct.stock}, Solicitado: ${item.qty}.`,
-                        400
+                        400,
                     );
                 }
             }
@@ -338,7 +379,7 @@ export class OrderService {
         // 5. Resolución de tasa BCV segura (P-02: con fallback a tenant.config_json)
         const bcvResolution = await resolveBcvRate(this.db, tenantId, clientRate, tenant?.config_json);
         if (bcvResolution.error || bcvResolution.rate <= 0) {
-            return err(bcvResolution.error || "Tasa BCV inválida o no configurada.", 400);
+            return err(bcvResolution.error || 'Tasa BCV inválida o no configurada.', 400);
         }
         const finalBcvRate = bcvResolution.rate;
 
@@ -350,56 +391,101 @@ export class OrderService {
 
         // Insert inicial del pedido (totales temporales 0, luego actualizados)
         statements.push(
-            this.db.prepare(
-                "INSERT INTO orders (id, client_name, client_phone, client_email, delivery_type, delivery_address, delivery_notes, payment_method, payment_reference, payment_receipt_url, bcv_rate, total_bs, status, total_items, total_price, template, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-            ).bind(
-                orderId, clientName, clientPhone, clientEmail || null, deliveryType,
-                deliveryAddress || null, deliveryNotes || null, paymentMethod || null,
-                paymentReference || null, paymentReceiptUrl || null,
-                finalBcvRate, 0.0, "pendiente", 0, 0.0, template || tenant?.template || 'restaurant', tenantId
-            )
+            this.db
+                .prepare(
+                    'INSERT INTO orders (id, client_name, client_phone, client_email, delivery_type, delivery_address, delivery_notes, payment_method, payment_reference, payment_receipt_url, bcv_rate, total_bs, status, total_items, total_price, template, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                )
+                .bind(
+                    orderId,
+                    clientName,
+                    clientPhone,
+                    clientEmail || null,
+                    deliveryType,
+                    deliveryAddress || null,
+                    deliveryNotes || null,
+                    paymentMethod || null,
+                    paymentReference || null,
+                    paymentReceiptUrl || null,
+                    finalBcvRate,
+                    0.0,
+                    'pendiente',
+                    0,
+                    0.0,
+                    template || tenant?.template || 'restaurant',
+                    tenantId,
+                ),
         );
 
         for (const item of items) {
             let matchedProduct: ProductShortRow | undefined;
             if (item.id && productMap.has(item.id)) matchedProduct = productMap.get(item.id);
             else if (item.key && productMap.has(item.key)) matchedProduct = productMap.get(item.key);
-            else matchedProduct = dbProducts.find(p => p.name === item.name);
+            else matchedProduct = dbProducts.find((p) => p.name === item.name);
 
-            const prodId = (matchedProduct ? matchedProduct.id : (item.id || item.key || 'item')).slice(0, 50);
+            const prodId = (matchedProduct ? matchedProduct.id : item.id || item.key || 'item').slice(0, 50);
             const price = matchedProduct ? parseFloat(String(matchedProduct.price)) : item.price;
             const qty = item.qty;
-            const prodName = (matchedProduct ? matchedProduct.name : (item.name || 'Producto')).slice(0, 150);
+            const prodName = (matchedProduct ? matchedProduct.name : item.name || 'Producto').slice(0, 150);
+
+            const matchedVariant = prodId ? resolveItemVariant(item, prodId, dbVariants) : undefined;
 
             let size: string | null = null;
             if (item.options) {
-                const entries = Object.entries(item.options).filter(([_, v]) => v);
+                const entries = Object.entries(item.options).filter(
+                    ([k, v]) => v && k !== 'variantId' && k !== 'variant_id',
+                );
                 if (entries.length === 1 && entries[0][0] === 'size') {
                     size = String(entries[0][1]).slice(0, 100);
                 } else if (entries.length > 0) {
-                    size = entries.map(([k, v]) => `${k}: ${v}`).join(', ').slice(0, 200);
+                    size = entries
+                        .map(([k, v]) => `${k}: ${v}`)
+                        .join(', ')
+                        .slice(0, 200);
                 }
+            }
+            if (!size && matchedVariant) {
+                size = matchedVariant.label.slice(0, 100);
             }
 
             totalItems += qty;
             itemsTotal += price * qty;
 
-            // Descontar inventario de forma atómica condicionada con WHERE stock >= ?
+            // Descontar inventario de variante de forma atómica condicionada con WHERE stock >= ?
+            if (matchedVariant && matchedVariant.stock !== null && matchedVariant.stock !== -1) {
+                stockUpdateIndices.push({
+                    statementIdx: statements.length,
+                    productName: `${prodName} (${matchedVariant.label})`,
+                });
+                statements.push(
+                    this.db
+                        .prepare(
+                            'UPDATE product_variants SET stock = stock - ?, active = CASE WHEN stock - ? <= 0 THEN 0 ELSE active END WHERE id = ? AND tenant_id = ? AND stock >= ?',
+                        )
+                        .bind(qty, qty, matchedVariant.id, tenantId, qty),
+                );
+            }
+
+            // Descontar inventario de producto base de forma atómica condicionada con WHERE stock >= ?
             if (matchedProduct && matchedProduct.stock !== null && matchedProduct.stock !== -1) {
                 stockUpdateIndices.push({
                     statementIdx: statements.length,
-                    productName: matchedProduct.name
+                    productName: matchedProduct.name,
                 });
                 statements.push(
-                    this.db.prepare(
-                        "UPDATE products SET stock = stock - ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND tenant_id = ? AND stock >= ?"
-                    ).bind(qty, matchedProduct.id, tenantId, qty)
+                    this.db
+                        .prepare(
+                            'UPDATE products SET stock = stock - ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND tenant_id = ? AND stock >= ?',
+                        )
+                        .bind(qty, matchedProduct.id, tenantId, qty),
                 );
             }
 
             statements.push(
-                this.db.prepare("INSERT INTO order_items (order_id, product_id, product_name, size, quantity, unit_price) VALUES (?, ?, ?, ?, ?, ?)")
-                .bind(orderId, prodId, prodName, size, qty, price)
+                this.db
+                    .prepare(
+                        'INSERT INTO order_items (order_id, product_id, product_name, size, quantity, unit_price) VALUES (?, ?, ?, ?, ?, ?)',
+                    )
+                    .bind(orderId, prodId, prodName, size, qty, price),
             );
         }
 
@@ -429,14 +515,20 @@ export class OrderService {
         const totals = calculateOrderTotals(itemsTotal, discountAmount, deliveryType, deliveryPrice, finalBcvRate);
 
         statements.push(
-            this.db.prepare("UPDATE orders SET total_items = ?, total_price = ?, total_bs = ?, coupon_code = ?, discount_amount = ? WHERE id = ?")
-            .bind(totalItems, totals.finalTotalPrice, totals.totalBs, appliedCouponCode, discountAmount, orderId)
+            this.db
+                .prepare(
+                    'UPDATE orders SET total_items = ?, total_price = ?, total_bs = ?, coupon_code = ?, discount_amount = ? WHERE id = ?',
+                )
+                .bind(totalItems, totals.finalTotalPrice, totals.totalBs, appliedCouponCode, discountAmount, orderId),
         );
 
         // 10. Evento inicial de auditoría (S-03)
         statements.push(
-            this.db.prepare("INSERT INTO order_events (order_id, tenant_id, from_status, to_status, actor, note) VALUES (?, ?, NULL, 'pendiente', 'cliente', 'Pedido creado en storefront')")
-            .bind(orderId, tenantId)
+            this.db
+                .prepare(
+                    "INSERT INTO order_events (order_id, tenant_id, from_status, to_status, actor, note) VALUES (?, ?, NULL, 'pendiente', 'cliente', 'Pedido creado en storefront')",
+                )
+                .bind(orderId, tenantId),
         );
 
         // 11. Ejecución del lote con verificación de stock atómico
@@ -444,7 +536,7 @@ export class OrderService {
         if (!batchResult.success) {
             return err(
                 `No se pudo completar el pedido: El stock para "${batchResult.stockExhaustedProduct}" se agotó en un pedido concurrente.`,
-                409
+                409,
             );
         }
 
@@ -456,7 +548,7 @@ export class OrderService {
             appliedCoupon: appliedCouponCode,
             totalPrice: totals.finalTotalPrice,
             totalBs: totals.totalBs,
-            bcvRate: finalBcvRate
+            bcvRate: finalBcvRate,
         });
     }
 
@@ -470,11 +562,11 @@ export class OrderService {
         actor: string,
         note?: string,
         paymentMethod?: string,
-        paymentAmount?: number
+        paymentAmount?: number,
     ): Promise<Result<{ whatsappNotificationUrl: string | null; order: OrderRow }, string>> {
         const order = await this.repo.findById(orderId, tenantId);
         if (!order) {
-            return err("Pedido no encontrado.", 404);
+            return err('Pedido no encontrado.', 404);
         }
 
         await this.repo.updateStatusWithEffects(
@@ -485,14 +577,17 @@ export class OrderService {
             actor,
             note,
             paymentMethod,
-            paymentAmount
+            paymentAmount,
         );
 
         const updatedOrder: OrderRow = {
             ...order,
             status: newStatus,
             payment_method: paymentMethod || order.payment_method,
-            total_price: (paymentAmount !== undefined && !Number.isNaN(Number(paymentAmount)) && Number(paymentAmount) >= 0) ? Number(paymentAmount) : order.total_price
+            total_price:
+                paymentAmount !== undefined && !Number.isNaN(Number(paymentAmount)) && Number(paymentAmount) >= 0
+                    ? Number(paymentAmount)
+                    : order.total_price,
         };
 
         const whatsappNotificationUrl = buildOrderStatusWhatsAppUrl(updatedOrder);
@@ -506,7 +601,7 @@ export class OrderService {
     async deleteOrder(orderId: string, tenantId: string): Promise<Result<boolean, string>> {
         const deleted = await this.repo.delete(orderId, tenantId);
         if (!deleted) {
-            return err("Pedido no encontrado.", 404);
+            return err('Pedido no encontrado.', 404);
         }
         return ok(true);
     }

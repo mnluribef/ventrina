@@ -4,262 +4,254 @@
 export type StoreTemplateType = 'restaurant' | 'hardware' | 'fashion' | 'tech' | 'autoparts' | 'grocery';
 
 export type SchemaOrgType =
-  | 'Restaurant'
-  | 'HardwareStore'
-  | 'ClothingStore'
-  | 'ElectronicsStore'
-  | 'AutoPartsStore'
-  | 'GroceryStore'
-  | 'Store'
-  | 'LocalBusiness'
-  | 'SoftwareApplication';
+    | 'Restaurant'
+    | 'HardwareStore'
+    | 'ClothingStore'
+    | 'ElectronicsStore'
+    | 'AutoPartsStore'
+    | 'GroceryStore'
+    | 'Store'
+    | 'LocalBusiness'
+    | 'SoftwareApplication';
 
 // Re-exportados desde functions/api/settings.ts (Single Source of Truth inferido de Zod)
 import type {
-  BenefitItem,
-  ProcessStep,
-  TestimonialItem,
-  FaqItem,
-  HeroSlide,
-  StoreSettings
+    BenefitItem,
+    FaqItem,
+    HeroSlide,
+    ProcessStep,
+    StoreSettings,
+    TestimonialItem,
 } from '../../functions/api/settings';
 
-export type {
-  BenefitItem,
-  ProcessStep,
-  TestimonialItem,
-  FaqItem,
-  HeroSlide,
-  StoreSettings
-};
+export type { BenefitItem, FaqItem, HeroSlide, ProcessStep, StoreSettings, TestimonialItem };
 
 export interface NavLink {
-  label: string;
-  href: string;
+    label: string;
+    href: string;
 }
 
 export interface StoreBusinessConfig {
-  name: string;
-  shortName?: string;
-  tagline: string;
-  description: string;
-  logoTextPrimary: string;
-  logoTextSecondary?: string;
-  logoIcon?: string; // SVG path or SVG string
-  logoImage?: string; // URL o DataURL del logo
-  siteUrl: string;
-  ogImage: string;
+    name: string;
+    shortName?: string;
+    tagline: string;
+    description: string;
+    logoTextPrimary: string;
+    logoTextSecondary?: string;
+    logoIcon?: string; // SVG path or SVG string
+    logoImage?: string; // URL o DataURL del logo
+    siteUrl: string;
+    ogImage: string;
 }
 
 export interface StoreContactConfig {
-  whatsapp: string; // Formato internacional sin +, ej: 584241230046
-  whatsappDisplay?: string; // Ej: +58 424-1230046
-  phone?: string;
-  email?: string;
-  instagram?: string;
-  instagramHandle?: string;
-  address: string;
-  addressLocality?: string;
-  addressRegion?: string;
-  addressCountry?: string;
-  hours: string;
-  mapsUrl?: string;
+    whatsapp: string; // Formato internacional sin +, ej: 584241230046
+    whatsappDisplay?: string; // Ej: +58 424-1230046
+    phone?: string;
+    email?: string;
+    instagram?: string;
+    instagramHandle?: string;
+    address: string;
+    addressLocality?: string;
+    addressRegion?: string;
+    addressCountry?: string;
+    hours: string;
+    mapsUrl?: string;
 }
 
 export interface StoreThemeConfig {
-  // Primarios (Botones, elementos activos, acentos principales)
-  primaryColor: string; // ej: '#0284C7' o '#BE185D'
-  primaryHover: string;
-  primaryDeep?: string;
-  primaryLight: string;
-  primaryPale?: string; // Fondo muy suave para tarjetas o chips
+    // Primarios (Botones, elementos activos, acentos principales)
+    primaryColor: string; // ej: '#0284C7' o '#BE185D'
+    primaryHover: string;
+    primaryDeep?: string;
+    primaryLight: string;
+    primaryPale?: string; // Fondo muy suave para tarjetas o chips
 
-  // Acentos (Detalles, estrellas, badges secundarios, contrastes)
-  accentColor: string; // ej: '#F97316' o '#06B6D4'
-  accentHover?: string;
-  accentLight?: string;
-  accentPale?: string;
+    // Acentos (Detalles, estrellas, badges secundarios, contrastes)
+    accentColor: string; // ej: '#F97316' o '#06B6D4'
+    accentHover?: string;
+    accentLight?: string;
+    accentPale?: string;
 
-  // Superficies y Fondos
-  bgPage?: string;      // Fondo general del sitio (reemplaza --cream)
-  bgSection?: string;   // Fondo alternativo de secciones (reemplaza --blush)
-  bgCard?: string;      // Fondo de tarjetas
-  bgDark?: string;      // Fondo oscuro
-  bgDarker?: string;    // Fondo más oscuro
-  borderSubtle?: string; // Borde sutil de tarjetas y divisores
-  borderFocus?: string;  // Borde al enfocar o hover
+    // Superficies y Fondos
+    bgPage?: string; // Fondo general del sitio (reemplaza --cream)
+    bgSection?: string; // Fondo alternativo de secciones (reemplaza --blush)
+    bgCard?: string; // Fondo de tarjetas
+    bgDark?: string; // Fondo oscuro
+    bgDarker?: string; // Fondo más oscuro
+    borderSubtle?: string; // Borde sutil de tarjetas y divisores
+    borderFocus?: string; // Borde al enfocar o hover
 
-  // Tipografía y Textos
-  textHeading?: string; // Títulos principales h1, h2, h3
-  textBody?: string;    // Texto de párrafos
-  textMuted?: string;   // Texto secundario
-  textLight?: string;   // Texto terciario o atenuado
+    // Tipografía y Textos
+    textHeading?: string; // Títulos principales h1, h2, h3
+    textBody?: string; // Texto de párrafos
+    textMuted?: string; // Texto secundario
+    textLight?: string; // Texto terciario o atenuado
 
-  // Hero y Overlays
-  heroBg?: string;         // Fondo base del hero
-  heroOverlay?: string;    // Gradiente sobre la imagen del hero
-  heroFadeBottom?: string; // Difuminado inferior del hero hacia el contenido
+    // Hero y Overlays
+    heroBg?: string; // Fondo base del hero
+    heroOverlay?: string; // Gradiente sobre la imagen del hero
+    heroFadeBottom?: string; // Difuminado inferior del hero hacia el contenido
 
-  // Gradientes
-  gradHero?: string;    // Gradiente decorativo hero
-  gradCta?: string;     // Gradiente botón principal
-  gradSection?: string; // Gradiente de fondo para catálogo/secciones
-  gradAccent?: string;  // Gradiente secundario
-  shadowColor?: string; // Tinte de sombra principal
-  shadowCard?: string;  // Sombra de tarjetas
+    // Gradientes
+    gradHero?: string; // Gradiente decorativo hero
+    gradCta?: string; // Gradiente botón principal
+    gradSection?: string; // Gradiente de fondo para catálogo/secciones
+    gradAccent?: string; // Gradiente secundario
+    shadowColor?: string; // Tinte de sombra principal
+    shadowCard?: string; // Sombra de tarjetas
 
-  // Badges y Pastillas
-  badgeBg?: string;
-  badgeBorder?: string;
-  badgeText?: string;
+    // Badges y Pastillas
+    badgeBg?: string;
+    badgeBorder?: string;
+    badgeText?: string;
 
-  // Paleta de colores preconfigurada seleccionada
-  palette?: string;
+    // Paleta de colores preconfigurada seleccionada
+    palette?: string;
 
-  // Fuentes
-  fontHeading: string;
-  fontBody: string;
-  googleFontsUrl: string;
+    // Fuentes
+    fontHeading: string;
+    fontBody: string;
+    googleFontsUrl: string;
 }
 
 export interface StoreLandingConfig {
-  hero: {
-    badgeText: string;
-    headline: string;
-    headlineHighlight: string;
-    subheadline: string;
-    ctaPrimaryText: string;
-    ctaPrimaryLink: string;
-    ctaSecondaryText?: string;
-    ctaSecondaryLink?: string;
-    slides: HeroSlide[];
-    stats: Array<{
-      value: string;
-      label: string;
-    }>;
-  };
-  benefits: {
-    title: string;
-    titleHighlight: string;
-    subtitle: string;
-    items: BenefitItem[];
-  };
-  catalog: {
-    title: string;
-    titleHighlight: string;
-    subtitle: string;
-    searchPlaceholder: string;
-    emptyMessage?: string;
-    addToCartText?: string;
-    productDetailViewMode?: 'modal' | 'page';
-    productDetailShareBtn?: 'enabled' | 'disabled';
-  };
-  process: {
-    title: string;
-    titleHighlight: string;
-    subtitle: string;
-    steps: ProcessStep[];
-  };
-  testimonials: {
-    title: string;
-    titleHighlight: string;
-    subtitle: string;
-    items: TestimonialItem[];
-  };
-  faq: {
-    title: string;
-    titleHighlight: string;
-    subtitle?: string;
-    items: FaqItem[];
-  };
+    hero: {
+        badgeText: string;
+        headline: string;
+        headlineHighlight: string;
+        subheadline: string;
+        ctaPrimaryText: string;
+        ctaPrimaryLink: string;
+        ctaSecondaryText?: string;
+        ctaSecondaryLink?: string;
+        slides: HeroSlide[];
+        stats: Array<{
+            value: string;
+            label: string;
+        }>;
+    };
+    benefits: {
+        title: string;
+        titleHighlight: string;
+        subtitle: string;
+        items: BenefitItem[];
+    };
+    catalog: {
+        title: string;
+        titleHighlight: string;
+        subtitle: string;
+        searchPlaceholder: string;
+        emptyMessage?: string;
+        addToCartText?: string;
+        productDetailViewMode?: 'modal' | 'page';
+        productDetailShareBtn?: 'enabled' | 'disabled';
+    };
+    process: {
+        title: string;
+        titleHighlight: string;
+        subtitle: string;
+        steps: ProcessStep[];
+    };
+    testimonials: {
+        title: string;
+        titleHighlight: string;
+        subtitle: string;
+        items: TestimonialItem[];
+    };
+    faq: {
+        title: string;
+        titleHighlight: string;
+        subtitle?: string;
+        items: FaqItem[];
+    };
 }
 
 export interface StoreNavConfig {
-  links: NavLink[];
+    links: NavLink[];
 }
 
 export interface StoreSeoConfig {
-  title: string;
-  description: string;
-  keywords: string;
-  schemaType: SchemaOrgType;
-  priceRange?: string;
-  servesCuisine?: string; // Para restaurantes
+    title: string;
+    description: string;
+    keywords: string;
+    schemaType: SchemaOrgType;
+    priceRange?: string;
+    servesCuisine?: string; // Para restaurantes
 }
 
 export interface StoreFeaturesConfig {
-  showBcvRate: boolean; // Mostrar tasa de cambio oficial (Venezuela)
-  showSearch: boolean;
-  showCart: boolean;
-  orderViaWhatsapp: boolean;
-  deliveryOptions: boolean; // Delivery vs Retiro en tienda
-  currencySymbol: string;
-  currencyCode: string;
-  allowCustomNotes: boolean;
+    showBcvRate: boolean; // Mostrar tasa de cambio oficial (Venezuela)
+    showSearch: boolean;
+    showCart: boolean;
+    orderViaWhatsapp: boolean;
+    deliveryOptions: boolean; // Delivery vs Retiro en tienda
+    currencySymbol: string;
+    currencyCode: string;
+    allowCustomNotes: boolean;
 }
 
 export interface PagoMovilAccount {
-  id?: string;
-  banco: string;
-  telefono: string;
-  cedula: string;
-  titular?: string;
-  isDefault?: boolean;
-}
-
-export interface BinancePayConfig {
-  payId?: string;
-  email?: string;
-  qrImage?: string;
-  merchantName?: string;
-}
-
-export interface StorePaymentConfig {
-  pagoMovil?: {
+    id?: string;
     banco: string;
     telefono: string;
     cedula: string;
     titular?: string;
-  };
-  pagoMovilAccounts?: PagoMovilAccount[];
-  zelle?: {
-    email: string;
-    titular: string;
-  };
-  binancePay?: BinancePayConfig;
-  efectivo?: boolean;
-  punto?: boolean;
+    isDefault?: boolean;
+}
+
+export interface BinancePayConfig {
+    payId?: string;
+    email?: string;
+    qrImage?: string;
+    merchantName?: string;
+}
+
+export interface StorePaymentConfig {
+    pagoMovil?: {
+        banco: string;
+        telefono: string;
+        cedula: string;
+        titular?: string;
+    };
+    pagoMovilAccounts?: PagoMovilAccount[];
+    zelle?: {
+        email: string;
+        titular: string;
+    };
+    binancePay?: BinancePayConfig;
+    efectivo?: boolean;
+    punto?: boolean;
 }
 
 export interface StoreLabelsConfig {
-  itemNounSingular: string; // ej: "Platillo", "Artículo", "Prenda", "Equipo"
-  itemNounPlural: string;   // ej: "Platillos", "Artículos", "Prendas", "Equipos"
-  emptyCartEmoji: string;   // ej: "🍽️", "🧰", "🛍️", "⚡"
-  cartTitle: string;        // ej: "Tu Pedido", "Tus Compras", "Tu Cotización"
-  deliveryOptionName: string; // ej: "Delivery", "Despacho a Obra", "Envío Nacional", "Envío Express"
-  deliveryOptionPrice: number; // Costo adicional en USD
-  pickupOptionName: string;   // ej: "Retiro en local", "Retiro en Galpón", "Retiro en Tienda", "Retiro en Oficina"
+    itemNounSingular: string; // ej: "Platillo", "Artículo", "Prenda", "Equipo"
+    itemNounPlural: string; // ej: "Platillos", "Artículos", "Prendas", "Equipos"
+    emptyCartEmoji: string; // ej: "🍽️", "🧰", "🛍️", "⚡"
+    cartTitle: string; // ej: "Tu Pedido", "Tus Compras", "Tu Cotización"
+    deliveryOptionName: string; // ej: "Delivery", "Despacho a Obra", "Envío Nacional", "Envío Express"
+    deliveryOptionPrice: number; // Costo adicional en USD
+    pickupOptionName: string; // ej: "Retiro en local", "Retiro en Galpón", "Retiro en Tienda", "Retiro en Oficina"
 }
 
 export interface CategoryDefinition {
-  id: string;
-  name: string;
-  icon?: string;
+    id: string;
+    name: string;
+    icon?: string;
 }
 
 export interface StoreConfig {
-  template: StoreTemplateType;
-  storePrefix?: string; // Prefijo para IDs de pedidos (ej: 'FOG', 'FER', 'AUR', 'NEX')
-  business: StoreBusinessConfig;
-  contact: StoreContactConfig;
-  theme: StoreThemeConfig;
-  landing: StoreLandingConfig;
-  nav: StoreNavConfig;
-  seo: StoreSeoConfig;
-  features: StoreFeaturesConfig;
-  payment?: StorePaymentConfig;
-  labels?: StoreLabelsConfig;
-  categories?: CategoryDefinition[];
-  palette?: string;
+    template: StoreTemplateType;
+    storePrefix?: string; // Prefijo para IDs de pedidos (ej: 'FOG', 'FER', 'AUR', 'NEX')
+    business: StoreBusinessConfig;
+    contact: StoreContactConfig;
+    theme: StoreThemeConfig;
+    landing: StoreLandingConfig;
+    nav: StoreNavConfig;
+    seo: StoreSeoConfig;
+    features: StoreFeaturesConfig;
+    payment?: StorePaymentConfig;
+    labels?: StoreLabelsConfig;
+    categories?: CategoryDefinition[];
+    palette?: string;
 }
-

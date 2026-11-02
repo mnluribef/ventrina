@@ -1,11 +1,11 @@
 ---
+import defaultStoreConfig from '../../config/store.config';
 // Header.astro - Navegación principal configurable
 import type { StoreConfig } from '../../types/store.types';
-import defaultStoreConfig from '../../config/store.config';
 import '../../styles/navbar.css';
 
 export interface Props {
-  config?: StoreConfig;
+    config?: StoreConfig;
 }
 
 const { config = defaultStoreConfig } = Astro.props;
@@ -14,9 +14,11 @@ const { business, nav } = config;
 // Separar enlaces de contenido y enlaces de acción (login / registro)
 const isSaas = business.logoTextPrimary === 'VENTRINA' || business.name === 'Ventrina';
 const currentPath = Astro.url.pathname;
-const mainLinks = nav.links.filter(l => l.href !== '/login' && l.href !== '/register');
-const loginLink = nav.links.find(l => l.href === '/login') || (isSaas ? { label: 'Iniciar Sesión', href: '/login' } : null);
-const ctaLink = nav.links.find(l => l.href === '/register') || (isSaas ? { label: 'Crear Tienda', href: '/register' } : null);
+const mainLinks = nav.links.filter((l) => l.href !== '/login' && l.href !== '/register');
+const loginLink =
+    nav.links.find((l) => l.href === '/login') || (isSaas ? { label: 'Iniciar Sesión', href: '/login' } : null);
+const ctaLink =
+    nav.links.find((l) => l.href === '/register') || (isSaas ? { label: 'Crear Tienda', href: '/register' } : null);
 ---
 
 <header class={`glass-nav ${isSaas ? 'saas-nav' : ''}`}>

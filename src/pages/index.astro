@@ -1,10 +1,8 @@
 ---
-// src/pages/index.astro
-// Landing Page de Alta Conversión de Ventrina SaaS (Tema Claro Premium)
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
+import Header from '../components/layout/Header.astro';
 import { techTemplate } from '../config/templates/tech';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import { DEFAULT_BCV_FALLBACK_RATE, EXTERNAL_BCV_API_URL, formatBsCurrency } from '../scripts/services/bcv.service';
 import '../styles/landing.css';
 
@@ -23,7 +21,7 @@ try {
     // Si no hay red durante la compilación, se mantiene la tasa fallback
 }
 
-const mockUsdTotal = 45.00;
+const mockUsdTotal = 45.0;
 const mockBsTotal = mockUsdTotal * bcvRate;
 const formattedBcvRate = formatBsCurrency(bcvRate);
 const formattedBsTotal = formatBsCurrency(mockBsTotal);
@@ -32,45 +30,48 @@ const formattedBsTotal = formatBsCurrency(mockBsTotal);
 const saasConfig = {
     ...techTemplate,
     template: 'tech' as const,
-    business: { 
-        ...techTemplate.business, 
-        name: "Ventrina", 
-        shortName: "Ventrina",
-        tagline: "Plataforma de E-commerce y Catálogos para WhatsApp",
-        logoTextPrimary: "VENTRINA", 
-        logoTextSecondary: "SAAS",
-        description: "Crea tu catálogo interactivo en minutos, sincroniza inventario con tasa BCV y recibe pedidos estructurados en tu WhatsApp.",
-        siteUrl: "https://ventrina.app"
+    business: {
+        ...techTemplate.business,
+        name: 'Ventrina',
+        shortName: 'Ventrina',
+        tagline: 'Plataforma de E-commerce y Catálogos para WhatsApp',
+        logoTextPrimary: 'VENTRINA',
+        logoTextSecondary: 'SAAS',
+        description:
+            'Crea tu catálogo interactivo en minutos, sincroniza inventario con tasa BCV y recibe pedidos estructurados en tu WhatsApp.',
+        siteUrl: 'https://ventrina.app',
     },
     contact: {
         ...techTemplate.contact,
         instagram: '',
         instagramHandle: '',
-        address: ''
+        address: '',
     },
     seo: {
-        title: "Ventrina | Crea tu Tienda Online y Vende por WhatsApp en Minutos",
-        description: "Plataforma líder en Venezuela y LatAm para crear catálogos interactivos, convertir precios a tasa BCV en tiempo real y recibir pedidos directamente a WhatsApp sin comisiones.",
-        keywords: "tienda online venezuela, catalogo whatsapp, pedidos whatsapp, ecommerce venezuela, ventrina, tasa bcv, catalogo digital",
-        schemaType: "SoftwareApplication" as const,
-        priceRange: "$"
+        title: 'Ventrina | Crea tu Tienda Online y Vende por WhatsApp en Minutos',
+        description:
+            'Plataforma líder en Venezuela y LatAm para crear catálogos interactivos, convertir precios a tasa BCV en tiempo real y recibir pedidos directamente a WhatsApp sin comisiones.',
+        keywords:
+            'tienda online venezuela, catalogo whatsapp, pedidos whatsapp, ecommerce venezuela, ventrina, tasa bcv, catalogo digital',
+        schemaType: 'SoftwareApplication' as const,
+        priceRange: '$',
     },
     nav: {
         links: [
-            { label: "Beneficios", href: "#beneficios" },
-            { label: "Planes", href: "#planes" },
-            { label: "Demos", href: "#demos" },
-            { label: "Características", href: "#caracteristicas" },
-            { label: "Comparativa", href: "#comparativa" },
-            { label: "FAQ", href: "#faq" },
-            { label: "Iniciar Sesión", href: "/login" },
-            { label: "Crear Tienda", href: "/register" }
-        ]
+            { label: 'Beneficios', href: '#beneficios' },
+            { label: 'Planes', href: '#planes' },
+            { label: 'Demos', href: '#demos' },
+            { label: 'Características', href: '#caracteristicas' },
+            { label: 'Comparativa', href: '#comparativa' },
+            { label: 'FAQ', href: '#faq' },
+            { label: 'Iniciar Sesión', href: '/login' },
+            { label: 'Crear Tienda', href: '/register' },
+        ],
     },
     features: {
         ...techTemplate.features,
-        showBcvRate: false
-    }
+        showBcvRate: false,
+    },
 };
 ---
 

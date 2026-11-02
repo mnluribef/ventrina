@@ -1,12 +1,12 @@
 ---
+import defaultStoreConfig from '../../config/store.config';
 // Benefits.astro - Sección de Beneficios / Valor agregado configurable
 import type { StoreConfig } from '../../types/store.types';
-import defaultStoreConfig from '../../config/store.config';
-import Icon from '../common/Icon.astro';
 import '../../styles/benefits.css';
+import Icon from '../common/Icon.astro';
 
 export interface Props {
-  config?: StoreConfig;
+    config?: StoreConfig;
 }
 
 const { config = defaultStoreConfig } = Astro.props;

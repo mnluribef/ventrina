@@ -1,9 +1,9 @@
-import type { CatalogProduct, StoreMetaConfig, TemplateCategory } from '../types/catalog.types';
-import type { CartService } from '../services/cart.service';
-import type { ICurrencyService } from '../services/bcv.service';
-import type { IToastService } from '../services/toast.service';
-import { initScrollReveal } from '../utils/reveal.util';
 import { renderIconSvg } from '../../components/common/icons';
+import type { ICurrencyService } from '../services/bcv.service';
+import type { CartService } from '../services/cart.service';
+import type { IToastService } from '../services/toast.service';
+import type { CatalogProduct, StoreMetaConfig, TemplateCategory } from '../types/catalog.types';
+import { initScrollReveal } from '../utils/reveal.util';
 
 export class CatalogController {
     private cartService: CartService;
@@ -23,7 +23,7 @@ export class CatalogController {
         cartService: CartService,
         currencyService: ICurrencyService,
         toastService: IToastService,
-        config: StoreMetaConfig
+        config: StoreMetaConfig,
     ) {
         this.cartService = cartService;
         this.currencyService = currencyService;
@@ -78,14 +78,15 @@ export class CatalogController {
             if (tenant) {
                 reqHeaders['X-Tenant-Id'] = tenant;
             }
-            const res = await fetch(`/api/products?template=${encodeURIComponent(this.config.template)}${tenantParam}`, {
-                headers: reqHeaders
-            });
+            const res = await fetch(
+                `/api/products?template=${encodeURIComponent(this.config.template)}${tenantParam}`,
+                {
+                    headers: reqHeaders,
+                },
+            );
             if (res.ok) {
                 const responseData: any = await res.json();
-                products = Array.isArray(responseData)
-                    ? responseData
-                    : responseData?.data || [];
+                products = Array.isArray(responseData) ? responseData : responseData?.data || [];
             }
         } catch {
             // Error de conexión o endpoint no disponible en servidor dev estático
@@ -95,7 +96,7 @@ export class CatalogController {
         if (products.length === 0 && this.config.isDemo) {
             try {
                 const fallbackEl = document.getElementById('catalog-fallback-products');
-                if (fallbackEl && fallbackEl.textContent) {
+                if (fallbackEl?.textContent) {
                     products = JSON.parse(fallbackEl.textContent);
                 }
             } catch {
@@ -136,7 +137,7 @@ export class CatalogController {
         const directId = urlParams.get('p') || urlParams.get('producto');
         if (!directId) return;
 
-        const product = this.products.find(p => p.id === directId);
+        const product = this.products.find((p) => p.id === directId);
         if (product) {
             if (this.config.productDetailViewMode === 'page') {
                 window.location.href = this.getProductUrl(product.id);
@@ -148,9 +149,10 @@ export class CatalogController {
 
     public getProductUrl(productId: string): string {
         const hostname = window.location.hostname.toLowerCase();
-        const isSubdomain = hostname.endsWith('.ventrina.app') || 
-                            hostname.endsWith('.localhost') || 
-                            (this.config.tenantId && hostname.startsWith(`${this.config.tenantId.toLowerCase()}.`));
+        const isSubdomain =
+            hostname.endsWith('.ventrina.app') ||
+            hostname.endsWith('.localhost') ||
+            (this.config.tenantId && hostname.startsWith(`${this.config.tenantId.toLowerCase()}.`));
         if (isSubdomain) {
             return `/p/${encodeURIComponent(productId)}`;
         }
@@ -164,16 +166,17 @@ export class CatalogController {
         const container = document.getElementById('category-filters');
         if (!container) return;
 
-        const types = new Set<string>(
-            this.products.map((p) => p.type_id || p.category || '').filter(Boolean)
-        );
+        const types = new Set<string>(this.products.map((p) => p.type_id || p.category || '').filter(Boolean));
         const toRender = ['all', ...Array.from(types)];
 
         container.innerHTML = toRender
             .map((type) => {
                 const name =
                     this.categoryNames[type] ||
-                    type.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    type
+                        .split('-')
+                        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                        .join(' ');
                 return `<button class="category-filter-btn ${this.activeCategory === type ? 'active' : ''}" data-category="${type}">${name}</button>`;
             })
             .join('');
@@ -192,9 +195,7 @@ export class CatalogController {
         if (this.searchQuery.trim() !== '') {
             const q = this.searchQuery.toLowerCase().trim();
             filtered = filtered.filter(
-                (p) =>
-                    p.name.toLowerCase().includes(q) ||
-                    (p.description && p.description.toLowerCase().includes(q))
+                (p) => p.name.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q),
             );
         }
 
@@ -228,16 +229,25 @@ export class CatalogController {
                                 attr.type === 'color_swatch'
                                     ? `<div class="color-swatch-container" data-attribute="${attr.key}" data-label="${attr.label}" data-product="${p.id}">${attr.values
                                           .map((val: string, idx: number) => {
-                                              const isLight = ['blanco', 'amarillo', 'beige', 'marfil', 'crema'].includes(val.toLowerCase().trim());
+                                              const isLight = [
+                                                  'blanco',
+                                                  'amarillo',
+                                                  'beige',
+                                                  'marfil',
+                                                  'crema',
+                                              ].includes(val.toLowerCase().trim());
                                               const lightClass = isLight ? 'light-color' : '';
-                                              const slug = val.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+                                              const slug = val
+                                                  .toLowerCase()
+                                                  .trim()
+                                                  .replace(/[^a-z0-9]/g, '');
                                               return `<button type="button" class="color-swatch-btn color-swatch-${slug} ${idx === 0 ? 'active' : ''} ${lightClass}" data-value="${val}" title="${val}"></button>`;
                                           })
                                           .join('')}</div>`
                                     : `<div class="attribute-selector" data-attribute="${attr.key}" data-label="${attr.label}" data-product="${p.id}">${attr.values
                                           .map(
                                               (val: string, idx: number) =>
-                                                  `<button type="button" class="attribute-btn ${idx === 0 ? 'active' : ''}" data-value="${val}">${val}</button>`
+                                                  `<button type="button" class="attribute-btn ${idx === 0 ? 'active' : ''}" data-value="${val}">${val}</button>`,
                                           )
                                           .join('')}</div>`;
                             return `<div class="attribute-options-group"><label>${attr.label}:</label>${optionsHtml}</div>`;
@@ -251,7 +261,7 @@ export class CatalogController {
                               .split(',')
                               .map(
                                   (size: string, idx: number) =>
-                                      `<button type="button" class="attribute-btn ${idx === 0 ? 'active' : ''}" data-value="${size.trim()}">${size.trim()}</button>`
+                                      `<button type="button" class="attribute-btn ${idx === 0 ? 'active' : ''}" data-value="${size.trim()}">${size.trim()}</button>`,
                               )
                               .join('')}</div></div>`
                         : '';
@@ -275,7 +285,7 @@ export class CatalogController {
                     unitBadge = `<span class="product-unit-badge">${unitMatch[1]}</span>`;
                 }
 
-                let isOutOfStock = p.stock !== undefined && p.stock !== null && p.stock === 0;
+                const isOutOfStock = p.stock !== undefined && p.stock !== null && p.stock === 0;
                 let stockBadge = '';
                 if (isOutOfStock) {
                     stockBadge = `<span class="product-stock-badge-danger">Agotado</span>`;
@@ -283,9 +293,12 @@ export class CatalogController {
                     stockBadge = `<span class="product-stock-badge-warning">¡Últimas ${p.stock} disp.!</span>`;
                 }
 
-                let brandBadge = p.brand ? `<span class="product-brand-badge">${p.brand}</span>` : '';
-                let modelBadge = p.model ? `<span class="product-model-badge">${p.model}</span>` : '';
-                let badgesHtml = (brandBadge || modelBadge || stockBadge) ? `<div class="product-badges">${brandBadge}${modelBadge}${stockBadge}</div>` : '';
+                const brandBadge = p.brand ? `<span class="product-brand-badge">${p.brand}</span>` : '';
+                const modelBadge = p.model ? `<span class="product-model-badge">${p.model}</span>` : '';
+                const badgesHtml =
+                    brandBadge || modelBadge || stockBadge
+                        ? `<div class="product-badges">${brandBadge}${modelBadge}${stockBadge}</div>`
+                        : '';
 
                 return `
           <div class="product-card reveal" data-product-id="${p.id}">
@@ -301,16 +314,20 @@ export class CatalogController {
               <p class="product-desc">${p.description || ''}</p>
               ${attributesHtml}${legacySizesHtml}
               <div class="product-actions">
-                ${isOutOfStock ? `
+                ${
+                    isOutOfStock
+                        ? `
                   <button type="button" class="cta-btn product-cta add-to-cart btn-out-of-stock" disabled>Agotado</button>
-                ` : `
+                `
+                        : `
                   <div class="main-qty-selector">
                     <button type="button" class="qty-btn-main minus" data-id="${p.id}">-</button>
-                    <input type="number" value="1" min="1" max="${(p.stock !== undefined && p.stock > 0) ? p.stock : 99}" id="qty-${p.id}" class="qty-input">
+                    <input type="number" value="1" min="1" max="${p.stock !== undefined && p.stock > 0 ? p.stock : 99}" id="qty-${p.id}" class="qty-input">
                     <button type="button" class="qty-btn-main plus" data-id="${p.id}">+</button>
                   </div>
                   <button type="button" class="cta-btn product-cta add-to-cart" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}" data-input="qty-${p.id}" data-icon="${p.icon || 'package'}">Agregar</button>
-                `}
+                `
+                }
               </div>
               <button type="button" class="product-quick-view-btn" data-action="open-detail" data-id="${p.id}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -335,7 +352,9 @@ export class CatalogController {
         const imgEl = document.getElementById('pdm-image') as HTMLImageElement | null;
         if (imgEl) {
             imgEl.src = product.image_url
-                ? (product.image_url.startsWith('http') || product.image_url.startsWith('/') ? product.image_url : `/${product.image_url}`)
+                ? product.image_url.startsWith('http') || product.image_url.startsWith('/')
+                    ? product.image_url
+                    : `/${product.image_url}`
                 : '/assets/favicon.svg';
             imgEl.alt = product.name;
         }
@@ -359,7 +378,8 @@ export class CatalogController {
 
         const priceUsdEl = document.getElementById('pdm-price-usd');
         if (priceUsdEl) {
-            priceUsdEl.textContent = product.price > 0 ? `$${parseFloat(String(product.price)).toFixed(2)}` : 'A consultar';
+            priceUsdEl.textContent =
+                product.price > 0 ? `$${parseFloat(String(product.price)).toFixed(2)}` : 'A consultar';
         }
 
         // Descuento en modal
@@ -408,20 +428,33 @@ export class CatalogController {
         if (attrsContainer) {
             let html = '';
             if (product.attributes && product.attributes.length > 0) {
-                html = product.attributes.map(attr => {
-                    const firstVal = attr.values[0] || '';
-                    const opts = attr.type === 'color_swatch'
-                        ? `<div class="color-swatch-container" data-attribute="${attr.key}" data-label="${attr.label}" data-product="${product.id}">${attr.values.map((val: string, idx: number) => {
-                            const slug = val.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
-                            return `<button type="button" class="color-swatch-btn color-swatch-${slug} ${idx === 0 ? 'active' : ''}" data-value="${val}" title="${val}"></button>`;
-                        }).join('')}</div>`
-                        : `<div class="attribute-selector" data-attribute="${attr.key}" data-label="${attr.label}" data-product="${product.id}">${attr.values.map((val: string, idx: number) => {
-                            return `<button type="button" class="attribute-btn ${idx === 0 ? 'active' : ''}" data-value="${val}">${val}</button>`;
-                        }).join('')}</div>`;
-                    return `<div class="attribute-options-group"><label>${attr.label}: <strong class="attr-selected-value">${firstVal}</strong></label>${opts}</div>`;
-                }).join('');
+                html = product.attributes
+                    .map((attr) => {
+                        const firstVal = attr.values[0] || '';
+                        const opts =
+                            attr.type === 'color_swatch'
+                                ? `<div class="color-swatch-container" data-attribute="${attr.key}" data-label="${attr.label}" data-product="${product.id}">${attr.values
+                                      .map((val: string, idx: number) => {
+                                          const slug = val
+                                              .toLowerCase()
+                                              .trim()
+                                              .replace(/[^a-z0-9]/g, '');
+                                          return `<button type="button" class="color-swatch-btn color-swatch-${slug} ${idx === 0 ? 'active' : ''}" data-value="${val}" title="${val}"></button>`;
+                                      })
+                                      .join('')}</div>`
+                                : `<div class="attribute-selector" data-attribute="${attr.key}" data-label="${attr.label}" data-product="${product.id}">${attr.values
+                                      .map((val: string, idx: number) => {
+                                          return `<button type="button" class="attribute-btn ${idx === 0 ? 'active' : ''}" data-value="${val}">${val}</button>`;
+                                      })
+                                      .join('')}</div>`;
+                        return `<div class="attribute-options-group"><label>${attr.label}: <strong class="attr-selected-value">${firstVal}</strong></label>${opts}</div>`;
+                    })
+                    .join('');
             } else if (product.sizes) {
-                const sizesList = product.sizes.split(',').map(s => s.trim()).filter(Boolean);
+                const sizesList = product.sizes
+                    .split(',')
+                    .map((s) => s.trim())
+                    .filter(Boolean);
                 const firstSize = sizesList[0] || '';
                 html = `<div class="attribute-options-group"><label>Opciones: <strong class="attr-selected-value">${firstSize}</strong></label><div class="attribute-selector" data-attribute="opcion" data-label="Opción" data-product="${product.id}">${sizesList.map((size: string, idx: number) => `<button type="button" class="attribute-btn ${idx === 0 ? 'active' : ''}" data-value="${size}">${size}</button>`).join('')}</div></div>`;
             }
@@ -432,7 +465,7 @@ export class CatalogController {
         const qtyIn = document.getElementById('pdm-qty-input') as HTMLInputElement | null;
         if (qtyIn) {
             qtyIn.value = '1';
-            qtyIn.max = String((product.stock !== undefined && product.stock > 0) ? product.stock : 99);
+            qtyIn.max = String(product.stock !== undefined && product.stock > 0 ? product.stock : 99);
         }
 
         // WhatsApp directo
@@ -495,9 +528,10 @@ export class CatalogController {
     }
 
     public async shareProduct(product: CatalogProduct): Promise<void> {
-        const shareUrl = this.config.productDetailViewMode === 'page'
-            ? `${window.location.origin}${this.getProductUrl(product.id)}`
-            : `${window.location.origin}${window.location.pathname}?p=${encodeURIComponent(product.id)}`;
+        const shareUrl =
+            this.config.productDetailViewMode === 'page'
+                ? `${window.location.origin}${this.getProductUrl(product.id)}`
+                : `${window.location.origin}${window.location.pathname}?p=${encodeURIComponent(product.id)}`;
 
         if (navigator.share) {
             try {
@@ -553,7 +587,7 @@ export class CatalogController {
                 document.body.style.overflow = '';
                 this.currentModalProduct = null;
             } else if (pId) {
-                const product = this.products.find(p => p.id === pId);
+                const product = this.products.find((p) => p.id === pId);
                 if (product) this.openProductModal(product);
             }
         });
@@ -562,14 +596,14 @@ export class CatalogController {
         const qtyInput = document.getElementById('pdm-qty-input') as HTMLInputElement | null;
         document.getElementById('pdm-qty-minus')?.addEventListener('click', () => {
             if (!qtyInput) return;
-            let v = parseInt(qtyInput.value) || 1;
+            const v = parseInt(qtyInput.value, 10) || 1;
             if (v > 1) qtyInput.value = String(v - 1);
         });
 
         document.getElementById('pdm-qty-plus')?.addEventListener('click', () => {
             if (!qtyInput) return;
-            let v = parseInt(qtyInput.value) || 1;
-            const max = parseInt(qtyInput.max) || 99;
+            const v = parseInt(qtyInput.value, 10) || 1;
+            const max = parseInt(qtyInput.max, 10) || 99;
             if (v < max) qtyInput.value = String(v + 1);
         });
 
@@ -580,7 +614,7 @@ export class CatalogController {
             if (!btn) return;
             const parent = btn.parentElement;
             if (!parent) return;
-            parent.querySelectorAll('.attribute-btn, .color-swatch-btn').forEach(b => b.classList.remove('active'));
+            parent.querySelectorAll('.attribute-btn, .color-swatch-btn').forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
 
             // Actualizar valor en label
@@ -596,7 +630,7 @@ export class CatalogController {
         document.getElementById('pdm-btn-add-cart')?.addEventListener('click', () => {
             if (!this.currentModalProduct) return;
             const p = this.currentModalProduct;
-            const qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
+            const qty = qtyInput ? parseInt(qtyInput.value, 10) || 1 : 1;
 
             const options: Record<string, string> = {};
             const optionLabels: Record<string, string> = {};
@@ -613,9 +647,7 @@ export class CatalogController {
 
             this.cartService.addItem(p.id, p.name, p.price, qty, p.icon || 'package', options, optionLabels);
             const optList = Object.values(options).filter(Boolean);
-            this.toastService.show(
-                `¡Añadido ${qty}x ${p.name}${optList.length ? ` (${optList.join(', ')})` : ''}!`
-            );
+            this.toastService.show(`¡Añadido ${qty}x ${p.name}${optList.length ? ` (${optList.join(', ')})` : ''}!`);
 
             const btnAdd = document.getElementById('pdm-btn-add-cart') as HTMLButtonElement | null;
             const btnText = document.getElementById('pdm-btn-add-text');
@@ -652,7 +684,7 @@ export class CatalogController {
                     if (this.config.productDetailViewMode === 'page') {
                         window.location.href = this.getProductUrl(id);
                     } else {
-                        const product = this.products.find(p => p.id === id);
+                        const product = this.products.find((p) => p.id === id);
                         if (product) this.openProductModal(product);
                     }
                 }
@@ -676,7 +708,7 @@ export class CatalogController {
                 const id = qtyBtn.getAttribute('data-id')!;
                 const input = document.getElementById(`qty-${id}`) as HTMLInputElement | null;
                 if (input) {
-                    let val = parseInt(input.value) || 1;
+                    let val = parseInt(input.value, 10) || 1;
                     if (qtyBtn.classList.contains('plus')) val++;
                     else if (qtyBtn.classList.contains('minus') && val > 1) val--;
                     input.value = String(val);
@@ -691,10 +723,8 @@ export class CatalogController {
                 const name = addBtn.getAttribute('data-name')!;
                 const price = parseFloat(addBtn.getAttribute('data-price') || '0');
                 const icon = addBtn.getAttribute('data-icon') || 'package';
-                const input = document.getElementById(
-                    addBtn.getAttribute('data-input')!
-                ) as HTMLInputElement | null;
-                const qty = input ? parseInt(input.value) || 1 : 1;
+                const input = document.getElementById(addBtn.getAttribute('data-input')!) as HTMLInputElement | null;
+                const qty = input ? parseInt(input.value, 10) || 1 : 1;
 
                 const options: Record<string, string> = {};
                 const optionLabels: Record<string, string> = {};
@@ -714,9 +744,7 @@ export class CatalogController {
                 if (input) input.value = '1';
 
                 const optList = Object.values(options).filter(Boolean);
-                this.toastService.show(
-                    `¡Añadido ${qty}x ${name}${optList.length ? ` (${optList.join(', ')})` : ''}!`
-                );
+                this.toastService.show(`¡Añadido ${qty}x ${name}${optList.length ? ` (${optList.join(', ')})` : ''}!`);
             }
         });
 
@@ -725,9 +753,7 @@ export class CatalogController {
             const btn = (e.target as HTMLElement).closest('.category-filter-btn') as HTMLElement | null;
             if (!btn) return;
             this.activeCategory = btn.getAttribute('data-category')!;
-            document
-                .querySelectorAll('.category-filter-btn')
-                .forEach((b) => b.classList.remove('active'));
+            document.querySelectorAll('.category-filter-btn').forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
             this.visibleCount = this.pageSize;
             this.renderProducts();

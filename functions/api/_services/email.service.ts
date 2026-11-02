@@ -45,12 +45,18 @@ export function escapeHtml(str: string): string {
  */
 function getTemplateFriendlyName(template: string): string {
     switch (template) {
-        case 'restaurant':  return 'Restaurante / Comida';
-        case 'hardware':    return 'Ferretería / Herramientas';
-        case 'autoparts':   return 'Repuestos Automotrices';
-        case 'fashion':     return 'Ropa / Moda';
-        case 'tech':        return 'Tecnología / Gadgets';
-        default:            return 'Comercio Digital';
+        case 'restaurant':
+            return 'Restaurante / Comida';
+        case 'hardware':
+            return 'Ferretería / Herramientas';
+        case 'autoparts':
+            return 'Repuestos Automotrices';
+        case 'fashion':
+            return 'Ropa / Moda';
+        case 'tech':
+            return 'Tecnología / Gadgets';
+        default:
+            return 'Comercio Digital';
     }
 }
 
@@ -60,13 +66,15 @@ function getTemplateFriendlyName(template: string): string {
 async function sendViaResend(
     apiKey: string | undefined,
     from: string,
-    payload: ResendPayload
+    payload: ResendPayload,
 ): Promise<EmailSendResult> {
     if (!apiKey) {
         if (payload.simulationLog) {
             console.log(payload.simulationLog);
         } else {
-            console.log(`[EmailService] Clave RESEND_API_KEY no configurada. Simulando envío a: ${payload.to.join(', ')}`);
+            console.log(
+                `[EmailService] Clave RESEND_API_KEY no configurada. Simulando envío a: ${payload.to.join(', ')}`,
+            );
         }
         console.log(`[EmailService] Asunto: ${payload.subject}`);
         const prefix = payload.simulationPrefix || 'simulated-';
@@ -77,10 +85,10 @@ async function sendViaResend(
         const response = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
+                Authorization: `Bearer ${apiKey}`,
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ ...payload, from })
+            body: JSON.stringify({ ...payload, from }),
         });
 
         if (!response.ok) {
@@ -157,12 +165,12 @@ https://ventrina.app
  */
 export function generateWelcomeEmailHtml(data: WelcomeEmailData): string {
     const templateLabel = getTemplateFriendlyName(data.template);
-    const safeName      = escapeHtml(data.tenantName);
-    const safeSlug      = escapeHtml(data.tenantSlug);
-    const safeTo        = escapeHtml(data.to);
-    const safeLabel     = escapeHtml(templateLabel);
-    const safeStoreUrl  = escapeHtml(data.storeUrl);
-    const safeAdminUrl  = escapeHtml(data.adminUrl);
+    const safeName = escapeHtml(data.tenantName);
+    const safeSlug = escapeHtml(data.tenantSlug);
+    const safeTo = escapeHtml(data.to);
+    const safeLabel = escapeHtml(templateLabel);
+    const safeStoreUrl = escapeHtml(data.storeUrl);
+    const safeAdminUrl = escapeHtml(data.adminUrl);
 
     return `<!DOCTYPE html>
 <html lang="es">
@@ -401,7 +409,7 @@ export async function sendWelcomeEmail(env: Env, data: WelcomeEmailData): Promis
         html: generateWelcomeEmailHtml(data),
         text: generateWelcomeEmailText(data),
         simulationPrefix: 'simulated-',
-        simulationLog: `[EmailService] Clave RESEND_API_KEY no configurada. Simulando envío de bienvenida a: ${data.to}`
+        simulationLog: `[EmailService] Clave RESEND_API_KEY no configurada. Simulando envío de bienvenida a: ${data.to}`,
     });
 }
 
@@ -421,13 +429,20 @@ export interface OrderStatusEmailData {
 
 export function getStatusFriendlyLabel(status: string): string {
     switch (status) {
-        case 'pendiente':      return 'Pendiente de confirmación';
-        case 'confirmado':     return 'Confirmado y en preparación';
-        case 'en_camino':      return 'En camino / Despachado';
-        case 'listo_entrega':  return 'Listo para entrega / retiro';
-        case 'completado':     return 'Completado con éxito';
-        case 'cancelado':      return 'Cancelado';
-        default:               return status;
+        case 'pendiente':
+            return 'Pendiente de confirmación';
+        case 'confirmado':
+            return 'Confirmado y en preparación';
+        case 'en_camino':
+            return 'En camino / Despachado';
+        case 'listo_entrega':
+            return 'Listo para entrega / retiro';
+        case 'completado':
+            return 'Completado con éxito';
+        case 'cancelado':
+            return 'Cancelado';
+        default:
+            return status;
     }
 }
 
@@ -448,13 +463,13 @@ Gracias por tu compra en ${data.tenantName}.
 }
 
 export function generateOrderStatusEmailHtml(data: OrderStatusEmailData): string {
-    const statusLabel    = getStatusFriendlyLabel(data.newStatus);
-    const safeName       = escapeHtml(data.tenantName);
-    const safeClient     = escapeHtml(data.clientName);
-    const safeOrderId    = escapeHtml(data.orderId);
-    const safeStatus     = escapeHtml(statusLabel);
-    const safeNote       = data.note ? escapeHtml(data.note) : null;
-    const safeStoreUrl   = data.storeUrl ? escapeHtml(data.storeUrl) : null;
+    const statusLabel = getStatusFriendlyLabel(data.newStatus);
+    const safeName = escapeHtml(data.tenantName);
+    const safeClient = escapeHtml(data.clientName);
+    const safeOrderId = escapeHtml(data.orderId);
+    const safeStatus = escapeHtml(statusLabel);
+    const safeNote = data.note ? escapeHtml(data.note) : null;
+    const safeStoreUrl = data.storeUrl ? escapeHtml(data.storeUrl) : null;
 
     return `<!DOCTYPE html>
 <html lang="es">
@@ -547,7 +562,7 @@ export function generateOrderStatusEmailHtml(data: OrderStatusEmailData): string
  */
 export async function sendOrderStatusEmail(env: Env, data: OrderStatusEmailData): Promise<EmailSendResult> {
     const statusLabel = getStatusFriendlyLabel(data.newStatus);
-    const subject     = `Actualización de pedido #${data.orderId}: ${statusLabel} (${data.tenantName})`;
+    const subject = `Actualización de pedido #${data.orderId}: ${statusLabel} (${data.tenantName})`;
     const { apiKey, from } = resolveEmailConfig(env, 'Ventrina <pedidos@ventrina.app>');
     return sendViaResend(apiKey, from, {
         from,
@@ -556,6 +571,6 @@ export async function sendOrderStatusEmail(env: Env, data: OrderStatusEmailData)
         html: generateOrderStatusEmailHtml(data),
         text: generateOrderStatusEmailText(data),
         simulationPrefix: 'simulated-order-',
-        simulationLog: `[EmailService] Clave RESEND_API_KEY no configurada. Simulando notificación de estado a: ${data.to}`
+        simulationLog: `[EmailService] Clave RESEND_API_KEY no configurada. Simulando notificación de estado a: ${data.to}`,
     });
 }

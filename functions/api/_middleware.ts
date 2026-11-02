@@ -8,7 +8,7 @@ const ALLOWED_ORIGIN_PATTERNS = [
     /^https:\/\/[a-z0-9-]+\.pages\.dev$/,
     /^http:\/\/localhost(:\d+)?$/,
     /^http:\/\/[a-z0-9-]+\.localhost(:\d+)?$/,
-    /^http:\/\/127\.0\.0\.1(:\d+)?$/
+    /^http:\/\/127\.0\.0\.1(:\d+)?$/,
 ];
 
 /**
@@ -32,10 +32,11 @@ export function buildCorsHeaders(origin: string | null): Record<string, string> 
     const allowed = getAllowedOrigin(origin);
     const headers: Record<string, string> = {
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Tenant-Id, X-Superadmin-Key, X-Requested-With, X-Request-Id',
+        'Access-Control-Allow-Headers':
+            'Content-Type, Authorization, X-Tenant-Id, X-Superadmin-Key, X-Requested-With, X-Request-Id',
         'Access-Control-Expose-Headers': 'X-Request-Id, X-Response-Time, X-API-Version, Content-Disposition, ETag',
         'Access-Control-Max-Age': '86400',
-        'Vary': 'Origin'
+        Vary: 'Origin',
     };
 
     if (allowed) {
@@ -60,7 +61,7 @@ function buildSecurityHeaders(): Record<string, string> {
             "script-src 'none'",
             "object-src 'none'",
             "frame-ancestors 'none'",
-        ].join('; ')
+        ].join('; '),
     };
 }
 
@@ -85,7 +86,7 @@ export async function onRequest(context: PagesContext): Promise<Response> {
 
     // M-04 & O-02: Asignar o propagar X-Request-Id para trazabilidad correlacionada
     const incomingReqId = context.request.headers.get('X-Request-Id');
-    const requestId = (incomingReqId && incomingReqId.trim()) ? incomingReqId.trim() : crypto.randomUUID();
+    const requestId = incomingReqId?.trim() ? incomingReqId.trim() : crypto.randomUUID();
 
     if (!context.data) {
         context.data = {};
@@ -130,15 +131,17 @@ export async function onRequest(context: PagesContext): Promise<Response> {
     // O-01 & O-02: Logging estructurado en formato JSON
     try {
         const url = new URL(context.request.url);
-        console.log(JSON.stringify({
-            type: 'request_timing',
-            requestId,
-            method: context.request.method,
-            path: url.pathname,
-            status: response.status,
-            durationMs,
-            tenantId: context.data?.tenantId || undefined
-        }));
+        console.log(
+            JSON.stringify({
+                type: 'request_timing',
+                requestId,
+                method: context.request.method,
+                path: url.pathname,
+                status: response.status,
+                durationMs,
+                tenantId: context.data?.tenantId || undefined,
+            }),
+        );
     } catch {}
 
     return new Response(response.body, {

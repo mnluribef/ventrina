@@ -1,7 +1,8 @@
 // tests/session-expiration.test.ts
-import { describe, it, expect, vi } from 'vitest';
-import { onRequestGet } from '../functions/api/auth';
+
 import type { D1Database } from '@cloudflare/workers-types';
+import { describe, expect, it, vi } from 'vitest';
+import { onRequestGet } from '../functions/api/auth';
 import type { Env, PagesContext } from '../functions/types';
 
 describe('Session Auto-Expiration & Verification (GET /api/auth)', () => {
@@ -17,25 +18,25 @@ describe('Session Auto-Expiration & Verification (GET /api/auth)', () => {
                                 role: 'admin',
                                 tenant_id: 'mitienda',
                                 email: 'admin@tienda.com',
-                                expires_at: now + 3600
+                                expires_at: now + 3600,
                             };
                         }
                         return null;
                     }),
-                    run: vi.fn().mockResolvedValue({ success: true })
-                }))
-            }))
+                    run: vi.fn().mockResolvedValue({ success: true }),
+                })),
+            })),
         } as unknown as D1Database;
 
         const context = {
             request: new Request('https://ventrina.app/api/auth', {
                 method: 'GET',
-                headers: { 'Cookie': 'ventrina_session=valid-active-token' }
+                headers: { Cookie: 'ventrina_session=valid-active-token' },
             }),
             env: {
-                DB: mockDb
+                DB: mockDb,
             },
-            waitUntil: vi.fn()
+            waitUntil: vi.fn(),
         } as unknown as PagesContext<Env>;
 
         const response = await onRequestGet(context);
@@ -53,20 +54,20 @@ describe('Session Auto-Expiration & Verification (GET /api/auth)', () => {
             prepare: vi.fn().mockImplementation(() => ({
                 bind: vi.fn().mockImplementation((..._args: any[]) => ({
                     first: vi.fn().mockResolvedValue(null), // Token no existe o expires_at < now
-                    run: vi.fn().mockResolvedValue({ success: true })
-                }))
-            }))
+                    run: vi.fn().mockResolvedValue({ success: true }),
+                })),
+            })),
         } as unknown as D1Database;
 
         const context = {
             request: new Request('https://ventrina.app/api/auth', {
                 method: 'GET',
-                headers: { 'Cookie': 'ventrina_session=expired-or-revoked-token' }
+                headers: { Cookie: 'ventrina_session=expired-or-revoked-token' },
             }),
             env: {
-                DB: mockDb
+                DB: mockDb,
             },
-            waitUntil: vi.fn()
+            waitUntil: vi.fn(),
         } as unknown as PagesContext<Env>;
 
         const response = await onRequestGet(context);
@@ -87,19 +88,19 @@ describe('Session Auto-Expiration & Verification (GET /api/auth)', () => {
             prepare: vi.fn().mockImplementation(() => ({
                 bind: vi.fn().mockImplementation((..._args: any[]) => ({
                     first: vi.fn().mockResolvedValue(null),
-                    run: vi.fn().mockResolvedValue({ success: true })
-                }))
-            }))
+                    run: vi.fn().mockResolvedValue({ success: true }),
+                })),
+            })),
         } as unknown as D1Database;
 
         const context = {
             request: new Request('https://ventrina.app/api/auth', {
-                method: 'GET'
+                method: 'GET',
             }),
             env: {
-                DB: mockDb
+                DB: mockDb,
             },
-            waitUntil: vi.fn()
+            waitUntil: vi.fn(),
         } as unknown as PagesContext<Env>;
 
         const response = await onRequestGet(context);

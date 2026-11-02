@@ -1,17 +1,23 @@
 // tests/subdomain-middleware.test.ts
-import { describe, it, expect, vi } from 'vitest';
-import { onRequest } from '../functions/_middleware';
+
 import type { D1Database } from '@cloudflare/workers-types';
+import { describe, expect, it, vi } from 'vitest';
+import { onRequest } from '../functions/_middleware';
 import type { Env, PagesContext, TenantRow } from '../functions/types';
 
 if (typeof (globalThis as any).HTMLRewriter === 'undefined') {
     (globalThis as any).HTMLRewriter = class {
-        on() { return this; }
+        on() {
+            return this;
+        }
         transform(res: Response) {
-            return new Response(`<!DOCTYPE html><html><head><title>El Fogón Criollo | Catálogo & Pedidos</title><meta property="og:url" content="https://fogon.ventrina.app/p/burger-123"></head><body><div id="catalog-store-meta" data-tenant="fogon"></div></body></html>`, {
-                status: res.status,
-                headers: res.headers
-            });
+            return new Response(
+                `<!DOCTYPE html><html><head><title>El Fogón Criollo | Catálogo & Pedidos</title><meta property="og:url" content="https://fogon.ventrina.app/p/burger-123"></head><body><div id="catalog-store-meta" data-tenant="fogon"></div></body></html>`,
+                {
+                    status: res.status,
+                    headers: res.headers,
+                },
+            );
         }
     };
 }
@@ -25,41 +31,47 @@ describe('Root Pages Middleware (_middleware.ts): Subdomains & Routing', () => {
         active: 1,
         config_json: JSON.stringify({
             business: { name: 'El Fogón Criollo' },
-            landing: { catalog: { productDetailViewMode: 'modal' } }
-        })
+            landing: { catalog: { productDetailViewMode: 'modal' } },
+        }),
     };
 
     const createMockEnv = (tenantToReturn: TenantRow | null = mockTenant): Env => {
         const mockDb = {
             prepare: vi.fn().mockReturnValue({
                 bind: vi.fn().mockReturnValue({
-                    first: vi.fn().mockImplementation(async () => tenantToReturn)
-                })
-            })
+                    first: vi.fn().mockImplementation(async () => tenantToReturn),
+                }),
+            }),
         } as unknown as D1Database;
 
         const mockAssets = {
             fetch: vi.fn().mockImplementation(async (req: Request) => {
                 const url = new URL(req.url);
                 if (url.pathname.includes('/demo/')) {
-                    return new Response(`<!DOCTYPE html><html><head><title>Demo</title></head><body><div id="catalog-store-meta"></div><div class="template-switcher"></div></body></html>`, {
-                        status: 200,
-                        headers: { 'Content-Type': 'text/html; charset=utf-8' }
-                    });
+                    return new Response(
+                        `<!DOCTYPE html><html><head><title>Demo</title></head><body><div id="catalog-store-meta"></div><div class="template-switcher"></div></body></html>`,
+                        {
+                            status: 200,
+                            headers: { 'Content-Type': 'text/html; charset=utf-8' },
+                        },
+                    );
                 }
                 if (url.pathname.includes('/producto')) {
-                    return new Response(`<!DOCTYPE html><html><head><title>Producto</title><meta name="description" content=""><meta property="og:title" content=""><meta property="og:url" content=""></head><body><div id="catalog-store-meta"></div></body></html>`, {
-                        status: 200,
-                        headers: { 'Content-Type': 'text/html; charset=utf-8' }
-                    });
+                    return new Response(
+                        `<!DOCTYPE html><html><head><title>Producto</title><meta name="description" content=""><meta property="og:title" content=""><meta property="og:url" content=""></head><body><div id="catalog-store-meta"></div></body></html>`,
+                        {
+                            status: 200,
+                            headers: { 'Content-Type': 'text/html; charset=utf-8' },
+                        },
+                    );
                 }
                 return new Response('Not found', { status: 404 });
-            })
+            }),
         };
 
         return {
             DB: mockDb,
-            ASSETS: mockAssets
+            ASSETS: mockAssets,
         } as unknown as Env;
     };
 
@@ -71,7 +83,7 @@ describe('Root Pages Middleware (_middleware.ts): Subdomains & Routing', () => {
             next,
             params: {},
             data: {},
-            waitUntil: vi.fn()
+            waitUntil: vi.fn(),
         } as unknown as PagesContext<Env>;
 
         const res = await onRequest(context);
@@ -87,7 +99,7 @@ describe('Root Pages Middleware (_middleware.ts): Subdomains & Routing', () => {
             next,
             params: {},
             data: {},
-            waitUntil: vi.fn()
+            waitUntil: vi.fn(),
         } as unknown as PagesContext<Env>;
 
         await onRequest(context);
@@ -102,7 +114,7 @@ describe('Root Pages Middleware (_middleware.ts): Subdomains & Routing', () => {
             next,
             params: {},
             data: {},
-            waitUntil: vi.fn()
+            waitUntil: vi.fn(),
         } as unknown as PagesContext<Env>;
 
         const res = await onRequest(context);
@@ -121,7 +133,7 @@ describe('Root Pages Middleware (_middleware.ts): Subdomains & Routing', () => {
             next,
             params: {},
             data: {},
-            waitUntil: vi.fn()
+            waitUntil: vi.fn(),
         } as unknown as PagesContext<Env>;
 
         const res = await onRequest(context);
@@ -140,7 +152,7 @@ describe('Root Pages Middleware (_middleware.ts): Subdomains & Routing', () => {
             next,
             params: {},
             data: {},
-            waitUntil: vi.fn()
+            waitUntil: vi.fn(),
         } as unknown as PagesContext<Env>;
 
         const res = await onRequest(context);
@@ -156,7 +168,7 @@ describe('Root Pages Middleware (_middleware.ts): Subdomains & Routing', () => {
             next,
             params: {},
             data: {},
-            waitUntil: vi.fn()
+            waitUntil: vi.fn(),
         } as unknown as PagesContext<Env>;
 
         const res = await onRequest(context);
@@ -172,7 +184,7 @@ describe('Root Pages Middleware (_middleware.ts): Subdomains & Routing', () => {
             next,
             params: {},
             data: {},
-            waitUntil: vi.fn()
+            waitUntil: vi.fn(),
         } as unknown as PagesContext<Env>;
 
         const res = await onRequest(context);
@@ -188,7 +200,7 @@ describe('Root Pages Middleware (_middleware.ts): Subdomains & Routing', () => {
             next,
             params: {},
             data: {},
-            waitUntil: vi.fn()
+            waitUntil: vi.fn(),
         } as unknown as PagesContext<Env>;
 
         const res = await onRequest(context);
@@ -204,7 +216,7 @@ describe('Root Pages Middleware (_middleware.ts): Subdomains & Routing', () => {
             next,
             params: {},
             data: {},
-            waitUntil: vi.fn()
+            waitUntil: vi.fn(),
         } as unknown as PagesContext<Env>;
 
         const res = await onRequest(context);
@@ -220,14 +232,14 @@ describe('Root Pages Middleware (_middleware.ts): Subdomains & Routing', () => {
             request: new Request('https://ventrina.app/', {
                 headers: {
                     'X-Forwarded-Host': 'fogon.ventrina.app',
-                    'X-Forwarded-Proto': 'https'
-                }
+                    'X-Forwarded-Proto': 'https',
+                },
             }),
             env: createMockEnv(),
             next,
             params: {},
             data: {},
-            waitUntil: vi.fn()
+            waitUntil: vi.fn(),
         } as unknown as PagesContext<Env>;
 
         const res = await onRequest(context);

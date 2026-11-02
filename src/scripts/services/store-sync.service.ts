@@ -1,7 +1,7 @@
 // src/scripts/services/store-sync.service.ts
 // Sincroniza dinámicamente y con alto rendimiento todos los textos, imágenes y secciones de la tienda desde /api/settings
 
-import { getPalette, generatePaletteCss } from '../../config/palettes';
+import { generatePaletteCss, getPalette } from '../../config/palettes';
 import { initScrollReveal } from '../utils/reveal.util';
 
 const ICON_SVGS: Record<string, string> = {
@@ -13,12 +13,16 @@ const ICON_SVGS: Record<string, string> = {
     star: '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
     heart: '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>',
     clock: '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
-    package: '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
-    'message-circle': '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>',
-    sparkles: '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>'
+    package:
+        '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
+    'message-circle':
+        '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>',
+    sparkles:
+        '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>',
 };
 
-const STAR_SVG = '<svg viewBox="0 0 24 24" class="star-svg"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>';
+const STAR_SVG =
+    '<svg viewBox="0 0 24 24" class="star-svg"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>';
 
 // Control de firmas y caché en memoria para evitar mutaciones redundantes y layout thrashing
 let lastAppliedPaletteId: string | null = null;
@@ -93,7 +97,7 @@ export function applyPalette(paletteId?: string | null): void {
     }
 
     const pal = getPalette(normalizedId);
-    if (!pal || !pal.theme) return;
+    if (!pal?.theme) return;
 
     const t = pal.theme;
 
@@ -160,12 +164,17 @@ export function syncStoreWithSettings(cfg: any): void {
         const primary = escapeHtml(b.logoTextPrimary || '');
         const secondary = escapeHtml(b.logoTextSecondary || '');
         const safeStoreName = escapeHtml(storeName || '');
-        const targetHtml = (primary || secondary)
-            ? (secondary ? `<span class="logo-primary">${primary}</span><span class="logo-secondary">${secondary}</span>` : `<span class="logo-primary">${primary}</span>`)
-            : (safeStoreName ? `<span class="logo-primary">${safeStoreName}</span>` : '');
+        const targetHtml =
+            primary || secondary
+                ? secondary
+                    ? `<span class="logo-primary">${primary}</span><span class="logo-secondary">${secondary}</span>`
+                    : `<span class="logo-primary">${primary}</span>`
+                : safeStoreName
+                  ? `<span class="logo-primary">${safeStoreName}</span>`
+                  : '';
 
         if (targetHtml) {
-            logoTextEls.forEach(el => safeSetHtml(el, targetHtml));
+            logoTextEls.forEach((el) => safeSetHtml(el, targetHtml));
         }
     }
 
@@ -180,7 +189,7 @@ export function syncStoreWithSettings(cfg: any): void {
     // Logo Imagen en Header
     if (b.logoImage && hasChanged('logoImage', b.logoImage)) {
         const logoLinks = document.querySelectorAll('.logo');
-        logoLinks.forEach(link => {
+        logoLinks.forEach((link) => {
             const existingSvg = link.querySelector('svg');
             if (existingSvg) {
                 let imgEl = link.querySelector('.custom-logo-img') as HTMLImageElement | null;
@@ -212,8 +221,9 @@ export function syncStoreWithSettings(cfg: any): void {
     if (h.headline !== undefined || h.headlineHighlight !== undefined) {
         const h1El = document.querySelector('.hero-content h1');
         if (h1El) {
-            const headline = h.headline !== undefined ? h.headline : (h1El.childNodes[0]?.textContent?.trim() || '');
-            const highlight = h.headlineHighlight !== undefined ? h.headlineHighlight : (h1El.querySelector('em')?.textContent || '');
+            const headline = h.headline !== undefined ? h.headline : h1El.childNodes[0]?.textContent?.trim() || '';
+            const highlight =
+                h.headlineHighlight !== undefined ? h.headlineHighlight : h1El.querySelector('em')?.textContent || '';
             safeSetHtml(h1El, `${headline} <em>${highlight}</em>`);
         }
     }
@@ -242,10 +252,12 @@ export function syncStoreWithSettings(cfg: any): void {
     if (Array.isArray(h.slides) && h.slides.length > 0 && hasChanged('slides', h.slides)) {
         const sliderContainer = document.querySelector('.hero-slider');
         if (sliderContainer) {
-            sliderContainer.innerHTML = h.slides.map((slide: any, idx: number) => {
-                if (!slide.image) return '';
-                return `<div class="slide ${idx === 0 ? 'active' : ''}"><img src="${slide.image}" alt="${slide.alt || 'Portada'}" loading="${idx === 0 ? 'eager' : 'lazy'}" /></div>`;
-            }).join('');
+            sliderContainer.innerHTML = h.slides
+                .map((slide: any, idx: number) => {
+                    if (!slide.image) return '';
+                    return `<div class="slide ${idx === 0 ? 'active' : ''}"><img src="${slide.image}" alt="${slide.alt || 'Portada'}" loading="${idx === 0 ? 'eager' : 'lazy'}" /></div>`;
+                })
+                .join('');
         }
     }
 
@@ -253,9 +265,12 @@ export function syncStoreWithSettings(cfg: any): void {
     if (Array.isArray(h.stats) && h.stats.length > 0 && hasChanged('stats', h.stats)) {
         const statsGrid = document.querySelector('.stats-grid');
         if (statsGrid) {
-            statsGrid.innerHTML = h.stats.map((st: any) =>
-                `<div class="stat-item reveal"><h3>${st.value || ''}</h3><p>${st.label || ''}</p></div>`
-            ).join('');
+            statsGrid.innerHTML = h.stats
+                .map(
+                    (st: any) =>
+                        `<div class="stat-item reveal"><h3>${st.value || ''}</h3><p>${st.label || ''}</p></div>`,
+                )
+                .join('');
             needsRevealRefresh = true;
         }
     }
@@ -310,16 +325,18 @@ export function syncStoreWithSettings(cfg: any): void {
     if (Array.isArray(ben.items) && ben.items.length > 0 && hasChanged('benefits', ben.items)) {
         const benefitsGrid = document.querySelector('.benefits-grid');
         if (benefitsGrid) {
-            benefitsGrid.innerHTML = ben.items.map((b: any) => {
-                const svgIcon = ICON_SVGS[b.icon] || ICON_SVGS.award;
-                return `
+            benefitsGrid.innerHTML = ben.items
+                .map((b: any) => {
+                    const svgIcon = ICON_SVGS[b.icon] || ICON_SVGS.award;
+                    return `
                     <div class="benefit-card reveal">
                         <div class="benefit-icon">${svgIcon}</div>
                         <h3>${b.title || ''}</h3>
                         <p>${b.description || ''}</p>
                     </div>
                 `;
-            }).join('');
+                })
+                .join('');
             needsRevealRefresh = true;
         }
     }
@@ -341,13 +358,17 @@ export function syncStoreWithSettings(cfg: any): void {
     if (Array.isArray(prc.steps) && prc.steps.length > 0 && hasChanged('process', prc.steps)) {
         const processGrid = document.querySelector('.process-grid');
         if (processGrid) {
-            processGrid.innerHTML = prc.steps.map((s: any) => `
+            processGrid.innerHTML = prc.steps
+                .map(
+                    (s: any) => `
                 <div class="reveal process-step">
                     <div class="process-number">${s.number ?? ''}</div>
                     <h3>${s.title || ''}</h3>
                     <p>${s.description || ''}</p>
                 </div>
-            `).join('');
+            `,
+                )
+                .join('');
             needsRevealRefresh = true;
         }
     }
@@ -369,11 +390,12 @@ export function syncStoreWithSettings(cfg: any): void {
     if (Array.isArray(tst.items) && tst.items.length > 0 && hasChanged('testimonials', tst.items)) {
         const testGrid = document.querySelector('.testimonials-grid');
         if (testGrid) {
-            testGrid.innerHTML = tst.items.map((t: any) => {
-                const starsCount = Math.max(1, Math.min(5, t.rating || 5));
-                const starsHtml = STAR_SVG.repeat(starsCount);
-                const avatar = t.avatar || '/assets/client_maria.webp';
-                return `
+            testGrid.innerHTML = tst.items
+                .map((t: any) => {
+                    const starsCount = Math.max(1, Math.min(5, t.rating || 5));
+                    const starsHtml = STAR_SVG.repeat(starsCount);
+                    const avatar = t.avatar || '/assets/client_maria.webp';
+                    return `
                     <div class="testimonial-card reveal">
                         <div class="stars">${starsHtml}</div>
                         <p class="review">"${t.review || ''}"</p>
@@ -388,7 +410,8 @@ export function syncStoreWithSettings(cfg: any): void {
                         </div>
                     </div>
                 `;
-            }).join('');
+                })
+                .join('');
             needsRevealRefresh = true;
         }
     }
@@ -410,7 +433,9 @@ export function syncStoreWithSettings(cfg: any): void {
     if (Array.isArray(fq.items) && fq.items.length > 0 && hasChanged('faq', fq.items)) {
         const faqWrapper = document.querySelector('.faq-wrapper');
         if (faqWrapper) {
-            faqWrapper.innerHTML = fq.items.map((item: any) => `
+            faqWrapper.innerHTML = fq.items
+                .map(
+                    (item: any) => `
                 <div class="faq-card reveal">
                     <h4>
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-icon"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
@@ -418,7 +443,9 @@ export function syncStoreWithSettings(cfg: any): void {
                     </h4>
                     <p>${item.a || ''}</p>
                 </div>
-            `).join('');
+            `,
+                )
+                .join('');
             needsRevealRefresh = true;
         }
     }
@@ -426,25 +453,28 @@ export function syncStoreWithSettings(cfg: any): void {
     // 8. CONTACTO & FOOTER
     if (c.whatsapp && hasChanged('whatsapp', c.whatsapp)) {
         const waLinks = document.querySelectorAll('a[href*="wa.me"]');
-        waLinks.forEach(a => {
+        waLinks.forEach((a) => {
             const el = a as HTMLAnchorElement;
             if (!el.classList.contains('float-wa') && !el.classList.contains('nav-cta-btn')) {
                 el.href = `https://wa.me/${c.whatsapp}`;
-                const textNodes = Array.from(el.childNodes).filter(n => n.nodeType === Node.TEXT_NODE);
+                const textNodes = Array.from(el.childNodes).filter((n) => n.nodeType === Node.TEXT_NODE);
                 if (textNodes.length > 0) {
-                    textNodes[textNodes.length - 1].textContent = ` ${c.whatsappDisplay || '+' + c.whatsapp}`;
+                    textNodes[textNodes.length - 1].textContent = ` ${c.whatsappDisplay || `+${c.whatsapp}`}`;
                 }
             }
         });
     }
 
-    if ((c.instagram || c.instagramHandle) && hasChanged('instagram', { url: c.instagram, handle: c.instagramHandle })) {
+    if (
+        (c.instagram || c.instagramHandle) &&
+        hasChanged('instagram', { url: c.instagram, handle: c.instagramHandle })
+    ) {
         const igLinks = document.querySelectorAll('a[href*="instagram.com"]');
-        igLinks.forEach(a => {
+        igLinks.forEach((a) => {
             const el = a as HTMLAnchorElement;
             if (c.instagram && el.href !== c.instagram) el.href = c.instagram;
             if (c.instagramHandle) {
-                const textNodes = Array.from(el.childNodes).filter(n => n.nodeType === Node.TEXT_NODE);
+                const textNodes = Array.from(el.childNodes).filter((n) => n.nodeType === Node.TEXT_NODE);
                 if (textNodes.length > 0 && textNodes[textNodes.length - 1].textContent !== ` ${c.instagramHandle}`) {
                     textNodes[textNodes.length - 1].textContent = ` ${c.instagramHandle}`;
                 }
@@ -458,7 +488,7 @@ export function syncStoreWithSettings(cfg: any): void {
 
     if (c.address && hasChanged('address', c.address)) {
         const addressEls = document.querySelectorAll('.footer-contact-link');
-        addressEls.forEach(el => {
+        addressEls.forEach((el) => {
             if (el.textContent && el.querySelector('svg path[d*="20 10c0 6-8 12"]')) {
                 const svg = el.querySelector('svg');
                 el.innerHTML = '';
@@ -472,8 +502,10 @@ export function syncStoreWithSettings(cfg: any): void {
     const lbl = cfg.labels || {};
     if (lbl.pickupOptionName) {
         const pickupRadio = document.querySelector('input[name="delivery-type"][value="retiro"]');
-        if (pickupRadio && pickupRadio.parentElement) {
-            const textNodes = Array.from(pickupRadio.parentElement.childNodes).filter(n => n.nodeType === Node.TEXT_NODE);
+        if (pickupRadio?.parentElement) {
+            const textNodes = Array.from(pickupRadio.parentElement.childNodes).filter(
+                (n) => n.nodeType === Node.TEXT_NODE,
+            );
             const target = ` 🏪 ${lbl.pickupOptionName}`;
             if (textNodes.length > 0 && textNodes[textNodes.length - 1].textContent !== target) {
                 textNodes[textNodes.length - 1].textContent = target;
@@ -483,11 +515,13 @@ export function syncStoreWithSettings(cfg: any): void {
 
     if (lbl.deliveryOptionName || lbl.deliveryOptionPrice !== undefined) {
         const deliveryRadio = document.querySelector('input[name="delivery-type"][value="delivery"]');
-        if (deliveryRadio && deliveryRadio.parentElement) {
+        if (deliveryRadio?.parentElement) {
             const name = lbl.deliveryOptionName || 'Delivery';
             const price = lbl.deliveryOptionPrice !== undefined ? lbl.deliveryOptionPrice : 5;
-            const target = ` 🛵 ${name} (+${price ? '$' + price : 'Gratis'})`;
-            const textNodes = Array.from(deliveryRadio.parentElement.childNodes).filter(n => n.nodeType === Node.TEXT_NODE);
+            const target = ` 🛵 ${name} (+${price ? `$${price}` : 'Gratis'})`;
+            const textNodes = Array.from(deliveryRadio.parentElement.childNodes).filter(
+                (n) => n.nodeType === Node.TEXT_NODE,
+            );
             if (textNodes.length > 0 && textNodes[textNodes.length - 1].textContent !== target) {
                 textNodes[textNodes.length - 1].textContent = target;
             }

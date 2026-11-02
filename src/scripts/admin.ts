@@ -1,7 +1,7 @@
 // src/scripts/admin.ts
 // Panel Administrativo - Ventrina SaaS
 import QRCode from 'qrcode';
-import { getModalService, type ConfirmModalOptions } from './services/modal.service';
+import { type ConfirmModalOptions, getModalService } from './services/modal.service';
 
 declare const lucide: any;
 declare const Chart: any;
@@ -27,7 +27,7 @@ let lastRecordedActivity = Date.now();
 let ordersList: any[] = [];
 let productsList: any[] = [];
 let salesList: any[] = [];
-let currentBcvRate = 853.50;
+let currentBcvRate = 853.5;
 let currentBcvAuto = true;
 let lastBcvUpdated = '';
 let lastBcvSource = '';
@@ -37,21 +37,20 @@ let ordersDateFilter = 'all';
 let salesSearchQuery = '';
 let productsSearchQuery = '';
 let activeStockFilter = 'all';
-let selectedProductIds = new Set<string>();
+const selectedProductIds = new Set<string>();
 let lastKnownOrderCount: number | null = null;
 let soundEnabled = localStorage.getItem('admin_sound_enabled') !== 'false';
 
 // Paginación State
 let ordersPage = 1;
 let ordersTotalPages = 1;
-let ordersTotalCount = 0;
+let _ordersTotalCount = 0;
 let productsPage = 1;
 let productsTotalPages = 1;
 let productsTotalCount = 0;
 let salesPage = 1;
 let salesTotalPages = 1;
 let salesTotalCount = 0;
-
 
 // Helper DOM accessors
 function $val(id: string): string {
@@ -133,20 +132,20 @@ function escapeHtml(str: any): string {
 // --- HASHING DE CONTRASEÑA ---
 /**
  * Hashea una contraseña usando SHA-256 nativo del navegador (hexadecimal)
- * @param {string} password 
+ * @param {string} password
  */
-async function sha256(password: string): Promise<string> {
+async function _sha256(password: string): Promise<string> {
     const msgBuffer = new TextEncoder().encode(password);
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
     return hashHex;
 }
 
 // --- SISTEMA DE TOASTS (NOTIFICACIONES) ---
 /**
  * Muestra una notificación flotante segura
- * @param {string} message 
+ * @param {string} message
  * @param {string} type - 'success', 'error', 'warning', 'info'
  */
 function showToast(message: string, type: string = 'success') {
@@ -154,7 +153,7 @@ function showToast(message: string, type: string = 'success') {
 
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    
+
     let icon = 'check-circle';
     if (type === 'error') icon = 'alert-triangle';
     if (type === 'warning') icon = 'alert-circle';
@@ -214,7 +213,7 @@ function getLastActivity(): number {
         const stored = localStorage.getItem(LAST_ACTIVITY_KEY);
         if (stored) {
             const parsed = parseInt(stored, 10);
-            if (!isNaN(parsed) && parsed > 0) {
+            if (!Number.isNaN(parsed) && parsed > 0) {
                 return parsed;
             }
         }
@@ -248,7 +247,7 @@ function startInactivityMonitor() {
     window.addEventListener('storage', (e) => {
         if (e.key === LAST_ACTIVITY_KEY && e.newValue) {
             const val = parseInt(e.newValue, 10);
-            if (!isNaN(val) && val > lastRecordedActivity) {
+            if (!Number.isNaN(val) && val > lastRecordedActivity) {
                 lastRecordedActivity = val;
             }
         }
@@ -294,7 +293,7 @@ async function handleSessionExpired(reason: 'inactivity' | 'unauthorized' | 'ser
         reason === 'inactivity'
             ? 'Tu sesión ha expirado por inactividad (30 min). Redirigiendo...'
             : 'Tu sesión ha expirado. Redirigiendo...',
-        'warning'
+        'warning',
     );
 
     setTimeout(() => {
@@ -304,12 +303,12 @@ async function handleSessionExpired(reason: 'inactivity' | 'unauthorized' | 'ser
 
 // --- INTERCEPTOR GLOBAL PARA ERRORES 401 UNAUTHORIZED ---
 const originalFetch = window.fetch;
-window.fetch = async function(...args: Parameters<typeof originalFetch>) {
+window.fetch = async function (...args: Parameters<typeof originalFetch>) {
     const response = await originalFetch.apply(this, args);
 
     if (response.status === 401 && !isSessionExpiring) {
         const firstArg = args[0];
-        const url = typeof firstArg === 'string' ? firstArg : (firstArg instanceof Request ? firstArg.url : '');
+        const url = typeof firstArg === 'string' ? firstArg : firstArg instanceof Request ? firstArg.url : '';
         const options = args[1];
         const method = (options?.method || (firstArg instanceof Request ? firstArg.method : 'GET')).toUpperCase();
 
@@ -343,7 +342,7 @@ async function checkSession() {
         // Si ya pasaron más de 30 minutos desde la última actividad registrada en localStorage
         const lastActivity = getLastActivity();
         const storedActivity = localStorage.getItem(LAST_ACTIVITY_KEY);
-        if (storedActivity && (Date.now() - lastActivity >= IDLE_TIMEOUT_MS)) {
+        if (storedActivity && Date.now() - lastActivity >= IDLE_TIMEOUT_MS) {
             try {
                 localStorage.removeItem(LAST_ACTIVITY_KEY);
                 await fetch('/api/auth', { method: 'DELETE' });
@@ -377,7 +376,7 @@ async function checkSession() {
             showLogin(data.expired ? 'expired' : undefined);
         }
     } catch (err) {
-        console.error("Error verificando sesión inicial:", err);
+        console.error('Error verificando sesión inicial:', err);
         showLogin();
     } finally {
         hideLoader();
@@ -390,9 +389,10 @@ function showLogin(reason?: string) {
         if (dashboardContainer) dashboardContainer.classList.add('d-none');
     } else {
         const errorParam = reason === 'expired' ? '?error=expired' : '';
-        const tenantParam = activeTenantId && activeTenantId !== 'demo'
-            ? `${errorParam ? '&' : '?'}tenant=${encodeURIComponent(activeTenantId)}`
-            : '';
+        const tenantParam =
+            activeTenantId && activeTenantId !== 'demo'
+                ? `${errorParam ? '&' : '?'}tenant=${encodeURIComponent(activeTenantId)}`
+                : '';
         window.location.href = `/login${errorParam}${tenantParam}`;
     }
 }
@@ -400,14 +400,14 @@ function showLogin(reason?: string) {
 function showDashboard() {
     if (loginContainer) loginContainer.classList.add('d-none');
     if (dashboardContainer) dashboardContainer.classList.remove('d-none');
-    
+
     // Mostrar insignia de admin
     const badge = document.getElementById('user-info-badge');
     const badgeName = document.getElementById('admin-user-name');
     if (badge && badgeName && currentAdmin) {
         badge.classList.remove('d-none');
         badgeName.textContent = currentAdmin.charAt(0).toUpperCase() + currentAdmin.slice(1);
-        
+
         // Actualizar rol en la UI si el elemento existe
         const roleEl = document.querySelector('.user-role');
         if (roleEl && window.currentUserRole) {
@@ -431,9 +431,9 @@ function hideLoader() {
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const email = $val('login-email') || $val('login-username');
-        const passwordPlain = ($input('login-password')?.value || '');
+        const passwordPlain = $input('login-password')?.value || '';
         const submitBtn = $btn('login-btn-submit');
 
         if (!email || !passwordPlain) return;
@@ -450,7 +450,7 @@ if (loginForm) {
             const res = await fetch('/api/auth', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password: passwordPlain, tenant: urlTenant })
+                body: JSON.stringify({ email, password: passwordPlain, tenant: urlTenant }),
             });
 
             const data = (await res.json()) as any;
@@ -490,12 +490,14 @@ if (btnLogout) {
             } catch {}
             showToast('Sesión cerrada correctamente.', 'info');
             setTimeout(() => {
-                const tenantParam = activeTenantId && activeTenantId !== 'demo' ? `?tenant=${encodeURIComponent(activeTenantId)}` : '';
+                const tenantParam =
+                    activeTenantId && activeTenantId !== 'demo' ? `?tenant=${encodeURIComponent(activeTenantId)}` : '';
                 window.location.href = `/login${tenantParam}`;
             }, 600);
         } catch (err) {
-            console.error("Error en logout:", err);
-            const tenantParam = activeTenantId && activeTenantId !== 'demo' ? `?tenant=${encodeURIComponent(activeTenantId)}` : '';
+            console.error('Error en logout:', err);
+            const tenantParam =
+                activeTenantId && activeTenantId !== 'demo' ? `?tenant=${encodeURIComponent(activeTenantId)}` : '';
             window.location.href = `/login${tenantParam}`;
         }
     });
@@ -555,7 +557,7 @@ if (changePasswordForm) {
             const res = await fetch('/api/auth', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ currentPassword: currentPass, newPassword: newPass })
+                body: JSON.stringify({ currentPassword: currentPass, newPassword: newPass }),
             });
 
             const data = (await res.json()) as any;
@@ -581,13 +583,13 @@ if (changePasswordForm) {
 }
 
 // --- NAVEGACIÓN ENTRE SECCIONES DEL SIDEBAR ---
-sidebarLinks.forEach(link => {
+sidebarLinks.forEach((link) => {
     link.addEventListener('click', () => {
-        sidebarLinks.forEach(l => l.classList.remove('active'));
+        sidebarLinks.forEach((l) => l.classList.remove('active'));
         link.classList.add('active');
 
         const targetId = link.getAttribute('data-target');
-        sections.forEach(sec => {
+        sections.forEach((sec) => {
             sec.classList.remove('active');
             if (sec.id === targetId) sec.classList.add('active');
         });
@@ -598,34 +600,43 @@ sidebarLinks.forEach(link => {
             if (dashboardSubtitle) dashboardSubtitle.textContent = 'Visión global de rendimiento, pedidos y catálogo.';
         } else if (targetId === 'section-orders') {
             if (dashboardTitle) dashboardTitle.textContent = 'Gestión de Pedidos';
-            if (dashboardSubtitle) dashboardSubtitle.textContent = 'Revisa y actualiza el estado de los pedidos recibidos por la web.';
+            if (dashboardSubtitle)
+                dashboardSubtitle.textContent = 'Revisa y actualiza el estado de los pedidos recibidos por la web.';
         } else if (targetId === 'section-sales') {
             if (dashboardTitle) dashboardTitle.textContent = 'Registro de Ventas';
-            if (dashboardSubtitle) dashboardSubtitle.textContent = 'Histórico de pedidos completados y cobrados exitosamente.';
+            if (dashboardSubtitle)
+                dashboardSubtitle.textContent = 'Histórico de pedidos completados y cobrados exitosamente.';
         } else if (targetId === 'section-inventory') {
             if (dashboardTitle) dashboardTitle.textContent = 'Catálogo y Productos';
-            if (dashboardSubtitle) dashboardSubtitle.textContent = 'Agrega, edita precios y administra el inventario de tus productos.';
+            if (dashboardSubtitle)
+                dashboardSubtitle.textContent = 'Agrega, edita precios y administra el inventario de tus productos.';
         } else if (targetId === 'section-coupons') {
             if (dashboardTitle) dashboardTitle.textContent = 'Cupones de Descuento';
-            if (dashboardSubtitle) dashboardSubtitle.textContent = 'Crea códigos promocionales y campañas de descuento para tus clientes.';
+            if (dashboardSubtitle)
+                dashboardSubtitle.textContent = 'Crea códigos promocionales y campañas de descuento para tus clientes.';
             loadCoupons();
         } else if (targetId === 'section-billing') {
             if (dashboardTitle) dashboardTitle.textContent = 'Plan y Facturación';
-            if (dashboardSubtitle) dashboardSubtitle.textContent = 'Gestiona los límites de tu cuenta y pagos de suscripción.';
+            if (dashboardSubtitle)
+                dashboardSubtitle.textContent = 'Gestiona los límites de tu cuenta y pagos de suscripción.';
             loadBillingData();
         } else if (targetId === 'section-team') {
             if (dashboardTitle) dashboardTitle.textContent = 'Mi Equipo y Accesos';
-            if (dashboardSubtitle) dashboardSubtitle.textContent = 'Administra los administradores y personal con acceso al panel de tu tienda.';
+            if (dashboardSubtitle)
+                dashboardSubtitle.textContent =
+                    'Administra los administradores y personal con acceso al panel de tu tienda.';
             loadTeamMembers();
         } else if (targetId === 'section-settings') {
             if (dashboardTitle) dashboardTitle.textContent = 'Configuración de Tienda';
-            if (dashboardSubtitle) dashboardSubtitle.textContent = 'Personaliza el nombre, contacto, WhatsApp, métodos de pago y delivery.';
+            if (dashboardSubtitle)
+                dashboardSubtitle.textContent =
+                    'Personaliza el nombre, contacto, WhatsApp, métodos de pago y delivery.';
             loadStoreSettings();
         }
     });
 });
 
-document.querySelectorAll('.view-all-orders-btn').forEach(btn => {
+document.querySelectorAll('.view-all-orders-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
         const ordersTab = document.querySelector('.sidebar-link[data-target="section-orders"]') as HTMLElement | null;
         if (ordersTab) ordersTab.click();
@@ -634,33 +645,35 @@ document.querySelectorAll('.view-all-orders-btn').forEach(btn => {
 
 // --- CARGA Y RENDERIZACIÓN DE DATOS ---
 
-
 // Cargar Tasa Oficial BCV
 async function loadBcvRate() {
     try {
         const res = await fetch('/api/bcv');
         if (res.ok) {
             const data = (await res.json()) as any;
-            currentBcvRate = parseFloat(data.rate) || 853.50;
+            currentBcvRate = parseFloat(data.rate) || 853.5;
             currentBcvAuto = data.autoUpdate !== false;
             lastBcvUpdated = data.lastUpdated || '';
             lastBcvSource = data.source || 'bcv_api';
 
             const display = document.getElementById('admin-bcv-val');
             if (display) display.textContent = `${currentBcvRate.toFixed(2)} Bs.`;
-            
+
             const rateIn = $input('bcv-rate-input');
             if (rateIn) rateIn.value = currentBcvRate.toFixed(2);
             const toggle = $input('bcv-auto-toggle');
             if (toggle) toggle.checked = currentBcvAuto;
-            const syncLabel = document.getElementById('bcv-last-sync-label') || document.getElementById('bcv-last-sync-text');
+            const syncLabel =
+                document.getElementById('bcv-last-sync-label') || document.getElementById('bcv-last-sync-text');
             if (syncLabel) {
-                const dateStr = lastBcvUpdated ? new Date(lastBcvUpdated).toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' }) : 'reciente';
+                const dateStr = lastBcvUpdated
+                    ? new Date(lastBcvUpdated).toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' })
+                    : 'reciente';
                 syncLabel.textContent = `Última sincronización: ${dateStr} (${lastBcvSource === 'bcv_api' ? 'Oficial BCV' : 'Manual'})`;
             }
         }
     } catch (e) {
-        console.error("Error al consultar tasa BCV:", e);
+        console.error('Error al consultar tasa BCV:', e);
     }
 }
 
@@ -676,54 +689,71 @@ async function loadBillingData() {
         const res = await fetch('/api/billing', { headers });
         if (res.ok) {
             const data = (await res.json()) as any;
-            
+
             // Info de Plan
             if (data.tenant) {
-                currentTenantPlanKey = data.tenant.planKey || (data.tenant.plan === 'Básico' || data.tenant.plan === 'basic' ? 'basic' : 'pro');
-                currentTenantHasAnalytics = typeof data.tenant.hasAnalytics === 'boolean'
-                    ? data.tenant.hasAnalytics
-                    : Boolean(currentTenantPlanKey && ['pro', 'enterprise', 'demo'].includes(currentTenantPlanKey));
+                currentTenantPlanKey =
+                    data.tenant.planKey ||
+                    (data.tenant.plan === 'Básico' || data.tenant.plan === 'basic' ? 'basic' : 'pro');
+                currentTenantHasAnalytics =
+                    typeof data.tenant.hasAnalytics === 'boolean'
+                        ? data.tenant.hasAnalytics
+                        : Boolean(currentTenantPlanKey && ['pro', 'enterprise', 'demo'].includes(currentTenantPlanKey));
             }
 
             const elPlanName = document.getElementById('billing-plan-name');
             if (elPlanName) elPlanName.textContent = data.tenant.plan;
-            
+
             const elTenantDomain = document.getElementById('billing-tenant-domain');
             if (elTenantDomain) elTenantDomain.textContent = data.tenant.domain;
-            
+
             const elStatus = document.getElementById('billing-status');
             if (elStatus) elStatus.textContent = data.tenant.status;
-            
+
             // Consumo de Pedidos
             const elOrdCurrent = document.getElementById('billing-orders-current');
             if (elOrdCurrent) {
                 elOrdCurrent.textContent = data.usage.ordersThisMonth.current;
-                (document.getElementById('billing-orders-limit') as HTMLElement).textContent = data.usage.ordersThisMonth.limit;
-                (document.getElementById('billing-orders-bar') as HTMLElement).style.width = data.usage.ordersThisMonth.percentage + '%';
-                const bop = document.getElementById('billing-orders-percent'); if (bop) bop.textContent = data.usage.ordersThisMonth.percentage + '% utilizado';
+                (document.getElementById('billing-orders-limit') as HTMLElement).textContent =
+                    data.usage.ordersThisMonth.limit;
+                (document.getElementById('billing-orders-bar') as HTMLElement).style.width =
+                    `${data.usage.ordersThisMonth.percentage}%`;
+                const bop = document.getElementById('billing-orders-percent');
+                if (bop) bop.textContent = `${data.usage.ordersThisMonth.percentage}% utilizado`;
             }
-            
+
             // Consumo de Productos
             const elProdCurrent = document.getElementById('billing-products-current');
             if (elProdCurrent) {
                 elProdCurrent.textContent = data.usage.products.current;
-                const bpl = document.getElementById('billing-products-limit'); if (bpl) bpl.textContent = data.usage.products.limit;
-                const bpb = document.getElementById('billing-products-bar'); if (bpb) bpb.style.width = data.usage.products.percentage + '%';
-                const bpp = document.getElementById('billing-products-percent'); if (bpp) bpp.textContent = data.usage.products.percentage + '% utilizado';
+                const bpl = document.getElementById('billing-products-limit');
+                if (bpl) bpl.textContent = data.usage.products.limit;
+                const bpb = document.getElementById('billing-products-bar');
+                if (bpb) bpb.style.width = `${data.usage.products.percentage}%`;
+                const bpp = document.getElementById('billing-products-percent');
+                if (bpp) bpp.textContent = `${data.usage.products.percentage}% utilizado`;
             }
-            
+
             // Pagos
             const elBank = document.getElementById('pay-bank');
             if (elBank) {
                 elBank.textContent = data.billing.bank;
-                const pp = document.getElementById('pay-phone'); if (pp) pp.textContent = data.billing.phone;
-                const pid = document.getElementById('pay-id'); if (pid) pid.textContent = data.billing.id;
-                const pb = document.getElementById('pay-binance'); if (pb) pb.textContent = data.billing.binancePay;
-                const pbid = document.getElementById('pay-binance-id'); if (pbid) pbid.textContent = data.billing.binancePayId || '284719302';
-                const pbm = document.getElementById('pay-binance-merchant'); if (pbm) pbm.textContent = data.billing.binanceMerchant || 'VentrinaSaaS';
-                const pz = document.getElementById('pay-zelle'); if (pz) pz.textContent = data.billing.zelle;
-                const pzt = document.getElementById('pay-zelle-titular'); if (pzt) pzt.textContent = data.billing.zelleTitular || 'Ventrina Software C.A.';
-                const pa = document.getElementById('pay-amount'); if (pa) pa.textContent = data.billing.monthlyPriceUsd;
+                const pp = document.getElementById('pay-phone');
+                if (pp) pp.textContent = data.billing.phone;
+                const pid = document.getElementById('pay-id');
+                if (pid) pid.textContent = data.billing.id;
+                const pb = document.getElementById('pay-binance');
+                if (pb) pb.textContent = data.billing.binancePay;
+                const pbid = document.getElementById('pay-binance-id');
+                if (pbid) pbid.textContent = data.billing.binancePayId || '284719302';
+                const pbm = document.getElementById('pay-binance-merchant');
+                if (pbm) pbm.textContent = data.billing.binanceMerchant || 'VentrinaSaaS';
+                const pz = document.getElementById('pay-zelle');
+                if (pz) pz.textContent = data.billing.zelle;
+                const pzt = document.getElementById('pay-zelle-titular');
+                if (pzt) pzt.textContent = data.billing.zelleTitular || 'Ventrina Software C.A.';
+                const pa = document.getElementById('pay-amount');
+                if (pa) pa.textContent = data.billing.monthlyPriceUsd;
 
                 // QR Binance Pay en Facturación
                 const qrWrap = document.getElementById('billing-binance-qr-wrap');
@@ -742,7 +772,7 @@ async function loadBillingData() {
             currentTenantHasAnalytics = false;
         }
     } catch (e) {
-        console.error("Error cargando billing:", e);
+        console.error('Error cargando billing:', e);
         currentTenantPlanKey = 'basic';
         currentTenantHasAnalytics = false;
     }
@@ -758,7 +788,7 @@ async function refreshAllData() {
         loadStats(),
         loadCoupons(),
         loadCategories(),
-        loadTeamMembers()
+        loadTeamMembers(),
     ]);
     renderMetrics();
 }
@@ -770,38 +800,38 @@ async function loadOrders(page = 1) {
         const res = await fetch(`/api/orders?page=${page}&limit=50`);
         if (!res.ok) throw new Error('No autorizado');
         const responseData = (await res.json()) as any;
-        
+
         if (responseData.meta) {
             ordersTotalPages = responseData.meta.totalPages || 1;
-            ordersTotalCount = responseData.meta.total ?? (responseData.data ? responseData.data.length : 0);
+            _ordersTotalCount = responseData.meta.total ?? (responseData.data ? responseData.data.length : 0);
             ordersList = responseData.data || [];
         } else {
             ordersTotalPages = 1;
-            ordersList = Array.isArray(responseData) ? responseData : (responseData.data || []);
-            ordersTotalCount = ordersList.length;
+            ordersList = Array.isArray(responseData) ? responseData : responseData.data || [];
+            _ordersTotalCount = ordersList.length;
         }
 
         // Detección de nuevo pedido para reproducir sonido y notificar
         if (lastKnownOrderCount !== null && ordersList.length > lastKnownOrderCount && page === 1) {
-            const hasNewPending = ordersList.some(o => o.status === 'pendiente');
+            const hasNewPending = ordersList.some((o) => o.status === 'pendiente');
             if (hasNewPending) {
                 playOrderChime();
                 flashPageTitle();
                 showToast('🔔 ¡Has recibido un nuevo pedido!', 'info');
 
-                const pendingOrders = ordersList.filter(o => o.status === 'pendiente');
+                const pendingOrders = ordersList.filter((o) => o.status === 'pendiente');
                 const latestOrder = pendingOrders[0];
                 const clientName = latestOrder?.client_name || 'Nuevo cliente';
                 const total = latestOrder?.total_price ? `$${parseFloat(latestOrder.total_price).toFixed(2)}` : '';
                 sendWebPushNotification(
                     '🔔 ¡Nuevo Pedido Recibido!',
                     `Pedido #${latestOrder?.id || ''} de ${clientName} (${total}). Haz clic para gestionarlo.`,
-                    latestOrder?.id
+                    latestOrder?.id,
                 );
             }
         }
         if (page === 1) lastKnownOrderCount = ordersList.length;
-        
+
         renderOrders();
         renderMetrics();
         updatePaginationUI('orders', ordersPage, ordersTotalPages);
@@ -818,17 +848,17 @@ async function loadProducts(page = 1) {
         const res = await fetch(`/api/products?admin=true&page=${page}&limit=50`);
         if (!res.ok) throw new Error('No autorizado');
         const responseData = (await res.json()) as any;
-        
+
         if (responseData.meta) {
             productsTotalPages = responseData.meta.totalPages || 1;
             productsTotalCount = responseData.meta.total ?? (responseData.data ? responseData.data.length : 0);
             productsList = responseData.data || [];
         } else {
             productsTotalPages = 1;
-            productsList = Array.isArray(responseData) ? responseData : (responseData.data || []);
+            productsList = Array.isArray(responseData) ? responseData : responseData.data || [];
             productsTotalCount = productsList.length;
         }
-        
+
         selectedProductIds.clear();
         updateBulkToolbar();
         updateCategoryDatalist();
@@ -851,25 +881,25 @@ async function loadSales(dateFrom: string | null = null, dateTo: string | null =
         if (dateTo) params.append('date_to', dateTo);
         params.append('page', String(page));
         params.append('limit', '50');
-        
+
         if (params.toString()) {
-            url += '?' + params.toString();
+            url += `?${params.toString()}`;
         }
-        
+
         const res = await fetch(url);
         if (!res.ok) throw new Error('No autorizado');
         const responseData = (await res.json()) as any;
-        
+
         if (responseData.meta) {
             salesTotalPages = responseData.meta.totalPages || 1;
             salesTotalCount = responseData.meta.total ?? (responseData.data ? responseData.data.length : 0);
             salesList = responseData.data || [];
         } else {
             salesTotalPages = 1;
-            salesList = Array.isArray(responseData) ? responseData : (responseData.data || []);
+            salesList = Array.isArray(responseData) ? responseData : responseData.data || [];
             salesTotalCount = salesList.length;
         }
-        
+
         renderSales();
         renderMetrics();
         updatePaginationUI('sales', salesPage, salesTotalPages);
@@ -890,7 +920,7 @@ async function loadStats() {
         const res = await fetch('/api/sales?stats=true', { headers });
         if (!res.ok) throw new Error('No autorizado');
         const data = (await res.json()) as any;
-        
+
         // Actualizar métrica de ingresos de hoy
         const metricRevenue = document.getElementById('metric-revenue');
         const metricRevenueBs = document.getElementById('metric-revenue-bs');
@@ -901,7 +931,7 @@ async function loadStats() {
                 metricRevenueBs.textContent = `≈ Bs ${(revenue * currentBcvRate).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             }
         }
-        
+
         // Renderizar gráfica
         renderChart(data.chartData || []);
         await loadAnalytics();
@@ -918,7 +948,8 @@ function renderAnalyticsLockedState() {
     const avgTicketBsEl = document.getElementById('metric-average-ticket-bs');
 
     if (monthRevEl) {
-        monthRevEl.innerHTML = '<span class="badge-pro-locked"><i data-lucide="lock" class="icon-inline"></i> Plan Pro</span>';
+        monthRevEl.innerHTML =
+            '<span class="badge-pro-locked"><i data-lucide="lock" class="icon-inline"></i> Plan Pro</span>';
     }
     if (monthRevBsEl) {
         monthRevBsEl.textContent = 'Disponible en planes Pro';
@@ -928,7 +959,8 @@ function renderAnalyticsLockedState() {
     }
 
     if (avgTicketEl) {
-        avgTicketEl.innerHTML = '<span class="badge-pro-locked"><i data-lucide="lock" class="icon-inline"></i> Plan Pro</span>';
+        avgTicketEl.innerHTML =
+            '<span class="badge-pro-locked"><i data-lucide="lock" class="icon-inline"></i> Plan Pro</span>';
     }
     if (avgTicketBsEl) {
         avgTicketBsEl.textContent = 'Disponible en planes Pro';
@@ -993,7 +1025,7 @@ async function loadAnalytics() {
             return;
         }
         const data = (await res.json()) as any;
-        
+
         // 1. Ingresos Mes Actual y Crecimiento
         const monthRevEl = document.getElementById('metric-month-revenue');
         const monthRevBsEl = document.getElementById('metric-month-revenue-bs');
@@ -1004,7 +1036,7 @@ async function loadAnalytics() {
             if (monthRevBsEl && currentBcvRate > 0) {
                 monthRevBsEl.textContent = `≈ Bs ${(revMonth * currentBcvRate).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             }
-            
+
             if (growthContainer) {
                 const growth = data.summary.monthlyGrowthPercentage || 0;
                 let badgeClass = 'badge-growth neutral';
@@ -1019,7 +1051,7 @@ async function loadAnalytics() {
                 growthContainer.innerHTML = `<span class="${badgeClass}">${arrow} ${Math.abs(growth)}% vs mes ant.</span>`;
             }
         }
-        
+
         // 2. Ticket Promedio
         const avgTicketEl = document.getElementById('metric-average-ticket');
         const avgTicketBsEl = document.getElementById('metric-average-ticket-bs');
@@ -1030,16 +1062,17 @@ async function loadAnalytics() {
                 avgTicketBsEl.textContent = `≈ Bs ${(avg * currentBcvRate).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             }
         }
-        
+
         // 3. Top 5 Productos
         const topProdContainer = document.getElementById('top-products-container');
         if (topProdContainer) {
             if (!data.topProducts || data.topProducts.length === 0) {
                 topProdContainer.innerHTML = `<p class="analytics-empty-note">Sin ventas registradas para generar ranking.</p>`;
             } else {
-                topProdContainer.innerHTML = data.topProducts.map((p: any, idx: number) => {
-                    const rankClass = idx === 0 ? 'rank-1' : idx === 1 ? 'rank-2' : idx === 2 ? 'rank-3' : '';
-                    return `
+                topProdContainer.innerHTML = data.topProducts
+                    .map((p: any, idx: number) => {
+                        const rankClass = idx === 0 ? 'rank-1' : idx === 1 ? 'rank-2' : idx === 2 ? 'rank-3' : '';
+                        return `
                         <div class="top-product-row">
                             <div class="top-product-info">
                                 <div class="top-product-rank ${rankClass}">${idx + 1}</div>
@@ -1054,28 +1087,36 @@ async function loadAnalytics() {
                             </div>
                         </div>
                     `;
-                }).join('');
+                    })
+                    .join('');
             }
         }
-        
+
         // 4. Métodos de Pago y Entregas
         const breakdownContainer = document.getElementById('breakdown-container');
         if (breakdownContainer) {
             let html = '';
-            
+
             // Pagos
-            const totalPaymentOrders = (data.paymentMethods || []).reduce((acc: number, curr: any) => acc + (curr.count || 0), 0) || 1;
+            const totalPaymentOrders =
+                (data.paymentMethods || []).reduce((acc: number, curr: any) => acc + (curr.count || 0), 0) || 1;
             html += `<div class="breakdown-section-title">Métodos de Pago</div>`;
             if (!data.paymentMethods || data.paymentMethods.length === 0) {
                 html += `<p class="analytics-empty-note">Sin datos de métodos de pago.</p>`;
             } else {
                 data.paymentMethods.forEach((pm: any) => {
                     const pct = Math.round((pm.count / totalPaymentOrders) * 100);
-                    const name = pm.payment_method?.startsWith('pago_movil') ? `Pago Móvil${pm.payment_method.includes(':') ? ` (${pm.payment_method.split(':')[1]})` : ''}` :
-                                 pm.payment_method === 'efectivo' ? 'Efectivo' :
-                                 pm.payment_method === 'zelle' ? 'Zelle' :
-                                 pm.payment_method === 'binance_pay' ? 'Binance Pay' :
-                                 pm.payment_method === 'punto' ? 'Punto de Venta' : pm.payment_method;
+                    const name = pm.payment_method?.startsWith('pago_movil')
+                        ? `Pago Móvil${pm.payment_method.includes(':') ? ` (${pm.payment_method.split(':')[1]})` : ''}`
+                        : pm.payment_method === 'efectivo'
+                          ? 'Efectivo'
+                          : pm.payment_method === 'zelle'
+                            ? 'Zelle'
+                            : pm.payment_method === 'binance_pay'
+                              ? 'Binance Pay'
+                              : pm.payment_method === 'punto'
+                                ? 'Punto de Venta'
+                                : pm.payment_method;
                     html += `
                         <div class="breakdown-item">
                             <div class="breakdown-header">
@@ -1089,16 +1130,18 @@ async function loadAnalytics() {
                     `;
                 });
             }
-            
+
             // Entregas
-            const totalDeliveryOrders = (data.deliveryTypes || []).reduce((acc: number, curr: any) => acc + (curr.count || 0), 0) || 1;
+            const totalDeliveryOrders =
+                (data.deliveryTypes || []).reduce((acc: number, curr: any) => acc + (curr.count || 0), 0) || 1;
             html += `<div class="breakdown-section-title delivery-section">Tipo de Entrega</div>`;
             if (!data.deliveryTypes || data.deliveryTypes.length === 0) {
                 html += `<p class="analytics-empty-note">Sin datos de entregas.</p>`;
             } else {
                 data.deliveryTypes.forEach((dt: any) => {
                     const pct = Math.round((dt.count / totalDeliveryOrders) * 100);
-                    const name = dt.delivery_type === 'delivery' ? 'Delivery / Domicilio' : 'Retiro en Tienda / Pick-up';
+                    const name =
+                        dt.delivery_type === 'delivery' ? 'Delivery / Domicilio' : 'Retiro en Tienda / Pick-up';
                     html += `
                         <div class="breakdown-item">
                             <div class="breakdown-header">
@@ -1112,38 +1155,37 @@ async function loadAnalytics() {
                     `;
                 });
             }
-            
+
             breakdownContainer.innerHTML = html;
-            
+
             // Aplicar anchos de progreso
-            breakdownContainer.querySelectorAll('.breakdown-fill').forEach(fill => {
+            breakdownContainer.querySelectorAll('.breakdown-fill').forEach((fill) => {
                 const pct = fill.getAttribute('data-pct');
-                if (pct) (fill as HTMLElement).style.width = pct + '%';
+                if (pct) (fill as HTMLElement).style.width = `${pct}%`;
             });
         }
-        
     } catch (err) {
-        console.error("Error al cargar analíticas:", err);
+        console.error('Error al cargar analíticas:', err);
     }
 }
 
 function renderChart(chartData: any[]) {
     const ctx = document.getElementById('salesChart');
     if (!ctx) return;
-    
+
     // Preparar etiquetas (fechas) y datos (totales)
     // Si no hay datos, mostrar 7 días vacíos
     const labels: string[] = [];
     const totals: number[] = [];
-    
+
     // Asegurar 7 días
     for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(d.getDate() - i);
         const dateStr = d.toISOString().split('T')[0];
-        
+
         labels.push(d.toLocaleDateString('es-VE', { weekday: 'short', day: 'numeric' }));
-        
+
         const dayData = chartData.find((c: any) => c.date === dateStr);
         totals.push(dayData ? parseFloat(dayData.total) : 0);
     }
@@ -1151,27 +1193,29 @@ function renderChart(chartData: any[]) {
     if (salesChartInstance) {
         salesChartInstance.destroy();
     }
-    
+
     if (typeof Chart === 'undefined') return;
 
     salesChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
-            datasets: [{
-                label: 'Ingresos (Bs)',
-                data: totals,
-                borderColor: '#4F46E5',
-                backgroundColor: 'rgba(79, 70, 229, 0.15)',
-                borderWidth: 3,
-                pointBackgroundColor: '#06B6D4',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 5,
-                pointHoverRadius: 7,
-                fill: true,
-                tension: 0.4
-            }]
+            datasets: [
+                {
+                    label: 'Ingresos (Bs)',
+                    data: totals,
+                    borderColor: '#4F46E5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.15)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#06B6D4',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    fill: true,
+                    tension: 0.4,
+                },
+            ],
         },
         options: {
             responsive: true,
@@ -1187,30 +1231,26 @@ function renderChart(chartData: any[]) {
                     padding: 12,
                     displayColors: false,
                     callbacks: {
-                        label: function(context: any) {
-                            return 'Bs ' + context.parsed.y.toLocaleString('es-VE');
-                        }
-                    }
-                }
+                        label: (context: any) => `Bs ${context.parsed.y.toLocaleString('es-VE')}`,
+                    },
+                },
             },
             scales: {
                 x: {
                     grid: { display: false, drawBorder: false },
-                    ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'Inter' } }
+                    ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'Inter' } },
                 },
                 y: {
                     grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false },
                     ticks: {
                         color: 'rgba(255,255,255,0.5)',
                         font: { family: 'Inter' },
-                        callback: function(value: any) {
-                            return 'Bs ' + value.toLocaleString('es-VE');
-                        }
+                        callback: (value: any) => `Bs ${value.toLocaleString('es-VE')}`,
                     },
-                    beginAtZero: true
-                }
-            }
-        }
+                    beginAtZero: true,
+                },
+            },
+        },
     });
 }
 
@@ -1228,11 +1268,12 @@ function renderSales() {
     let filteredSales = salesList;
     if (salesSearchQuery) {
         const q = salesSearchQuery.toLowerCase();
-        filteredSales = filteredSales.filter(s => 
-            (s.client_name && s.client_name.toLowerCase().includes(q)) ||
-            (s.order_id && s.order_id.toLowerCase().includes(q)) ||
-            (s.client_phone && s.client_phone.toLowerCase().includes(q)) ||
-            (s.metodo_pago && s.metodo_pago.toLowerCase().includes(q))
+        filteredSales = filteredSales.filter(
+            (s) =>
+                s.client_name?.toLowerCase().includes(q) ||
+                s.order_id?.toLowerCase().includes(q) ||
+                s.client_phone?.toLowerCase().includes(q) ||
+                s.metodo_pago?.toLowerCase().includes(q),
         );
     }
 
@@ -1241,19 +1282,20 @@ function renderSales() {
         return;
     }
 
-    tableSales.innerHTML = filteredSales.map(s => {
-        const dateObj = new Date(s.fecha);
-        const dateString = dateObj.toLocaleDateString('es-VE', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+    tableSales.innerHTML = filteredSales
+        .map((s) => {
+            const dateObj = new Date(s.fecha);
+            const dateString = dateObj.toLocaleDateString('es-VE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+            });
 
-        const montoVal = parseFloat(s.monto) || 0.0;
+            const montoVal = parseFloat(s.monto) || 0.0;
 
-        return `
+            return `
             <tr>
                 <td><strong>#V-${escapeHtml(s.id)}</strong></td>
                 <td><code class="table-code-highlight">${escapeHtml(s.order_id)}</code></td>
@@ -1264,7 +1306,8 @@ function renderSales() {
                 <td class="table-text-secondary">${dateString}</td>
             </tr>
         `;
-    }).join('');
+        })
+        .join('');
 
     if (window.lucide) lucide.createIcons();
 }
@@ -1274,9 +1317,9 @@ function renderMetrics() {
     const metricProdCount = document.getElementById('metric-prod-count');
     if (metricProdCount) metricProdCount.textContent = String(productsTotalCount || productsList.length);
 
-    const pendingOrders = ordersList.filter(o => o.status === 'pendiente');
-    const prodOrders = ordersList.filter(o => o.status === 'en_produccion');
-    
+    const pendingOrders = ordersList.filter((o) => o.status === 'pendiente');
+    const prodOrders = ordersList.filter((o) => o.status === 'en_produccion');
+
     const metricPending = document.getElementById('metric-pending-orders');
     if (metricPending) metricPending.textContent = String(pendingOrders.length);
 
@@ -1284,11 +1327,11 @@ function renderMetrics() {
     if (metricProd) metricProd.textContent = String(prodOrders.length);
 
     const metricSalesCount = document.getElementById('metric-sales-count');
-    
+
     if (metricSalesCount) {
         metricSalesCount.textContent = String(salesTotalCount || salesList.length);
     }
-    
+
     // Actualizar badge del sidebar
     const badgeOrders = document.getElementById('sidebar-badge-orders');
     if (badgeOrders) {
@@ -1304,7 +1347,7 @@ function renderOrders() {
     const tableRecent = document.getElementById('table-recent-orders');
 
     const totalOrdersSum = ordersList.reduce((sum, o) => sum + (parseFloat(o.total_price) || 0), 0);
-    const nonCancelledOrders = ordersList.filter(o => o.status !== 'cancelado');
+    const nonCancelledOrders = ordersList.filter((o) => o.status !== 'cancelado');
     const activeOrdersSum = nonCancelledOrders.reduce((sum, o) => sum + (parseFloat(o.total_price) || 0), 0);
 
     const summarySpan = document.getElementById('orders-total-summary');
@@ -1315,27 +1358,28 @@ function renderOrders() {
     // Filtrar pedidos según búsqueda, estado y fecha
     let filteredOrders = ordersList;
     if (ordersStatusFilter) {
-        filteredOrders = filteredOrders.filter(o => o.status === ordersStatusFilter);
+        filteredOrders = filteredOrders.filter((o) => o.status === ordersStatusFilter);
     }
     if (ordersSearchQuery) {
         const q = ordersSearchQuery.toLowerCase();
-        filteredOrders = filteredOrders.filter(o =>
-            (o.id && o.id.toLowerCase().includes(q)) ||
-            (o.client_name && o.client_name.toLowerCase().includes(q)) ||
-            (o.client_phone && o.client_phone.toLowerCase().includes(q))
+        filteredOrders = filteredOrders.filter(
+            (o) =>
+                o.id?.toLowerCase().includes(q) ||
+                o.client_name?.toLowerCase().includes(q) ||
+                o.client_phone?.toLowerCase().includes(q),
         );
     }
     if (ordersDateFilter && ordersDateFilter !== 'all') {
         const now = new Date();
         const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-        const startOfYesterday = startOfToday - (24 * 60 * 60 * 1000);
-        const startOf7Days = startOfToday - (7 * 24 * 60 * 60 * 1000);
+        const startOfYesterday = startOfToday - 24 * 60 * 60 * 1000;
+        const startOf7Days = startOfToday - 7 * 24 * 60 * 60 * 1000;
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
 
-        filteredOrders = filteredOrders.filter(o => {
+        filteredOrders = filteredOrders.filter((o) => {
             if (!o.created_at) return false;
             const orderTime = new Date(o.created_at).getTime();
-            if (isNaN(orderTime)) return true;
+            if (Number.isNaN(orderTime)) return true;
 
             if (ordersDateFilter === 'today') {
                 return orderTime >= startOfToday;
@@ -1356,7 +1400,7 @@ function renderOrders() {
         if (filteredOrders.length === 0) {
             tableAll.innerHTML = `<tr><td colspan="7" class="table-empty-message">${hasFilters ? 'No hay pedidos que coincidan con los filtros aplicados.' : 'No hay pedidos en la base de datos.'}</td></tr>`;
         } else {
-            tableAll.innerHTML = filteredOrders.map(o => createOrderRowMarkup(o)).join('');
+            tableAll.innerHTML = filteredOrders.map((o) => createOrderRowMarkup(o)).join('');
         }
     }
 
@@ -1366,7 +1410,7 @@ function renderOrders() {
             tableRecent.innerHTML = `<tr><td colspan="7" class="table-empty-message">No hay pedidos recientes.</td></tr>`;
         } else {
             const recent = ordersList.slice(0, 5);
-            tableRecent.innerHTML = recent.map(o => createOrderRowMarkup(o, false)).join('');
+            tableRecent.innerHTML = recent.map((o) => createOrderRowMarkup(o, false)).join('');
         }
     }
 
@@ -1380,11 +1424,11 @@ function createOrderRowMarkup(order: any, includeStatusSelector: boolean = true)
         month: '2-digit',
         year: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
     });
 
     const priceText = order.total_price > 0 ? `$${parseFloat(order.total_price).toFixed(2)}` : '$0.00';
-    
+
     let statusSelector = '';
     if (includeStatusSelector) {
         const orderIdEsc = escapeHtml(order.id);
@@ -1409,9 +1453,11 @@ function createOrderRowMarkup(order: any, includeStatusSelector: boolean = true)
         statusSelector = `<span class="status-badge ${escapeHtml(order.status)}">${escapeHtml(order.status).replace('_', ' ')}</span>`;
     }
 
-        const hasReceipt = Boolean(order.payment_receipt);
-        const receiptBadge = hasReceipt ? ' <span title="Comprobante de pago adjunto" class="table-receipt-badge">📸</span>' : '';
-        return `
+    const hasReceipt = Boolean(order.payment_receipt);
+    const receiptBadge = hasReceipt
+        ? ' <span title="Comprobante de pago adjunto" class="table-receipt-badge">📸</span>'
+        : '';
+    return `
         <tr>
             <td><strong>#${escapeHtml(order.id)}</strong>${receiptBadge}</td>
             <td>${escapeHtml(order.client_name)}</td>
@@ -1446,9 +1492,9 @@ async function updateOrderStatus(orderId: string, newStatus: string) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Requested-With': 'fetch'
+                'X-Requested-With': 'fetch',
             },
-            body: JSON.stringify({ id: orderId, status: newStatus })
+            body: JSON.stringify({ id: orderId, status: newStatus }),
         });
 
         if (!response.ok) {
@@ -1456,7 +1502,7 @@ async function updateOrderStatus(orderId: string, newStatus: string) {
             throw new Error(errJson?.error || 'Error al actualizar estado');
         }
         const resData = await response.json();
-        
+
         showToast(`Pedido #${orderId} actualizado a "${newStatus.replace('_', ' ')}"`, 'success');
 
         if (resData && (resData as any).whatsappNotificationUrl) {
@@ -1467,7 +1513,7 @@ async function updateOrderStatus(orderId: string, newStatus: string) {
                 confirmText: 'Abrir WhatsApp',
                 cancelText: 'No notificar',
                 variant: 'primary',
-                icon: 'message-circle'
+                icon: 'message-circle',
             });
             if (shouldNotify) {
                 window.open((resData as any).whatsappNotificationUrl, '_blank');
@@ -1480,7 +1526,7 @@ async function updateOrderStatus(orderId: string, newStatus: string) {
         // Revertir selector al estado previo en caso de error
         const select = document.getElementById(`status-select-${orderId}`) as HTMLSelectElement | null;
         if (select) {
-            const targetOrder = ordersList.find(o => o.id === orderId);
+            const targetOrder = ordersList.find((o) => o.id === orderId);
             if (targetOrder) {
                 select.value = targetOrder.status;
                 select.className = `status-select status-select-${targetOrder.status}`;
@@ -1498,7 +1544,7 @@ async function deleteOrder(orderId: string) {
         confirmText: 'Eliminar pedido',
         cancelText: 'Cancelar',
         variant: 'danger',
-        icon: 'trash-2'
+        icon: 'trash-2',
     });
     if (!confirmed) {
         return;
@@ -1506,7 +1552,7 @@ async function deleteOrder(orderId: string) {
 
     try {
         const response = await fetch(`/api/orders?id=${encodeURIComponent(orderId)}`, {
-            method: 'DELETE'
+            method: 'DELETE',
         });
 
         if (!response.ok) throw new Error('Error al eliminar');
@@ -1535,7 +1581,7 @@ async function viewOrderDetails(orderId: string) {
 
         const clientPhoneElem = document.getElementById('modal-client-phone');
         if (clientPhoneElem) clientPhoneElem.textContent = order.client_phone;
-        
+
         const dateObj = new Date(order.created_at);
         const orderDateElem = document.getElementById('modal-order-date');
         if (orderDateElem) orderDateElem.textContent = dateObj.toLocaleString('es-VE');
@@ -1556,7 +1602,7 @@ async function viewOrderDetails(orderId: string) {
         }
 
         const bcvRateUsed = parseFloat(order.bcv_rate) || currentBcvRate;
-        const totalBsVal = parseFloat(order.total_bs) || (totalVal * bcvRateUsed);
+        const totalBsVal = parseFloat(order.total_bs) || totalVal * bcvRateUsed;
         const totalBsElement = document.getElementById('modal-order-total-bs');
         if (totalBsElement) {
             totalBsElement.textContent = `≈ Bs. ${totalBsVal.toFixed(2)} (Tasa: ${bcvRateUsed.toFixed(2)} Bs/$)`;
@@ -1587,11 +1633,11 @@ async function viewOrderDetails(orderId: string) {
         if (deliveryTypeElem) {
             const isDelivery = order.delivery_type === 'delivery';
             deliveryTypeElem.textContent = isDelivery ? '🛵 Delivery a Domicilio' : '🏪 Retiro en Local';
-            
+
             if (isDelivery) {
                 if (deliveryAddressContainer) deliveryAddressContainer.classList.remove('d-none');
                 if (deliveryAddressElem) deliveryAddressElem.textContent = order.delivery_address || 'No especificada';
-                
+
                 if (order.delivery_notes) {
                     if (deliveryNotesContainer) deliveryNotesContainer.classList.remove('d-none');
                     if (deliveryNotesElem) deliveryNotesElem.textContent = order.delivery_notes;
@@ -1612,7 +1658,7 @@ async function viewOrderDetails(orderId: string) {
             zelle: '🇺🇸 Zelle',
             binance_pay: '🟡 Binance Pay',
             efectivo: '💵 Efectivo',
-            punto: '💳 Punto de Venta'
+            punto: '💳 Punto de Venta',
         };
 
         if (paymentMethodElem) {
@@ -1632,12 +1678,13 @@ async function viewOrderDetails(orderId: string) {
             if (!order.items || order.items.length === 0) {
                 itemsList.innerHTML = `<p class="table-empty-message">No hay detalles de productos registrados.</p>`;
             } else {
-                itemsList.innerHTML = order.items.map((item: any) => {
-                    const sizeText = item.size ? ` [${escapeHtml(item.size)}]` : '';
-                    const unitPrice = parseFloat(item.unit_price) || 0.0;
-                    const subtotal = unitPrice * item.quantity;
+                itemsList.innerHTML = order.items
+                    .map((item: any) => {
+                        const sizeText = item.size ? ` [${escapeHtml(item.size)}]` : '';
+                        const unitPrice = parseFloat(item.unit_price) || 0.0;
+                        const subtotal = unitPrice * item.quantity;
 
-                    return `
+                        return `
                         <div class="detail-item items-center">
                             <div class="detail-item-info">
                                 <div class="detail-item-icon">
@@ -1661,7 +1708,8 @@ async function viewOrderDetails(orderId: string) {
                             </div>
                         </div>
                     `;
-                }).join('');
+                    })
+                    .join('');
             }
         }
 
@@ -1670,21 +1718,22 @@ async function viewOrderDetails(orderId: string) {
         if (btnChat) {
             let cleanPhone = String(order.client_phone || '').replace(/[^\d]/g, '');
             if (cleanPhone.startsWith('0')) {
-                cleanPhone = '58' + cleanPhone.slice(1);
+                cleanPhone = `58${cleanPhone.slice(1)}`;
             } else if (cleanPhone.length === 10 && !cleanPhone.startsWith('58')) {
-                cleanPhone = '58' + cleanPhone;
+                cleanPhone = `58${cleanPhone}`;
             }
             const businessName = $val('cfg-business-name') || 'nuestra tienda';
-            
+
             let message = `¡Hola ${order.client_name}! Te contactamos de *${businessName}* con respecto a tu pedido *#${order.id}*...`;
             if (order.status === 'pendiente') {
                 message = `¡Hola ${order.client_name}! Te saludamos de *${businessName}*. Recibimos tu pedido *#${order.id}* por un monto total de *${totalText}*. ¿Deseas acordar el método de pago o requieres nuestros datos bancarios?`;
             } else if (order.status === 'en_produccion') {
                 message = `¡Hola ${order.client_name}! Te notificamos de *${businessName}* que tu pedido *#${order.id}* ya está en preparación 👨‍🍳. Te avisaremos apenas esté listo.`;
             } else if (order.status === 'listo_entrega') {
-                message = order.delivery_type === 'delivery'
-                    ? `¡Hola ${order.client_name}! 🛵 Tu pedido *#${order.id}* de *${businessName}* ya está listo y va en camino a tu dirección (${order.delivery_address || 'acordada'}). ¡Pronto estará contigo!`
-                    : `¡Hola ${order.client_name}! 🛍️ Tu pedido *#${order.id}* de *${businessName}* ya está listo para ser retirado en nuestro local. ¡Te esperamos!`;
+                message =
+                    order.delivery_type === 'delivery'
+                        ? `¡Hola ${order.client_name}! 🛵 Tu pedido *#${order.id}* de *${businessName}* ya está listo y va en camino a tu dirección (${order.delivery_address || 'acordada'}). ¡Pronto estará contigo!`
+                        : `¡Hola ${order.client_name}! 🛍️ Tu pedido *#${order.id}* de *${businessName}* ya está listo para ser retirado en nuestro local. ¡Te esperamos!`;
             } else if (order.status === 'completado') {
                 message = `¡Hola ${order.client_name}! 🎉 Muchas gracias por tu compra en *${businessName}*. Tu pedido *#${order.id}* ha sido completado con éxito. ¡Esperamos que disfrutes tu pedido y que vuelvas pronto!`;
             } else if (order.status === 'cancelado') {
@@ -1721,15 +1770,17 @@ function openPaymentModal(orderId: string, newStatus: string) {
     if (paymentModalOrderId) {
         paymentModalOrderId.textContent = `#${orderId}`;
     }
-    
-    const targetOrder = ordersList.find(o => o.id === orderId);
+
+    const targetOrder = ordersList.find((o) => o.id === orderId);
     const amountInput = document.getElementById('payment-amount');
     if (amountInput && targetOrder) {
         (amountInput as HTMLInputElement).value = parseFloat(targetOrder.total_price || 0).toFixed(2);
     }
 
     if (paymentMethodSelect && targetOrder?.payment_method) {
-        paymentMethodSelect.value = targetOrder.payment_method.startsWith('pago_movil') ? 'pago_movil' : targetOrder.payment_method;
+        paymentMethodSelect.value = targetOrder.payment_method.startsWith('pago_movil')
+            ? 'pago_movil'
+            : targetOrder.payment_method;
     }
     if (paymentReferenceInput) {
         paymentReferenceInput.value = targetOrder?.payment_reference || '';
@@ -1743,7 +1794,7 @@ function openPaymentModal(orderId: string, newStatus: string) {
     if (targetOrder?.payment_receipt) {
         if (receiptBox) receiptBox.classList.remove('d-none');
         if (receiptThumb) receiptThumb.src = targetOrder.payment_receipt;
-        
+
         const openReceiptViewer = (e: Event) => {
             e.preventDefault();
             const receiptModal = document.getElementById('receipt-modal');
@@ -1759,7 +1810,7 @@ function openPaymentModal(orderId: string, newStatus: string) {
     } else {
         if (receiptBox) receiptBox.classList.add('d-none');
     }
-    
+
     if (paymentModal) {
         paymentModal.classList.add('active');
     }
@@ -1789,14 +1840,14 @@ if (paymentModal) {
 if (paymentForm) {
     paymentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        const method = paymentMethodSelect ? paymentMethodSelect.value : "pago_movil";
-        const ref = paymentReferenceInput ? paymentReferenceInput.value.trim() : "";
+
+        const method = paymentMethodSelect ? paymentMethodSelect.value : 'pago_movil';
+        const ref = paymentReferenceInput ? paymentReferenceInput.value.trim() : '';
         const paymentMethodString = ref ? `${method} (Ref: ${ref})` : method;
-        
+
         const orderId = pendingPaymentOrderId;
         const status = pendingPaymentStatus;
-        
+
         const btnConfirm = $btn('btn-confirm-payment');
         const originalHTML = btnConfirm ? btnConfirm.innerHTML : '';
         if (btnConfirm) {
@@ -1804,31 +1855,31 @@ if (paymentForm) {
             btnConfirm.innerHTML = '<i data-lucide="loader" class="spin"></i> Procesando...';
             if (window.lucide) lucide.createIcons();
         }
-        
+
         const paymentAmountVal = parseFloat($val('payment-amount'));
         const payload: any = { id: orderId, status: status, paymentMethod: paymentMethodString };
-        if (!isNaN(paymentAmountVal) && paymentAmountVal >= 0) {
+        if (!Number.isNaN(paymentAmountVal) && paymentAmountVal >= 0) {
             payload.paymentAmount = paymentAmountVal;
         }
-        
+
         try {
             const response = await fetch('/api/orders', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Requested-With': 'fetch'
+                    'X-Requested-With': 'fetch',
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
             });
 
             if (!response.ok) {
                 const errJson = (await response.json().catch(() => null)) as any;
                 throw new Error(errJson?.error || 'Error al actualizar estado');
             }
-            
+
             const resData = await response.json().catch(() => null);
             showToast(`Pedido #${orderId} completado y venta registrada.`, 'success');
-            
+
             if (paymentModal) {
                 paymentModal.classList.remove('active');
             }
@@ -1846,13 +1897,13 @@ if (paymentForm) {
                     confirmText: 'Abrir WhatsApp',
                     cancelText: 'No notificar',
                     variant: 'primary',
-                    icon: 'message-circle'
+                    icon: 'message-circle',
                 });
                 if (shouldNotify) {
                     window.open((resData as any).whatsappNotificationUrl, '_blank');
                 }
             }
-            
+
             await refreshAllData();
         } catch (err) {
             console.error(err);
@@ -1877,7 +1928,7 @@ const templateDefaultCategory = {
     autoparts: 'frenos',
     fashion: 'vestidos',
     tech: 'laptops-pc',
-    grocery: 'despensa'
+    grocery: 'despensa',
 };
 
 const templateBadges = {
@@ -1886,7 +1937,7 @@ const templateBadges = {
     autoparts: '<span class="template-badge autoparts">🚗 Repuestos</span>',
     fashion: '<span class="template-badge fashion">👗 Moda</span>',
     tech: '<span class="template-badge tech">⚡ Tecnología</span>',
-    grocery: '<span class="template-badge grocery">🛒 Bodegón</span>'
+    grocery: '<span class="template-badge grocery">🛒 Bodegón</span>',
 };
 
 function renderProductsTable() {
@@ -1903,12 +1954,15 @@ function renderProductsTable() {
     const countGroc = document.getElementById('count-grocery');
 
     if (countAll) countAll.textContent = String(productsList.length);
-    if (countRest) countRest.textContent = String(productsList.filter(p => (p.template || 'restaurant') === 'restaurant').length);
-    if (countHard) countHard.textContent = String(productsList.filter(p => p.template === 'hardware').length);
-    if (countFash) countFash.textContent = String(productsList.filter(p => p.template === 'fashion').length);
-    if (countTech) countTech.textContent = String(productsList.filter(p => p.template === 'tech').length);
-    if (countAuto) countAuto.textContent = String(productsList.filter(p => p.template === 'autoparts').length);
-    if (countGroc) countGroc.textContent = String(productsList.filter(p => p.template === 'grocery').length);
+    if (countRest)
+        countRest.textContent = String(
+            productsList.filter((p) => (p.template || 'restaurant') === 'restaurant').length,
+        );
+    if (countHard) countHard.textContent = String(productsList.filter((p) => p.template === 'hardware').length);
+    if (countFash) countFash.textContent = String(productsList.filter((p) => p.template === 'fashion').length);
+    if (countTech) countTech.textContent = String(productsList.filter((p) => p.template === 'tech').length);
+    if (countAuto) countAuto.textContent = String(productsList.filter((p) => p.template === 'autoparts').length);
+    if (countGroc) countGroc.textContent = String(productsList.filter((p) => p.template === 'grocery').length);
 
     // Actualizar contadores de stock
     const stockCountAll = document.getElementById('stock-count-all');
@@ -1917,39 +1971,59 @@ function renderProductsTable() {
     const stockCountAvailable = document.getElementById('stock-count-available');
 
     if (stockCountAll) stockCountAll.textContent = String(productsList.length);
-    if (stockCountCritical) stockCountCritical.textContent = String(productsList.filter(p => p.stock !== undefined && p.stock !== null && p.stock > 0 && p.stock <= 3).length);
-    if (stockCountOut) stockCountOut.textContent = String(productsList.filter(p => (p.stock !== undefined && p.stock !== null && p.stock === 0) || p.active === 0).length);
-    if (stockCountAvailable) stockCountAvailable.textContent = String(productsList.filter(p => (p.stock === -1 || p.stock === undefined || p.stock === null || p.stock > 3) && p.active !== 0).length);
+    if (stockCountCritical)
+        stockCountCritical.textContent = String(
+            productsList.filter((p) => p.stock !== undefined && p.stock !== null && p.stock > 0 && p.stock <= 3).length,
+        );
+    if (stockCountOut)
+        stockCountOut.textContent = String(
+            productsList.filter((p) => (p.stock !== undefined && p.stock !== null && p.stock === 0) || p.active === 0)
+                .length,
+        );
+    if (stockCountAvailable)
+        stockCountAvailable.textContent = String(
+            productsList.filter(
+                (p) => (p.stock === -1 || p.stock === undefined || p.stock === null || p.stock > 3) && p.active !== 0,
+            ).length,
+        );
 
     // Filtrar lista según plantilla activa
-    let filteredProducts = activeProductTemplateFilter === 'all'
-        ? productsList
-        : productsList.filter(p => (p.template || 'restaurant') === activeProductTemplateFilter);
+    let filteredProducts =
+        activeProductTemplateFilter === 'all'
+            ? productsList
+            : productsList.filter((p) => (p.template || 'restaurant') === activeProductTemplateFilter);
 
     // Filtrar lista según nivel de stock activo
     if (activeStockFilter === 'critical') {
-        filteredProducts = filteredProducts.filter(p => p.stock !== undefined && p.stock !== null && p.stock > 0 && p.stock <= 3);
+        filteredProducts = filteredProducts.filter(
+            (p) => p.stock !== undefined && p.stock !== null && p.stock > 0 && p.stock <= 3,
+        );
     } else if (activeStockFilter === 'out_of_stock') {
-        filteredProducts = filteredProducts.filter(p => (p.stock !== undefined && p.stock !== null && p.stock === 0) || p.active === 0);
+        filteredProducts = filteredProducts.filter(
+            (p) => (p.stock !== undefined && p.stock !== null && p.stock === 0) || p.active === 0,
+        );
     } else if (activeStockFilter === 'available') {
-        filteredProducts = filteredProducts.filter(p => (p.stock === -1 || p.stock === undefined || p.stock === null || p.stock > 3) && p.active !== 0);
+        filteredProducts = filteredProducts.filter(
+            (p) => (p.stock === -1 || p.stock === undefined || p.stock === null || p.stock > 3) && p.active !== 0,
+        );
     }
 
     if (productsSearchQuery) {
         const q = productsSearchQuery.toLowerCase();
-        filteredProducts = filteredProducts.filter(p =>
-            (p.name && p.name.toLowerCase().includes(q)) ||
-            (p.id && p.id.toLowerCase().includes(q)) ||
-            (p.sku && p.sku.toLowerCase().includes(q)) ||
-            (p.category && p.category.toLowerCase().includes(q))
+        filteredProducts = filteredProducts.filter(
+            (p) =>
+                p.name?.toLowerCase().includes(q) ||
+                p.id?.toLowerCase().includes(q) ||
+                p.sku?.toLowerCase().includes(q) ||
+                p.category?.toLowerCase().includes(q),
         );
     }
 
     // Actualizar estado del checkbox maestro
     const checkAll = document.getElementById('check-all-products') as HTMLInputElement | null;
     if (checkAll) {
-        const allChecked = filteredProducts.length > 0 && filteredProducts.every(p => selectedProductIds.has(p.id));
-        const someChecked = filteredProducts.some(p => selectedProductIds.has(p.id));
+        const allChecked = filteredProducts.length > 0 && filteredProducts.every((p) => selectedProductIds.has(p.id));
+        const someChecked = filteredProducts.some((p) => selectedProductIds.has(p.id));
         checkAll.checked = allChecked;
         checkAll.indeterminate = !allChecked && someChecked;
     }
@@ -1957,7 +2031,9 @@ function renderProductsTable() {
     if (filteredProducts.length === 0) {
         const emptyMsg = productsSearchQuery
             ? 'No se encontraron productos que coincidan con la búsqueda.'
-            : (activeStockFilter !== 'all' ? 'No hay productos en esta categoría de stock.' : 'No hay productos registrados en esta plantilla. Agrega uno nuevo arriba.');
+            : activeStockFilter !== 'all'
+              ? 'No hay productos en esta categoría de stock.'
+              : 'No hay productos registrados en esta plantilla. Agrega uno nuevo arriba.';
         tableProducts.innerHTML = `<tr><td colspan="11" class="table-empty-message">${emptyMsg}</td></tr>`;
         return;
     }
@@ -1966,56 +2042,58 @@ function renderProductsTable() {
         destacado: '⭐ Destacado',
         oferta: '🔥 Oferta',
         nuevo: '✨ Nuevo',
-        liquidacion: '🏷️ Liquidación'
+        liquidacion: '🏷️ Liquidación',
     };
 
-    tableProducts.innerHTML = filteredProducts.map(p => {
-        const sizesText = p.sizes || 'N/A';
-        const priceNum = parseFloat(p.price) || 0;
-        const comparePriceNum = parseFloat(p.compare_at_price) || 0;
-        
-        let priceHtml = `<span>$${priceNum.toFixed(2)}</span>`;
-        if (comparePriceNum > priceNum && priceNum > 0) {
-            const discountPct = Math.round(((comparePriceNum - priceNum) / comparePriceNum) * 100);
-            priceHtml = `
+    tableProducts.innerHTML = filteredProducts
+        .map((p) => {
+            const sizesText = p.sizes || 'N/A';
+            const priceNum = parseFloat(p.price) || 0;
+            const comparePriceNum = parseFloat(p.compare_at_price) || 0;
+
+            let priceHtml = `<span>$${priceNum.toFixed(2)}</span>`;
+            if (comparePriceNum > priceNum && priceNum > 0) {
+                const discountPct = Math.round(((comparePriceNum - priceNum) / comparePriceNum) * 100);
+                priceHtml = `
                 <div>
                     <strong>$${priceNum.toFixed(2)}</strong>
                     <span class="table-price-old">$${comparePriceNum.toFixed(2)}</span>
                     <span class="table-discount-badge">-${discountPct}%</span>
                 </div>
             `;
-        }
+            }
 
-        const statusText = p.active === 1 ? 'Disponible' : 'Agotado';
-        const statusClass = p.active === 1 ? 'completado' : 'cancelado';
-        const categoryLabel = p.category || p.type_id || 'general';
-        const tmpl = p.template || 'restaurant';
-        const badge = templateBadges[tmpl] || `<span class="template-badge">${escapeHtml(tmpl)}</span>`;
+            const statusText = p.active === 1 ? 'Disponible' : 'Agotado';
+            const statusClass = p.active === 1 ? 'completado' : 'cancelado';
+            const categoryLabel = p.category || p.type_id || 'general';
+            const tmpl = p.template || 'restaurant';
+            const badge = templateBadges[tmpl] || `<span class="template-badge">${escapeHtml(tmpl)}</span>`;
 
-        const stockVal = p.stock !== undefined && p.stock !== null ? p.stock : -1;
-        let stockHtml = '';
-        if (stockVal === -1) {
-            stockHtml = '<span class="stock-badge ilimitado">♾️ Ilimitado</span>';
-        } else if (stockVal <= 0 || p.active === 0) {
-            stockHtml = '<span class="stock-badge agotado">0 (Agotado)</span>';
-        } else if (stockVal <= 3) {
-            stockHtml = `<span class="stock-badge critico">⚠️ ${stockVal} (Crítico)</span>`;
-        } else {
-            stockHtml = `<span class="stock-badge normal">${stockVal} disp.</span>`;
-        }
+            const stockVal = p.stock !== undefined && p.stock !== null ? p.stock : -1;
+            let stockHtml = '';
+            if (stockVal === -1) {
+                stockHtml = '<span class="stock-badge ilimitado">♾️ Ilimitado</span>';
+            } else if (stockVal <= 0 || p.active === 0) {
+                stockHtml = '<span class="stock-badge agotado">0 (Agotado)</span>';
+            } else if (stockVal <= 3) {
+                stockHtml = `<span class="stock-badge critico">⚠️ ${stockVal} (Crítico)</span>`;
+            } else {
+                stockHtml = `<span class="stock-badge normal">${stockVal} disp.</span>`;
+            }
 
-        const isChecked = selectedProductIds.has(p.id);
-        const promoBadgeHtml = p.badge && promoBadgeLabels[p.badge]
-            ? `<span class="promo-badge ${escapeHtml(p.badge)}">${promoBadgeLabels[p.badge]}</span>`
-            : '';
+            const isChecked = selectedProductIds.has(p.id);
+            const promoBadgeHtml =
+                p.badge && promoBadgeLabels[p.badge]
+                    ? `<span class="promo-badge ${escapeHtml(p.badge)}">${promoBadgeLabels[p.badge]}</span>`
+                    : '';
 
-        return `
+            return `
             <tr>
                 <td class="table-check-col">
                     <input type="checkbox" class="table-checkbox product-row-check" data-id="${escapeHtml(p.id)}" ${isChecked ? 'checked' : ''} />
                 </td>
                 <td>
-                    <img src="${escapeHtml((p.image_url && (p.image_url.startsWith('http') || p.image_url.startsWith('/'))) ? p.image_url : `/${p.image_url || 'assets/favicon.svg'}`)}" alt="${escapeHtml(p.name)}" onerror="this.onerror=null; this.src='/assets/favicon.svg';" class="table-product-thumb">
+                    <img src="${escapeHtml(p.image_url && (p.image_url.startsWith('http') || p.image_url.startsWith('/')) ? p.image_url : `/${p.image_url || 'assets/favicon.svg'}`)}" alt="${escapeHtml(p.name)}" onerror="this.onerror=null; this.src='/assets/favicon.svg';" class="table-product-thumb">
                 </td>
                 <td>
                     <code>${escapeHtml(p.id)}</code>
@@ -2052,7 +2130,8 @@ function renderProductsTable() {
                 </td>
             </tr>
         `;
-    }).join('');
+        })
+        .join('');
 
     if (window.lucide) lucide.createIcons();
 }
@@ -2071,7 +2150,7 @@ function setupTemplateFilterTabs() {
         if (!filter) return;
 
         activeProductTemplateFilter = filter;
-        tabsContainer.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
+        tabsContainer.querySelectorAll('.filter-tab-btn').forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
 
         renderProductsTable();
@@ -2093,7 +2172,7 @@ function setupStockFilterTabs() {
         if (!filter) return;
 
         activeStockFilter = filter;
-        stockContainer.querySelectorAll('.stock-filter-btn').forEach(b => b.classList.remove('active'));
+        stockContainer.querySelectorAll('.stock-filter-btn').forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
 
         renderProductsTable();
@@ -2125,7 +2204,7 @@ if (productForm) {
         const category = $val('prod-category');
         const price = parseFloat($val('prod-price')) || 0.0;
         const comparePriceVal = $val('prod-compare-price');
-        const compare_at_price = comparePriceVal !== '' ? (parseFloat(comparePriceVal) || 0.0) : 0.0;
+        const compare_at_price = comparePriceVal !== '' ? parseFloat(comparePriceVal) || 0.0 : 0.0;
         const badge = $val('prod-badge') || '';
         const sku = $val('prod-sku') || '';
         const icon = $val('prod-icon');
@@ -2135,9 +2214,9 @@ if (productForm) {
         const model = $val('prod-model');
         const stockInputVal = $val('prod-stock');
         const stock = stockInputVal !== '' ? parseInt(stockInputVal, 10) : -1;
-        const active = parseInt($val('prod-active')) || 1;
+        const active = parseInt($val('prod-active'), 10) || 1;
         const description = $val('prod-description');
-        
+
         const imageFile = ($input('prod-image-file')?.files || [])[0];
 
         const btnSave = $btn('btn-submit-product');
@@ -2151,13 +2230,13 @@ if (productForm) {
             // Subir imagen a R2 primero si hay archivo
             if (imageFile) {
                 const formData = new FormData();
-                formData.append("file", imageFile);
+                formData.append('file', imageFile);
                 const uploadRes = await fetch('/api/upload?type=product', { method: 'POST', body: formData });
                 const uploadData = (await uploadRes.json()) as any;
                 if (uploadRes.ok && uploadData.success) {
                     image_url = uploadData.url;
                 } else {
-                    throw new Error(uploadData.error || "Error al subir la imagen a R2");
+                    throw new Error(uploadData.error || 'Error al subir la imagen a R2');
                 }
             }
 
@@ -2165,13 +2244,23 @@ if (productForm) {
                 method: method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    id, name, template, category, price, icon, image_url, sizes: sizes || null, active, description,
-                    brand: brand || null, model: model || null,
-                    stock: isNaN(stock) ? -1 : stock,
+                    id,
+                    name,
+                    template,
+                    category,
+                    price,
+                    icon,
+                    image_url,
+                    sizes: sizes || null,
+                    active,
+                    description,
+                    brand: brand || null,
+                    model: model || null,
+                    stock: Number.isNaN(stock) ? -1 : stock,
                     compare_at_price,
                     badge,
-                    sku
-                })
+                    sku,
+                }),
             });
 
             const data = (await response.json()) as any;
@@ -2198,14 +2287,15 @@ if (productForm) {
 
 // Iniciar edición de un producto
 function startEditProduct(productId: string) {
-    const product = productsList.find(p => p.id === productId);
+    const product = productsList.find((p) => p.id === productId);
     if (!product) return;
 
     const imagePreviewEl = document.getElementById('prod-image-preview');
 
     setVal('prod-method', 'PUT');
     setVal('prod-id', product.id);
-    const idIn = $input('prod-id'); if (idIn) idIn.disabled = true;
+    const idIn = $input('prod-id');
+    if (idIn) idIn.disabled = true;
     setVal('prod-template', product.template || 'restaurant');
     setVal('prod-name', product.name);
     setVal('prod-category', product.category || product.type_id || 'principales');
@@ -2214,11 +2304,15 @@ function startEditProduct(productId: string) {
     setVal('prod-badge', product.badge || '');
     setVal('prod-sku', product.sku || '');
     setVal('prod-icon', product.icon || '');
-    
+
     setVal('prod-image', product.image_url || '');
-    const imgFileIn = $input('prod-image-file'); if (imgFileIn) imgFileIn.value = ''; // Reset file input
+    const imgFileIn = $input('prod-image-file');
+    if (imgFileIn) imgFileIn.value = ''; // Reset file input
     if (imagePreviewEl && product.image_url) {
-        const url = (product.image_url.startsWith('http') || product.image_url.startsWith('/')) ? product.image_url : `/${product.image_url}`;
+        const url =
+            product.image_url.startsWith('http') || product.image_url.startsWith('/')
+                ? product.image_url
+                : `/${product.image_url}`;
         imagePreviewEl.innerHTML = `<img src="${escapeHtml(url)}" alt="Vista previa" class="prod-thumb-img" />`;
         imagePreviewEl.classList.remove('d-none');
     } else if (imagePreviewEl) {
@@ -2227,7 +2321,7 @@ function startEditProduct(productId: string) {
     }
 
     setVal('prod-sizes', product.sizes || '');
-    setVal('prod-stock', (product.stock !== undefined && product.stock !== null) ? product.stock : -1);
+    setVal('prod-stock', product.stock !== undefined && product.stock !== null ? product.stock : -1);
     setVal('prod-brand', product.brand || '');
     setVal('prod-model', product.model || '');
     setVal('prod-active', product.active !== undefined ? product.active : 1);
@@ -2236,7 +2330,7 @@ function startEditProduct(productId: string) {
     if (formProductTitle) formProductTitle.textContent = `Editando Producto: ${product.name}`;
     if (btnSubmitProduct) btnSubmitProduct.innerHTML = '<i data-lucide="save"></i> Actualizar Producto';
     if (btnCancelEdit) btnCancelEdit.classList.remove('d-none');
-    
+
     if (window.lucide) lucide.createIcons();
 
     const collapseEl = document.getElementById('product-form-collapse');
@@ -2253,7 +2347,7 @@ function startEditProduct(productId: string) {
 function resetProductForm() {
     if (productForm) productForm.reset();
     const imagePreviewEl = document.getElementById('prod-image-preview');
-    
+
     setVal('prod-method', 'POST');
     const idInReset = $input('prod-id');
     if (idInReset) {
@@ -2270,15 +2364,16 @@ function resetProductForm() {
         imagePreviewEl.innerHTML = '';
         imagePreviewEl.classList.add('d-none');
     }
-    const ife = $input('prod-image-file'); if (ife) ife.value = '';
-    
+    const ife = $input('prod-image-file');
+    if (ife) ife.value = '';
+
     if (formProductTitle) formProductTitle.textContent = 'Añadir Nuevo Producto';
     if (btnSubmitProduct) btnSubmitProduct.innerHTML = '<i data-lucide="plus-circle"></i> Guardar Producto';
     if (btnCancelEdit) btnCancelEdit.classList.add('d-none');
     if (window.lucide) lucide.createIcons();
 
     const collapseEl = document.getElementById('product-form-collapse');
-    if (collapseEl && collapseEl.classList.contains('expanded')) {
+    if (collapseEl?.classList.contains('expanded')) {
         collapseEl.classList.remove('expanded');
     }
 }
@@ -2294,7 +2389,7 @@ async function deleteProduct(productId: string) {
         confirmText: 'Eliminar producto',
         cancelText: 'Cancelar',
         variant: 'danger',
-        icon: 'trash-2'
+        icon: 'trash-2',
     });
     if (!confirmed) {
         return;
@@ -2302,7 +2397,7 @@ async function deleteProduct(productId: string) {
 
     try {
         const response = await fetch(`/api/products?id=${encodeURIComponent(productId)}`, {
-            method: 'DELETE'
+            method: 'DELETE',
         });
 
         if (!response.ok) throw new Error('Error al eliminar');
@@ -2317,7 +2412,7 @@ async function deleteProduct(productId: string) {
 
 // Duplicar / Clonar Producto
 function duplicateProduct(productId: string) {
-    const product = productsList.find(p => p.id === productId);
+    const product = productsList.find((p) => p.id === productId);
     if (!product) return;
 
     resetProductForm();
@@ -2340,7 +2435,7 @@ function duplicateProduct(productId: string) {
     setVal('prod-icon', product.icon || '');
     setVal('prod-image', product.image_url || '');
     setVal('prod-sizes', product.sizes || '');
-    setVal('prod-stock', (product.stock !== undefined && product.stock !== null) ? product.stock : -1);
+    setVal('prod-stock', product.stock !== undefined && product.stock !== null ? product.stock : -1);
     setVal('prod-brand', product.brand || '');
     setVal('prod-model', product.model || '');
     setVal('prod-active', 1);
@@ -2348,7 +2443,10 @@ function duplicateProduct(productId: string) {
 
     const imagePreviewEl = document.getElementById('prod-image-preview');
     if (imagePreviewEl && product.image_url) {
-        const url = (product.image_url.startsWith('http') || product.image_url.startsWith('/')) ? product.image_url : `/${product.image_url}`;
+        const url =
+            product.image_url.startsWith('http') || product.image_url.startsWith('/')
+                ? product.image_url
+                : `/${product.image_url}`;
         imagePreviewEl.innerHTML = `<img src="${escapeHtml(url)}" alt="Vista previa" class="prod-thumb-img" />`;
         imagePreviewEl.classList.remove('d-none');
     }
@@ -2371,7 +2469,7 @@ function duplicateProduct(productId: string) {
 
 // --- EDICIÓN RÁPIDA (QUICK EDIT) ---
 function openQuickEditModal(productId: string) {
-    const product = productsList.find(p => p.id === productId);
+    const product = productsList.find((p) => p.id === productId);
     if (!product) return;
 
     setVal('quick-edit-id', product.id);
@@ -2395,12 +2493,12 @@ async function handleQuickEditSubmit() {
     const id = $val('quick-edit-id');
     const price = parseFloat($val('quick-edit-price')) || 0;
     const comparePriceVal = $val('quick-edit-compare-price');
-    const compare_at_price = comparePriceVal !== '' ? (parseFloat(comparePriceVal) || 0) : 0;
+    const compare_at_price = comparePriceVal !== '' ? parseFloat(comparePriceVal) || 0 : 0;
     const stockVal = $val('quick-edit-stock');
     const stock = stockVal !== '' ? parseInt(stockVal, 10) : -1;
     const active = parseInt($val('quick-edit-active'), 10);
 
-    const product = productsList.find(p => p.id === id);
+    const product = productsList.find((p) => p.id === id);
     if (!product) return;
 
     const btnSave = document.getElementById('btn-save-quick-edit') as HTMLButtonElement | null;
@@ -2417,9 +2515,9 @@ async function handleQuickEditSubmit() {
                 ...product,
                 price,
                 compare_at_price,
-                stock: isNaN(stock) ? -1 : stock,
-                active
-            })
+                stock: Number.isNaN(stock) ? -1 : stock,
+                active,
+            }),
         });
         const resData = (await response.json()) as any;
         if (response.ok && resData.success) {
@@ -2480,7 +2578,7 @@ function clearBulkSelection() {
         checkAll.checked = false;
         checkAll.indeterminate = false;
     }
-    document.querySelectorAll<HTMLInputElement>('.product-row-check').forEach(cb => {
+    document.querySelectorAll<HTMLInputElement>('.product-row-check').forEach((cb) => {
         cb.checked = false;
     });
     updateBulkToolbar();
@@ -2496,20 +2594,20 @@ async function handleBulkActivate(active: number) {
         confirmText: active === 1 ? 'Activar productos' : 'Pausar productos',
         cancelText: 'Cancelar',
         variant: active === 1 ? 'primary' : 'warning',
-        icon: active === 1 ? 'check-circle' : 'pause-circle'
+        icon: active === 1 ? 'check-circle' : 'pause-circle',
     });
     if (!confirmed) return;
 
     showToast(`Actualizando ${selectedProductIds.size} productos...`, 'info');
     let successCount = 0;
     for (const id of Array.from(selectedProductIds)) {
-        const prod = productsList.find(p => p.id === id);
+        const prod = productsList.find((p) => p.id === id);
         if (!prod) continue;
         try {
             const res = await fetch('/api/products', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...prod, active })
+                body: JSON.stringify({ ...prod, active }),
             });
             if (res.ok) successCount++;
         } catch (e) {
@@ -2523,10 +2621,12 @@ async function handleBulkActivate(active: number) {
 
 async function handleBulkPriceAdjust() {
     if (selectedProductIds.size === 0) return;
-    const input = prompt(`Ajustar precios de los ${selectedProductIds.size} productos seleccionados:\nIngresa el porcentaje de cambio (ej: 10 para aumentar 10%, -15 para descontar 15%):`);
+    const input = prompt(
+        `Ajustar precios de los ${selectedProductIds.size} productos seleccionados:\nIngresa el porcentaje de cambio (ej: 10 para aumentar 10%, -15 para descontar 15%):`,
+    );
     if (input === null) return;
     const pct = parseFloat(input);
-    if (isNaN(pct) || pct < -99 || pct > 500) {
+    if (Number.isNaN(pct) || pct < -99 || pct > 500) {
         showToast('Porcentaje no válido. Debe ser entre -99% y +500%.', 'error');
         return;
     }
@@ -2538,14 +2638,14 @@ async function handleBulkPriceAdjust() {
         confirmText: 'Aplicar precios',
         cancelText: 'Cancelar',
         variant: 'warning',
-        icon: 'trending-up'
+        icon: 'trending-up',
     });
     if (!confirmed) return;
 
     showToast('Aplicando ajuste masivo de precios...', 'info');
     let successCount = 0;
     for (const id of Array.from(selectedProductIds)) {
-        const prod = productsList.find(p => p.id === id);
+        const prod = productsList.find((p) => p.id === id);
         if (!prod) continue;
         const currentPrice = parseFloat(prod.price) || 0;
         const newPrice = Math.max(0.01, Math.round(currentPrice * (1 + pct / 100) * 100) / 100);
@@ -2556,8 +2656,8 @@ async function handleBulkPriceAdjust() {
                 body: JSON.stringify({
                     ...prod,
                     price: newPrice,
-                    compare_at_price: currentPrice
-                })
+                    compare_at_price: currentPrice,
+                }),
             });
             if (res.ok) successCount++;
         } catch (e) {
@@ -2579,7 +2679,7 @@ async function handleBulkDelete() {
         confirmText: `Eliminar ${count} productos`,
         cancelText: 'Cancelar',
         variant: 'danger',
-        icon: 'trash-2'
+        icon: 'trash-2',
     });
     if (!confirmed) return;
 
@@ -2587,9 +2687,9 @@ async function handleBulkDelete() {
     try {
         const idsArray = Array.from(selectedProductIds);
         const res = await fetch(`/api/products?ids=${encodeURIComponent(idsArray.join(','))}`, {
-            method: 'DELETE'
+            method: 'DELETE',
         });
-        const data = await res.json() as any;
+        const data = (await res.json()) as any;
         if (res.ok && data.success) {
             showToast(`${count} productos eliminados del catálogo.`, 'success');
         } else {
@@ -2612,13 +2712,13 @@ document.addEventListener('change', (e) => {
     if (target.id === 'check-all-products') {
         const rowChecks = document.querySelectorAll<HTMLInputElement>('.product-row-check');
         if (target.checked) {
-            rowChecks.forEach(cb => {
+            rowChecks.forEach((cb) => {
                 cb.checked = true;
                 const id = cb.getAttribute('data-id');
                 if (id) selectedProductIds.add(id);
             });
         } else {
-            rowChecks.forEach(cb => {
+            rowChecks.forEach((cb) => {
                 cb.checked = false;
                 const id = cb.getAttribute('data-id');
                 if (id) selectedProductIds.delete(id);
@@ -2637,8 +2737,8 @@ document.addEventListener('change', (e) => {
         const checkAll = document.getElementById('check-all-products') as HTMLInputElement | null;
         if (checkAll) {
             const rowChecks = Array.from(document.querySelectorAll<HTMLInputElement>('.product-row-check'));
-            const allChecked = rowChecks.length > 0 && rowChecks.every(cb => cb.checked);
-            const someChecked = rowChecks.some(cb => cb.checked);
+            const allChecked = rowChecks.length > 0 && rowChecks.every((cb) => cb.checked);
+            const someChecked = rowChecks.some((cb) => cb.checked);
             checkAll.checked = allChecked;
             checkAll.indeterminate = !allChecked && someChecked;
         }
@@ -2679,7 +2779,7 @@ function updateCategoryDatalist() {
 
     // 1. Categorías del Gestor Central
     if (categoriesDataList && categoriesDataList.length > 0) {
-        categoriesDataList.forEach(c => {
+        categoriesDataList.forEach((c) => {
             if (!seen.has(c.id)) {
                 seen.add(c.id);
                 options.push(`<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`);
@@ -2689,13 +2789,33 @@ function updateCategoryDatalist() {
 
     // 2. Categorías predeterminadas sugeridas
     const defaults = [
-        'entradas', 'principales', 'bebidas', 'postres', 'promociones',
-        'herramientas-manuales', 'herramientas-electricas', 'seguridad', 'electricidad', 'construccion-pinturas',
-        'vestidos', 'blusas-tops', 'pantalones-jeans', 'conjuntos', 'accesorios-calzado',
-        'laptops-pc', 'componentes', 'perifericos', 'smartphones-tablets', 'accesorios-redes',
-        'frenos', 'motor-partes', 'suspension-direccion', 'baterias-electricidad', 'accesorios-repuestos'
+        'entradas',
+        'principales',
+        'bebidas',
+        'postres',
+        'promociones',
+        'herramientas-manuales',
+        'herramientas-electricas',
+        'seguridad',
+        'electricidad',
+        'construccion-pinturas',
+        'vestidos',
+        'blusas-tops',
+        'pantalones-jeans',
+        'conjuntos',
+        'accesorios-calzado',
+        'laptops-pc',
+        'componentes',
+        'perifericos',
+        'smartphones-tablets',
+        'accesorios-redes',
+        'frenos',
+        'motor-partes',
+        'suspension-direccion',
+        'baterias-electricidad',
+        'accesorios-repuestos',
     ];
-    defaults.forEach(c => {
+    defaults.forEach((c) => {
         if (!seen.has(c)) {
             seen.add(c);
             options.push(`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`);
@@ -2703,7 +2823,7 @@ function updateCategoryDatalist() {
     });
 
     // 3. Categorías existentes en productos cargados
-    productsList.forEach(p => {
+    productsList.forEach((p) => {
         if (p.category && typeof p.category === 'string' && p.category.trim() && !seen.has(p.category.trim())) {
             seen.add(p.category.trim());
             options.push(`<option value="${escapeHtml(p.category.trim())}">${escapeHtml(p.category.trim())}</option>`);
@@ -2733,12 +2853,13 @@ function renderCategoriesTable() {
         return;
     }
 
-    tbody.innerHTML = categoriesDataList.map(cat => {
-        const iconName = cat.icon || 'tag';
-        const countClass = cat.count > 0 ? 'has-products' : 'zero-products';
-        const countText = `${cat.count} ${cat.count === 1 ? 'producto' : 'productos'}`;
+    tbody.innerHTML = categoriesDataList
+        .map((cat) => {
+            const iconName = cat.icon || 'tag';
+            const countClass = cat.count > 0 ? 'has-products' : 'zero-products';
+            const countText = `${cat.count} ${cat.count === 1 ? 'producto' : 'productos'}`;
 
-        return `
+            return `
             <tr>
                 <td>
                     <span class="category-slug-pill">
@@ -2785,7 +2906,8 @@ function renderCategoriesTable() {
                 </td>
             </tr>
         `;
-    }).join('');
+        })
+        .join('');
 
     if (window.lucide) lucide.createIcons();
 }
@@ -2845,11 +2967,11 @@ function openDeleteCategoryModal(slug: string, name: string, count: number) {
         }
         if (reassignContainer) reassignContainer.classList.remove('d-none');
         if (reassignSelect) {
-            const otherCategories = categoriesDataList.filter(c => c.id !== slug);
+            const otherCategories = categoriesDataList.filter((c) => c.id !== slug);
             if (otherCategories.length > 0) {
-                reassignSelect.innerHTML = otherCategories.map(c => 
-                    `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)} (${c.id})</option>`
-                ).join('');
+                reassignSelect.innerHTML = otherCategories
+                    .map((c) => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)} (${c.id})</option>`)
+                    .join('');
             } else {
                 reassignSelect.innerHTML = `<option value="general">General (Crear)</option>`;
             }
@@ -2910,7 +3032,7 @@ if (formNewCat) {
             const res = await fetch('/api/categories', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: slug, name, icon })
+                body: JSON.stringify({ id: slug, name, icon }),
             });
             const data = (await res.json()) as any;
             if (!res.ok) throw new Error(data.error || 'Error al crear categoría');
@@ -2939,7 +3061,9 @@ if (formRenameCat) {
     formRenameCat.addEventListener('submit', async (e) => {
         e.preventDefault();
         const oldSlug = (document.getElementById('rename-cat-old-slug') as HTMLInputElement)?.value;
-        const newSlug = (document.getElementById('rename-cat-new-slug') as HTMLInputElement)?.value.trim().toLowerCase();
+        const newSlug = (document.getElementById('rename-cat-new-slug') as HTMLInputElement)?.value
+            .trim()
+            .toLowerCase();
         const name = (document.getElementById('rename-cat-name') as HTMLInputElement)?.value.trim();
         const icon = (document.getElementById('rename-cat-icon') as HTMLInputElement)?.value.trim();
         const submitBtn = document.getElementById('btn-submit-cat-rename') as HTMLButtonElement | null;
@@ -2956,7 +3080,7 @@ if (formRenameCat) {
             const res = await fetch('/api/categories', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ oldCategory: oldSlug, newCategory: newSlug, name, icon })
+                body: JSON.stringify({ oldCategory: oldSlug, newCategory: newSlug, name, icon }),
             });
             const data = (await res.json()) as any;
             if (!res.ok) throw new Error(data.error || 'Error al renombrar categoría');
@@ -2999,7 +3123,7 @@ if (formDeleteCat) {
             const res = await fetch('/api/categories', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ category: slug, reassignTo })
+                body: JSON.stringify({ category: slug, reassignTo }),
             });
             const data = (await res.json()) as any;
             if (!res.ok) throw new Error(data.error || 'Error al eliminar categoría');
@@ -3058,7 +3182,7 @@ const prodNameInput = document.getElementById('prod-name') as HTMLInputElement |
 const prodIdInput = document.getElementById('prod-id') as HTMLInputElement | null;
 if (prodNameInput && prodIdInput) {
     prodNameInput.addEventListener('input', () => {
-        const method = ($input('prod-method')?.value || 'POST');
+        const method = $input('prod-method')?.value || 'POST';
         if (method === 'POST' && !prodIdInput.dataset.manual) {
             prodIdInput.value = prodNameInput.value
                 .toLowerCase()
@@ -3127,25 +3251,25 @@ if (btnRefreshSales) {
 
 window.addEventListener('DOMContentLoaded', () => {
     checkSession();
-    
+
     // Sidebar colapsable en móvil
     const sidebar = document.querySelector('.sidebar');
     const btnSidebarToggle = document.getElementById('btn-sidebar-toggle');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
-    
+
     if (btnSidebarToggle && sidebar && sidebarOverlay) {
         btnSidebarToggle.addEventListener('click', () => {
             sidebar.classList.toggle('active');
             sidebarOverlay.classList.toggle('active');
         });
-        
+
         sidebarOverlay.addEventListener('click', () => {
             sidebar.classList.remove('active');
             sidebarOverlay.classList.remove('active');
         });
-        
+
         const sidebarMenuLinks = document.querySelectorAll('.sidebar-link');
-        sidebarMenuLinks.forEach(link => {
+        sidebarMenuLinks.forEach((link) => {
             link.addEventListener('click', () => {
                 if (window.innerWidth <= 992) {
                     sidebar.classList.remove('active');
@@ -3212,7 +3336,7 @@ if (bcvForm) {
             const res = await fetch('/api/bcv', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ rate: newRate, autoUpdate })
+                body: JSON.stringify({ rate: newRate, autoUpdate }),
             });
             const data = (await res.json()) as any;
             if (res.ok && data.success) {
@@ -3225,7 +3349,7 @@ if (bcvForm) {
             } else {
                 showToast(data.error || 'Error al actualizar tasa BCV.', 'error');
             }
-        } catch (err) {
+        } catch (_err) {
             showToast('Error de conexión al guardar tasa.', 'error');
         }
     });
@@ -3277,9 +3401,12 @@ if (btnForceBcvSync) {
                 if (bcvRateIn) bcvRateIn.value = currentBcvRate.toFixed(2);
                 const display = document.getElementById('admin-bcv-val');
                 if (display) display.textContent = `${currentBcvRate.toFixed(2)} Bs.`;
-                const syncLabel = document.getElementById('bcv-last-sync-label') || document.getElementById('bcv-last-sync-text');
+                const syncLabel =
+                    document.getElementById('bcv-last-sync-label') || document.getElementById('bcv-last-sync-text');
                 if (syncLabel) {
-                    const dateStr = lastBcvUpdated ? new Date(lastBcvUpdated).toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' }) : 'reciente';
+                    const dateStr = lastBcvUpdated
+                        ? new Date(lastBcvUpdated).toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' })
+                        : 'reciente';
                     syncLabel.textContent = `Última sincronización: ${dateStr} (Oficial BCV)`;
                 }
                 showToast(`✅ Tasa oficial actualizada: ${currentBcvRate.toFixed(2)} Bs.`, 'success');
@@ -3301,7 +3428,7 @@ if (btnForceBcvSync) {
 function playOrderChime() {
     if (!soundEnabled) return;
     try {
-        const AudioContextClass = window.AudioContext || window['webkitAudioContext'];
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         if (!AudioContextClass) return;
         const ctx = new AudioContextClass();
         const now = ctx.currentTime;
@@ -3334,7 +3461,7 @@ function playOrderChime() {
     }
 }
 
-let originalPageTitle = document.title;
+const originalPageTitle = document.title;
 let titleFlashTimer: any = null;
 
 function flashPageTitle() {
@@ -3423,12 +3550,18 @@ function setupWebPushNotifications() {
     const handlePushToggle = async () => {
         if (Notification.permission === 'granted') {
             showToast('Las notificaciones Web Push ya están activadas.', 'info');
-            sendWebPushNotification('🔔 Ventrina Notificaciones', 'Sistema de alertas de pedidos activo y funcionando.');
+            sendWebPushNotification(
+                '🔔 Ventrina Notificaciones',
+                'Sistema de alertas de pedidos activo y funcionando.',
+            );
             return;
         }
 
         if (Notification.permission === 'denied') {
-            showToast('Las notificaciones están bloqueadas en tu navegador. Por favor habilítalas en el candado de la barra de direcciones.', 'warning');
+            showToast(
+                'Las notificaciones están bloqueadas en tu navegador. Por favor habilítalas en el candado de la barra de direcciones.',
+                'warning',
+            );
             return;
         }
 
@@ -3436,8 +3569,14 @@ function setupWebPushNotifications() {
             const permission = await Notification.requestPermission();
             if (permission === 'granted') {
                 updatePushUI();
-                showToast('¡Notificaciones Web Push activadas con éxito! Recibirás alertas inmediatas al llegar nuevos pedidos.', 'success');
-                sendWebPushNotification('🎉 ¡Notificaciones activadas!', 'A partir de ahora recibirás alertas instantáneas cuando entre un nuevo pedido.');
+                showToast(
+                    '¡Notificaciones Web Push activadas con éxito! Recibirás alertas inmediatas al llegar nuevos pedidos.',
+                    'success',
+                );
+                sendWebPushNotification(
+                    '🎉 ¡Notificaciones activadas!',
+                    'A partir de ahora recibirás alertas instantáneas cuando entre un nuevo pedido.',
+                );
             } else {
                 showToast('No se otorgaron permisos para notificaciones.', 'info');
             }
@@ -3457,13 +3596,15 @@ function sendWebPushNotification(title: string, body: string, orderId?: string) 
             body,
             icon: '/assets/favicon.svg',
             badge: '/assets/favicon.svg',
-            tag: orderId ? `order-${orderId}` : `ventrina-${Date.now()}`
+            tag: orderId ? `order-${orderId}` : `ventrina-${Date.now()}`,
         });
 
         notif.onclick = () => {
             window.focus();
             if (orderId) {
-                const navOrders = document.querySelector('.sidebar-link[data-target="section-orders"], .sidebar-link[data-target="orders"]') as HTMLElement | null;
+                const navOrders = document.querySelector(
+                    '.sidebar-link[data-target="section-orders"], .sidebar-link[data-target="orders"]',
+                ) as HTMLElement | null;
                 if (navOrders) navOrders.click();
                 viewOrderDetails(orderId);
             }
@@ -3490,10 +3631,13 @@ function debounce(func: (...args: any[]) => any, wait: number) {
 // Buscador de Pedidos
 const ordersSearchInput = document.getElementById('orders-search-input');
 if (ordersSearchInput) {
-    ordersSearchInput.addEventListener('input', debounce((e) => {
-        ordersSearchQuery = e.target.value.trim();
-        renderOrders();
-    }, 300));
+    ordersSearchInput.addEventListener(
+        'input',
+        debounce((e) => {
+            ordersSearchQuery = e.target.value.trim();
+            renderOrders();
+        }, 300),
+    );
 }
 
 // Filtro de Estado de Pedidos
@@ -3517,10 +3661,13 @@ if (ordersDateFilterEl) {
 // Buscador de Ventas
 const salesSearchInput = document.getElementById('sales-search-input');
 if (salesSearchInput) {
-    salesSearchInput.addEventListener('input', debounce((e) => {
-        salesSearchQuery = (e.target as HTMLInputElement).value.trim();
-        renderSales();
-    }, 300));
+    salesSearchInput.addEventListener(
+        'input',
+        debounce((e) => {
+            salesSearchQuery = (e.target as HTMLInputElement).value.trim();
+            renderSales();
+        }, 300),
+    );
 }
 
 const btnFilterSalesDates = document.getElementById('btn-filter-sales-dates');
@@ -3535,10 +3682,13 @@ if (btnFilterSalesDates) {
 // Buscador de Productos
 const productsSearchInput = document.getElementById('products-search-input');
 if (productsSearchInput) {
-    productsSearchInput.addEventListener('input', debounce((e) => {
-        productsSearchQuery = (e.target as HTMLInputElement).value.trim();
-        renderProductsTable();
-    }, 300));
+    productsSearchInput.addEventListener(
+        'input',
+        debounce((e) => {
+            productsSearchQuery = (e.target as HTMLInputElement).value.trim();
+            renderProductsTable();
+        }, 300),
+    );
 }
 
 // --- EXPORTACIÓN DE REPORTES A CSV (EXCEL FRIENDLY) ---
@@ -3548,7 +3698,7 @@ function updatePaginationUI(type: string, currentPage: number, totalPages: numbe
     const btnPrev = document.getElementById(`btn-${type}-prev`);
     const btnNext = document.getElementById(`btn-${type}-next`);
     const pageInfo = document.getElementById(`${type}-page-info`);
-    
+
     if (btnPrev && btnNext && pageInfo) {
         pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
         (btnPrev as HTMLButtonElement).disabled = currentPage <= 1;
@@ -3561,7 +3711,7 @@ function handleUpgradePlan() {
     const domain = document.getElementById('billing-tenant-domain')?.textContent || 'mi tienda';
     const msg = `¡Hola Ventrina Soporte! Deseo mejorar mi plan para la tienda (${domain}). ¿Cuáles son los planes y opciones disponibles?`;
     const supportPhone = document.getElementById('pay-phone')?.textContent?.replace(/[^\d]/g, '') || '584141234567';
-    let cleanPhone = supportPhone.startsWith('0') ? '58' + supportPhone.slice(1) : supportPhone;
+    const cleanPhone = supportPhone.startsWith('0') ? `58${supportPhone.slice(1)}` : supportPhone;
     window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
@@ -3571,7 +3721,7 @@ function handleReportPayment() {
     const planName = document.getElementById('billing-plan-name')?.textContent || 'Básico';
     const msg = `¡Hola Ventrina Soporte! 👋 Adjunto mi comprobante de pago de suscripción ($${amount} USD) para la tienda (${domain}) correspondiente al Plan ${planName}.`;
     const supportPhone = document.getElementById('pay-phone')?.textContent?.replace(/[^\d]/g, '') || '584141234567';
-    let cleanPhone = supportPhone.startsWith('0') ? '58' + supportPhone.slice(1) : supportPhone;
+    const cleanPhone = supportPhone.startsWith('0') ? `58${supportPhone.slice(1)}` : supportPhone;
     window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
@@ -3611,12 +3761,15 @@ document.addEventListener('click', (e) => {
         const prodId = btnCopyProduct.getAttribute('data-id') || '';
         const prodName = btnCopyProduct.getAttribute('data-name') || prodId;
         const productUrl = `${window.location.origin}/producto?id=${encodeURIComponent(prodId)}`;
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(productUrl).then(() => {
-                showToast(`¡Enlace de "${prodName}" copiado! Listo para compartir en WhatsApp.`, 'success');
-            }).catch(() => {
-                prompt('Copia este enlace para compartir:', productUrl);
-            });
+        if (navigator.clipboard?.writeText) {
+            navigator.clipboard
+                .writeText(productUrl)
+                .then(() => {
+                    showToast(`¡Enlace de "${prodName}" copiado! Listo para compartir en WhatsApp.`, 'success');
+                })
+                .catch(() => {
+                    prompt('Copia este enlace para compartir:', productUrl);
+                });
         } else {
             prompt('Copia este enlace para compartir:', productUrl);
         }
@@ -3763,11 +3916,14 @@ document.addEventListener('click', (e) => {
         const id = document.getElementById('pay-id')?.textContent?.trim() || '';
         const text = `Pago Móvil Ventrina SaaS\nBanco: ${banco}\nTeléfono: ${telefono}\nRIF/Cédula: ${id}`;
         if (navigator.clipboard) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('Datos de Pago Móvil copiados al portapapeles', 'success');
-            }).catch(() => {
-                showToast('Error al copiar datos', 'error');
-            });
+            navigator.clipboard
+                .writeText(text)
+                .then(() => {
+                    showToast('Datos de Pago Móvil copiados al portapapeles', 'success');
+                })
+                .catch(() => {
+                    showToast('Error al copiar datos', 'error');
+                });
         }
         return;
     }
@@ -3776,11 +3932,14 @@ document.addEventListener('click', (e) => {
     if (t.closest('#btn-copy-billing-binance')) {
         const payId = document.getElementById('pay-binance-id')?.textContent?.trim() || '';
         if (navigator.clipboard) {
-            navigator.clipboard.writeText(payId).then(() => {
-                showToast(`Binance Pay ID (${payId}) copiado al portapapeles`, 'success');
-            }).catch(() => {
-                showToast('Error al copiar Pay ID', 'error');
-            });
+            navigator.clipboard
+                .writeText(payId)
+                .then(() => {
+                    showToast(`Binance Pay ID (${payId}) copiado al portapapeles`, 'success');
+                })
+                .catch(() => {
+                    showToast('Error al copiar Pay ID', 'error');
+                });
         }
         return;
     }
@@ -3789,11 +3948,14 @@ document.addEventListener('click', (e) => {
     if (t.closest('#btn-copy-billing-zelle')) {
         const email = document.getElementById('pay-zelle')?.textContent?.trim() || '';
         if (navigator.clipboard) {
-            navigator.clipboard.writeText(email).then(() => {
-                showToast('Correo Zelle copiado al portapapeles', 'success');
-            }).catch(() => {
-                showToast('Error al copiar correo', 'error');
-            });
+            navigator.clipboard
+                .writeText(email)
+                .then(() => {
+                    showToast('Correo Zelle copiado al portapapeles', 'success');
+                })
+                .catch(() => {
+                    showToast('Error al copiar correo', 'error');
+                });
         }
         return;
     }
@@ -3808,11 +3970,11 @@ document.addEventListener('click', (e) => {
     // Orders Pagination
     if (t.closest('#btn-orders-prev') && ordersPage > 1) loadOrders(ordersPage - 1);
     if (t.closest('#btn-orders-next') && ordersPage < ordersTotalPages) loadOrders(ordersPage + 1);
-    
+
     // Products Pagination
     if (t.closest('#btn-products-prev') && productsPage > 1) loadProducts(productsPage - 1);
     if (t.closest('#btn-products-next') && productsPage < productsTotalPages) loadProducts(productsPage + 1);
-    
+
     // Sales Pagination
     if (t.closest('#btn-sales-prev') && salesPage > 1) {
         const dFrom = $val('sales-date-from');
@@ -3862,7 +4024,7 @@ document.addEventListener('change', (e) => {
 });
 
 function downloadCSV(filename: string, csvContent: string) {
-    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -3878,8 +4040,23 @@ function exportOrdersToCSV() {
         showToast('No hay pedidos registrados para exportar.', 'warning');
         return;
     }
-    const headers = ['ID Pedido', 'Cliente', 'Telefono', 'Tipo Entrega', 'Direccion', 'Notas', 'Metodo Pago', 'Referencia', 'Articulos', 'Total USD', 'Tasa BCV', 'Total Bs', 'Estado', 'Fecha'];
-    const rows = ordersList.map(o => [
+    const headers = [
+        'ID Pedido',
+        'Cliente',
+        'Telefono',
+        'Tipo Entrega',
+        'Direccion',
+        'Notas',
+        'Metodo Pago',
+        'Referencia',
+        'Articulos',
+        'Total USD',
+        'Tasa BCV',
+        'Total Bs',
+        'Estado',
+        'Fecha',
+    ];
+    const rows = ordersList.map((o) => [
         `"${o.id || ''}"`,
         `"${(o.client_name || '').replace(/"/g, '""')}"`,
         `"${(o.client_phone || '').replace(/"/g, '""')}"`,
@@ -3893,9 +4070,9 @@ function exportOrdersToCSV() {
         (parseFloat(o.bcv_rate) || 0).toFixed(2),
         (parseFloat(o.total_bs) || 0).toFixed(2),
         `"${o.status || ''}"`,
-        `"${o.created_at || ''}"`
+        `"${o.created_at || ''}"`,
     ]);
-    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\r\n');
     const dateStr = new Date().toISOString().split('T')[0];
     downloadCSV(`pedidos_ventrina_${dateStr}.csv`, csv);
     showToast('Archivo CSV de pedidos generado.', 'success');
@@ -3907,16 +4084,16 @@ function exportSalesToCSV() {
         return;
     }
     const headers = ['ID Venta', 'ID Pedido', 'Cliente', 'Telefono', 'Monto USD', 'Metodo Pago', 'Fecha'];
-    const rows = salesList.map(s => [
+    const rows = salesList.map((s) => [
         `"V-${s.id || ''}"`,
         `"${s.order_id || ''}"`,
         `"${(s.client_name || '').replace(/"/g, '""')}"`,
         `"${(s.client_phone || '').replace(/"/g, '""')}"`,
         (parseFloat(s.monto) || 0).toFixed(2),
         `"${(s.metodo_pago || '').replace(/"/g, '""')}"`,
-        `"${s.fecha || ''}"`
+        `"${s.fecha || ''}"`,
     ]);
-    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\r\n');
     const dateStr = new Date().toISOString().split('T')[0];
     downloadCSV(`ventas_ventrina_${dateStr}.csv`, csv);
     showToast('Archivo CSV de ventas generado.', 'success');
@@ -3937,8 +4114,19 @@ function exportProductsToCSV() {
         showToast('No hay productos en el catálogo para exportar.', 'warning');
         return;
     }
-    const headers = ['ID', 'Nombre', 'Plantilla', 'Categoria', 'Precio USD', 'Stock', 'Opciones', 'Descripcion', 'Disponible', 'Imagen'];
-    const rows = productsList.map(p => [
+    const headers = [
+        'ID',
+        'Nombre',
+        'Plantilla',
+        'Categoria',
+        'Precio USD',
+        'Stock',
+        'Opciones',
+        'Descripcion',
+        'Disponible',
+        'Imagen',
+    ];
+    const rows = productsList.map((p) => [
         `"${(p.id || '').replace(/"/g, '""')}"`,
         `"${(p.name || '').replace(/"/g, '""')}"`,
         `"${(p.template || 'restaurant').replace(/"/g, '""')}"`,
@@ -3948,9 +4136,9 @@ function exportProductsToCSV() {
         `"${(p.sizes || '').replace(/"/g, '""')}"`,
         `"${(p.description || '').replace(/"/g, '""')}"`,
         p.active === 0 ? 0 : 1,
-        `"${(p.image_url || '').replace(/"/g, '""')}"`
+        `"${(p.image_url || '').replace(/"/g, '""')}"`,
     ]);
-    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\r\n');
     const dateStr = new Date().toISOString().split('T')[0];
     downloadCSV(`productos_catalogo_${dateStr}.csv`, csv);
     showToast(`Catálogo exportado exitosamente (${productsList.length} productos).`, 'success');
@@ -3984,7 +4172,7 @@ function setupProductsCSVImport() {
                     return;
                 }
 
-                const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
+                const lines = text.split(/\r?\n/).filter((line) => line.trim().length > 0);
                 if (lines.length <= 1) {
                     showToast('El archivo CSV no contiene filas de datos.', 'warning');
                     return;
@@ -4017,20 +4205,28 @@ function setupProductsCSVImport() {
                     return result;
                 };
 
-                const rawHeaders = parseCsvLine(lines[0]).map(h => 
-                    h.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '')
+                const rawHeaders = parseCsvLine(lines[0]).map((h) =>
+                    h
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .replace(/[^a-z0-9]/g, ''),
                 );
-                
-                const idIdx = rawHeaders.findIndex(h => h === 'id' || h === 'slug' || h === 'codigo');
-                const nameIdx = rawHeaders.findIndex(h => h === 'nombre' || h === 'name' || h === 'producto');
-                const priceIdx = rawHeaders.findIndex(h => h === 'precio' || h === 'preciousd' || h === 'price');
-                const templateIdx = rawHeaders.findIndex(h => h === 'plantilla' || h === 'template');
-                const categoryIdx = rawHeaders.findIndex(h => h === 'categoria' || h === 'category' || h === 'rubro');
-                const stockIdx = rawHeaders.findIndex(h => h === 'stock' || h === 'inventario' || h === 'cantidad');
-                const sizesIdx = rawHeaders.findIndex(h => h === 'opciones' || h === 'sizes' || h === 'tallas' || h === 'variantes');
-                const descIdx = rawHeaders.findIndex(h => h === 'descripcion' || h === 'description' || h === 'detalle');
-                const activeIdx = rawHeaders.findIndex(h => h === 'disponible' || h === 'activo' || h === 'active');
-                const imageIdx = rawHeaders.findIndex(h => h === 'imagen' || h === 'image' || h === 'imageurl');
+
+                const idIdx = rawHeaders.findIndex((h) => h === 'id' || h === 'slug' || h === 'codigo');
+                const nameIdx = rawHeaders.findIndex((h) => h === 'nombre' || h === 'name' || h === 'producto');
+                const priceIdx = rawHeaders.findIndex((h) => h === 'precio' || h === 'preciousd' || h === 'price');
+                const templateIdx = rawHeaders.findIndex((h) => h === 'plantilla' || h === 'template');
+                const categoryIdx = rawHeaders.findIndex((h) => h === 'categoria' || h === 'category' || h === 'rubro');
+                const stockIdx = rawHeaders.findIndex((h) => h === 'stock' || h === 'inventario' || h === 'cantidad');
+                const sizesIdx = rawHeaders.findIndex(
+                    (h) => h === 'opciones' || h === 'sizes' || h === 'tallas' || h === 'variantes',
+                );
+                const descIdx = rawHeaders.findIndex(
+                    (h) => h === 'descripcion' || h === 'description' || h === 'detalle',
+                );
+                const activeIdx = rawHeaders.findIndex((h) => h === 'disponible' || h === 'activo' || h === 'active');
+                const imageIdx = rawHeaders.findIndex((h) => h === 'imagen' || h === 'image' || h === 'imageurl');
 
                 if (nameIdx === -1 || priceIdx === -1) {
                     showToast('El CSV debe incluir al menos las columnas "Nombre" y "Precio".', 'error');
@@ -4045,7 +4241,7 @@ function setupProductsCSVImport() {
                     confirmText: 'Importar productos',
                     cancelText: 'Cancelar',
                     variant: 'primary',
-                    icon: 'upload-cloud'
+                    icon: 'upload-cloud',
                 });
                 if (!confirmed) return;
 
@@ -4056,28 +4252,42 @@ function setupProductsCSVImport() {
 
                 for (const rowStr of dataRows) {
                     const cols = parseCsvLine(rowStr);
-                    if (!cols || cols.length === 0 || cols.every(c => c === '')) continue;
+                    if (!cols || cols.length === 0 || cols.every((c) => c === '')) continue;
 
                     const rawName = cols[nameIdx] || '';
                     if (!rawName) continue;
 
                     let rawPrice = cols[priceIdx] ? parseFloat(cols[priceIdx].replace(',', '.')) : 0;
-                    if (isNaN(rawPrice)) rawPrice = 0;
+                    if (Number.isNaN(rawPrice)) rawPrice = 0;
 
                     let rawId = idIdx !== -1 && cols[idIdx] ? cols[idIdx] : '';
                     if (!rawId) {
-                        rawId = rawName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9_-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+                        rawId = rawName
+                            .toLowerCase()
+                            .normalize('NFD')
+                            .replace(/[\u0300-\u036f]/g, '')
+                            .replace(/[^a-z0-9_-]/g, '-')
+                            .replace(/-+/g, '-')
+                            .replace(/^-|-$/g, '');
                     }
 
-                    const rawTemplate = templateIdx !== -1 && cols[templateIdx] ? cols[templateIdx].toLowerCase() : 'restaurant';
+                    const rawTemplate =
+                        templateIdx !== -1 && cols[templateIdx] ? cols[templateIdx].toLowerCase() : 'restaurant';
                     const rawCategory = categoryIdx !== -1 && cols[categoryIdx] ? cols[categoryIdx] : 'principales';
                     const rawStock = stockIdx !== -1 && cols[stockIdx] ? parseInt(cols[stockIdx], 10) : -1;
                     const rawSizes = sizesIdx !== -1 && cols[sizesIdx] ? cols[sizesIdx] : null;
                     const rawDesc = descIdx !== -1 && cols[descIdx] ? cols[descIdx] : '';
-                    const rawActive = activeIdx !== -1 && cols[activeIdx] ? (cols[activeIdx] === '0' || cols[activeIdx].toLowerCase() === 'no' || cols[activeIdx].toLowerCase() === 'falso' ? 0 : 1) : 1;
+                    const rawActive =
+                        activeIdx !== -1 && cols[activeIdx]
+                            ? cols[activeIdx] === '0' ||
+                              cols[activeIdx].toLowerCase() === 'no' ||
+                              cols[activeIdx].toLowerCase() === 'falso'
+                                ? 0
+                                : 1
+                            : 1;
                     const rawImage = imageIdx !== -1 && cols[imageIdx] ? cols[imageIdx] : '/assets/favicon.svg';
 
-                    const exists = productsList.some(p => p.id === rawId);
+                    const exists = productsList.some((p) => p.id === rawId);
                     const method = exists ? 'PUT' : 'POST';
 
                     const payload = {
@@ -4086,19 +4296,19 @@ function setupProductsCSVImport() {
                         price: rawPrice,
                         template: rawTemplate,
                         category: rawCategory,
-                        stock: isNaN(rawStock) ? -1 : rawStock,
+                        stock: Number.isNaN(rawStock) ? -1 : rawStock,
                         sizes: rawSizes,
                         description: rawDesc,
                         active: rawActive,
                         image_url: rawImage,
-                        icon: 'package'
+                        icon: 'package',
                     };
 
                     try {
                         const res = await fetch('/api/products', {
                             method,
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
+                            body: JSON.stringify(payload),
                         });
                         if (res.ok) {
                             processedCount++;
@@ -4110,7 +4320,10 @@ function setupProductsCSVImport() {
                     }
                 }
 
-                showToast(`Importación completada: ${processedCount} procesados, ${errorCount} errores.`, processedCount > 0 ? 'success' : 'error');
+                showToast(
+                    `Importación completada: ${processedCount} procesados, ${errorCount} errores.`,
+                    processedCount > 0 ? 'success' : 'error',
+                );
                 loadProducts();
             } catch (err) {
                 console.error('Error importando CSV:', err);
@@ -4135,7 +4348,7 @@ const connectionStatusText = document.getElementById('connection-status-text');
 
 function updateConnectionStatus() {
     if (!connectionStatus || !connectionStatusText) return;
-    
+
     if (navigator.onLine) {
         connectionStatus.classList.remove('offline');
         connectionStatus.classList.add('online');
@@ -4169,7 +4382,7 @@ async function uploadImageFile(file: File): Promise<string | null> {
     try {
         const res = await fetch('/api/upload?type=store', {
             method: 'POST',
-            body: formData
+            body: formData,
         });
         const data = (await res.json()) as any;
         if (res.ok && data.url) {
@@ -4190,7 +4403,7 @@ async function uploadImageFile(file: File): Promise<string | null> {
 
 function setPreviewImage(imgEl: any, placeholderEl: any, url?: string) {
     if (!imgEl) return;
-    if (url && url.trim()) {
+    if (url?.trim()) {
         imgEl.src = url;
         imgEl.classList.remove('file-input-hidden');
         if (placeholderEl) placeholderEl.classList.add('file-input-hidden');
@@ -4204,16 +4417,16 @@ function setPreviewImage(imgEl: any, placeholderEl: any, url?: string) {
 // Inicialización de pestañas en configuración
 function initSettingsTabs() {
     const tabButtons = document.querySelectorAll('.settings-tab-btn');
-    tabButtons.forEach(btn => {
+    tabButtons.forEach((btn) => {
         btn.addEventListener('click', () => {
             const targetTab = (btn as HTMLElement).dataset.tab;
             if (!targetTab) return;
 
-            tabButtons.forEach(b => b.classList.remove('active'));
+            tabButtons.forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
 
             const panels = document.querySelectorAll('.settings-tab-panel');
-            panels.forEach(p => {
+            panels.forEach((p) => {
                 if (p.id === targetTab) {
                     p.classList.add('active');
                 } else {
@@ -4227,7 +4440,13 @@ function initSettingsTabs() {
 }
 
 // Configurar inputs de imagen simples (Logo y OG)
-function setupSingleImageUploader(btnId: string, fileInputId: string, textInputId: string, previewImgId: string, placeholderId: string) {
+function setupSingleImageUploader(
+    btnId: string,
+    fileInputId: string,
+    textInputId: string,
+    previewImgId: string,
+    placeholderId: string,
+) {
     const btn = $btn(btnId);
     const fileInput = $input(fileInputId);
     const textInput = $input(textInputId);
@@ -4240,7 +4459,7 @@ function setupSingleImageUploader(btnId: string, fileInputId: string, textInputI
 
     if (fileInput && textInput) {
         fileInput.addEventListener('change', async () => {
-            if (fileInput.files && fileInput.files[0]) {
+            if (fileInput.files?.[0]) {
                 const originalText = btn ? btn.innerHTML : '';
                 if (btn) {
                     btn.disabled = true;
@@ -4333,7 +4552,7 @@ function renderHeroSlides(slides: any[] = []) {
         }
         if (fileIn && textIn) {
             fileIn.addEventListener('change', async () => {
-                if (fileIn.files && fileIn.files[0]) {
+                if (fileIn.files?.[0]) {
                     if (uploadBtn) {
                         uploadBtn.disabled = true;
                         uploadBtn.innerHTML = '<i data-lucide="loader" class="spin"></i>...';
@@ -4420,15 +4639,28 @@ function renderBenefits(items: any[] = []) {
     if (!container) return;
     container.innerHTML = '';
 
-    const iconOptions = ['flame', 'zap', 'award', 'shield', 'truck', 'star', 'heart', 'clock', 'package', 'message-circle', 'sparkles', 'check'];
+    const iconOptions = [
+        'flame',
+        'zap',
+        'award',
+        'shield',
+        'truck',
+        'star',
+        'heart',
+        'clock',
+        'package',
+        'message-circle',
+        'sparkles',
+        'check',
+    ];
 
     items.forEach((item, idx) => {
         const row = document.createElement('div');
         row.className = 'dynamic-item-card benefit-item-row';
 
         let optionsHtml = '';
-        iconOptions.forEach(ico => {
-            const isSel = (item.icon === ico) ? 'selected' : '';
+        iconOptions.forEach((ico) => {
+            const isSel = item.icon === ico ? 'selected' : '';
             optionsHtml += `<option value="${ico}" ${isSel}>${ico}</option>`;
         });
 
@@ -4488,7 +4720,7 @@ function renderProcessSteps(steps: any[] = []) {
             <div class="settings-grid-2">
                 <div class="settings-form-group">
                     <label>Número o Etiqueta</label>
-                    <input type="text" class="form-control step-number-input" placeholder="Ej: 1" value="${step.number ?? (idx + 1)}" />
+                    <input type="text" class="form-control step-number-input" placeholder="Ej: 1" value="${step.number ?? idx + 1}" />
                 </div>
                 <div class="settings-form-group">
                     <label>Título del Paso</label>
@@ -4584,7 +4816,7 @@ function renderTestimonials(items: any[] = []) {
         }
         if (fileIn && textIn) {
             fileIn.addEventListener('change', async () => {
-                if (fileIn.files && fileIn.files[0]) {
+                if (fileIn.files?.[0]) {
                     if (uploadBtn) {
                         uploadBtn.disabled = true;
                         uploadBtn.innerHTML = '<i data-lucide="loader" class="spin"></i>...';
@@ -4748,27 +4980,28 @@ async function loadStoreSettings() {
         const bp = p.binancePay || {};
         const l = cfg.labels || {};
 
-function updateStoreUrls(tenant: any) {
-    const template = tenant?.template || 'restaurant';
-    const tenantId = tenant?.id;
-    let url = `/demo/${template}`;
-    if (tenant?.domain) {
-        url = `https://${tenant.domain}`;
-    } else if (tenantId && tenantId !== 'demo') {
-        url = getStoreUrl(tenantId, tenant?.domain);
-    }
+        function updateStoreUrls(tenant: any) {
+            const template = tenant?.template || 'restaurant';
+            const tenantId = tenant?.id;
+            let url = `/demo/${template}`;
+            if (tenant?.domain) {
+                url = `https://${tenant.domain}`;
+            } else if (tenantId && tenantId !== 'demo') {
+                url = getStoreUrl(tenantId, tenant?.domain);
+            }
 
-    const previewBtn = document.getElementById('btn-preview-store') as HTMLAnchorElement | null;
-    if (previewBtn) previewBtn.href = url;
+            const previewBtn = document.getElementById('btn-preview-store') as HTMLAnchorElement | null;
+            if (previewBtn) previewBtn.href = url;
 
-    const headerBtn = document.getElementById('btn-header-view-store') as HTMLAnchorElement | null;
-    if (headerBtn) headerBtn.href = url;
+            const headerBtn = document.getElementById('btn-header-view-store') as HTMLAnchorElement | null;
+            if (headerBtn) headerBtn.href = url;
 
-    activeStoreUrl = url.startsWith('/') ? `${window.location.origin}${url}` : url;
-    activeStoreName = tenant?.name || $val('cfg-business-name') || 'Mi Tienda';
-    activeStoreTagline = tenant?.config?.business?.tagline || $val('cfg-tagline') || 'Escanea con tu cámara y haz tu pedido';
-    refreshStoreQrCodes();
-}
+            activeStoreUrl = url.startsWith('/') ? `${window.location.origin}${url}` : url;
+            activeStoreName = tenant?.name || $val('cfg-business-name') || 'Mi Tienda';
+            activeStoreTagline =
+                tenant?.config?.business?.tagline || $val('cfg-tagline') || 'Escanea con tu cámara y haz tu pedido';
+            refreshStoreQrCodes();
+        }
 
         // Actualizar botones de vista previa "Ver Mi Tienda" (en Ajustes y Cabecera)
         updateStoreUrls(data.tenant);
@@ -4787,10 +5020,18 @@ function updateStoreUrls(tenant: any) {
         selectPalette(activePalette);
 
         setVal('cfg-logo-image', b.logoImage || '');
-        setPreviewImage(document.getElementById('preview-logo-img'), document.getElementById('placeholder-logo'), b.logoImage);
+        setPreviewImage(
+            document.getElementById('preview-logo-img'),
+            document.getElementById('placeholder-logo'),
+            b.logoImage,
+        );
 
         setVal('cfg-og-image', b.ogImage || '');
-        setPreviewImage(document.getElementById('preview-og-img'), document.getElementById('placeholder-og'), b.ogImage);
+        setPreviewImage(
+            document.getElementById('preview-og-img'),
+            document.getElementById('placeholder-og'),
+            b.ogImage,
+        );
 
         // TAB 2: HERO
         setVal('cfg-hero-badge', h.badgeText || '');
@@ -4802,16 +5043,20 @@ function updateStoreUrls(tenant: any) {
         setVal('cfg-hero-cta2-text', h.ctaSecondaryText || '');
         setVal('cfg-hero-cta2-link', h.ctaSecondaryLink || '');
 
-        renderHeroSlides(h.slides || [
-            { image: '/assets/hero_main.webp', alt: 'Portada 1' },
-            { image: '/assets/hero_grill.webp', alt: 'Portada 2' }
-        ]);
+        renderHeroSlides(
+            h.slides || [
+                { image: '/assets/hero_main.webp', alt: 'Portada 1' },
+                { image: '/assets/hero_grill.webp', alt: 'Portada 2' },
+            ],
+        );
 
-        renderHeroStats(h.stats || [
-            { value: '+800', label: 'Pedidos Entregados' },
-            { value: '⭐ 4.9', label: 'Calificación Promedio' },
-            { value: '🚀 Rápido', label: 'Delivery Express' }
-        ]);
+        renderHeroStats(
+            h.stats || [
+                { value: '+800', label: 'Pedidos Entregados' },
+                { value: '⭐ 4.9', label: 'Calificación Promedio' },
+                { value: '🚀 Rápido', label: 'Delivery Express' },
+            ],
+        );
 
         // TAB 3: CATÁLOGO
         setVal('cfg-catalog-title', cat.title || '');
@@ -4832,43 +5077,93 @@ function updateStoreUrls(tenant: any) {
         setVal('cfg-benefits-title-highlight', ben.titleHighlight || '');
         setVal('cfg-benefits-subtitle', ben.subtitle || '');
 
-        renderBenefits(ben.items || [
-            { icon: 'flame', title: 'Cocina Artesanal', description: 'Recetas tradicionales preparadas al momento con ingredientes frescos del día.' },
-            { icon: 'zap', title: 'Delivery Express', description: 'Tu pedido llega caliente y empacado con cuidado a tiempo.' },
-            { icon: 'message-circle', title: 'Pedido por WhatsApp', description: 'Sin apps complicadas. Elige en la web y envía tu orden en un clic.' }
-        ]);
+        renderBenefits(
+            ben.items || [
+                {
+                    icon: 'flame',
+                    title: 'Cocina Artesanal',
+                    description: 'Recetas tradicionales preparadas al momento con ingredientes frescos del día.',
+                },
+                {
+                    icon: 'zap',
+                    title: 'Delivery Express',
+                    description: 'Tu pedido llega caliente y empacado con cuidado a tiempo.',
+                },
+                {
+                    icon: 'message-circle',
+                    title: 'Pedido por WhatsApp',
+                    description: 'Sin apps complicadas. Elige en la web y envía tu orden en un clic.',
+                },
+            ],
+        );
 
         // TAB 5: PROCESO
         setVal('cfg-process-title', prc.title || '');
         setVal('cfg-process-title-highlight', prc.titleHighlight || '');
         setVal('cfg-process-subtitle', prc.subtitle || '');
 
-        renderProcessSteps(prc.steps || [
-            { number: 1, title: 'Elige tu Plato', description: 'Explora nuestro menú y selecciona tus opciones favoritas.' },
-            { number: 2, title: 'Arma tu Pedido', description: 'Añade tus artículos al carrito y selecciona delivery o retiro.' },
-            { number: 3, title: 'Envía por WhatsApp', description: 'Te confirmamos en minutos y preparamos tu orden.' },
-            { number: 4, title: '¡Disfruta!', description: 'Recibe en tu puerta o retira en nuestro local.' }
-        ]);
+        renderProcessSteps(
+            prc.steps || [
+                {
+                    number: 1,
+                    title: 'Elige tu Plato',
+                    description: 'Explora nuestro menú y selecciona tus opciones favoritas.',
+                },
+                {
+                    number: 2,
+                    title: 'Arma tu Pedido',
+                    description: 'Añade tus artículos al carrito y selecciona delivery o retiro.',
+                },
+                {
+                    number: 3,
+                    title: 'Envía por WhatsApp',
+                    description: 'Te confirmamos en minutos y preparamos tu orden.',
+                },
+                { number: 4, title: '¡Disfruta!', description: 'Recibe en tu puerta o retira en nuestro local.' },
+            ],
+        );
 
         // TAB 6: TESTIMONIOS
         setVal('cfg-testimonials-title', tst.title || '');
         setVal('cfg-testimonials-title-highlight', tst.titleHighlight || '');
         setVal('cfg-testimonials-subtitle', tst.subtitle || '');
 
-        renderTestimonials(tst.items || [
-            { name: 'María González', role: 'Cliente frecuente', rating: 5, review: 'La comida llegó caliente y deliciosa. El pedido por WhatsApp fue súper rápido.', avatar: '/assets/client_maria.webp' },
-            { name: 'Carlos Rodríguez', role: 'Cliente verificado', rating: 5, review: 'Excelente atención y calidad insuperable. 100% recomendado.', avatar: '/assets/client_jose.webp' }
-        ]);
+        renderTestimonials(
+            tst.items || [
+                {
+                    name: 'María González',
+                    role: 'Cliente frecuente',
+                    rating: 5,
+                    review: 'La comida llegó caliente y deliciosa. El pedido por WhatsApp fue súper rápido.',
+                    avatar: '/assets/client_maria.webp',
+                },
+                {
+                    name: 'Carlos Rodríguez',
+                    role: 'Cliente verificado',
+                    rating: 5,
+                    review: 'Excelente atención y calidad insuperable. 100% recomendado.',
+                    avatar: '/assets/client_jose.webp',
+                },
+            ],
+        );
 
         // TAB 7: FAQ
         setVal('cfg-faq-title', fq.title || '');
         setVal('cfg-faq-title-highlight', fq.titleHighlight || '');
         setVal('cfg-faq-subtitle', fq.subtitle || '');
 
-        renderFaq(fq.items || [
-            { q: '¿Cómo pago mi pedido?', a: 'Aceptamos Pago Móvil, Zelle y Efectivo. Puedes adjuntar tu comprobante de pago al ordenar.' },
-            { q: '¿Cuánto tarda el delivery?', a: 'Normalmente entre 25 a 45 minutos dependiendo de la zona de entrega.' }
-        ]);
+        renderFaq(
+            fq.items || [
+                {
+                    q: '¿Cómo pago mi pedido?',
+                    a: 'Aceptamos Pago Móvil, Zelle y Efectivo. Puedes adjuntar tu comprobante de pago al ordenar.',
+                },
+                {
+                    q: '¿Cuánto tarda el delivery?',
+                    a: 'Normalmente entre 25 a 45 minutos dependiendo de la zona de entrega.',
+                },
+            ],
+        );
 
         // TAB 8: CONTACTO & PAGOS
         setVal('cfg-whatsapp', c.whatsapp || data.tenant?.whatsapp || '');
@@ -4879,9 +5174,12 @@ function updateStoreUrls(tenant: any) {
         setVal('cfg-instagram', c.instagram || '');
         setVal('cfg-instagram-handle', c.instagramHandle || '');
 
-        const pmAccounts = p.pagoMovilAccounts && Array.isArray(p.pagoMovilAccounts) && p.pagoMovilAccounts.length > 0
-            ? p.pagoMovilAccounts
-            : (pm.banco || pm.telefono || pm.cedula ? [{ ...pm, isDefault: true }] : []);
+        const pmAccounts =
+            p.pagoMovilAccounts && Array.isArray(p.pagoMovilAccounts) && p.pagoMovilAccounts.length > 0
+                ? p.pagoMovilAccounts
+                : pm.banco || pm.telefono || pm.cedula
+                  ? [{ ...pm, isDefault: true }]
+                  : [];
         renderPagoMovilAccounts(pmAccounts);
 
         setVal('cfg-zelle-email', z.email || '');
@@ -4906,7 +5204,13 @@ function updateStoreUrls(tenant: any) {
 // Inicialización de escuchadores de eventos
 initSettingsTabs();
 initPalettePicker();
-setupSingleImageUploader('btn-upload-logo', 'file-logo-image', 'cfg-logo-image', 'preview-logo-img', 'placeholder-logo');
+setupSingleImageUploader(
+    'btn-upload-logo',
+    'file-logo-image',
+    'cfg-logo-image',
+    'preview-logo-img',
+    'placeholder-logo',
+);
 setupSingleImageUploader('btn-upload-og', 'file-og-image', 'cfg-og-image', 'preview-og-img', 'placeholder-og');
 
 // Selector de Paletas de Colores Preconfiguradas
@@ -4915,7 +5219,7 @@ function selectPalette(paletteId: string) {
     if (input) input.value = paletteId;
 
     const cards = document.querySelectorAll('.palette-card');
-    cards.forEach(card => {
+    cards.forEach((card) => {
         const id = card.getAttribute('data-palette-id');
         const isActive = id === paletteId;
         card.classList.toggle('active', isActive);
@@ -4961,7 +5265,11 @@ const btnAddBenefit = document.getElementById('btn-add-benefit');
 if (btnAddBenefit) {
     btnAddBenefit.addEventListener('click', () => {
         const currentBenefits = collectBenefits();
-        currentBenefits.push({ icon: 'star', title: 'Nuevo Beneficio', description: 'Describe esta ventaja competitiva...' });
+        currentBenefits.push({
+            icon: 'star',
+            title: 'Nuevo Beneficio',
+            description: 'Describe esta ventaja competitiva...',
+        });
         renderBenefits(currentBenefits);
     });
 }
@@ -4980,7 +5288,13 @@ const btnAddTestimonial = document.getElementById('btn-add-testimonial');
 if (btnAddTestimonial) {
     btnAddTestimonial.addEventListener('click', () => {
         const currentTests = collectTestimonials();
-        currentTests.push({ name: 'Nuevo Cliente', role: 'Cliente', rating: 5, review: 'Excelente producto y atención.', avatar: '' });
+        currentTests.push({
+            name: 'Nuevo Cliente',
+            role: 'Cliente',
+            rating: 5,
+            review: 'Excelente producto y atención.',
+            avatar: '',
+        });
         renderTestimonials(currentTests);
     });
 }
@@ -5013,7 +5327,7 @@ if (btnAddPm) {
 function collectHeroSlides() {
     const rows = document.querySelectorAll('.hero-slide-row');
     const slides: any[] = [];
-    rows.forEach(r => {
+    rows.forEach((r) => {
         const img = getRowVal(r, '.slide-img-input');
         const alt = getRowVal(r, '.slide-alt-input');
         if (img) slides.push({ image: img, alt: alt || '' });
@@ -5024,7 +5338,7 @@ function collectHeroSlides() {
 function collectHeroStats() {
     const rows = document.querySelectorAll('.hero-stat-row');
     const stats: any[] = [];
-    rows.forEach(r => {
+    rows.forEach((r) => {
         const val = getRowVal(r, '.stat-value-input');
         const lbl = getRowVal(r, '.stat-label-input');
         if (val && lbl) stats.push({ value: val, label: lbl });
@@ -5035,7 +5349,7 @@ function collectHeroStats() {
 function collectBenefits() {
     const rows = document.querySelectorAll('.benefit-item-row');
     const items: any[] = [];
-    rows.forEach(r => {
+    rows.forEach((r) => {
         const icon = getRowVal(r, '.benefit-icon-select');
         const title = getRowVal(r, '.benefit-title-input');
         const desc = getRowVal(r, '.benefit-desc-input');
@@ -5047,7 +5361,7 @@ function collectBenefits() {
 function collectProcessSteps() {
     const rows = document.querySelectorAll('.process-step-row');
     const steps: any[] = [];
-    rows.forEach(r => {
+    rows.forEach((r) => {
         const num = getRowVal(r, '.step-number-input');
         const title = getRowVal(r, '.step-title-input');
         const desc = getRowVal(r, '.step-desc-input');
@@ -5059,7 +5373,7 @@ function collectProcessSteps() {
 function collectTestimonials() {
     const rows = document.querySelectorAll('.testimonial-item-row');
     const items: any[] = [];
-    rows.forEach(r => {
+    rows.forEach((r) => {
         const name = getRowVal(r, '.test-name-input');
         const role = getRowVal(r, '.test-role-input');
         const rating = parseInt(getRowVal(r, '.test-rating-select') || '5', 10);
@@ -5075,7 +5389,7 @@ function collectTestimonials() {
 function collectFaqs() {
     const rows = document.querySelectorAll('.faq-item-row');
     const items: any[] = [];
-    rows.forEach(r => {
+    rows.forEach((r) => {
         const q = getRowVal(r, '.faq-q-input');
         const a = getRowVal(r, '.faq-a-input');
         if (q && a) items.push({ q, a });
@@ -5103,7 +5417,7 @@ function collectPagoMovilAccounts() {
             });
         }
     });
-    if (items.length > 0 && !items.some(a => a.isDefault)) {
+    if (items.length > 0 && !items.some((a) => a.isDefault)) {
         items[0].isDefault = true;
     }
     return items;
@@ -5166,7 +5480,8 @@ if (storeSettingsForm) {
                     addToCartText: $val('cfg-catalog-add-cart-text') || undefined,
                     emptyMessage: $val('cfg-catalog-empty-msg') || undefined,
                     productDetailViewMode: ($val('cfg-product-detail-view-mode') as 'modal' | 'page') || 'modal',
-                    productDetailShareBtn: ($val('cfg-product-detail-share-btn') as 'enabled' | 'disabled') || 'enabled',
+                    productDetailShareBtn:
+                        ($val('cfg-product-detail-share-btn') as 'enabled' | 'disabled') || 'enabled',
                 },
                 benefits: {
                     title: $val('cfg-benefits-title') || undefined,
@@ -5204,9 +5519,9 @@ if (storeSettingsForm) {
             },
             payment: {
                 pagoMovilAccounts: collectPagoMovilAccounts(),
-                pagoMovil: (function() {
+                pagoMovil: (() => {
                     const accs = collectPagoMovilAccounts();
-                    const def = accs.find(a => a.isDefault) || accs[0] || {};
+                    const def = accs.find((a) => a.isDefault) || accs[0] || {};
                     return {
                         banco: def.banco || undefined,
                         telefono: def.telefono || undefined,
@@ -5223,11 +5538,12 @@ if (storeSettingsForm) {
                     merchantName: $val('cfg-binance-merchant') || undefined,
                     email: $val('cfg-binance-email') || undefined,
                     qrImage: $val('cfg-binance-qr') || undefined,
-                }
+                },
             },
             labels: {
                 deliveryOptionName: $val('cfg-delivery-name') || undefined,
-                deliveryOptionPrice: $val('cfg-delivery-price') !== '' ? parseFloat($val('cfg-delivery-price')) : undefined,
+                deliveryOptionPrice:
+                    $val('cfg-delivery-price') !== '' ? parseFloat($val('cfg-delivery-price')) : undefined,
                 pickupOptionName: $val('cfg-pickup-name') || undefined,
                 itemNounSingular: $val('cfg-item-noun-singular') || undefined,
                 itemNounPlural: $val('cfg-item-noun-plural') || undefined,
@@ -5235,14 +5551,14 @@ if (storeSettingsForm) {
             },
             template: ($val('cfg-store-template') as any) || undefined,
             palette: $val('cfg-store-palette') || 'default',
-            storePrefix: $val('cfg-store-prefix').toUpperCase() || undefined
+            storePrefix: $val('cfg-store-prefix').toUpperCase() || undefined,
         };
 
         try {
             const res = await fetch('/api/settings', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
             });
 
             const data = (await res.json()) as any;
@@ -5250,7 +5566,7 @@ if (storeSettingsForm) {
                 showToast('✅ ¡Toda la tienda ha sido actualizada exitosamente!', 'success');
                 if (payload.business.name) {
                     const subTitle = document.getElementById('dashboard-subtitle');
-                    if (subTitle && subTitle.textContent.includes('FOGÓN')) {
+                    if (subTitle?.textContent.includes('FOGÓN')) {
                         subTitle.textContent = subTitle.textContent.replace('FOGÓN', payload.business.name);
                     }
                 }
@@ -5281,7 +5597,7 @@ async function loadCoupons() {
         couponsList = data.coupons || [];
         renderCouponsTable();
     } catch (e) {
-        console.error("Error al cargar cupones:", e);
+        console.error('Error al cargar cupones:', e);
     }
 }
 
@@ -5290,21 +5606,27 @@ function renderCouponsTable() {
     if (!tableEl) return;
 
     if (couponsList.length === 0) {
-        tableEl.innerHTML = '<tr><td colspan="8" class="table-empty-message">No hay cupones creados aún. Crea el primero arriba.</td></tr>';
+        tableEl.innerHTML =
+            '<tr><td colspan="8" class="table-empty-message">No hay cupones creados aún. Crea el primero arriba.</td></tr>';
         return;
     }
 
-    tableEl.innerHTML = couponsList.map(c => {
-        const discountText = c.discount_type === 'percentage' ? `${c.discount_value}%` : `$${parseFloat(c.discount_value).toFixed(2)}`;
-        const minOrderText = c.min_order_amount > 0 ? `$${parseFloat(c.min_order_amount).toFixed(2)}` : 'Sin mínimo';
-        const usesText = c.max_uses > 0 ? `${c.uses_count} / ${c.max_uses}` : `${c.uses_count} (Ilimitado)`;
-        const expiresText = c.expires_at ? new Date(c.expires_at).toLocaleDateString('es-VE') : 'Permanente';
-        const isActive = c.active === 1;
-        const statusBadge = isActive
-            ? '<span class="status-badge completado">Activo</span>'
-            : '<span class="status-badge cancelado">Inactivo</span>';
+    tableEl.innerHTML = couponsList
+        .map((c) => {
+            const discountText =
+                c.discount_type === 'percentage'
+                    ? `${c.discount_value}%`
+                    : `$${parseFloat(c.discount_value).toFixed(2)}`;
+            const minOrderText =
+                c.min_order_amount > 0 ? `$${parseFloat(c.min_order_amount).toFixed(2)}` : 'Sin mínimo';
+            const usesText = c.max_uses > 0 ? `${c.uses_count} / ${c.max_uses}` : `${c.uses_count} (Ilimitado)`;
+            const expiresText = c.expires_at ? new Date(c.expires_at).toLocaleDateString('es-VE') : 'Permanente';
+            const isActive = c.active === 1;
+            const statusBadge = isActive
+                ? '<span class="status-badge completado">Activo</span>'
+                : '<span class="status-badge cancelado">Inactivo</span>';
 
-        return `
+            return `
             <tr>
                 <td><code><strong>${escapeHtml(c.code)}</strong></code></td>
                 <td>${c.discount_type === 'percentage' ? 'Porcentaje' : 'Monto Fijo'}</td>
@@ -5325,7 +5647,8 @@ function renderCouponsTable() {
                 </td>
             </tr>
         `;
-    }).join('');
+        })
+        .join('');
 
     if (window.lucide) lucide.createIcons();
 }
@@ -5336,7 +5659,7 @@ async function toggleCouponStatus(couponId: number, currentActive: number) {
         const res = await fetch('/api/coupons', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: couponId, active: newActive })
+            body: JSON.stringify({ id: couponId, active: newActive }),
         });
         if (!res.ok) throw new Error('Error al actualizar');
         showToast(`Cupón ${newActive === 1 ? 'activado' : 'pausado'} con éxito.`, 'success');
@@ -5350,11 +5673,12 @@ async function deleteCoupon(couponId: number) {
     const confirmed = await showConfirmDialog({
         title: '¿Eliminar cupón de descuento?',
         subtitle: 'Configuración de cupones',
-        message: '¿Seguro que deseas eliminar este cupón de descuento? Dejará de funcionar de inmediato para los clientes.',
+        message:
+            '¿Seguro que deseas eliminar este cupón de descuento? Dejará de funcionar de inmediato para los clientes.',
         confirmText: 'Eliminar cupón',
         cancelText: 'Cancelar',
         variant: 'danger',
-        icon: 'trash-2'
+        icon: 'trash-2',
     });
     if (!confirmed) return;
     try {
@@ -5394,7 +5718,7 @@ if (couponForm) {
         const discountType = $val('coupon-type');
         const discountValue = parseFloat($val('coupon-value'));
         const minOrderAmount = parseFloat($val('coupon-min-order')) || 0;
-        const maxUses = parseInt($val('coupon-max-uses')) || -1;
+        const maxUses = parseInt($val('coupon-max-uses'), 10) || -1;
         const expiresAt = $val('coupon-expires-at') || null;
 
         if (discountType === 'percentage' && (discountValue <= 0 || discountValue > 100)) {
@@ -5414,10 +5738,10 @@ if (couponForm) {
                     discountType,
                     discountValue,
                     minOrderAmount,
-                    maxUses: isNaN(maxUses) ? -1 : maxUses,
-                    expiresAt: expiresAt ? new Date(expiresAt + 'T23:59:59').toISOString() : null,
-                    active: 1
-                })
+                    maxUses: Number.isNaN(maxUses) ? -1 : maxUses,
+                    expiresAt: expiresAt ? new Date(`${expiresAt}T23:59:59`).toISOString() : null,
+                    active: 1,
+                }),
             });
 
             const data = (await res.json()) as any;
@@ -5450,9 +5774,9 @@ async function renderQrToCanvas(canvas: HTMLCanvasElement | null, url: string, s
             margin: 2,
             color: {
                 dark: '#0f172a',
-                light: '#ffffff'
+                light: '#ffffff',
             },
-            errorCorrectionLevel: 'H'
+            errorCorrectionLevel: 'H',
         });
     } catch (err) {
         console.error('Error generando QR code:', err);
@@ -5460,7 +5784,10 @@ async function renderQrToCanvas(canvas: HTMLCanvasElement | null, url: string, s
 }
 
 function refreshStoreQrCodes() {
-    const finalUrl = activeStoreUrl || (document.getElementById('btn-header-view-store') as HTMLAnchorElement | null)?.href || window.location.origin;
+    const finalUrl =
+        activeStoreUrl ||
+        (document.getElementById('btn-header-view-store') as HTMLAnchorElement | null)?.href ||
+        window.location.origin;
     const businessName = $val('cfg-business-name') || activeStoreName || 'Mi Tienda';
     const tagline = $val('cfg-tagline') || activeStoreTagline || 'Escanea con tu cámara y haz tu pedido';
 
@@ -5524,7 +5851,7 @@ async function copyStoreUrlToClipboard(url: string) {
             ta.value = url;
             document.body.appendChild(ta);
             ta.select();
-            document.execCommand('copy');
+            (document as any).execCommand?.('copy');
             document.body.removeChild(ta);
         }
         showToast('¡Enlace de la tienda copiado al portapapeles!', 'success');
@@ -5548,11 +5875,17 @@ if (storeQrModal) {
 
 // Botones de acciones
 document.getElementById('btn-settings-copy-url')?.addEventListener('click', () => {
-    const finalUrl = activeStoreUrl || (document.getElementById('btn-header-view-store') as HTMLAnchorElement | null)?.href || window.location.origin;
+    const finalUrl =
+        activeStoreUrl ||
+        (document.getElementById('btn-header-view-store') as HTMLAnchorElement | null)?.href ||
+        window.location.origin;
     copyStoreUrlToClipboard(finalUrl);
 });
 document.getElementById('btn-modal-copy-qr-url')?.addEventListener('click', () => {
-    const finalUrl = activeStoreUrl || (document.getElementById('btn-header-view-store') as HTMLAnchorElement | null)?.href || window.location.origin;
+    const finalUrl =
+        activeStoreUrl ||
+        (document.getElementById('btn-header-view-store') as HTMLAnchorElement | null)?.href ||
+        window.location.origin;
     copyStoreUrlToClipboard(finalUrl);
 });
 
@@ -5617,9 +5950,10 @@ async function loadTeamMembers() {
         updateTeamStats();
         renderTeamTable();
     } catch (err) {
-        console.error("Error al cargar miembros del equipo:", err);
+        console.error('Error al cargar miembros del equipo:', err);
         if (tableEl) {
-            tableEl.innerHTML = '<tr><td colspan="5" class="table-empty-row text-danger">No se pudieron cargar los miembros del equipo.</td></tr>';
+            tableEl.innerHTML =
+                '<tr><td colspan="5" class="table-empty-row text-danger">No se pudieron cargar los miembros del equipo.</td></tr>';
         }
     }
 }
@@ -5630,8 +5964,8 @@ function updateTeamStats() {
     const staffEl = document.getElementById('stat-team-staff');
 
     const total = teamMembersList.length;
-    const admins = teamMembersList.filter(u => u.role === 'admin').length;
-    const staff = teamMembersList.filter(u => u.role === 'staff').length;
+    const admins = teamMembersList.filter((u) => u.role === 'admin').length;
+    const staff = teamMembersList.filter((u) => u.role === 'staff').length;
 
     if (totalEl) totalEl.textContent = String(total);
     if (adminsEl) adminsEl.textContent = String(admins);
@@ -5643,45 +5977,50 @@ function renderTeamTable() {
     if (!tableEl) return;
 
     if (teamMembersList.length === 0) {
-        tableEl.innerHTML = '<tr><td colspan="5" class="table-empty-row">No hay miembros registrados aún. Haz clic en "Nuevo Miembro" para invitar al equipo.</td></tr>';
+        tableEl.innerHTML =
+            '<tr><td colspan="5" class="table-empty-row">No hay miembros registrados aún. Haz clic en "Nuevo Miembro" para invitar al equipo.</td></tr>';
         return;
     }
 
     const activeUserEmail = (currentAdmin || '').toLowerCase();
-    const adminCount = teamMembersList.filter(u => u.role === 'admin').length;
+    const adminCount = teamMembersList.filter((u) => u.role === 'admin').length;
 
-    tableEl.innerHTML = teamMembersList.map(member => {
-        const memberEmail = (member.email || member.username || '').toLowerCase();
-        const isSelf = memberEmail === activeUserEmail;
-        const isLastAdmin = member.role === 'admin' && adminCount <= 1;
-        const createdDate = member.created_at ? new Date(member.created_at).toLocaleDateString('es-VE', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        }) : 'Registrado';
+    tableEl.innerHTML = teamMembersList
+        .map((member) => {
+            const memberEmail = (member.email || member.username || '').toLowerCase();
+            const isSelf = memberEmail === activeUserEmail;
+            const isLastAdmin = member.role === 'admin' && adminCount <= 1;
+            const createdDate = member.created_at
+                ? new Date(member.created_at).toLocaleDateString('es-VE', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                  })
+                : 'Registrado';
 
-        const roleBadge = member.role === 'admin'
-            ? '<span class="status-badge admin"><i data-lucide="shield" class="table-badge-icon"></i> Admin</span>'
-            : '<span class="status-badge staff"><i data-lucide="user" class="table-badge-icon"></i> Staff</span>';
+            const roleBadge =
+                member.role === 'admin'
+                    ? '<span class="status-badge admin"><i data-lucide="shield" class="table-badge-icon"></i> Admin</span>'
+                    : '<span class="status-badge staff"><i data-lucide="user" class="table-badge-icon"></i> Staff</span>';
 
-        const selfBadge = isSelf ? '<span class="badge-current-user">Tú</span>' : '';
+            const selfBadge = isSelf ? '<span class="badge-current-user">Tú</span>' : '';
 
-        let actionButtons = '';
-        if (isSelf) {
-            actionButtons = `<span class="table-text-secondary table-self-note" title="No puedes eliminar tu propia cuenta activa">Sesión actual</span>`;
-        } else if (isLastAdmin) {
-            actionButtons = `<span class="table-text-secondary table-self-note" title="No es posible eliminar al único administrador">Único Admin</span>`;
-        } else {
-            actionButtons = `
+            let actionButtons = '';
+            if (isSelf) {
+                actionButtons = `<span class="table-text-secondary table-self-note" title="No puedes eliminar tu propia cuenta activa">Sesión actual</span>`;
+            } else if (isLastAdmin) {
+                actionButtons = `<span class="table-text-secondary table-self-note" title="No es posible eliminar al único administrador">Único Admin</span>`;
+            } else {
+                actionButtons = `
                 <div class="table-actions-group">
                     <button class="action-icon-btn delete" data-action="delete-team-member" data-id="${member.id}" data-email="${escapeHtml(member.email || member.username)}" title="Eliminar Acceso">
                         <i data-lucide="trash-2" class="table-action-icon-sm"></i>
                     </button>
                 </div>
             `;
-        }
+            }
 
-        return `
+            return `
             <tr>
                 <td>
                     <div class="team-user-cell">
@@ -5700,7 +6039,8 @@ function renderTeamTable() {
                 <td>${actionButtons}</td>
             </tr>
         `;
-    }).join('');
+        })
+        .join('');
 
     if (window.lucide) lucide.createIcons();
 }
@@ -5713,7 +6053,7 @@ async function deleteTeamMember(id: number, email: string) {
         confirmText: 'Revocar acceso',
         cancelText: 'Cancelar',
         variant: 'danger',
-        icon: 'user-x'
+        icon: 'user-x',
     });
     if (!confirmed) {
         return;
@@ -5721,7 +6061,7 @@ async function deleteTeamMember(id: number, email: string) {
 
     try {
         const res = await fetch(`/api/users?id=${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
         });
         const data = (await res.json()) as any;
         if (!res.ok) {
@@ -5786,7 +6126,7 @@ if (teamUserForm) {
             const res = await fetch('/api/users', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password, role })
+                body: JSON.stringify({ email, password, role }),
             });
 
             const data = (await res.json()) as any;
@@ -5816,7 +6156,3 @@ document.addEventListener('click', (e) => {
         if (id) deleteTeamMember(id, email);
     }
 });
-
-
-
-

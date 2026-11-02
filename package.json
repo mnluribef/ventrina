@@ -1,41 +1,41 @@
 {
-  "name": "ventrina",
-  "version": "1.0.0",
-  "description": "Ventrina — Plataforma SaaS multi-plantilla para catálogos y comercio digital ágil",
-  "type": "module",
-  "scripts": {
-    "dev": "astro dev",
-    "dev:pages": "concurrently \"pnpm run dev\" \"wrangler pages dev --proxy 4321\"",
-    "build": "astro build",
-    "preview": "astro preview",
-    "check": "astro check",
-    "deploy": "pnpm run build && wrangler pages deploy dist",
-    "db:init:local": "wrangler d1 execute ventrina-db --local --file=schema.sql",
-    "db:seed:local": "wrangler d1 execute ventrina-db --local --file=seed_templates.sql",
-    "db:migrate:local": "wrangler d1 migrations apply ventrina-db --local",
-    "db:migrate:remote": "wrangler d1 migrations apply ventrina-db --remote",
-    "create-admin": "node scripts/generate-admin.js",
-    "test": "vitest run",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "format": "biome format --write ."
-  },
-  "dependencies": {
-    "@astrojs/cloudflare": "^14.2.3",
-    "@lucide/astro": "^1.50.0",
-    "astro": "^7.2.4",
-    "qrcode": "^1.5.4",
-    "zod": "^4.6.5"
-  },
-  "devDependencies": {
-    "@astrojs/check": "^0.9.10",
-    "@astrojs/tailwind": "^5.1.5",
-    "@biomejs/biome": "^2.5.15",
-    "@cloudflare/workers-types": "^4.20250620.0",
-    "@types/qrcode": "^1.5.6",
-    "concurrently": "^10.0.5",
-    "typescript": "^5.9.3",
-    "vitest": "^5.0.5",
-    "wrangler": "^4.151.1"
-  }
+    "name": "ventrina",
+    "version": "1.0.0",
+    "description": "Ventrina — Plataforma SaaS multi-plantilla para catálogos y comercio digital ágil",
+    "type": "module",
+    "scripts": {
+        "dev": "astro dev",
+        "dev:pages": "concurrently \"pnpm run dev\" \"wrangler pages dev --proxy 4321\"",
+        "build": "astro build",
+        "preview": "astro preview",
+        "check": "astro check",
+        "deploy": "pnpm run build && wrangler pages deploy dist",
+        "db:init:local": "wrangler d1 execute ventrina-db --local --file=schema.sql",
+        "db:seed:local": "wrangler d1 execute ventrina-db --local --file=seed_templates.sql",
+        "db:migrate:local": "wrangler d1 migrations apply ventrina-db --local",
+        "db:migrate:remote": "wrangler d1 migrations apply ventrina-db --remote",
+        "create-admin": "node scripts/generate-admin.js",
+        "test": "vitest run",
+        "lint": "biome check .",
+        "lint:fix": "biome check --write .",
+        "format": "biome format --write ."
+    },
+    "dependencies": {
+        "@astrojs/cloudflare": "^14.2.3",
+        "@lucide/astro": "^1.50.0",
+        "astro": "^7.2.4",
+        "qrcode": "^1.5.4",
+        "zod": "^4.6.5"
+    },
+    "devDependencies": {
+        "@astrojs/check": "^0.9.10",
+        "@astrojs/tailwind": "^5.1.5",
+        "@biomejs/biome": "^2.5.15",
+        "@cloudflare/workers-types": "^4.20250620.0",
+        "@types/qrcode": "^1.5.6",
+        "concurrently": "^10.0.5",
+        "typescript": "^5.9.3",
+        "vitest": "^5.0.5",
+        "wrangler": "^4.151.1"
+    }
 }

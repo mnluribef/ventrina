@@ -3,28 +3,28 @@
 
 import type { StoreConfig, StoreTemplateType } from '../types/store.types';
 import { getPalette } from './palettes';
-import { restaurantTemplate } from './templates/restaurant';
-import { hardwareTemplate } from './templates/hardware';
 import { autopartsTemplate } from './templates/autoparts';
 import { fashionTemplate } from './templates/fashion';
-import { techTemplate } from './templates/tech';
 import { groceryTemplate } from './templates/grocery';
+import { hardwareTemplate } from './templates/hardware';
+import { restaurantTemplate } from './templates/restaurant';
+import { techTemplate } from './templates/tech';
 
 /**
  * Registro de todas las plantillas disponibles en el sistema.
  */
 export const storeTemplates: Record<StoreTemplateType, StoreConfig> = {
-  restaurant: restaurantTemplate,
-  hardware: hardwareTemplate,
-  autoparts: autopartsTemplate,
-  fashion: fashionTemplate,
-  tech: techTemplate,
-  grocery: groceryTemplate,
+    restaurant: restaurantTemplate,
+    hardware: hardwareTemplate,
+    autoparts: autopartsTemplate,
+    fashion: fashionTemplate,
+    tech: techTemplate,
+    grocery: groceryTemplate,
 };
 
 /**
  * Plantilla activa actual.
- * 
+ *
  * 👉 ¡Para cambiar el tipo de tienda en todo el proyecto, solo cambia este valor!
  * Opciones disponibles: 'restaurant' | 'hardware' | 'fashion' | 'tech' | 'autoparts' | 'grocery'
  */
@@ -34,40 +34,46 @@ export const ACTIVE_TEMPLATE: StoreTemplateType = 'restaurant';
  * Helper para combinar configuraciones de forma recursiva o con overrides personalizados.
  */
 export function createStoreConfig(
-  templateType: StoreTemplateType = ACTIVE_TEMPLATE,
-  customOverrides?: Partial<StoreConfig>
+    templateType: StoreTemplateType = ACTIVE_TEMPLATE,
+    customOverrides?: Partial<StoreConfig>,
 ): StoreConfig {
-  const base = storeTemplates[templateType] || storeTemplates.restaurant;
-  if (!customOverrides) return base;
+    const base = storeTemplates[templateType] || storeTemplates.restaurant;
+    if (!customOverrides) return base;
 
-  const paletteId = customOverrides.palette || customOverrides.theme?.palette;
-  const paletteDef = getPalette(paletteId);
-  const paletteTheme = paletteDef?.theme || {};
+    const paletteId = customOverrides.palette || customOverrides.theme?.palette;
+    const paletteDef = getPalette(paletteId);
+    const paletteTheme = paletteDef?.theme || {};
 
-  return {
-    ...base,
-    ...customOverrides,
-    palette: paletteId || base.palette,
-    business: { ...base.business, ...(customOverrides.business || {}) },
-    contact: { ...base.contact, ...(customOverrides.contact || {}) },
-    theme: { ...base.theme, ...paletteTheme, ...(customOverrides.theme || {}) },
-    landing: {
-      ...base.landing,
-      ...(customOverrides.landing || {}),
-      hero: { ...base.landing.hero, ...(customOverrides.landing?.hero || {}) },
-      benefits: { ...base.landing.benefits, ...(customOverrides.landing?.benefits || {}) },
-      catalog: { ...base.landing.catalog, ...(customOverrides.landing?.catalog || {}) },
-      process: { ...base.landing.process, ...(customOverrides.landing?.process || {}) },
-      testimonials: { ...base.landing.testimonials, ...(customOverrides.landing?.testimonials || {}) },
-      faq: { ...base.landing.faq, ...(customOverrides.landing?.faq || {}) },
-    },
-    nav: { ...base.nav, ...(customOverrides.nav || {}) },
-    seo: { ...base.seo, ...(customOverrides.seo || {}) },
-    features: { ...base.features, ...(customOverrides.features || {}) },
-    payment: (base.payment || customOverrides.payment) ? { ...(base.payment || {}), ...(customOverrides.payment || {}) } : undefined,
-    labels: (base.labels || customOverrides.labels) ? { ...(base.labels || {}), ...(customOverrides.labels || {}) } as any : undefined,
-    categories: customOverrides.categories || base.categories,
-  };
+    return {
+        ...base,
+        ...customOverrides,
+        palette: paletteId || base.palette,
+        business: { ...base.business, ...(customOverrides.business || {}) },
+        contact: { ...base.contact, ...(customOverrides.contact || {}) },
+        theme: { ...base.theme, ...paletteTheme, ...(customOverrides.theme || {}) },
+        landing: {
+            ...base.landing,
+            ...(customOverrides.landing || {}),
+            hero: { ...base.landing.hero, ...(customOverrides.landing?.hero || {}) },
+            benefits: { ...base.landing.benefits, ...(customOverrides.landing?.benefits || {}) },
+            catalog: { ...base.landing.catalog, ...(customOverrides.landing?.catalog || {}) },
+            process: { ...base.landing.process, ...(customOverrides.landing?.process || {}) },
+            testimonials: { ...base.landing.testimonials, ...(customOverrides.landing?.testimonials || {}) },
+            faq: { ...base.landing.faq, ...(customOverrides.landing?.faq || {}) },
+        },
+        nav: { ...base.nav, ...(customOverrides.nav || {}) },
+        seo: { ...base.seo, ...(customOverrides.seo || {}) },
+        features: { ...base.features, ...(customOverrides.features || {}) },
+        payment:
+            base.payment || customOverrides.payment
+                ? { ...(base.payment || {}), ...(customOverrides.payment || {}) }
+                : undefined,
+        labels:
+            base.labels || customOverrides.labels
+                ? ({ ...(base.labels || {}), ...(customOverrides.labels || {}) } as any)
+                : undefined,
+        categories: customOverrides.categories || base.categories,
+    };
 }
 
 /**

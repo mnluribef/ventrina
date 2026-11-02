@@ -238,9 +238,11 @@ END;
 -- ÍNDICES PARA OPTIMIZACIÓN MULTI-TENANT
 -- ============================================================
 CREATE INDEX IF NOT EXISTS idx_products_tenant       ON products(tenant_id, active);
+CREATE INDEX IF NOT EXISTS idx_products_sku          ON products(tenant_id, sku);
 CREATE INDEX IF NOT EXISTS idx_products_template     ON products(template);
 CREATE INDEX IF NOT EXISTS idx_product_attributes_tenant_prod ON product_attributes(tenant_id, product_id);
 CREATE INDEX IF NOT EXISTS idx_product_variants_tenant_prod   ON product_variants(tenant_id, product_id);
+CREATE INDEX IF NOT EXISTS idx_product_variants_sku           ON product_variants(tenant_id, sku);
 CREATE INDEX IF NOT EXISTS idx_orders_tenant         ON orders(tenant_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_orders_cursor         ON orders(tenant_id, created_at DESC, id DESC);
 CREATE INDEX IF NOT EXISTS idx_orders_status         ON orders(tenant_id, status);

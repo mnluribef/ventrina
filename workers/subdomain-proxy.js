@@ -1,6 +1,6 @@
 /**
  * Cloudflare Worker: Proxy Wildcard para Subdominios de Ventrina
- * 
+ *
  * Enrutamiento: *.ventrina.app/*
  * Destino: ventrina.app (Backend en Cloudflare Pages)
  */
@@ -30,7 +30,7 @@ export default {
             method: request.method,
             headers: newHeaders,
             body: hasBody ? request.body : undefined,
-            redirect: 'manual' // Permite que los redirects 301/302 del backend lleguen directamente al cliente
+            redirect: 'manual', // Permite que los redirects 301/302 del backend lleguen directamente al cliente
         });
 
         try {
@@ -38,8 +38,8 @@ export default {
         } catch (err) {
             return new Response(`Error en Worker Proxy de subdominios: ${err.message}`, {
                 status: 502,
-                headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+                headers: { 'Content-Type': 'text/plain; charset=utf-8' },
             });
         }
-    }
+    },
 };

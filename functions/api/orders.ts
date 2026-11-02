@@ -1,20 +1,19 @@
 // functions/api/orders.ts
 // Controlador HTTP de Pedidos - Ventrina SaaS (M-01: Capa Controller)
-import { z } from "zod";
-import { verifySession, unauthorizedResponse } from "./_auth";
-import { resolveTenant } from "./_tenant";
-import { getDB, jsonResponse, compressedJsonResponse } from "./_helpers";
-import { requireAdmin, requireStaffOrAdmin } from "./_guards";
-import { OrderService } from "./_services/order.service";
-import { dispatchWebhookIfConfigured } from "./_services/webhook.service";
-import { sendOrderStatusEmail } from "./_services/email.service";
-import type { Env, PagesHandler, OrderRow } from '../types';
-
+import { z } from 'zod';
+import type { Env, OrderRow, PagesHandler } from '../types';
+import { unauthorizedResponse, verifySession } from './_auth';
+import { requireAdmin, requireStaffOrAdmin } from './_guards';
+import { compressedJsonResponse, getDB, jsonResponse } from './_helpers';
+import { sendOrderStatusEmail } from './_services/email.service';
+import { OrderService } from './_services/order.service';
+import { dispatchWebhookIfConfigured } from './_services/webhook.service';
+import { resolveTenant } from './_tenant';
 
 export const createOrderSchema = z.object({
-    clientName: z.string().min(2, "El nombre debe tener al menos 2 caracteres").max(100),
-    clientPhone: z.string().min(7, "El teléfono debe ser válido").max(25),
-    clientEmail: z.email("Correo electrónico inválido").optional().nullable(),
+    clientName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(100),
+    clientPhone: z.string().min(7, 'El teléfono debe ser válido').max(25),
+    clientEmail: z.email('Correo electrónico inválido').optional().nullable(),
     deliveryType: z.enum(['delivery', 'pickup']),
     deliveryAddress: z.string().max(250).optional().nullable(),
     deliveryNotes: z.string().max(250).optional().nullable(),
@@ -25,16 +24,20 @@ export const createOrderSchema = z.object({
     bcvRate: z.number().positive().optional().nullable(),
     couponCode: z.string().max(50).optional().nullable(),
     storePrefix: z.string().max(10).optional().nullable(),
-    template: z.string().max(50).default("restaurant"),
+    template: z.string().max(50).default('restaurant'),
     turnstileToken: z.string().optional().nullable(),
-    items: z.array(z.object({
-        id: z.string().optional(),
-        key: z.string().optional(),
-        name: z.string().min(1).max(150),
-        price: z.number().min(0),
-        qty: z.number().int().positive(),
-        options: z.record(z.string(), z.unknown()).optional().nullable(),
-    })).min(1, "El pedido debe contener al menos un producto")
+    items: z
+        .array(
+            z.object({
+                id: z.string().optional(),
+                key: z.string().optional(),
+                name: z.string().min(1).max(150),
+                price: z.number().min(0),
+                qty: z.number().int().positive(),
+                options: z.record(z.string(), z.unknown()).optional().nullable(),
+            }),
+        )
+        .min(1, 'El pedido debe contener al menos un producto'),
 });
 
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
@@ -43,8 +46,13 @@ export const updateOrderStatusSchema = z.object({
     id: z.string().min(1),
     status: z.enum(['pendiente', 'en_produccion', 'listo_entrega', 'completado', 'cancelado']),
     paymentMethod: z.string().optional().nullable(),
-    paymentAmount: z.number().min(0).or(z.string().transform(v => parseFloat(v))).optional().nullable(),
-    note: z.string().max(500).optional().nullable()
+    paymentAmount: z
+        .number()
+        .min(0)
+        .or(z.string().transform((v) => parseFloat(v)))
+        .optional()
+        .nullable(),
+    note: z.string().max(500).optional().nullable(),
 });
 
 export type UpdateOrderStatusInput = z.infer<typeof updateOrderStatusSchema>;
@@ -72,7 +80,7 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
     if (!user) return unauthorizedResponse();
 
     const url = new URL(request.url);
-    const orderId = url.searchParams.get("id");
+    const orderId = url.searchParams.get('id');
     const orderService = new OrderService(db);
 
     try {
@@ -84,27 +92,32 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
             return jsonResponse(detailRes.data);
         }
 
-        const after = url.searchParams.get("after");
-        const limit = Math.max(1, Math.min(100, parseInt(url.searchParams.get("limit") || "50")));
-        const status = url.searchParams.get("status");
-        const page = Math.max(1, parseInt(url.searchParams.get("page") || "1"));
+        const after = url.searchParams.get('after');
+        const limit = Math.max(1, Math.min(100, parseInt(url.searchParams.get('limit') || '50', 10)));
+        const status = url.searchParams.get('status');
+        const page = Math.max(1, parseInt(url.searchParams.get('page') || '1', 10));
 
         const listResult = await orderService.listOrders({ tenantId, status, limit, after, page });
 
         if ('hasMore' in listResult) {
             return compressedJsonResponse({
                 data: listResult.orders,
-                meta: { limit, hasMore: listResult.hasMore, nextCursor: listResult.nextCursor }
+                meta: { limit, hasMore: listResult.hasMore, nextCursor: listResult.nextCursor },
             });
         }
 
         return compressedJsonResponse({
             data: listResult.orders,
-            meta: { total: listResult.total, page: listResult.page, limit: listResult.limit, totalPages: listResult.totalPages }
+            meta: {
+                total: listResult.total,
+                page: listResult.page,
+                limit: listResult.limit,
+                totalPages: listResult.totalPages,
+            },
         });
     } catch (err) {
-        console.error("Error en GET /api/orders:", err);
-        return jsonResponse({ error: "Error interno al consultar pedidos." }, 500);
+        console.error('Error en GET /api/orders:', err);
+        return jsonResponse({ error: 'Error interno al consultar pedidos.' }, 500);
     }
 };
 
@@ -115,7 +128,7 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
 export const onRequestPost: PagesHandler<Env> = async (context) => {
     const { env, request } = context;
     const db = getDB(env);
-    const clientIp = request.headers.get("CF-Connecting-IP") || "unknown";
+    const clientIp = request.headers.get('CF-Connecting-IP') || 'unknown';
     const { id: tenantId, tenant } = await resolveTenant(request, db, env.KV);
 
     // Fix #5: Idempotencia — si viene Idempotency-Key, verificar si ya existe un pedido reciente con esa clave
@@ -137,7 +150,7 @@ export const onRequestPost: PagesHandler<Env> = async (context) => {
         const rawData = await request.json();
         const result = createOrderSchema.safeParse(rawData);
         if (!result.success) {
-            return jsonResponse({ error: "Datos inválidos", details: result.error.issues }, 400);
+            return jsonResponse({ error: 'Datos inválidos', details: result.error.issues }, 400);
         }
 
         const data = result.data;
@@ -163,7 +176,7 @@ export const onRequestPost: PagesHandler<Env> = async (context) => {
             template: data.template,
             couponCode: data.couponCode,
             clientRate: data.bcvRate ?? undefined,
-            items: data.items
+            items: data.items,
         });
 
         if (!createRes.ok) {
@@ -180,35 +193,41 @@ export const onRequestPost: PagesHandler<Env> = async (context) => {
         }
 
         // Despacho asíncrono de webhook si está configurado (SRP fix #9)
-        dispatchWebhookIfConfigured(env.WEBHOOK_URL, env.WEBHOOK_SECRET, {
-            event: 'new_order_created',
-            orderId: orderData.orderId,
-            tenantId,
-            clientName: data.clientName,
-            totalPrice: orderData.totalPrice,
-            totalBs: orderData.totalBs,
-            discountAmount: orderData.discountAmount,
-            appliedCoupon: orderData.appliedCoupon,
-        }, context.waitUntil?.bind(context));
+        dispatchWebhookIfConfigured(
+            env.WEBHOOK_URL,
+            env.WEBHOOK_SECRET,
+            {
+                event: 'new_order_created',
+                orderId: orderData.orderId,
+                tenantId,
+                clientName: data.clientName,
+                totalPrice: orderData.totalPrice,
+                totalBs: orderData.totalBs,
+                discountAmount: orderData.discountAmount,
+                appliedCoupon: orderData.appliedCoupon,
+            },
+            context.waitUntil?.bind(context),
+        );
 
-        return jsonResponse({
-            success: true,
-            orderId: orderData.orderId,
-            totalItems: orderData.totalItems,
-            itemsTotal: orderData.itemsTotal,
-            discountAmount: orderData.discountAmount,
-            appliedCoupon: orderData.appliedCoupon,
-            totalPrice: orderData.totalPrice,
-            totalBs: orderData.totalBs,
-            bcvRate: orderData.bcvRate
-        }, 201);
-
+        return jsonResponse(
+            {
+                success: true,
+                orderId: orderData.orderId,
+                totalItems: orderData.totalItems,
+                itemsTotal: orderData.itemsTotal,
+                discountAmount: orderData.discountAmount,
+                appliedCoupon: orderData.appliedCoupon,
+                totalPrice: orderData.totalPrice,
+                totalBs: orderData.totalBs,
+                bcvRate: orderData.bcvRate,
+            },
+            201,
+        );
     } catch (err) {
-        console.error("Error en POST /api/orders:", err);
-        return jsonResponse({ error: "Error interno al procesar pedido." }, 500);
+        console.error('Error en POST /api/orders:', err);
+        return jsonResponse({ error: 'Error interno al procesar pedido.' }, 500);
     }
 };
-
 
 /**
  * PUT /api/orders - Actualización de estado de pedido (Admin / Staff)
@@ -224,7 +243,7 @@ export const onRequestPut: PagesHandler<Env> = async (context) => {
         const bodyJson = await context.request.json();
         const parseResult = updateOrderStatusSchema.safeParse(bodyJson);
         if (!parseResult.success) {
-            return jsonResponse({ error: "Datos de estado inválidos", details: parseResult.error.issues }, 400);
+            return jsonResponse({ error: 'Datos de estado inválidos', details: parseResult.error.issues }, 400);
         }
 
         const { id, status, paymentMethod, paymentAmount, note } = parseResult.data;
@@ -237,7 +256,7 @@ export const onRequestPut: PagesHandler<Env> = async (context) => {
             user.username,
             note ?? undefined,
             paymentMethod ?? undefined,
-            (paymentAmount !== undefined && paymentAmount !== null) ? Number(paymentAmount) : undefined
+            paymentAmount !== undefined && paymentAmount !== null ? Number(paymentAmount) : undefined,
         );
 
         if (!updateRes.ok) {
@@ -245,12 +264,17 @@ export const onRequestPut: PagesHandler<Env> = async (context) => {
         }
 
         // Despacho asíncrono de webhook si está configurado (SRP fix #9)
-        dispatchWebhookIfConfigured(env.WEBHOOK_URL, env.WEBHOOK_SECRET, {
-            event: 'order_status_updated',
-            orderId: id,
-            newStatus: status,
-            tenantId,
-        }, context.waitUntil?.bind(context));
+        dispatchWebhookIfConfigured(
+            env.WEBHOOK_URL,
+            env.WEBHOOK_SECRET,
+            {
+                event: 'order_status_updated',
+                orderId: id,
+                newStatus: status,
+                tenantId,
+            },
+            context.waitUntil?.bind(context),
+        );
 
         // Fix #18: Notificación por correo electrónico automática si el cliente proporcionó email
         const orderData = updateRes.data.order;
@@ -264,22 +288,20 @@ export const onRequestPut: PagesHandler<Env> = async (context) => {
                     newStatus: status,
                     totalPrice: orderData.total_price,
                     totalBs: orderData.total_bs,
-                    note: note ?? undefined
-                }).catch(e => console.error("Error al enviar email de estado de pedido:", e))
+                    note: note ?? undefined,
+                }).catch((e) => console.error('Error al enviar email de estado de pedido:', e)),
             );
         }
 
         return jsonResponse({
             success: true,
-            whatsappNotificationUrl: updateRes.data.whatsappNotificationUrl
+            whatsappNotificationUrl: updateRes.data.whatsappNotificationUrl,
         });
-
     } catch (err) {
-        console.error("Error en PUT /api/orders:", err);
-        return jsonResponse({ error: "Error interno al actualizar pedido." }, 500);
+        console.error('Error en PUT /api/orders:', err);
+        return jsonResponse({ error: 'Error interno al actualizar pedido.' }, 500);
     }
 };
-
 
 /**
  * PATCH /api/orders - Alias para actualizar estado
@@ -296,8 +318,8 @@ export const onRequestDelete: PagesHandler<Env> = async (context) => {
     const { tenantId } = guard;
 
     try {
-        const id = new URL(context.request.url).searchParams.get("id");
-        if (!id) return jsonResponse({ error: "ID requerido." }, 400);
+        const id = new URL(context.request.url).searchParams.get('id');
+        if (!id) return jsonResponse({ error: 'ID requerido.' }, 400);
 
         const orderService = new OrderService(getDB(context.env));
         const deleteRes = await orderService.deleteOrder(id, tenantId);
@@ -308,8 +330,7 @@ export const onRequestDelete: PagesHandler<Env> = async (context) => {
 
         return jsonResponse({ success: true });
     } catch (err) {
-        console.error("Error en DELETE /api/orders:", err);
-        return jsonResponse({ error: "Error interno al eliminar pedido." }, 500);
+        console.error('Error en DELETE /api/orders:', err);
+        return jsonResponse({ error: 'Error interno al eliminar pedido.' }, 500);
     }
 };
-

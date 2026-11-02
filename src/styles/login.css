@@ -1,85 +1,154 @@
 /* Ventrina Login — Identidad: Violet × Amber */
-@import './tokens.css';
+@import "./tokens.css";
 
 :root {
-  --primary:        var(--color-primary);
-  --accent:         var(--color-accent);
-  --card-bg:        var(--light-bg-card);
-  --border-color:   var(--light-border);
-  --text-primary:   var(--light-text-heading);
-  --text-secondary: var(--light-text-muted);
+    --primary: var(--color-primary);
+    --accent: var(--color-accent);
+    --card-bg: var(--light-bg-card);
+    --border-color: var(--light-border);
+    --text-primary: var(--light-text-heading);
+    --text-secondary: var(--light-text-muted);
 }
 body {
-  font-family: var(--font-body);
-  background: var(--light-bg);
-  background-image: var(--grad-bg);
-  background-attachment: fixed;
-  color: var(--text-primary);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
+    font-family: var(--font-body);
+    background: var(--light-bg);
+    background-image: var(--grad-bg);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
 }
 .login-card {
-  background: var(--light-bg-card);
-  border: 1px solid var(--light-border);
-  border-radius: 28px;
-  padding: 3rem 2.5rem;
-  width: 100%;
-  max-width: 440px;
-  box-shadow: var(--light-shadow-lg);
-  text-align: center;
+    background: var(--light-bg-card);
+    border: 1px solid var(--light-border);
+    border-radius: 28px;
+    padding: 3rem 2.5rem;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: var(--light-shadow-lg);
+    text-align: center;
 }
-.logo { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; }
-.logo span { color: var(--text-primary); }
-.logo span span { color: var(--primary); }
-.subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.25rem; }
-.store-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.8rem; border-radius: 999px; background: var(--light-bg-elevated); border: 1px solid var(--light-border); font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 1.75rem; }
-.store-badge strong { color: var(--accent); }
-.error-msg { background: var(--color-danger-bg); border: 1px solid rgba(239,68,68,0.3); color: var(--color-danger); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 0.88rem; }
-.field { margin-bottom: 1.25rem; text-align: left; }
-.field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem; }
+.logo {
+    font-family: "Outfit", sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+.logo span {
+    color: var(--text-primary);
+}
+.logo span span {
+    color: var(--primary);
+}
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+}
+.store-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    background: var(--light-bg-elevated);
+    border: 1px solid var(--light-border);
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.75rem;
+}
+.store-badge strong {
+    color: var(--accent);
+}
+.error-msg {
+    background: var(--color-danger-bg);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: var(--color-danger);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.88rem;
+}
+.field {
+    margin-bottom: 1.25rem;
+    text-align: left;
+}
+.field label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+}
 .field input {
-  width: 100%; padding: 0.85rem 1rem;
-  background: var(--light-bg);
-  border: 1px solid var(--light-border);
-  border-radius: 12px; color: var(--text-primary);
-  font-size: 0.95rem; outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: var(--light-bg);
+    border: 1px solid var(--light-border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    outline: none;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
 }
-.field input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--color-primary-light); }
+.field input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+}
 .login-btn {
-  width: 100%; padding: 0.9rem;
-  background: var(--grad-primary);
-  color: white; border: none; border-radius: 12px;
-  font-size: 1rem; font-weight: 600; cursor: pointer;
-  box-shadow: 0 4px 15px var(--color-primary-glow);
-  transition: opacity 0.2s, transform 0.2s;
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--grad-primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px var(--color-primary-glow);
+    transition:
+        opacity 0.2s,
+        transform 0.2s;
 }
-.login-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-.login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.login-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+.login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
 
 .hidden {
-  display: none !important;
+    display: none;
 }
 
 .login-footer-links {
-  margin-top: 1.5rem;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .login-footer-links a {
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
 }
 
 .login-footer-links a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }

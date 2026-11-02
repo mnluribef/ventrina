@@ -1,7 +1,7 @@
 // tests/result.test.ts
 // Tests unitarios para el tipo y utilidades Result<T, E> (M-03)
-import { describe, it, expect } from 'vitest';
-import { ok, err, isOk, isErr, unwrap, unwrapOr, mapOk, type Result } from '../functions/api/_result';
+import { describe, expect, it } from 'vitest';
+import { err, isErr, isOk, mapOk, ok, type Result, unwrap, unwrapOr } from '../functions/api/_result';
 
 describe('M-03: Result<T, E> Pattern (_result.ts)', () => {
     it('creates an Ok result with data', () => {

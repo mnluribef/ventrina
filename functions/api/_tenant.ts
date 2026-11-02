@@ -1,8 +1,8 @@
 // functions/api/_tenant.ts
 // Middleware multi-tenant: resuelve el tenant desde la request y lo inyecta en context.tenant
 import type { D1Database, KVNamespace } from '@cloudflare/workers-types';
-import { parseCookies } from './_helpers';
 import type { TenantResolution, TenantRow } from '../types';
+import { parseCookies } from './_helpers';
 
 export const SYSTEM_PATHS = new Set([
     '',
@@ -25,7 +25,7 @@ export const SYSTEM_PATHS = new Set([
     'ai-catalog.json',
     'favicon.ico',
     'favicon.svg',
-    '.well-known'
+    '.well-known',
 ]);
 export const SYSTEM_SUBDOMAINS = new Set(['www', 'app', 'admin', 'demo', 'api']);
 
@@ -152,14 +152,15 @@ export async function resolveTenant(request: Request, db: D1Database, kv?: KVNam
 
     // 4. Cookie de Sesión (solo para llamadas administrativas sin host específico, ej: desde /admin en dominio raíz)
     const cookies = parseCookies(request.headers.get('Cookie'));
-    const sessionToken = cookies['ventrina_session'];
+    const sessionToken = cookies.ventrina_session;
     if (sessionToken && db) {
         try {
             const now = Math.floor(Date.now() / 1000);
-            const sessionRow = await db.prepare(
-                'SELECT tenant_id FROM sessions WHERE token = ? AND expires_at > ?'
-            ).bind(sessionToken, now).first<{ tenant_id: string }>();
-            if (sessionRow && sessionRow.tenant_id) {
+            const sessionRow = await db
+                .prepare('SELECT tenant_id FROM sessions WHERE token = ? AND expires_at > ?')
+                .bind(sessionToken, now)
+                .first<{ tenant_id: string }>();
+            if (sessionRow?.tenant_id) {
                 const tenant = await getTenantByIdCached(db, sessionRow.tenant_id, kv);
                 if (tenant) return { id: sessionRow.tenant_id, tenant };
                 if (sessionRow.tenant_id === 'demo') {
@@ -183,9 +184,7 @@ export async function resolveTenant(request: Request, db: D1Database, kv?: KVNam
  */
 async function getTenantById(db: D1Database, tenantId: string): Promise<TenantRow | null> {
     try {
-        return await db.prepare(
-            'SELECT * FROM tenants WHERE id = ? AND active = 1'
-        ).bind(tenantId).first<TenantRow>();
+        return await db.prepare('SELECT * FROM tenants WHERE id = ? AND active = 1').bind(tenantId).first<TenantRow>();
     } catch {
         return null;
     }
@@ -195,9 +194,9 @@ async function getTenantById(db: D1Database, tenantId: string): Promise<TenantRo
  * E-04: TTL de caché progresivo según el plan del tenant (en segundos)
  */
 export const TTL_BY_PLAN: Record<string, number> = {
-    basic: 60,       // 1 minuto
-    pro: 300,        // 5 minutos
-    enterprise: 1800 // 30 minutos
+    basic: 60, // 1 minuto
+    pro: 300, // 5 minutos
+    enterprise: 1800, // 30 minutos
 };
 
 export function getTenantCacheTtl(plan?: string | null): number {
@@ -219,12 +218,16 @@ export function getDomainKvKey(domain: string): string {
 /**
  * Obtiene un tenant de la BD o de Cloudflare KV por su ID con TTL progresivo según plan (P-01, E-04, E-06)
  */
-export async function getTenantByIdCached(db: D1Database, tenantId: string, kv?: KVNamespace): Promise<TenantRow | null> {
+export async function getTenantByIdCached(
+    db: D1Database,
+    tenantId: string,
+    kv?: KVNamespace,
+): Promise<TenantRow | null> {
     const primaryKey = getTenantKvKey(tenantId);
     if (kv) {
         try {
             // Intentar con prefijo v1 estructurado; fallback a clave legacy para transición suave
-            const cached = await kv.get(primaryKey, 'json') || await kv.get(`tenant:${tenantId}`, 'json');
+            const cached = (await kv.get(primaryKey, 'json')) || (await kv.get(`tenant:${tenantId}`, 'json'));
             if (cached) return cached as TenantRow;
         } catch {}
     }
@@ -244,9 +247,10 @@ export async function getTenantByIdCached(db: D1Database, tenantId: string, kv?:
  */
 async function getTenantByDomain(db: D1Database, domain: string): Promise<TenantRow | null> {
     try {
-        return await db.prepare(
-            'SELECT * FROM tenants WHERE domain = ? AND active = 1'
-        ).bind(domain).first<TenantRow>();
+        return await db
+            .prepare('SELECT * FROM tenants WHERE domain = ? AND active = 1')
+            .bind(domain)
+            .first<TenantRow>();
     } catch {
         return null;
     }
@@ -255,11 +259,15 @@ async function getTenantByDomain(db: D1Database, domain: string): Promise<Tenant
 /**
  * Obtiene un tenant por dominio con caché Cloudflare KV con TTL progresivo (P-01, E-04, E-06)
  */
-export async function getTenantByDomainCached(db: D1Database, domain: string, kv?: KVNamespace): Promise<TenantRow | null> {
+export async function getTenantByDomainCached(
+    db: D1Database,
+    domain: string,
+    kv?: KVNamespace,
+): Promise<TenantRow | null> {
     const primaryKey = getDomainKvKey(domain);
     if (kv) {
         try {
-            const cached = await kv.get(primaryKey, 'json') || await kv.get(`domain:${domain}`, 'json');
+            const cached = (await kv.get(primaryKey, 'json')) || (await kv.get(`domain:${domain}`, 'json'));
             if (cached) return cached as TenantRow;
         } catch {}
     }
@@ -277,13 +285,14 @@ export async function getTenantByDomainCached(db: D1Database, domain: string, kv
 /**
  * Invalida la caché de un tenant en Cloudflare KV (limpia keys versionadas y legacy) (E-06)
  */
-export async function invalidateTenantCache(kv: KVNamespace | undefined, tenantId: string, domain?: string | null): Promise<void> {
+export async function invalidateTenantCache(
+    kv: KVNamespace | undefined,
+    tenantId: string,
+    domain?: string | null,
+): Promise<void> {
     if (!kv) return;
     try {
-        const promises = [
-            kv.delete(getTenantKvKey(tenantId)),
-            kv.delete(`tenant:${tenantId}`)
-        ];
+        const promises = [kv.delete(getTenantKvKey(tenantId)), kv.delete(`tenant:${tenantId}`)];
         if (domain) {
             promises.push(kv.delete(getDomainKvKey(domain)));
             promises.push(kv.delete(`domain:${domain}`));
@@ -298,7 +307,7 @@ export async function invalidateTenantCache(kv: KVNamespace | undefined, tenantI
 export function tenantNotFoundResponse(): Response {
     return new Response(JSON.stringify({ error: 'Tenant no encontrado o suspendido.' }), {
         status: 404,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
     });
 }
 

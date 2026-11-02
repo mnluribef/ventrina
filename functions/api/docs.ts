@@ -20,8 +20,8 @@ export const onRequestGet: PagesHandler<Env> = async () => {
 
     return new Response(html, {
         headers: {
-            "Content-Type": "text/html; charset=utf-8",
-            "Cache-Control": "public, max-age=3600"
-        }
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'public, max-age=3600',
+        },
     });
 };

@@ -1,10 +1,10 @@
 // tests/phase2.test.ts
 // Tests unitarios para las mejoras avanzadas de la Fase 2
-import { describe, it, expect } from 'vitest';
-import { getAllowedOrigin, buildCorsHeaders } from '../functions/api/_middleware';
+import { describe, expect, it } from 'vitest';
 import { validateCsrf } from '../functions/api/_auth';
-import { strongPasswordSchema } from '../functions/api/auth';
 import { problemResponse } from '../functions/api/_helpers';
+import { buildCorsHeaders, getAllowedOrigin } from '../functions/api/_middleware';
+import { strongPasswordSchema } from '../functions/api/auth';
 import { openApiSpec } from '../functions/api/openapi';
 
 describe('Phase 2 Improvements Unit Tests', () => {
@@ -33,7 +33,7 @@ describe('Phase 2 Improvements Unit Tests', () => {
             const headers = buildCorsHeaders('https://ventrina.app');
             expect(headers['Access-Control-Allow-Origin']).toBe('https://ventrina.app');
             expect(headers['Access-Control-Allow-Credentials']).toBe('true');
-            expect(headers['Vary']).toBe('Origin');
+            expect(headers.Vary).toBe('Origin');
             expect(headers['Access-Control-Expose-Headers']).toContain('X-Request-Id');
             expect(headers['Access-Control-Expose-Headers']).toContain('X-Response-Time');
         });
@@ -42,13 +42,14 @@ describe('Phase 2 Improvements Unit Tests', () => {
             const { onRequest } = await import('../functions/api/_middleware');
             const mockContext: any = {
                 request: new Request('https://ventrina.app/api/products', {
-                    headers: { 'Origin': 'https://ventrina.app' }
+                    headers: { Origin: 'https://ventrina.app' },
                 }),
-                next: async () => new Response(JSON.stringify({ ok: true }), {
-                    status: 200,
-                    headers: { 'Content-Type': 'application/json' }
-                }),
-                data: {}
+                next: async () =>
+                    new Response(JSON.stringify({ ok: true }), {
+                        status: 200,
+                        headers: { 'Content-Type': 'application/json' },
+                    }),
+                data: {},
             };
 
             const response = await onRequest(mockContext);
@@ -72,7 +73,7 @@ describe('Phase 2 Improvements Unit Tests', () => {
         it('allows mutating requests with custom X-Requested-With header', () => {
             const postReq = new Request('https://ventrina.app/api/orders', {
                 method: 'POST',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
             });
             expect(validateCsrf(postReq)).toBe(true);
         });
@@ -80,13 +81,13 @@ describe('Phase 2 Improvements Unit Tests', () => {
         it('allows mutating requests with same origin or trusted host', () => {
             const postReq = new Request('https://fogon.ventrina.app/api/orders', {
                 method: 'POST',
-                headers: { 'Origin': 'https://fogon.ventrina.app' }
+                headers: { Origin: 'https://fogon.ventrina.app' },
             });
             expect(validateCsrf(postReq)).toBe(true);
 
             const customDomainReq = new Request('https://mitienda.com/api/settings', {
                 method: 'PUT',
-                headers: { 'Origin': 'https://mitienda.com' }
+                headers: { Origin: 'https://mitienda.com' },
             });
             expect(validateCsrf(customDomainReq, 'mitienda.com')).toBe(true);
         });
@@ -94,7 +95,7 @@ describe('Phase 2 Improvements Unit Tests', () => {
         it('rejects cross-origin mutations from untrusted origins', () => {
             const postReq = new Request('https://fogon.ventrina.app/api/orders', {
                 method: 'POST',
-                headers: { 'Origin': 'https://attacker.org' }
+                headers: { Origin: 'https://attacker.org' },
             });
             expect(validateCsrf(postReq, 'fogon.ventrina.app')).toBe(false);
         });
@@ -129,13 +130,13 @@ describe('Phase 2 Improvements Unit Tests', () => {
                 type: 'https://ventrina.app/errors/rate-limit-exceeded',
                 title: 'Límite de subida alcanzado',
                 status: 429,
-                detail: 'Máximo 10 comprobantes por hora.'
+                detail: 'Máximo 10 comprobantes por hora.',
             });
 
             expect(response.status).toBe(429);
             expect(response.headers.get('Content-Type')).toBe('application/problem+json');
 
-            const body = await response.json() as any;
+            const body = (await response.json()) as any;
             expect(body.type).toBe('https://ventrina.app/errors/rate-limit-exceeded');
             expect(body.title).toBe('Límite de subida alcanzado');
             expect(body.status).toBe(429);

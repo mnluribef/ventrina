@@ -23,11 +23,11 @@ export interface WebhookConfig {
 export async function dispatchWebhook(
     config: WebhookConfig,
     payload: WebhookPayload,
-    waitUntil?: (promise: Promise<unknown>) => void
+    waitUntil?: (promise: Promise<unknown>) => void,
 ): Promise<void> {
     const body = JSON.stringify({
         ...payload,
-        timestamp: payload.timestamp ?? new Date().toISOString()
+        timestamp: payload.timestamp ?? new Date().toISOString(),
     });
 
     let signature: string;
@@ -42,10 +42,10 @@ export async function dispatchWebhook(
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-Ventrina-Signature': `sha256=${signature}`
+            'X-Ventrina-Signature': `sha256=${signature}`,
         },
-        body
-    }).catch(err => console.error('[WebhookService] Error al enviar webhook:', err));
+        body,
+    }).catch((err) => console.error('[WebhookService] Error al enviar webhook:', err));
 
     if (waitUntil) {
         waitUntil(sendRequest);
@@ -62,13 +62,14 @@ export function dispatchWebhookIfConfigured(
     webhookUrl: string | undefined,
     webhookSecret: string | undefined,
     payload: WebhookPayload,
-    waitUntil?: (promise: Promise<unknown>) => void
+    waitUntil?: (promise: Promise<unknown>) => void,
 ): boolean {
     if (!webhookUrl || !webhookSecret) return false;
 
     // No await — se despacha en background
-    dispatchWebhook({ url: webhookUrl, secret: webhookSecret }, payload, waitUntil)
-        .catch(err => console.error('[WebhookService] Fallo inesperado:', err));
+    dispatchWebhook({ url: webhookUrl, secret: webhookSecret }, payload, waitUntil).catch((err) =>
+        console.error('[WebhookService] Fallo inesperado:', err),
+    );
 
     return true;
 }

@@ -1,11 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import {
-    hashPasswordPBKDF2,
-    hashSHA256,
-    generateSalt,
-    hexToBytes,
-    bytesToHex
-} from '../functions/api/_auth';
+import { describe, expect, it } from 'vitest';
+import { bytesToHex, generateSalt, hashPasswordPBKDF2, hashSHA256, hexToBytes } from '../functions/api/_auth';
 
 describe('Authentication & Crypto Logic (_auth.ts)', () => {
     it('converts bytes to hex and back accurately', () => {
@@ -28,10 +22,10 @@ describe('Authentication & Crypto Logic (_auth.ts)', () => {
     it('hashes passwords directly with PBKDF2 (Fix #5)', async () => {
         const salt = generateSalt();
         const password = 'mySecurePassword123!';
-        
+
         const hash1 = await hashPasswordPBKDF2(password, salt);
         const hash2 = await hashPasswordPBKDF2(password, salt);
-        
+
         expect(hash1).toBe(hash2);
         expect(hash1.length).toBe(64); // 256 bits = 32 bytes = 64 hex chars
     });
@@ -39,11 +33,11 @@ describe('Authentication & Crypto Logic (_auth.ts)', () => {
     it('demonstrates distinct hash outputs between direct PBKDF2 and legacy pre-hashed SHA256', async () => {
         const salt = generateSalt();
         const password = 'mySecurePassword123!';
-        
+
         const directHash = await hashPasswordPBKDF2(password, salt);
         const preSha = await hashSHA256(password);
         const legacyHash = await hashPasswordPBKDF2(preSha, salt);
-        
+
         expect(directHash).not.toBe(legacyHash);
     });
 });

@@ -1,33 +1,31 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "ventrina",
-  "pages_build_output_dir": "./dist",
-  "compatibility_date": "2026-05-02",
-  "observability": {
-    "enabled": true
-  },
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "ventrina-db",
-      "database_id": "6c3ffce2-5fa5-4821-9c63-52d01119b926",
-      "migrations_dir": "migrations"
-    }
-  ],
-  "kv_namespaces": [
-    {
-      "binding": "KV",
-      "id": "REPLACE_WITH_YOUR_KV_NAMESPACE_ID",
-      "preview_id": "REPLACE_WITH_YOUR_KV_PREVIEW_ID"
-    }
-  ],
-  "r2_buckets": [
-    {
-      "binding": "STORAGE",
-      "bucket_name": "REPLACE_WITH_YOUR_R2_BUCKET_NAME"
-    }
-  ]
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "ventrina",
+    "pages_build_output_dir": "./dist",
+    "compatibility_date": "2026-05-02",
+    "observability": {
+        "enabled": true
+    },
+    "compatibility_flags": ["nodejs_compat"],
+    "d1_databases": [
+        {
+            "binding": "DB",
+            "database_name": "ventrina-db",
+            "database_id": "6c3ffce2-5fa5-4821-9c63-52d01119b926",
+            "migrations_dir": "migrations"
+        }
+    ],
+    "kv_namespaces": [
+        {
+            "binding": "KV",
+            "id": "ventrina-kv-id",
+            "preview_id": "ventrina-kv-preview"
+        }
+    ],
+    "r2_buckets": [
+        {
+            "binding": "STORAGE",
+            "bucket_name": "ventrina-storage"
+        }
+    ]
 }

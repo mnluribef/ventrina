@@ -1,6 +1,6 @@
 // functions/types.ts
 // Tipos unificados para Cloudflare Pages Functions y bindings del backend
-import type { D1Database, R2Bucket, KVNamespace } from '@cloudflare/workers-types';
+import type { D1Database, KVNamespace, R2Bucket } from '@cloudflare/workers-types';
 
 export interface Env {
     DB: D1Database;
@@ -12,6 +12,8 @@ export interface Env {
     TURNSTILE_SECRET_KEY?: string;
     WEBHOOK_URL?: string;
     WEBHOOK_SECRET?: string;
+    WHATSAPP_VERIFY_TOKEN?: string;
+    WHATSAPP_APP_SECRET?: string;
     RESEND_API_KEY?: string;
     EMAIL_FROM?: string;
     ENVIRONMENT?: string;
@@ -47,16 +49,16 @@ export interface PaymentEnvConfig {
 
 export function extractPaymentConfig(env: Env): PaymentEnvConfig {
     return {
-        method: env.PAYMENT_METHOD || "Transferencia Bancaria / Pago Móvil",
-        bank: env.PAYMENT_BANK || "Banesco (0134)",
-        phone: env.PAYMENT_PHONE || "0412-4756191",
-        id: env.PAYMENT_ID || "J-50123984",
-        binancePay: env.PAYMENT_BINANCE || "pagos@ventrina.app",
-        binancePayId: env.PAYMENT_BINANCE_PAY_ID || "284719302",
-        binanceMerchant: env.PAYMENT_BINANCE_MERCHANT || "VentrinaSaaS",
-        binanceQr: env.PAYMENT_BINANCE_QR || "",
-        zelle: env.PAYMENT_ZELLE || "pagos@ventrina.app",
-        zelleTitular: env.PAYMENT_ZELLE_TITULAR || "Ventrina Software C.A."
+        method: env.PAYMENT_METHOD || 'Transferencia Bancaria / Pago Móvil',
+        bank: env.PAYMENT_BANK || 'Banesco (0134)',
+        phone: env.PAYMENT_PHONE || '0412-4756191',
+        id: env.PAYMENT_ID || 'J-50123984',
+        binancePay: env.PAYMENT_BINANCE || 'pagos@ventrina.app',
+        binancePayId: env.PAYMENT_BINANCE_PAY_ID || '284719302',
+        binanceMerchant: env.PAYMENT_BINANCE_MERCHANT || 'VentrinaSaaS',
+        binanceQr: env.PAYMENT_BINANCE_QR || '',
+        zelle: env.PAYMENT_ZELLE || 'pagos@ventrina.app',
+        zelleTitular: env.PAYMENT_ZELLE_TITULAR || 'Ventrina Software C.A.',
     };
 }
 
@@ -72,7 +74,7 @@ export interface PagesContext<E = Env, P extends string = string> {
 }
 
 export type PagesHandler<E = Env, P extends string = string> = (
-    context: PagesContext<E, P>
+    context: PagesContext<E, P>,
 ) => Response | Promise<Response>;
 
 /**
@@ -96,7 +98,7 @@ export interface AppContext<E = Env, P extends string = string> extends Omit<Pag
 }
 
 export type AppHandler<E = Env, P extends string = string> = (
-    context: AppContext<E, P>
+    context: AppContext<E, P>,
 ) => Response | Promise<Response>;
 
 export interface TenantRow {

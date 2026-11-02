@@ -1,14 +1,14 @@
-import type { StoreMetaConfig } from './types/catalog.types';
-import { ToastService } from './services/toast.service';
-import { ImageCompressionService } from './services/image.service';
-import { BcvCurrencyService } from './services/bcv.service';
-import { LocalStorageCartStorage } from './services/storage.service';
-import { CartService } from './services/cart.service';
-import { OrderService } from './services/order.service';
 import { CartUIController } from './controllers/cart.controller';
 import { CatalogController } from './controllers/catalog.controller';
-import { initScrollReveal } from './utils/reveal.util';
+import { BcvCurrencyService } from './services/bcv.service';
+import { CartService } from './services/cart.service';
+import { ImageCompressionService } from './services/image.service';
+import { OrderService } from './services/order.service';
+import { LocalStorageCartStorage } from './services/storage.service';
 import { syncStoreWithSettings } from './services/store-sync.service';
+import { ToastService } from './services/toast.service';
+import type { StoreMetaConfig } from './types/catalog.types';
+import { initScrollReveal } from './utils/reveal.util';
 
 function resolveActiveTenantId(): string | undefined {
     const storeMetaEl = document.getElementById('catalog-store-meta');
@@ -44,7 +44,19 @@ function resolveActiveTenantId(): string | undefined {
         if (candidate === 's' && pathParts.length > 1) {
             candidate = pathParts[1].toLowerCase();
         }
-        const SYSTEM_PATHS = new Set(['api', 'admin', 'login', 'register', 'precios', 'superadmin', 'demo', 'assets', '_astro', 'terminos', 'producto']);
+        const SYSTEM_PATHS = new Set([
+            'api',
+            'admin',
+            'login',
+            'register',
+            'precios',
+            'superadmin',
+            'demo',
+            'assets',
+            '_astro',
+            'terminos',
+            'producto',
+        ]);
         if (candidate && !SYSTEM_PATHS.has(candidate) && !candidate.includes('.')) {
             return candidate;
         }
@@ -57,7 +69,7 @@ export function createStoreConfig(): StoreMetaConfig {
     const storeMetaEl = document.getElementById('catalog-store-meta');
     const isDemo = Boolean(
         storeMetaEl?.dataset.isDemo === 'true' ||
-        (typeof window !== 'undefined' && window.location.pathname.startsWith('/demo/'))
+            (typeof window !== 'undefined' && window.location.pathname.startsWith('/demo/')),
     );
     const tenantId = isDemo ? 'demo' : resolveActiveTenantId();
     if (tenantId && tenantId !== 'demo') {
@@ -83,11 +95,7 @@ export function createStoreConfig(): StoreMetaConfig {
     };
 }
 
-export function applyFullTenantConfig(
-    cfg: any,
-    config: StoreMetaConfig,
-    cartController?: CartUIController
-): void {
+export function applyFullTenantConfig(cfg: any, config: StoreMetaConfig, cartController?: CartUIController): void {
     if (!cfg || config.isDemo) return;
 
     // Sincronizar DOM de textos, hero, catálogo, beneficios, testimonios, FAQs, footer
@@ -121,9 +129,22 @@ export function applyFullTenantConfig(
     if (cfg.storePrefix) config.storePrefix = cfg.storePrefix;
 
     // Actualizar datos de pago móvil en el DOM si fueron configurados
-    const pmAccounts = cfg.payment?.pagoMovilAccounts && Array.isArray(cfg.payment.pagoMovilAccounts) && cfg.payment.pagoMovilAccounts.length > 0
-        ? cfg.payment.pagoMovilAccounts
-        : (pm ? [{ banco: pm.banco || '', telefono: pm.telefono || '', cedula: pm.cedula || '', titular: pm.titular || '', isDefault: true }] : []);
+    const pmAccounts =
+        cfg.payment?.pagoMovilAccounts &&
+        Array.isArray(cfg.payment.pagoMovilAccounts) &&
+        cfg.payment.pagoMovilAccounts.length > 0
+            ? cfg.payment.pagoMovilAccounts
+            : pm
+              ? [
+                    {
+                        banco: pm.banco || '',
+                        telefono: pm.telefono || '',
+                        cedula: pm.cedula || '',
+                        titular: pm.titular || '',
+                        isDefault: true,
+                    },
+                ]
+              : [];
 
     if (cartController && pmAccounts.length > 0) {
         cartController.setPagoMovilAccounts(pmAccounts);
@@ -190,10 +211,10 @@ export function initCatalogApp(): void {
     // Hidratación instantánea si fue inyectada por el servidor
     const injectedConfigEl = document.getElementById('injected-tenant-config');
     let preloadedConfig: any = null;
-    if (injectedConfigEl && injectedConfigEl.textContent) {
+    if (injectedConfigEl?.textContent) {
         try {
             preloadedConfig = JSON.parse(injectedConfigEl.textContent);
-        } catch (_) { }
+        } catch (_) {}
     }
 
     // Services (Dependency Inversion & Single Responsibility)
@@ -211,15 +232,10 @@ export function initCatalogApp(): void {
         orderService,
         toastService,
         imageService,
-        config
+        config,
     );
 
-    const catalogController = new CatalogController(
-        cartService,
-        currencyService,
-        toastService,
-        config
-    );
+    const catalogController = new CatalogController(cartService, currencyService, toastService, config);
 
     // Aplicar configuración prehidratada antes del primer render
     if (preloadedConfig) {
@@ -236,15 +252,18 @@ export function initCatalogApp(): void {
     if (!config.isDemo && config.tenantId && config.tenantId !== 'demo') {
         const settingsUrl = `/api/settings?tenant=${encodeURIComponent(config.tenantId)}`;
         const reqHeaders: Record<string, string> = {
-            'X-Tenant-Id': config.tenantId
+            'X-Tenant-Id': config.tenantId,
         };
 
-        fetch(settingsUrl, { headers: reqHeaders }).then(res => res.json() as Promise<any>).then((data: any) => {
-            if (data.success && data.tenant?.config) {
-                applyFullTenantConfig(data.tenant.config, config, cartController);
-            }
-        }).catch(() => {
-            // En caso de modo offline, conserva los valores por defecto
-        });
+        fetch(settingsUrl, { headers: reqHeaders })
+            .then((res) => res.json() as Promise<any>)
+            .then((data: any) => {
+                if (data.success && data.tenant?.config) {
+                    applyFullTenantConfig(data.tenant.config, config, cartController);
+                }
+            })
+            .catch(() => {
+                // En caso de modo offline, conserva los valores por defecto
+            });
     }
 }

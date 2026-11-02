@@ -8,10 +8,10 @@ export function normalizePhoneForWhatsApp(phone: string): string {
     const cleanPhone = phone.replace(/\D/g, '');
     if (!cleanPhone) return '';
     if (cleanPhone.startsWith('0')) {
-        return '58' + cleanPhone.slice(1);
+        return `58${cleanPhone.slice(1)}`;
     }
     if (cleanPhone.length === 10 && !cleanPhone.startsWith('58')) {
-        return '58' + cleanPhone;
+        return `58${cleanPhone}`;
     }
     return cleanPhone;
 }
@@ -37,9 +37,10 @@ export function buildOrderStatusWhatsAppUrl(order: OrderStatusNotificationData):
     if (order.status === 'en_produccion') {
         messageText = `¡Hola ${order.client_name}! 👩‍🍳 Tu pedido #${order.id} ya está en preparación. Te avisaremos apenas esté listo.`;
     } else if (order.status === 'listo_entrega') {
-        messageText = order.delivery_type === 'delivery'
-            ? `¡Hola ${order.client_name}! 🛵 Tu pedido #${order.id} ya está listo y va en camino a tu dirección: ${order.delivery_address || ''}.`
-            : `¡Hola ${order.client_name}! 🛍️ Tu pedido #${order.id} ya está listo para ser retirado en tienda.`;
+        messageText =
+            order.delivery_type === 'delivery'
+                ? `¡Hola ${order.client_name}! 🛵 Tu pedido #${order.id} ya está listo y va en camino a tu dirección: ${order.delivery_address || ''}.`
+                : `¡Hola ${order.client_name}! 🛍️ Tu pedido #${order.id} ya está listo para ser retirado en tienda.`;
     } else if (order.status === 'completado') {
         messageText = `¡Hola ${order.client_name}! 🎉 Tu pedido #${order.id} ha sido completado con éxito. ¡Muchas gracias por tu compra!`;
     } else if (order.status === 'cancelado') {

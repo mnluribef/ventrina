@@ -1,12 +1,12 @@
 // tests/email-service.test.ts
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-    generateWelcomeEmailHtml,
-    generateWelcomeEmailText,
-    sendWelcomeEmail,
     generateOrderStatusEmailHtml,
     generateOrderStatusEmailText,
-    sendOrderStatusEmail
+    generateWelcomeEmailHtml,
+    generateWelcomeEmailText,
+    sendOrderStatusEmail,
+    sendWelcomeEmail,
 } from '../functions/api/_services/email.service';
 import type { Env } from '../functions/types';
 
@@ -17,7 +17,7 @@ describe('Transactional Email Service & Welcome Template (email.service.ts)', ()
         tenantSlug: 'fogon',
         template: 'restaurant',
         storeUrl: 'https://fogon.ventrina.app',
-        adminUrl: 'https://ventrina.app/admin?tenant=fogon'
+        adminUrl: 'https://ventrina.app/admin?tenant=fogon',
     };
 
     describe('generateWelcomeEmailHtml', () => {
@@ -67,19 +67,21 @@ describe('Transactional Email Service & Welcome Template (email.service.ts)', ()
             expect(result.mocked).toBe(true);
             expect(result.messageId).toContain('simulated-');
             expect(consoleSpy).toHaveBeenCalledWith(
-                expect.stringContaining('[EmailService] Clave RESEND_API_KEY no configurada. Simulando envío de bienvenida a: owner@elrestaurante.com')
+                expect.stringContaining(
+                    '[EmailService] Clave RESEND_API_KEY no configurada. Simulando envío de bienvenida a: owner@elrestaurante.com',
+                ),
             );
         });
 
         it('sends email via Resend API when RESEND_API_KEY is configured', async () => {
             const mockEnv = {
                 RESEND_API_KEY: 're_test_123456',
-                EMAIL_FROM: 'Ventrina <hola@ventrina.app>'
+                EMAIL_FROM: 'Ventrina <hola@ventrina.app>',
             } as Env;
 
-            const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-                new Response(JSON.stringify({ id: 'msg_resend_98765' }), { status: 200 })
-            );
+            const fetchSpy = vi
+                .spyOn(globalThis, 'fetch')
+                .mockResolvedValue(new Response(JSON.stringify({ id: 'msg_resend_98765' }), { status: 200 }));
 
             const result = await sendWelcomeEmail(mockEnv, sampleData);
             expect(result.success).toBe(true);
@@ -89,20 +91,18 @@ describe('Transactional Email Service & Welcome Template (email.service.ts)', ()
                 expect.objectContaining({
                     method: 'POST',
                     headers: expect.objectContaining({
-                        Authorization: 'Bearer re_test_123456'
-                    })
-                })
+                        Authorization: 'Bearer re_test_123456',
+                    }),
+                }),
             );
         });
 
         it('handles Resend API error responses gracefully without crashing', async () => {
             const mockEnv = {
-                RESEND_API_KEY: 're_invalid_key'
+                RESEND_API_KEY: 're_invalid_key',
             } as Env;
 
-            vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-                new Response('Invalid API key', { status: 401 })
-            );
+            vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('Invalid API key', { status: 401 }));
 
             const result = await sendWelcomeEmail(mockEnv, sampleData);
             expect(result.success).toBe(false);
@@ -117,9 +117,9 @@ describe('Transactional Email Service & Welcome Template (email.service.ts)', ()
             orderId: 'ord_998877',
             tenantName: 'El Fogón Criollo',
             newStatus: 'listo_entrega',
-            totalPrice: 25.50,
+            totalPrice: 25.5,
             totalBs: 930.75,
-            note: 'Retirar por ventanilla 2'
+            note: 'Retirar por ventanilla 2',
         };
 
         it('generates email HTML with order details, status label and totals without inline styles', () => {
@@ -152,7 +152,7 @@ describe('Transactional Email Service & Welcome Template (email.service.ts)', ()
         it('sends order email via Resend when API key is provided', async () => {
             const mockEnv = { RESEND_API_KEY: 're_valid_key' } as Env;
             vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-                new Response(JSON.stringify({ id: 'msg_order_12345' }), { status: 200 })
+                new Response(JSON.stringify({ id: 'msg_order_12345' }), { status: 200 }),
             );
 
             const res = await sendOrderStatusEmail(mockEnv, orderEmailData);

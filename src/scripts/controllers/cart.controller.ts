@@ -1,10 +1,10 @@
-import type { OrderSubmissionData, StoreMetaConfig } from '../types/catalog.types';
-import type { CartService } from '../services/cart.service';
+import { renderIconSvg } from '../../components/common/icons';
 import type { ICurrencyService } from '../services/bcv.service';
+import type { CartService } from '../services/cart.service';
+import type { IImageService } from '../services/image.service';
 import type { IOrderService } from '../services/order.service';
 import type { IToastService } from '../services/toast.service';
-import type { IImageService } from '../services/image.service';
-import { renderIconSvg } from '../../components/common/icons';
+import type { OrderSubmissionData, StoreMetaConfig } from '../types/catalog.types';
 
 export class CartUIController {
     private cartService: CartService;
@@ -23,7 +23,13 @@ export class CartUIController {
         discountValue: number;
         minOrderAmount: number;
     } | null = null;
-    private pagoMovilAccounts: Array<{ banco: string; telefono: string; cedula: string; titular?: string; isDefault?: boolean }> = [];
+    private pagoMovilAccounts: Array<{
+        banco: string;
+        telefono: string;
+        cedula: string;
+        titular?: string;
+        isDefault?: boolean;
+    }> = [];
 
     constructor(
         cartService: CartService,
@@ -31,7 +37,7 @@ export class CartUIController {
         orderService: IOrderService,
         toastService: IToastService,
         imageService: IImageService,
-        config: StoreMetaConfig
+        config: StoreMetaConfig,
     ) {
         this.cartService = cartService;
         this.currencyService = currencyService;
@@ -122,17 +128,14 @@ export class CartUIController {
                 const opts = Object.entries(item.options || {})
                     .filter(([, v]) => v)
                     .map(([k, v]) => {
-                        const labelText = item.optionLabels?.[k] || labels[k] || (k.charAt(0).toUpperCase() + k.slice(1));
+                        const labelText = item.optionLabels?.[k] || labels[k] || k.charAt(0).toUpperCase() + k.slice(1);
                         return `<span class="cart-item-option">${labelText}: ${v}</span>`;
                     })
                     .join('');
 
-                const unitPrice =
-                    item.price && item.price > 0 ? `$${item.price.toFixed(2)}` : 'A consultar';
+                const unitPrice = item.price && item.price > 0 ? `$${item.price.toFixed(2)}` : 'A consultar';
                 const subtotal =
-                    item.price && item.price > 0
-                        ? `$${(item.price * item.qty).toFixed(2)}`
-                        : 'A consultar';
+                    item.price && item.price > 0 ? `$${(item.price * item.qty).toFixed(2)}` : 'A consultar';
 
                 return `
           <div class="cart-item">
@@ -187,7 +190,7 @@ export class CartUIController {
         if (this.appliedCoupon) {
             if (subtotal >= this.appliedCoupon.minOrderAmount) {
                 if (this.appliedCoupon.discountType === 'percentage') {
-                    discount = Math.round((subtotal * (this.appliedCoupon.discountValue / 100)) * 100) / 100;
+                    discount = Math.round(subtotal * (this.appliedCoupon.discountValue / 100) * 100) / 100;
                 } else {
                     discount = Math.min(subtotal, this.appliedCoupon.discountValue);
                 }
@@ -225,9 +228,7 @@ export class CartUIController {
     }
 
     private getSelectedDeliveryType(): 'retiro' | 'delivery' {
-        const input = document.querySelector(
-            'input[name="delivery-type"]:checked'
-        ) as HTMLInputElement | null;
+        const input = document.querySelector('input[name="delivery-type"]:checked') as HTMLInputElement | null;
         return (input?.value as 'retiro' | 'delivery') || 'retiro';
     }
 
@@ -251,7 +252,8 @@ export class CartUIController {
     public goToStep(step: number): void {
         if (step === 2) {
             if (this.cartService.getItems().length === 0) {
-                return this.toastService.show('⚠️ Tu pedido está vacío');
+                this.toastService.show('⚠️ Tu pedido está vacío');
+                return;
             }
         }
 
@@ -400,7 +402,8 @@ export class CartUIController {
             if (infoZelle) infoZelle.style.display = method === 'zelle' ? 'block' : 'none';
             if (infoBinance) infoBinance.style.display = method === 'binance_pay' ? 'block' : 'none';
             if (refContainer) {
-                refContainer.style.display = (method === 'pago_movil' || method === 'zelle' || method === 'binance_pay') ? 'block' : 'none';
+                refContainer.style.display =
+                    method === 'pago_movil' || method === 'zelle' || method === 'binance_pay' ? 'block' : 'none';
             }
 
             const refInput = document.getElementById('payment-reference') as HTMLInputElement | null;
@@ -416,7 +419,7 @@ export class CartUIController {
         // Pago Movil account selection
         document.getElementById('pm-account-selector')?.addEventListener('change', (e) => {
             const idx = parseInt((e.target as HTMLSelectElement).value, 10);
-            if (!isNaN(idx) && this.pagoMovilAccounts[idx]) {
+            if (!Number.isNaN(idx) && this.pagoMovilAccounts[idx]) {
                 this.updateDisplayedPagoMovilAccount(this.pagoMovilAccounts[idx]);
             }
         });
@@ -428,15 +431,17 @@ export class CartUIController {
             const cedula = document.getElementById('pm-data-cedula')?.textContent?.trim() || '';
             const titular = document.getElementById('pm-data-titular')?.textContent?.trim() || '';
             const copyText = `Banco: ${banco}\nTeléfono: ${telefono}\nC.I/RIF: ${cedula}${titular ? `\nTitular: ${titular}` : ''}`;
-            
+
             try {
                 await navigator.clipboard.writeText(copyText);
                 const btn = e.currentTarget as HTMLButtonElement;
                 const originalHtml = btn.innerHTML;
                 btn.innerHTML = '✅ ¡Copiado!';
                 this.toastService.show('Datos copiados al portapapeles');
-                setTimeout(() => { btn.innerHTML = originalHtml; }, 2000);
-            } catch (err) {
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                }, 2000);
+            } catch (_err) {
                 this.toastService.show('❌ Error al copiar los datos');
             }
         });
@@ -446,15 +451,17 @@ export class CartUIController {
             const email = document.getElementById('zelle-data-email')?.textContent?.trim() || '';
             const titular = document.getElementById('zelle-data-titular')?.textContent?.trim() || '';
             const copyText = `Correo: ${email}\nTitular: ${titular}`;
-            
+
             try {
                 await navigator.clipboard.writeText(copyText);
                 const btn = e.currentTarget as HTMLButtonElement;
                 const originalHtml = btn.innerHTML;
                 btn.innerHTML = '✅ ¡Copiado!';
                 this.toastService.show('Datos copiados al portapapeles');
-                setTimeout(() => { btn.innerHTML = originalHtml; }, 2000);
-            } catch (err) {
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                }, 2000);
+            } catch (_err) {
                 this.toastService.show('❌ Error al copiar los datos');
             }
         });
@@ -464,15 +471,17 @@ export class CartUIController {
             const payId = document.getElementById('binance-data-payid')?.textContent?.trim() || '';
             const merchant = document.getElementById('binance-data-merchant')?.textContent?.trim() || '';
             const copyText = `Binance Pay ID: ${payId}${merchant ? `\nComercio: ${merchant}` : ''}`;
-            
+
             try {
                 await navigator.clipboard.writeText(copyText);
                 const btn = e.currentTarget as HTMLButtonElement;
                 const originalHtml = btn.innerHTML;
                 btn.innerHTML = '✅ ¡Copiado!';
                 this.toastService.show('Datos de Binance Pay copiados');
-                setTimeout(() => { btn.innerHTML = originalHtml; }, 2000);
-            } catch (err) {
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                }, 2000);
+            } catch (_err) {
                 this.toastService.show('❌ Error al copiar datos de Binance Pay');
             }
         });
@@ -515,9 +524,10 @@ export class CartUIController {
                 if (couponMsg) {
                     couponMsg.style.display = 'block';
                     couponMsg.style.color = '#22c55e';
-                    const desc = this.appliedCoupon.discountType === 'percentage'
-                        ? `${this.appliedCoupon.discountValue}%`
-                        : `$${this.appliedCoupon.discountValue.toFixed(2)}`;
+                    const desc =
+                        this.appliedCoupon.discountType === 'percentage'
+                            ? `${this.appliedCoupon.discountValue}%`
+                            : `$${this.appliedCoupon.discountValue.toFixed(2)}`;
                     couponMsg.textContent = `✓ ¡Cupón ${code} aplicado (${desc} de descuento)!`;
                 }
 
@@ -613,10 +623,14 @@ export class CartUIController {
             return;
         }
 
-        if ((paymentMethod === 'pago_movil' || paymentMethod === 'zelle' || paymentMethod === 'binance_pay') && !paymentReference) {
-            const msg = paymentMethod === 'binance_pay'
-                ? '⚠️ Ingresa el Order ID o ID de transacción de Binance Pay.'
-                : '⚠️ Ingresa el número de referencia del pago.';
+        if (
+            (paymentMethod === 'pago_movil' || paymentMethod === 'zelle' || paymentMethod === 'binance_pay') &&
+            !paymentReference
+        ) {
+            const msg =
+                paymentMethod === 'binance_pay'
+                    ? '⚠️ Ingresa el Order ID o ID de transacción de Binance Pay.'
+                    : '⚠️ Ingresa el número de referencia del pago.';
             this.toastService.show(msg);
             paymentRefInput?.focus();
             return;
@@ -701,7 +715,9 @@ export class CartUIController {
         }
     }
 
-    public setPagoMovilAccounts(accounts: Array<{ banco: string; telefono: string; cedula: string; titular?: string; isDefault?: boolean }>): void {
+    public setPagoMovilAccounts(
+        accounts: Array<{ banco: string; telefono: string; cedula: string; titular?: string; isDefault?: boolean }>,
+    ): void {
         this.pagoMovilAccounts = accounts || [];
         this.renderPagoMovilSelector();
     }
@@ -713,10 +729,12 @@ export class CartUIController {
 
         if (this.pagoMovilAccounts.length > 1) {
             selectorGroup.classList.remove('d-none');
-            selector.innerHTML = this.pagoMovilAccounts.map((acc, idx) => {
-                const label = `${acc.banco} — ${acc.telefono}${acc.titular ? ` (${acc.titular})` : ''}`;
-                return `<option value="${idx}" ${acc.isDefault ? 'selected' : ''}>${label}</option>`;
-            }).join('');
+            selector.innerHTML = this.pagoMovilAccounts
+                .map((acc, idx) => {
+                    const label = `${acc.banco} — ${acc.telefono}${acc.titular ? ` (${acc.titular})` : ''}`;
+                    return `<option value="${idx}" ${acc.isDefault ? 'selected' : ''}>${label}</option>`;
+                })
+                .join('');
 
             const selectedIdx = selector.selectedIndex >= 0 ? selector.selectedIndex : 0;
             this.updateDisplayedPagoMovilAccount(this.pagoMovilAccounts[selectedIdx]);
@@ -726,7 +744,12 @@ export class CartUIController {
         }
     }
 
-    private updateDisplayedPagoMovilAccount(acc?: { banco: string; telefono: string; cedula: string; titular?: string }): void {
+    private updateDisplayedPagoMovilAccount(acc?: {
+        banco: string;
+        telefono: string;
+        cedula: string;
+        titular?: string;
+    }): void {
         if (!acc) return;
         const b = document.getElementById('pm-data-banco');
         const t = document.getElementById('pm-data-telefono');

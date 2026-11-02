@@ -1,10 +1,10 @@
 // functions/api/tenants.ts
 // Gestión de Tenants - Super-Admin Only
 // Protegido por variable de entorno SUPERADMIN_KEY (no usa el sistema de sesiones de tenant)
-import { z } from "zod";
-import { getDB, jsonResponse } from "./_helpers";
-import { invalidateTenantCache } from "./_tenant";
+import { z } from 'zod';
 import type { Env, PagesHandler, TenantRow } from '../types';
+import { getDB, jsonResponse } from './_helpers';
+import { invalidateTenantCache } from './_tenant';
 
 /**
  * Comparación criptográficamente segura en tiempo constante.
@@ -40,8 +40,10 @@ function superadminRequired(): Response {
 }
 
 export const tenantSchema = z.object({
-    id: z.string()
-        .min(2).max(60)
+    id: z
+        .string()
+        .min(2)
+        .max(60)
         .regex(/^[a-z0-9-]+$/, 'Solo minúsculas, números y guiones'),
     name: z.string().min(2).max(100),
     plan: z.enum(['basic', 'pro', 'enterprise']).default('basic'),
@@ -59,7 +61,7 @@ export type TenantInput = z.infer<typeof tenantSchema>;
  */
 export const onRequestGet: PagesHandler<Env> = async (context) => {
     const { request, env } = context;
-    if (!await verifySuperAdmin(request, env)) return superadminRequired();
+    if (!(await verifySuperAdmin(request, env))) return superadminRequired();
 
     const db = getDB(env);
     const url = new URL(request.url);
@@ -72,9 +74,18 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
 
             // Stats del tenant
             const [products, orders, users] = await Promise.all([
-                db.prepare('SELECT COUNT(*) as total FROM products WHERE tenant_id = ?').bind(tenantId).first<{ total: number }>(),
-                db.prepare('SELECT COUNT(*) as total FROM orders WHERE tenant_id = ?').bind(tenantId).first<{ total: number }>(),
-                db.prepare('SELECT COUNT(*) as total FROM users WHERE tenant_id = ?').bind(tenantId).first<{ total: number }>(),
+                db
+                    .prepare('SELECT COUNT(*) as total FROM products WHERE tenant_id = ?')
+                    .bind(tenantId)
+                    .first<{ total: number }>(),
+                db
+                    .prepare('SELECT COUNT(*) as total FROM orders WHERE tenant_id = ?')
+                    .bind(tenantId)
+                    .first<{ total: number }>(),
+                db
+                    .prepare('SELECT COUNT(*) as total FROM users WHERE tenant_id = ?')
+                    .bind(tenantId)
+                    .first<{ total: number }>(),
             ]);
 
             return jsonResponse({
@@ -83,13 +94,15 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
                     products: products?.total ?? 0,
                     orders: orders?.total ?? 0,
                     users: users?.total ?? 0,
-                }
+                },
             });
         }
 
-        const { results: tenants } = await db.prepare(
-            'SELECT id, name, plan, template, domain, active, created_at FROM tenants ORDER BY created_at DESC'
-        ).all<TenantRow>();
+        const { results: tenants } = await db
+            .prepare(
+                'SELECT id, name, plan, template, domain, active, created_at FROM tenants ORDER BY created_at DESC',
+            )
+            .all<TenantRow>();
 
         return jsonResponse({ data: tenants });
     } catch (err) {
@@ -103,7 +116,7 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
  */
 export const onRequestPost: PagesHandler<Env> = async (context) => {
     const { request, env } = context;
-    if (!await verifySuperAdmin(request, env)) return superadminRequired();
+    if (!(await verifySuperAdmin(request, env))) return superadminRequired();
 
     const db = getDB(env);
 
@@ -130,21 +143,27 @@ export const onRequestPost: PagesHandler<Env> = async (context) => {
             return jsonResponse({ error: 'config_json no es un JSON válido.' }, 400);
         }
 
-        await db.prepare(
-            'INSERT INTO tenants (id, name, plan, template, config_json, domain, whatsapp, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-        ).bind(id, name, plan, template, config_json, domain || null, whatsapp || null, active).run();
+        await db
+            .prepare(
+                'INSERT INTO tenants (id, name, plan, template, config_json, domain, whatsapp, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            )
+            .bind(id, name, plan, template, config_json, domain || null, whatsapp || null, active)
+            .run();
 
         // Insertar settings base del tenant
-        await db.prepare(
-            "INSERT OR IGNORE INTO settings (key, value, tenant_id) VALUES ('bcv_rate', '36.50', ?)"
-        ).bind(id).run();
+        await db
+            .prepare("INSERT OR IGNORE INTO settings (key, value, tenant_id) VALUES ('bcv_rate', '36.50', ?)")
+            .bind(id)
+            .run();
 
-        return jsonResponse({
-            success: true,
-            message: `Tenant "${name}" creado exitosamente.`,
-            tenantId: id,
-        }, 201);
-
+        return jsonResponse(
+            {
+                success: true,
+                message: `Tenant "${name}" creado exitosamente.`,
+                tenantId: id,
+            },
+            201,
+        );
     } catch (err) {
         console.error('Error en POST /api/tenants:', err);
         return jsonResponse({ error: 'Error interno al crear tenant.' }, 500);
@@ -156,7 +175,7 @@ export const onRequestPost: PagesHandler<Env> = async (context) => {
  */
 export const onRequestPut: PagesHandler<Env> = async (context) => {
     const { request, env } = context;
-    if (!await verifySuperAdmin(request, env)) return superadminRequired();
+    if (!(await verifySuperAdmin(request, env))) return superadminRequired();
 
     const db = getDB(env);
 
@@ -175,15 +194,17 @@ export const onRequestPut: PagesHandler<Env> = async (context) => {
             return jsonResponse({ error: 'Tenant no encontrado.' }, 404);
         }
 
-        await db.prepare(
-            'UPDATE tenants SET name = ?, plan = ?, template = ?, config_json = ?, domain = ?, whatsapp = ?, active = ?, deleted_at = CASE WHEN ? = 0 THEN CURRENT_TIMESTAMP ELSE NULL END, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
-        ).bind(name, plan, template, config_json, domain || null, whatsapp || null, active, active, id).run();
+        await db
+            .prepare(
+                'UPDATE tenants SET name = ?, plan = ?, template = ?, config_json = ?, domain = ?, whatsapp = ?, active = ?, deleted_at = CASE WHEN ? = 0 THEN CURRENT_TIMESTAMP ELSE NULL END, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            )
+            .bind(name, plan, template, config_json, domain || null, whatsapp || null, active, active, id)
+            .run();
 
         // Fix #3: Invalidar caché KV tras actualizar tenant
         await invalidateTenantCache(env.KV, id, domain || undefined);
 
         return jsonResponse({ success: true, message: 'Tenant actualizado.' });
-
     } catch (err) {
         console.error('Error en PUT /api/tenants:', err);
         return jsonResponse({ error: 'Error interno.' }, 500);
@@ -195,7 +216,7 @@ export const onRequestPut: PagesHandler<Env> = async (context) => {
  */
 export const onRequestDelete: PagesHandler<Env> = async (context) => {
     const { request, env } = context;
-    if (!await verifySuperAdmin(request, env)) return superadminRequired();
+    if (!(await verifySuperAdmin(request, env))) return superadminRequired();
 
     const db = getDB(env);
 
@@ -209,7 +230,9 @@ export const onRequestDelete: PagesHandler<Env> = async (context) => {
 
         if (hardDelete) {
             await db.batch([
-                db.prepare('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE tenant_id = ?)').bind(id),
+                db
+                    .prepare('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE tenant_id = ?)')
+                    .bind(id),
                 db.prepare('DELETE FROM orders WHERE tenant_id = ?').bind(id),
                 db.prepare('DELETE FROM product_attributes WHERE tenant_id = ?').bind(id),
                 db.prepare('DELETE FROM product_variants WHERE tenant_id = ?').bind(id),
@@ -225,11 +248,15 @@ export const onRequestDelete: PagesHandler<Env> = async (context) => {
         }
 
         // Soft delete: solo desactivar registrando auditoría en deleted_at (Fix #13)
-        await db.prepare('UPDATE tenants SET active = 0, deleted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?').bind(id).run();
+        await db
+            .prepare(
+                'UPDATE tenants SET active = 0, deleted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            )
+            .bind(id)
+            .run();
         // Fix #3: Invalidar caché KV tras suspender tenant
         await invalidateTenantCache(env.KV, id);
         return jsonResponse({ success: true, message: `Tenant "${id}" suspendido.` });
-
     } catch (err) {
         console.error('Error en DELETE /api/tenants:', err);
         return jsonResponse({ error: 'Error interno.' }, 500);

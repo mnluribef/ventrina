@@ -1,8 +1,9 @@
 // functions/api/cleanup.ts
 // Endpoint de limpieza programada: sesiones expiradas y registros obsoletos de rate limiting
 // Protegido por SUPERADMIN_KEY — llamable desde cron externo o Cloudflare Scheduled Workers
-import { getDB, jsonResponse } from './_helpers';
+
 import type { Env, PagesHandler } from '../types';
+import { getDB, jsonResponse } from './_helpers';
 
 /**
  * GET /api/cleanup — Purga sesiones expiradas y registros obsoletos.
@@ -22,29 +23,27 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
 
     try {
         const [sessionsResult, rateLimitsResult] = await Promise.all([
-            db.prepare('DELETE FROM sessions WHERE expires_at < ?')
-                .bind(now)
-                .run(),
-            db.prepare('DELETE FROM rate_limits WHERE lockout_until < ? AND lockout_until != 0')
-                .bind(nowMs)
-                .run()
+            db.prepare('DELETE FROM sessions WHERE expires_at < ?').bind(now).run(),
+            db.prepare('DELETE FROM rate_limits WHERE lockout_until < ? AND lockout_until != 0').bind(nowMs).run(),
         ]);
 
-        const deletedSessions   = sessionsResult?.meta?.changes ?? 0;
+        const deletedSessions = sessionsResult?.meta?.changes ?? 0;
         const deletedRateLimits = rateLimitsResult?.meta?.changes ?? 0;
 
-        console.log(JSON.stringify({
-            type: 'cleanup_run',
-            deletedSessions,
-            deletedRateLimits,
-            timestamp: new Date().toISOString()
-        }));
+        console.log(
+            JSON.stringify({
+                type: 'cleanup_run',
+                deletedSessions,
+                deletedRateLimits,
+                timestamp: new Date().toISOString(),
+            }),
+        );
 
         return jsonResponse({
             success: true,
             deletedSessions,
             deletedRateLimits,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
         });
     } catch (err) {
         console.error('[Cleanup] Error durante limpieza:', err);

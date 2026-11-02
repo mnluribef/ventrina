@@ -4,14 +4,12 @@
 import '../styles/superadmin.css';
 
 interface Props {
-  title?: string;
-  description?: string;
+    title?: string;
+    description?: string;
 }
 
-const {
-  title = "Super Admin | Ventrina HQ",
-  description = "Consola Central de Operaciones y Control Maestro SaaS"
-} = Astro.props;
+const { title = 'Super Admin | Ventrina HQ', description = 'Consola Central de Operaciones y Control Maestro SaaS' } =
+    Astro.props;
 ---
 
 <!doctype html>

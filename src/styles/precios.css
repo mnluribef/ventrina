@@ -1,18 +1,18 @@
 /* Premium Pricing SaaS Styles */
 /* Identidad: Violet × Amber — Design System Centralizado */
 
-@import './tokens.css';
-@import './navbar.css';
+@import "./tokens.css";
+@import "./navbar.css";
 
 :root {
-  --color-brand-500: var(--brand-500);
-  --color-brand-600: var(--color-primary);
-  --color-dark-900:  var(--light-bg);          /* renombrado semánticamente */
-  --color-dark-800:  var(--light-bg-subtle);
-  --color-dark-card: var(--light-bg-card);
-  --color-text-main: var(--light-text-heading);
-  --color-text-muted:var(--light-text-muted);
-  --color-border:    var(--light-border);
+    --color-brand-500: var(--brand-500);
+    --color-brand-600: var(--color-primary);
+    --color-dark-900: var(--light-bg); /* renombrado semánticamente */
+    --color-dark-800: var(--light-bg-subtle);
+    --color-dark-card: var(--light-bg-card);
+    --color-text-main: var(--light-text-heading);
+    --color-text-muted: var(--light-text-muted);
+    --color-border: var(--light-border);
 }
 
 html {
@@ -22,8 +22,8 @@ html {
 
 .pricing-page {
     min-height: 100vh;
-    background-color: var(--light-bg) !important;
-    color: var(--light-text-heading) !important;
+    background-color: var(--light-bg);
+    color: var(--light-text-heading);
     font-family: var(--font-body);
 }
 
@@ -35,12 +35,14 @@ html {
 }
 
 .pricing-hero::before {
-    content: '';
+    content: "";
     position: absolute;
-    top: -30%; left: 50%;
+    top: -30%;
+    left: 50%;
     transform: translateX(-50%);
-    width: 80vw; height: 80vw;
-    background: radial-gradient(circle, rgba(88, 80, 200, 0.10) 0%, rgba(217, 119, 6, 0.05) 35%, transparent 70%);
+    width: 80vw;
+    height: 80vw;
+    background: radial-gradient(circle, rgba(88, 80, 200, 0.1) 0%, rgba(217, 119, 6, 0.05) 35%, transparent 70%);
     z-index: 0;
     pointer-events: none;
 }
@@ -117,7 +119,9 @@ html {
     border: 2px solid var(--color-primary);
     background: var(--light-bg-card);
     transform: scale(1.04);
-    box-shadow: var(--light-shadow-lg), 0 0 0 1px var(--color-primary-light);
+    box-shadow:
+        var(--light-shadow-lg),
+        0 0 0 1px var(--color-primary-light);
     z-index: 2;
 }
 
@@ -130,8 +134,10 @@ html {
 }
 
 .pricing-card.popular:hover {
-    transform: scale(1.04) translateY(-8px) !important;
-    box-shadow: var(--light-shadow-hover), 0 0 0 1px var(--color-primary);
+    transform: scale(1.04) translateY(-8px);
+    box-shadow:
+        var(--light-shadow-hover),
+        0 0 0 1px var(--color-primary);
 }
 
 @media (max-width: 1024px) {
@@ -141,7 +147,7 @@ html {
         transform: none;
     }
     .pricing-card.popular:hover {
-        transform: translateY(-8px) !important;
+        transform: translateY(-8px);
     }
 }
 
@@ -159,7 +165,7 @@ html {
     letter-spacing: 0.5px;
     text-transform: uppercase;
     box-shadow: 0 4px 15px var(--color-primary-glow);
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .card-header {
@@ -174,7 +180,7 @@ html {
     color: var(--light-text-heading);
     font-weight: 700;
     margin-bottom: 1rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
 }
 
 .price {
@@ -183,7 +189,7 @@ html {
     color: var(--light-text-heading);
     line-height: 1;
     margin-bottom: 0.5rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
     letter-spacing: -0.03em;
 }
 
@@ -241,7 +247,8 @@ html {
     margin-top: 1px;
 }
 
-.btn-primary, .btn-outline {
+.btn-primary,
+.btn-outline {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -295,7 +302,7 @@ html {
     font-size: clamp(2rem, 4vw, 2.8rem);
     color: var(--light-text-heading);
     margin-bottom: 4rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
     font-weight: 800;
 }
 
@@ -322,7 +329,9 @@ html {
 .reveal {
     opacity: 0;
     transform: translateY(24px);
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition:
+        opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity, transform;
 }
 

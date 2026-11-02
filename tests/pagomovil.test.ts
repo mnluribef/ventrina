@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
-import { paymentSettingsSchema, pagoMovilAccountSchema } from '../functions/api/settings';
+import { describe, expect, it } from 'vitest';
+import { pagoMovilAccountSchema, paymentSettingsSchema } from '../functions/api/settings';
 import { OrderService } from '../src/scripts/services/order.service';
-import type { OrderSubmissionData, CartItem, StoreMetaConfig } from '../src/scripts/types/catalog.types';
+import type { CartItem, OrderSubmissionData, StoreMetaConfig } from '../src/scripts/types/catalog.types';
 
 describe('Multi-Account Pago Móvil Feature Tests', () => {
     describe('Zod Validation Schemas (settings.ts)', () => {

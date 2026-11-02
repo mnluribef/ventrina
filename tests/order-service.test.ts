@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-    generateOrderId,
     calculateOrderTotals,
+    generateOrderId,
     generateWebhookSignature,
-    verifyTurnstile
+    verifyTurnstile,
 } from '../functions/api/_services/order.service';
 
 describe('Order Service Logic (order.service.ts)', () => {

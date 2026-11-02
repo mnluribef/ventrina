@@ -1,11 +1,12 @@
 // functions/api/_guards.ts
 // Helper centralizado de autenticación/autorización — encapsula: resolveTenant → CSRF → verifySession → role check
 // Incluye: requireRole() genérico (LSP), resolveAuthenticatedTenant() (DRY — SRP fix #5)
-import { validateCsrf, verifySession, unauthorizedResponse, forbiddenResponse } from './_auth';
-import { resolveTenant, getTenantByIdCached } from './_tenant';
-import { getDB } from './_helpers';
+
 import type { D1Database, KVNamespace } from '@cloudflare/workers-types';
-import type { UserSession, TenantRow, PagesContext, Env } from '../types';
+import type { Env, PagesContext, TenantRow, UserSession } from '../types';
+import { forbiddenResponse, unauthorizedResponse, validateCsrf, verifySession } from './_auth';
+import { getDB } from './_helpers';
+import { getTenantByIdCached, resolveTenant } from './_tenant';
 
 export type GuardResult =
     | { ok: true; user: UserSession; tenantId: string; tenant: TenantRow | null }
@@ -26,16 +27,16 @@ export async function resolveAuthenticatedTenant(
     kv: KVNamespace | undefined,
     initialTenantId: string,
     initialTenant: TenantRow | null,
-    user: UserSession
+    user: UserSession,
 ): Promise<{ tenantId: string; tenant: TenantRow | null }> {
     let tenantId = initialTenantId;
-    let tenant   = initialTenant;
+    let tenant = initialTenant;
 
     // Si resolveTenant cayó en demo pero el usuario pertenece a otro tenant, correguir.
     if ((!tenant || tenantId === 'demo') && user.tenant_id && user.tenant_id !== 'demo') {
         const userTenant = await getTenantByIdCached(db, user.tenant_id, kv);
         if (userTenant) {
-            tenant   = userTenant;
+            tenant = userTenant;
             tenantId = user.tenant_id;
         }
     }
@@ -54,7 +55,7 @@ export async function resolveAuthenticatedTenant(
             active: 1,
             deleted_at: null,
             created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
         };
     }
 
@@ -73,10 +74,7 @@ export async function resolveAuthenticatedTenant(
  * const { user, tenantId, tenant } = guard;
  * ```
  */
-export async function requireRole(
-    roles: string[],
-    context: PagesContext<Env>
-): Promise<GuardResult> {
+export async function requireRole(roles: string[], context: PagesContext<Env>): Promise<GuardResult> {
     const { request, env } = context;
     const db = getDB(env);
     const { id: tenantId, tenant } = await resolveTenant(request, db, env.KV);

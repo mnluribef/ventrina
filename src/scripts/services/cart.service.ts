@@ -43,7 +43,7 @@ export class CartService {
         qty = 1,
         icon = 'package',
         options: Record<string, string> = {},
-        optionLabels: Record<string, string> = {}
+        optionLabels: Record<string, string> = {},
     ): { itemKey: string; isNew: boolean } {
         const optionsKey = Object.keys(options)
             .sort()

@@ -86,14 +86,11 @@ export class OrderService implements IOrderService {
             const opts = Object.entries(item.options || {})
                 .filter(([, v]) => v)
                 .map(([k, v]) => {
-                    const labelText = item.optionLabels?.[k] || labels[k] || (k.charAt(0).toUpperCase() + k.slice(1));
+                    const labelText = item.optionLabels?.[k] || labels[k] || k.charAt(0).toUpperCase() + k.slice(1);
                     return `${labelText}: ${v}`;
                 })
                 .join(', ');
-            const itemTotal =
-                item.price && item.price > 0
-                    ? (item.price * item.qty).toFixed(2)
-                    : 'A consultar';
+            const itemTotal = item.price && item.price > 0 ? (item.price * item.qty).toFixed(2) : 'A consultar';
             msg += `✅ ${item.qty}x ${item.name}${opts ? ` [${opts}]` : ''} - $${itemTotal}\n`;
         });
 
@@ -116,7 +113,7 @@ export class OrderService implements IOrderService {
             punto: '💳 Punto de Venta',
         };
         let paymentDisplay = paymentLabels[data.paymentMethod] || data.paymentMethod;
-        if (data.paymentMethod && data.paymentMethod.startsWith('pago_movil:')) {
+        if (data.paymentMethod?.startsWith('pago_movil:')) {
             const bank = data.paymentMethod.replace('pago_movil:', '').trim();
             paymentDisplay = `📱 Pago Móvil (${bank})`;
         }

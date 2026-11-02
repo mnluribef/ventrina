@@ -1,7 +1,8 @@
 // tests/products-api.test.ts
-import { describe, it, expect, vi } from 'vitest';
-import { onRequestGet } from '../functions/api/products';
+
 import type { D1Database } from '@cloudflare/workers-types';
+import { describe, expect, it, vi } from 'vitest';
+import { onRequestGet } from '../functions/api/products';
 
 describe('GET /api/products handler', () => {
     it('returns products for demo tenant with template parameter', async () => {
@@ -24,8 +25,8 @@ describe('GET /api/products handler', () => {
                 tenant_id: 'demo',
                 brand: null,
                 model: null,
-                sku: ''
-            }
+                sku: '',
+            },
         ];
 
         const mockDb = {
@@ -48,21 +49,21 @@ describe('GET /api/products handler', () => {
                             return { results: [] };
                         }
                         return { results: [] };
-                    })
-                }))
-            }))
+                    }),
+                })),
+            })),
         } as unknown as D1Database;
 
         const mockContext: any = {
             request: new Request('http://localhost:4321/api/products?template=restaurant&tenant=demo', {
                 headers: {
-                    'X-Tenant-Id': 'demo'
-                }
+                    'X-Tenant-Id': 'demo',
+                },
             }),
             env: {
-                DB: mockDb
+                DB: mockDb,
             },
-            data: {}
+            data: {},
         };
 
         const res = await onRequestGet(mockContext);
@@ -88,19 +89,19 @@ describe('GET /api/products handler', () => {
                     }),
                     all: vi.fn().mockImplementation(async () => {
                         return { results: [] };
-                    })
-                }))
-            }))
+                    }),
+                })),
+            })),
         } as unknown as D1Database;
 
         const templates = ['restaurant', 'hardware', 'fashion', 'tech', 'autoparts', 'grocery'];
         for (const tmpl of templates) {
             const mockContext: any = {
                 request: new Request(`http://localhost:4321/api/products?template=${tmpl}&tenant=demo`, {
-                    headers: { 'X-Tenant-Id': 'demo' }
+                    headers: { 'X-Tenant-Id': 'demo' },
                 }),
                 env: { DB: mockDb },
-                data: {}
+                data: {},
             };
             const res = await onRequestGet(mockContext);
             expect(res.status).toBe(200);

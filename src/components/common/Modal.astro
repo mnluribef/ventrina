@@ -1,97 +1,95 @@
 ---
-// src/components/common/Modal.astro
-// Componente Base Modal Altamente Reutilizable y Escalable (Estándar y Confirmación)
-import Icon from './Icon.astro';
 import '../../styles/modal.css';
+import Icon from './Icon.astro';
 
 export interface Props {
-  /** Tipo de modal: 'default' (contenido/formulario estándar) o 'confirm' (diálogo interactivo de confirmación) */
-  type?: 'default' | 'confirm';
-  /** ID del contenedor modal (usado por selectores de scripts y accesibilidad) */
-  id: string;
-  /** Título del modal para encabezados estándar */
-  title?: string;
-  /** ID opcional para el elemento h3 del título */
-  titleId?: string;
-  /** Subtítulo descriptivo */
-  subtitle?: string;
-  /** ID opcional para el elemento de subtítulo */
-  subtitleId?: string;
-  /** Mensaje descriptivo principal (usado en type='confirm') */
-  message?: string;
-  /** Texto del botón de confirmación (usado en type='confirm') */
-  confirmText?: string;
-  /** Texto del botón de cancelación (usado en type='confirm') */
-  cancelText?: string;
-  /** Variante semántica de color e intención (usado en type='confirm') */
-  variant?: 'danger' | 'warning' | 'primary' | 'success';
-  /** Nombre del ícono predeterminado (usado en type='confirm') */
-  icon?: string;
-  /** Tamaño del contenido: 'sm' (440px), 'md' (600px), 'lg' (800px), '460' (460px) o 'none' */
-  size?: 'sm' | 'md' | 'lg' | '460' | 'none';
-  /** Clases CSS adicionales para la tarjeta (.modal-content / .sa-modal-card) */
-  contentClass?: string;
-  /** Clases CSS para el encabezado (.modal-header / .sa-modal-header) */
-  headerClass?: string;
-  /** ID opcional para el cuerpo (.modal-body / .sa-modal-body) */
-  bodyId?: string;
-  /** Clases CSS adicionales para el cuerpo (.modal-body / .sa-modal-body) */
-  bodyClass?: string;
-  /** Clases CSS adicionales para el pie (.modal-footer / .sa-modal-footer) */
-  footerClass?: string;
-  /** Si debe incluir encabezado */
-  hasHeader?: boolean;
-  /** Si debe incluir botón de cierre en el encabezado */
-  hasCloseBtn?: boolean;
-  /** ID del botón de cierre (por defecto btn-close-${id}) */
-  closeBtnId?: string;
-  /** Clases adicionales para el botón de cierre */
-  closeBtnClass?: string;
-  /** Si debe incluir pie de modal */
-  hasFooter?: boolean;
-  /** Si el cuerpo y pie están envueltos en un <form> */
-  formId?: string;
-  /** Clases para el formulario si formId está definido */
-  formClass?: string;
-  /** Clases para el overlay exterior */
-  class?: string;
-  /** Rol accesible (por defecto 'dialog', o 'alertdialog' para confirmaciones) */
-  role?: astroHTML.JSX.AriaRole;
-  /** Aria-labelledby personalizado */
-  ariaLabelledBy?: string;
-  /** Tema visual: 'admin' (panel de tienda estándar), 'superadmin' / 'dark' (backoffice oscuro) o 'auto' */
-  theme?: 'admin' | 'superadmin' | 'dark' | 'auto';
+    /** Tipo de modal: 'default' (contenido/formulario estándar) o 'confirm' (diálogo interactivo de confirmación) */
+    type?: 'default' | 'confirm';
+    /** ID del contenedor modal (usado por selectores de scripts y accesibilidad) */
+    id: string;
+    /** Título del modal para encabezados estándar */
+    title?: string;
+    /** ID opcional para el elemento h3 del título */
+    titleId?: string;
+    /** Subtítulo descriptivo */
+    subtitle?: string;
+    /** ID opcional para el elemento de subtítulo */
+    subtitleId?: string;
+    /** Mensaje descriptivo principal (usado en type='confirm') */
+    message?: string;
+    /** Texto del botón de confirmación (usado en type='confirm') */
+    confirmText?: string;
+    /** Texto del botón de cancelación (usado en type='confirm') */
+    cancelText?: string;
+    /** Variante semántica de color e intención (usado en type='confirm') */
+    variant?: 'danger' | 'warning' | 'primary' | 'success';
+    /** Nombre del ícono predeterminado (usado en type='confirm') */
+    icon?: string;
+    /** Tamaño del contenido: 'sm' (440px), 'md' (600px), 'lg' (800px), '460' (460px) o 'none' */
+    size?: 'sm' | 'md' | 'lg' | '460' | 'none';
+    /** Clases CSS adicionales para la tarjeta (.modal-content / .sa-modal-card) */
+    contentClass?: string;
+    /** Clases CSS para el encabezado (.modal-header / .sa-modal-header) */
+    headerClass?: string;
+    /** ID opcional para el cuerpo (.modal-body / .sa-modal-body) */
+    bodyId?: string;
+    /** Clases CSS adicionales para el cuerpo (.modal-body / .sa-modal-body) */
+    bodyClass?: string;
+    /** Clases CSS adicionales para el pie (.modal-footer / .sa-modal-footer) */
+    footerClass?: string;
+    /** Si debe incluir encabezado */
+    hasHeader?: boolean;
+    /** Si debe incluir botón de cierre en el encabezado */
+    hasCloseBtn?: boolean;
+    /** ID del botón de cierre (por defecto btn-close-${id}) */
+    closeBtnId?: string;
+    /** Clases adicionales para el botón de cierre */
+    closeBtnClass?: string;
+    /** Si debe incluir pie de modal */
+    hasFooter?: boolean;
+    /** Si el cuerpo y pie están envueltos en un <form> */
+    formId?: string;
+    /** Clases para el formulario si formId está definido */
+    formClass?: string;
+    /** Clases para el overlay exterior */
+    class?: string;
+    /** Rol accesible (por defecto 'dialog', o 'alertdialog' para confirmaciones) */
+    role?: astroHTML.JSX.AriaRole;
+    /** Aria-labelledby personalizado */
+    ariaLabelledBy?: string;
+    /** Tema visual: 'admin' (panel de tienda estándar), 'superadmin' / 'dark' (backoffice oscuro) o 'auto' */
+    theme?: 'admin' | 'superadmin' | 'dark' | 'auto';
 }
 
 const {
-  type = 'default',
-  id,
-  title = type === 'confirm' ? 'Confirmar Acción' : undefined,
-  titleId,
-  subtitle = type === 'confirm' ? 'Esta acción requiere tu validación' : undefined,
-  subtitleId,
-  message = '',
-  confirmText = 'Confirmar',
-  cancelText = 'Cancelar',
-  variant = 'danger',
-  icon = 'alert-triangle',
-  size = 'none',
-  contentClass = '',
-  headerClass = '',
-  bodyId,
-  bodyClass = '',
-  footerClass = '',
-  hasHeader = true,
-  hasCloseBtn = true,
-  closeBtnId,
-  closeBtnClass = '',
-  hasFooter = true,
-  formId,
-  formClass = '',
-  class: overlayClass = '',
-  theme = 'admin',
-  role = type === 'confirm' ? 'alertdialog' : 'dialog',
-  ariaLabelledBy = titleId || (title ? `${id}-title` : undefined),
+    type = 'default',
+    id,
+    title = type === 'confirm' ? 'Confirmar Acción' : undefined,
+    titleId,
+    subtitle = type === 'confirm' ? 'Esta acción requiere tu validación' : undefined,
+    subtitleId,
+    message = '',
+    confirmText = 'Confirmar',
+    cancelText = 'Cancelar',
+    variant = 'danger',
+    icon = 'alert-triangle',
+    size = 'none',
+    contentClass = '',
+    headerClass = '',
+    bodyId,
+    bodyClass = '',
+    footerClass = '',
+    hasHeader = true,
+    hasCloseBtn = true,
+    closeBtnId,
+    closeBtnClass = '',
+    hasFooter = true,
+    formId,
+    formClass = '',
+    class: overlayClass = '',
+    theme = 'admin',
+    role = type === 'confirm' ? 'alertdialog' : 'dialog',
+    ariaLabelledBy = titleId || (title ? `${id}-title` : undefined),
 } = Astro.props;
 
 const isSuperAdmin = theme === 'superadmin' || theme === 'dark';

@@ -1,52 +1,54 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
+import Header from '../components/layout/Header.astro';
 import { techTemplate } from '../config/templates/tech';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/precios.css';
 
 const saasConfig = {
     ...techTemplate,
     template: 'tech' as const,
-    business: { 
-        ...techTemplate.business, 
-        name: "Ventrina", 
-        shortName: "Ventrina",
-        tagline: "Plataforma de E-commerce y Pedidos por WhatsApp",
-        logoTextPrimary: "VENTRINA", 
-        logoTextSecondary: "SAAS",
-        description: "La solución líder para crear tu tienda virtual en minutos y recibir pedidos directamente en tu WhatsApp.",
-        siteUrl: "https://ventrina.app"
+    business: {
+        ...techTemplate.business,
+        name: 'Ventrina',
+        shortName: 'Ventrina',
+        tagline: 'Plataforma de E-commerce y Pedidos por WhatsApp',
+        logoTextPrimary: 'VENTRINA',
+        logoTextSecondary: 'SAAS',
+        description:
+            'La solución líder para crear tu tienda virtual en minutos y recibir pedidos directamente en tu WhatsApp.',
+        siteUrl: 'https://ventrina.app',
     },
     contact: {
         ...techTemplate.contact,
         instagram: '',
         instagramHandle: '',
-        address: ''
+        address: '',
     },
     seo: {
-        title: "Planes y Precios | Ventrina SaaS",
-        description: "Escala tu negocio con nuestros planes. Sin comisiones por venta.",
-        keywords: "tienda online venezuela, catalogo whatsapp, pedidos whatsapp, ecommerce venezuela, ventrina, tasa bcv",
-        schemaType: "SoftwareApplication" as const,
-        priceRange: "$$"
+        title: 'Planes y Precios | Ventrina SaaS',
+        description: 'Escala tu negocio con nuestros planes. Sin comisiones por venta.',
+        keywords:
+            'tienda online venezuela, catalogo whatsapp, pedidos whatsapp, ecommerce venezuela, ventrina, tasa bcv',
+        schemaType: 'SoftwareApplication' as const,
+        priceRange: '$$',
     },
     nav: {
         links: [
-            { label: "Beneficios", href: "/#beneficios" },
-            { label: "Planes", href: "/precios" },
-            { label: "Demos", href: "/#demos" },
-            { label: "Características", href: "/#caracteristicas" },
-            { label: "Comparativa", href: "/#comparativa" },
-            { label: "FAQ", href: "/#faq" },
-            { label: "Iniciar Sesión", href: "/login" },
-            { label: "Crear Tienda", href: "/register" }
-        ]
+            { label: 'Beneficios', href: '/#beneficios' },
+            { label: 'Planes', href: '/precios' },
+            { label: 'Demos', href: '/#demos' },
+            { label: 'Características', href: '/#caracteristicas' },
+            { label: 'Comparativa', href: '/#comparativa' },
+            { label: 'FAQ', href: '/#faq' },
+            { label: 'Iniciar Sesión', href: '/login' },
+            { label: 'Crear Tienda', href: '/register' },
+        ],
     },
     features: {
         ...techTemplate.features,
-        showBcvRate: false
-    }
+        showBcvRate: false,
+    },
 };
 ---
 

@@ -2,284 +2,297 @@
 import type { StoreConfig } from '../../types/store.types';
 
 export const techTemplate: StoreConfig = {
-  template: 'tech',
-  business: {
-    name: 'NEXUS TECH',
-    shortName: 'NEXUS',
-    tagline: 'Tecnología, Gaming & Hardware de Alto Rendimiento',
-    description: 'NEXUS TECH: Laptops, smartphones, periféricos gamer, componentes de PC y gadgets de última generación con garantía directa y despacho asegurado.',
-    logoTextPrimary: 'NEXUS',
-    logoTextSecondary: 'TECH',
-    siteUrl: 'https://nexustech.pages.dev',
-    ogImage: '/assets/og_image_tech.webp',
-  },
-  contact: {
-    whatsapp: '584241230046',
-    whatsappDisplay: '+58 424-1230046',
-    phone: '+58 424-1230046',
-    email: 'soporte@nexustech.com',
-    instagram: 'https://www.instagram.com/nexustech.ve/',
-    instagramHandle: '@nexustech.ve',
-    address: 'Torre Empresarial Sigma, Piso 3, Ofic. 304',
-    addressLocality: 'Valencia',
-    addressRegion: 'Carabobo',
-    addressCountry: 'VE',
-    hours: 'Lun – Sáb: 9:00 AM – 6:30 PM',
-  },
-  theme: {
-    // Primario: Indigo Eléctrico Cyber / Vanguardia Digital
-    primaryColor: '#6366F1',
-    primaryHover: '#4F46E5',
-    primaryDeep: '#3730A3',
-    primaryLight: 'rgba(99, 102, 241, 0.12)',
-    primaryPale: '#EEF2FF',
-
-    // Acento: Cyan Neón / Aqua Tech
-    accentColor: '#06B6D4',
-    accentHover: '#0891B2',
-    accentLight: 'rgba(6, 182, 212, 0.16)',
-    accentPale: '#ECFEFF',
-
-    // Superficies y Fondos Tech
-    bgPage: '#F8FAFC',     // Tech Slate limpio de alto contraste
-    bgSection: '#EFF6FF',  // Azul hielo cuántico
-    bgCard: '#FFFFFF',
-    borderSubtle: 'rgba(99, 102, 241, 0.12)',
-    borderFocus: '#6366F1',
-
-    // Tipografía & Contrastes
-    textHeading: '#090D1A', // Deep Cyber Slate
-    textBody: '#1E293B',    // Slate técnico profundo
-    textMuted: '#475569',
-    textLight: '#94A3B8',
-
-    // Hero & Overlays
-    heroBg: '#070A14',
-    heroOverlay: 'linear-gradient(to bottom right, rgba(7, 10, 20, 0.94) 0%, rgba(15, 23, 50, 0.78) 45%, rgba(99, 102, 241, 0.22) 80%, rgba(6, 182, 212, 0.16) 100%)',
-    heroFadeBottom: 'linear-gradient(to top, #F8FAFC 0%, transparent 100%)',
-
-    // Gradientes & Sombras
-    gradHero: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 50%, #06B6D4 100%)',
-    gradCta: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
-    gradSection: 'linear-gradient(160deg, #F8FAFC 0%, #EFF6FF 60%, #EEF2FF 100%)',
-    gradAccent: 'linear-gradient(135deg, #0891B2 0%, #06B6D4 100%)',
-    shadowColor: 'rgba(99, 102, 241, 0.24)',
-    shadowCard: '0 4px 22px rgba(15, 23, 42, 0.07)',
-
-    // Badges & Pastillas
-    badgeBg: 'rgba(6, 182, 212, 0.16)',
-    badgeBorder: 'rgba(6, 182, 212, 0.40)',
-    badgeText: '#22D3EE',
-
-    // Fuentes
-    fontHeading: "'Outfit', sans-serif",
-    fontBody: "'Inter', sans-serif",
-    googleFontsUrl: 'https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@300;400;500;600&display=swap',
-  },
-  landing: {
-    hero: {
-      badgeText: '⚡ Hardware de Nueva Generación · Garantía Oficial',
-      headline: 'Rendimiento sin',
-      headlineHighlight: 'límites.',
-      subheadline: 'Equipos sellados, procesadores, tarjetas gráficas, laptops de alto rendimiento y periféricos gamer. Asesoría técnica especializada y envíos asegurados a todo el país.',
-      ctaPrimaryText: 'Explorar Equipos',
-      ctaPrimaryLink: '#menu',
-      ctaSecondaryText: 'Consultar Stock',
-      ctaSecondaryLink: 'https://wa.me/584241230046',
-      slides: [
-        { image: '/assets/product_laptop.webp', alt: 'Laptops y computadoras de alto rendimiento' },
-        { image: '/assets/product_monitor.webp', alt: 'Monitores gamer y pantallas profesionales' },
-        { image: '/assets/product_teclado.webp', alt: 'Periféricos y componentes gamer' },
-      ],
-      stats: [
-        { value: '100%', label: 'Equipos Nuevos y Sellados' },
-        { value: '🛡️ 1 Año', label: 'Garantía Escrita' },
-        { value: '✈️ Asegurado', label: 'Envíos Nacionales' },
-      ],
+    template: 'tech',
+    business: {
+        name: 'NEXUS TECH',
+        shortName: 'NEXUS',
+        tagline: 'Tecnología, Gaming & Hardware de Alto Rendimiento',
+        description:
+            'NEXUS TECH: Laptops, smartphones, periféricos gamer, componentes de PC y gadgets de última generación con garantía directa y despacho asegurado.',
+        logoTextPrimary: 'NEXUS',
+        logoTextSecondary: 'TECH',
+        siteUrl: 'https://nexustech.pages.dev',
+        ogImage: '/assets/og_image_tech.webp',
     },
-    benefits: {
-      title: 'Por qué confiar en',
-      titleHighlight: 'NEXUS TECH',
-      subtitle: 'Comprar tecnología debe darte total tranquilidad. Cero riesgos, cero sorpresas.',
-      items: [
-        {
-          icon: 'cpu',
-          title: '100% Originales y Sellados en Caja',
-          description: 'Todos nuestros dispositivos son importados legalmente con seriales verificables ante el fabricante correspondiente.',
-        },
-        {
-          icon: 'shield-check',
-          title: 'Garantía Escrita y Soporte Local',
-          description: 'Cuentas con garantía contra defectos de fábrica respaldada por nuestro propio laboratorio técnico especializado.',
-        },
-        {
-          icon: 'zap',
-          title: 'Asesoría en Ensamblaje y Compatibilidad',
-          description: '¿No sabes si esa gráfica entra en tu case o qué fuente necesitas? Te ayudamos a armar tu setup ideal sin costo extra.',
-        },
-      ],
+    contact: {
+        whatsapp: '584241230046',
+        whatsappDisplay: '+58 424-1230046',
+        phone: '+58 424-1230046',
+        email: 'soporte@nexustech.com',
+        instagram: 'https://www.instagram.com/nexustech.ve/',
+        instagramHandle: '@nexustech.ve',
+        address: 'Torre Empresarial Sigma, Piso 3, Ofic. 304',
+        addressLocality: 'Valencia',
+        addressRegion: 'Carabobo',
+        addressCountry: 'VE',
+        hours: 'Lun – Sáb: 9:00 AM – 6:30 PM',
     },
-    catalog: {
-      title: 'Catálogo de',
-      titleHighlight: 'Tecnología',
-      subtitle: 'Explora laptops, componentes de PC, smartphones, monitores, audio y periféricos para productividad y gaming.',
-      searchPlaceholder: 'Buscar laptop, RTX 4070, monitor 144Hz, SSD NVMe, teclado...',
-      emptyMessage: 'No encontramos ese modelo en lista. ¡Contáctanos por WhatsApp para pedidos bajo encargo o cotización!',
-      addToCartText: 'Agregar al Carrito',
+    theme: {
+        // Primario: Indigo Eléctrico Cyber / Vanguardia Digital
+        primaryColor: '#6366F1',
+        primaryHover: '#4F46E5',
+        primaryDeep: '#3730A3',
+        primaryLight: 'rgba(99, 102, 241, 0.12)',
+        primaryPale: '#EEF2FF',
+
+        // Acento: Cyan Neón / Aqua Tech
+        accentColor: '#06B6D4',
+        accentHover: '#0891B2',
+        accentLight: 'rgba(6, 182, 212, 0.16)',
+        accentPale: '#ECFEFF',
+
+        // Superficies y Fondos Tech
+        bgPage: '#F8FAFC', // Tech Slate limpio de alto contraste
+        bgSection: '#EFF6FF', // Azul hielo cuántico
+        bgCard: '#FFFFFF',
+        borderSubtle: 'rgba(99, 102, 241, 0.12)',
+        borderFocus: '#6366F1',
+
+        // Tipografía & Contrastes
+        textHeading: '#090D1A', // Deep Cyber Slate
+        textBody: '#1E293B', // Slate técnico profundo
+        textMuted: '#475569',
+        textLight: '#94A3B8',
+
+        // Hero & Overlays
+        heroBg: '#070A14',
+        heroOverlay:
+            'linear-gradient(to bottom right, rgba(7, 10, 20, 0.94) 0%, rgba(15, 23, 50, 0.78) 45%, rgba(99, 102, 241, 0.22) 80%, rgba(6, 182, 212, 0.16) 100%)',
+        heroFadeBottom: 'linear-gradient(to top, #F8FAFC 0%, transparent 100%)',
+
+        // Gradientes & Sombras
+        gradHero: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 50%, #06B6D4 100%)',
+        gradCta: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
+        gradSection: 'linear-gradient(160deg, #F8FAFC 0%, #EFF6FF 60%, #EEF2FF 100%)',
+        gradAccent: 'linear-gradient(135deg, #0891B2 0%, #06B6D4 100%)',
+        shadowColor: 'rgba(99, 102, 241, 0.24)',
+        shadowCard: '0 4px 22px rgba(15, 23, 42, 0.07)',
+
+        // Badges & Pastillas
+        badgeBg: 'rgba(6, 182, 212, 0.16)',
+        badgeBorder: 'rgba(6, 182, 212, 0.40)',
+        badgeText: '#22D3EE',
+
+        // Fuentes
+        fontHeading: "'Outfit', sans-serif",
+        fontBody: "'Inter', sans-serif",
+        googleFontsUrl:
+            'https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@300;400;500;600&display=swap',
     },
-    process: {
-      title: '¿Cómo comprar tu',
-      titleHighlight: 'equipo?',
-      subtitle: 'Proceso transparente con verificación previa de seriales y especificaciones.',
-      steps: [
-        {
-          number: 1,
-          title: 'Elige tu Dispositivo',
-          description: 'Revisa especificaciones de CPU, RAM, almacenamiento, pantalla y puertos.',
+    landing: {
+        hero: {
+            badgeText: '⚡ Hardware de Nueva Generación · Garantía Oficial',
+            headline: 'Rendimiento sin',
+            headlineHighlight: 'límites.',
+            subheadline:
+                'Equipos sellados, procesadores, tarjetas gráficas, laptops de alto rendimiento y periféricos gamer. Asesoría técnica especializada y envíos asegurados a todo el país.',
+            ctaPrimaryText: 'Explorar Equipos',
+            ctaPrimaryLink: '#menu',
+            ctaSecondaryText: 'Consultar Stock',
+            ctaSecondaryLink: 'https://wa.me/584241230046',
+            slides: [
+                { image: '/assets/product_laptop.webp', alt: 'Laptops y computadoras de alto rendimiento' },
+                { image: '/assets/product_monitor.webp', alt: 'Monitores gamer y pantallas profesionales' },
+                { image: '/assets/product_teclado.webp', alt: 'Periféricos y componentes gamer' },
+            ],
+            stats: [
+                { value: '100%', label: 'Equipos Nuevos y Sellados' },
+                { value: '🛡️ 1 Año', label: 'Garantía Escrita' },
+                { value: '✈️ Asegurado', label: 'Envíos Nacionales' },
+            ],
         },
-        {
-          number: 2,
-          title: 'Configura tu Orden',
-          description: 'Selecciona variantes (almacenamiento, color) o añade accesorios complementarios.',
+        benefits: {
+            title: 'Por qué confiar en',
+            titleHighlight: 'NEXUS TECH',
+            subtitle: 'Comprar tecnología debe darte total tranquilidad. Cero riesgos, cero sorpresas.',
+            items: [
+                {
+                    icon: 'cpu',
+                    title: '100% Originales y Sellados en Caja',
+                    description:
+                        'Todos nuestros dispositivos son importados legalmente con seriales verificables ante el fabricante correspondiente.',
+                },
+                {
+                    icon: 'shield-check',
+                    title: 'Garantía Escrita y Soporte Local',
+                    description:
+                        'Cuentas con garantía contra defectos de fábrica respaldada por nuestro propio laboratorio técnico especializado.',
+                },
+                {
+                    icon: 'zap',
+                    title: 'Asesoría en Ensamblaje y Compatibilidad',
+                    description:
+                        '¿No sabes si esa gráfica entra en tu case o qué fuente necesitas? Te ayudamos a armar tu setup ideal sin costo extra.',
+                },
+            ],
         },
-        {
-          number: 3,
-          title: 'Confirma por WhatsApp',
-          description: 'Te enviamos fotos reales del empaque sellado y serial para tu total seguridad antes del pago.',
+        catalog: {
+            title: 'Catálogo de',
+            titleHighlight: 'Tecnología',
+            subtitle:
+                'Explora laptops, componentes de PC, smartphones, monitores, audio y periféricos para productividad y gaming.',
+            searchPlaceholder: 'Buscar laptop, RTX 4070, monitor 144Hz, SSD NVMe, teclado...',
+            emptyMessage:
+                'No encontramos ese modelo en lista. ¡Contáctanos por WhatsApp para pedidos bajo encargo o cotización!',
+            addToCartText: 'Agregar al Carrito',
         },
-        {
-          number: 4,
-          title: 'Despacho Inmediato',
-          description: 'Retira en nuestra oficina técnica o recibe con número de guía rastreable en tiempo real.',
+        process: {
+            title: '¿Cómo comprar tu',
+            titleHighlight: 'equipo?',
+            subtitle: 'Proceso transparente con verificación previa de seriales y especificaciones.',
+            steps: [
+                {
+                    number: 1,
+                    title: 'Elige tu Dispositivo',
+                    description: 'Revisa especificaciones de CPU, RAM, almacenamiento, pantalla y puertos.',
+                },
+                {
+                    number: 2,
+                    title: 'Configura tu Orden',
+                    description: 'Selecciona variantes (almacenamiento, color) o añade accesorios complementarios.',
+                },
+                {
+                    number: 3,
+                    title: 'Confirma por WhatsApp',
+                    description:
+                        'Te enviamos fotos reales del empaque sellado y serial para tu total seguridad antes del pago.',
+                },
+                {
+                    number: 4,
+                    title: 'Despacho Inmediato',
+                    description:
+                        'Retira en nuestra oficina técnica o recibe con número de guía rastreable en tiempo real.',
+                },
+            ],
         },
-      ],
+        testimonials: {
+            title: 'Lo que opinan',
+            titleHighlight: 'nuestros usuarios',
+            subtitle: 'Profesionales, gamers y empresas que confían su infraestructura en NEXUS.',
+            items: [
+                {
+                    name: 'Alejandro Bastidas',
+                    role: 'Desarrollador de Software',
+                    review: '"Compré mi laptop para programar y una pantalla externa. Llegaron al día siguiente a Valencia totalmente selladas con su factura. Excelente atención."',
+                    avatar: '/assets/client_jose.webp',
+                    rating: 5,
+                },
+                {
+                    name: 'Valeria Rivas',
+                    role: 'Diseñadora UI/UX & 3D',
+                    review: '"Me asesoraron con la tarjeta gráfica y la memoria RAM para mis renders. El soporte es impecable y los precios son los más competitivos del mercado."',
+                    avatar: '/assets/client_ana.webp',
+                    rating: 5,
+                },
+                {
+                    name: 'Marcos Gil',
+                    role: 'Gamer & Streamer',
+                    review: '"El teclado mecánico y los auriculares llegaron impecables. La atención por WhatsApp fue súper rápida y me resolvieron todas las dudas técnicas."',
+                    avatar: '/assets/client_maria.webp',
+                    rating: 5,
+                },
+            ],
+        },
+        faq: {
+            title: 'Preguntas',
+            titleHighlight: 'Frecuentes',
+            subtitle: 'Transparencia total para tus compras tecnológicas',
+            items: [
+                {
+                    q: '¿Los equipos son completamente nuevos y sellados?',
+                    a: 'Sí, 100% de nuestros productos vienen de fábrica en caja precintada con sus sellos de seguridad intactos. No comercializamos productos usados sin previo aviso explícito.',
+                },
+                {
+                    q: '¿Cómo funciona la garantía de los productos?',
+                    a: 'Todos los equipos disponen de garantía formal por escrito desde 30 días hasta 12 meses dependiendo de la categoría y fabricante.',
+                },
+                {
+                    q: '¿Hacen entregas personales?',
+                    a: 'Sí, puedes retirar directamente en nuestras instalaciones previa coordinación y verificar tu equipo en persona.',
+                },
+                {
+                    q: '¿Qué medios de pago reciben?',
+                    a: 'Recibimos Binance (USDT), Zelle, transferencias en Bolívares a tasa oficial BCV, Pago Móvil, PayPal y efectivo en divisas.',
+                },
+                {
+                    q: '¿Hacen importaciones o pedidos bajo encargo de piezas específicas?',
+                    a: 'Sí, si buscas un componente o modelo específico no listado en catálogo, podemos cotizarte y gestionarte la importación express.',
+                },
+            ],
+        },
     },
-    testimonials: {
-      title: 'Lo que opinan',
-      titleHighlight: 'nuestros usuarios',
-      subtitle: 'Profesionales, gamers y empresas que confían su infraestructura en NEXUS.',
-      items: [
-        {
-          name: 'Alejandro Bastidas',
-          role: 'Desarrollador de Software',
-          review: '"Compré mi laptop para programar y una pantalla externa. Llegaron al día siguiente a Valencia totalmente selladas con su factura. Excelente atención."',
-          avatar: '/assets/client_jose.webp',
-          rating: 5,
-        },
-        {
-          name: 'Valeria Rivas',
-          role: 'Diseñadora UI/UX & 3D',
-          review: '"Me asesoraron con la tarjeta gráfica y la memoria RAM para mis renders. El soporte es impecable y los precios son los más competitivos del mercado."',
-          avatar: '/assets/client_ana.webp',
-          rating: 5,
-        },
-        {
-          name: 'Marcos Gil',
-          role: 'Gamer & Streamer',
-          review: '"El teclado mecánico y los auriculares llegaron impecables. La atención por WhatsApp fue súper rápida y me resolvieron todas las dudas técnicas."',
-          avatar: '/assets/client_maria.webp',
-          rating: 5,
-        },
-      ],
+    nav: {
+        links: [
+            { label: 'GARANTÍA', href: '#nosotros' },
+            { label: 'CATÁLOGO', href: '#menu' },
+            { label: 'CÓMO COMPRAR', href: '#como-pedir' },
+            { label: 'CLIENTES', href: '#testimonios' },
+            { label: 'PREGUNTAS', href: '#faq' },
+        ],
     },
-    faq: {
-      title: 'Preguntas',
-      titleHighlight: 'Frecuentes',
-      subtitle: 'Transparencia total para tus compras tecnológicas',
-      items: [
-        {
-          q: '¿Los equipos son completamente nuevos y sellados?',
-          a: 'Sí, 100% de nuestros productos vienen de fábrica en caja precintada con sus sellos de seguridad intactos. No comercializamos productos usados sin previo aviso explícito.',
-        },
-        {
-          q: '¿Cómo funciona la garantía de los productos?',
-          a: 'Todos los equipos disponen de garantía formal por escrito desde 30 días hasta 12 meses dependiendo de la categoría y fabricante.',
-        },
-        {
-          q: '¿Hacen entregas personales?',
-          a: 'Sí, puedes retirar directamente en nuestras instalaciones previa coordinación y verificar tu equipo en persona.',
-        },
-        {
-          q: '¿Qué medios de pago reciben?',
-          a: 'Recibimos Binance (USDT), Zelle, transferencias en Bolívares a tasa oficial BCV, Pago Móvil, PayPal y efectivo en divisas.',
-        },
-        {
-          q: '¿Hacen importaciones o pedidos bajo encargo de piezas específicas?',
-          a: 'Sí, si buscas un componente o modelo específico no listado en catálogo, podemos cotizarte y gestionarte la importación express.',
-        },
-      ],
+    seo: {
+        title: 'NEXUS TECH | Tienda de Tecnología, Computación & Gaming',
+        description:
+            'Venta de laptops, hardware gamer, componentes de PC, smartphones y accesorios con garantía y despacho asegurado a toda Venezuela.',
+        keywords:
+            'tecnologia venezuela, computadoras gamer, laptops, procesadores, rtx, componentes pc, valencia, caracas',
+        schemaType: 'ElectronicsStore',
+        priceRange: '$$$',
     },
-  },
-  nav: {
-    links: [
-      { label: 'GARANTÍA', href: '#nosotros' },
-      { label: 'CATÁLOGO', href: '#menu' },
-      { label: 'CÓMO COMPRAR', href: '#como-pedir' },
-      { label: 'CLIENTES', href: '#testimonios' },
-      { label: 'PREGUNTAS', href: '#faq' },
+    features: {
+        showBcvRate: true,
+        showSearch: true,
+        showCart: true,
+        orderViaWhatsapp: true,
+        deliveryOptions: true,
+        currencySymbol: '$',
+        currencyCode: 'USD',
+        allowCustomNotes: true,
+    },
+    storePrefix: 'NEX',
+    payment: {
+        pagoMovil: {
+            banco: 'Banesco (0134)',
+            telefono: '0412-4756191',
+            cedula: 'J-50123984',
+            titular: 'NEXUS TECH SOLUTIONS C.A.',
+        },
+        pagoMovilAccounts: [
+            {
+                id: 'pm-1',
+                banco: 'Banesco (0134)',
+                telefono: '0412-4756191',
+                cedula: 'J-50123984',
+                titular: 'NEXUS TECH SOLUTIONS C.A.',
+                isDefault: true,
+            },
+        ],
+        zelle: {
+            email: 'pagos@nexustech.com',
+            titular: 'NEXUS TECH SOLUTIONS C.A.',
+        },
+        binancePay: {
+            payId: '284719302',
+            merchantName: 'NexusTech',
+            email: 'binance@nexustech.com',
+        },
+        efectivo: true,
+        punto: true,
+    },
+    labels: {
+        itemNounSingular: 'Equipo',
+        itemNounPlural: 'Equipos',
+        emptyCartEmoji: '⚡',
+        cartTitle: '⚡ Tu Pedido Tech',
+        deliveryOptionName: 'Envío Asegurado / Delivery',
+        deliveryOptionPrice: 5,
+        pickupOptionName: 'Retiro en Oficina / Showroom',
+    },
+    categories: [
+        { id: 'laptops-pc', name: 'Laptops & PC', icon: 'cpu' },
+        { id: 'componentes', name: 'Componentes & Almacenamiento', icon: 'hard-drive' },
+        { id: 'perifericos', name: 'Periféricos & Gaming', icon: 'headphones' },
+        { id: 'audio-video', name: 'Audio & Video', icon: 'tv' },
+        { id: 'redes-conectividad', name: 'Redes & Conectividad', icon: 'wifi' },
     ],
-  },
-  seo: {
-    title: 'NEXUS TECH | Tienda de Tecnología, Computación & Gaming',
-    description: 'Venta de laptops, hardware gamer, componentes de PC, smartphones y accesorios con garantía y despacho asegurado a toda Venezuela.',
-    keywords: 'tecnologia venezuela, computadoras gamer, laptops, procesadores, rtx, componentes pc, valencia, caracas',
-    schemaType: 'ElectronicsStore',
-    priceRange: '$$$',
-  },
-  features: {
-    showBcvRate: true,
-    showSearch: true,
-    showCart: true,
-    orderViaWhatsapp: true,
-    deliveryOptions: true,
-    currencySymbol: '$',
-    currencyCode: 'USD',
-    allowCustomNotes: true,
-  },
-  storePrefix: 'NEX',
-  payment: {
-    pagoMovil: {
-      banco: 'Banesco (0134)',
-      telefono: '0412-4756191',
-      cedula: 'J-50123984',
-      titular: 'NEXUS TECH SOLUTIONS C.A.',
-    },
-    pagoMovilAccounts: [
-      {
-        id: 'pm-1',
-        banco: 'Banesco (0134)',
-        telefono: '0412-4756191',
-        cedula: 'J-50123984',
-        titular: 'NEXUS TECH SOLUTIONS C.A.',
-        isDefault: true,
-      }
-    ],
-    zelle: {
-      email: 'pagos@nexustech.com',
-      titular: 'NEXUS TECH SOLUTIONS C.A.',
-    },
-    binancePay: {
-      payId: '284719302',
-      merchantName: 'NexusTech',
-      email: 'binance@nexustech.com',
-    },
-    efectivo: true,
-    punto: true,
-  },
-  labels: {
-    itemNounSingular: 'Equipo',
-    itemNounPlural: 'Equipos',
-    emptyCartEmoji: '⚡',
-    cartTitle: '⚡ Tu Pedido Tech',
-    deliveryOptionName: 'Envío Asegurado / Delivery',
-    deliveryOptionPrice: 5,
-    pickupOptionName: 'Retiro en Oficina / Showroom',
-  },
-  categories: [
-    { id: 'laptops-pc', name: 'Laptops & PC', icon: 'cpu' },
-    { id: 'componentes', name: 'Componentes & Almacenamiento', icon: 'hard-drive' },
-    { id: 'perifericos', name: 'Periféricos & Gaming', icon: 'headphones' },
-    { id: 'audio-video', name: 'Audio & Video', icon: 'tv' },
-    { id: 'redes-conectividad', name: 'Redes & Conectividad', icon: 'wifi' },
-  ],
 };

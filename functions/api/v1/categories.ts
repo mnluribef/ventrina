@@ -1,2 +1,2 @@
 // functions/api/v1/categories.ts
-export { onRequestGet, onRequestPost, onRequestPut, onRequestDelete } from "../categories";
+export { onRequestDelete, onRequestGet, onRequestPost, onRequestPut } from '../categories';

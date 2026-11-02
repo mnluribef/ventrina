@@ -5,18 +5,53 @@ import type { StoreTemplateType } from '../../types/store.types';
 import '../../styles/template-switcher.css';
 
 export interface Props {
-  activeTemplate: StoreTemplateType;
+    activeTemplate: StoreTemplateType;
 }
 
 const { activeTemplate } = Astro.props;
 
 const templates = [
-  { id: 'restaurant', name: 'Restaurante', icon: '🍽️', url: '/demo/restaurant', brand: 'FOGÓN', desc: 'Gastronomía y Delivery' },
-  { id: 'hardware', name: 'Ferretería', icon: '🔨', url: '/demo/hardware', brand: 'FERROMAX', desc: 'Ferretería y Herramientas' },
-  { id: 'fashion', name: 'Moda & Ropa', icon: '👗', url: '/demo/fashion', brand: 'AURA', desc: 'Boutique y Colecciones' },
-  { id: 'tech', name: 'Tecnología', icon: '⚡', url: '/demo/tech', brand: 'NEXUS', desc: 'Gadgets y Electrónica' },
-  { id: 'autoparts', name: 'Repuestos', icon: '🚗', url: '/demo/autoparts', brand: 'MOTOPARTS', desc: 'Repuestos y Accesorios' },
-  { id: 'grocery', name: 'Bodegón', icon: '🛒', url: '/demo/grocery', brand: 'BODEGÓN', desc: 'Víveres y Delicatessen' },
+    {
+        id: 'restaurant',
+        name: 'Restaurante',
+        icon: '🍽️',
+        url: '/demo/restaurant',
+        brand: 'FOGÓN',
+        desc: 'Gastronomía y Delivery',
+    },
+    {
+        id: 'hardware',
+        name: 'Ferretería',
+        icon: '🔨',
+        url: '/demo/hardware',
+        brand: 'FERROMAX',
+        desc: 'Ferretería y Herramientas',
+    },
+    {
+        id: 'fashion',
+        name: 'Moda & Ropa',
+        icon: '👗',
+        url: '/demo/fashion',
+        brand: 'AURA',
+        desc: 'Boutique y Colecciones',
+    },
+    { id: 'tech', name: 'Tecnología', icon: '⚡', url: '/demo/tech', brand: 'NEXUS', desc: 'Gadgets y Electrónica' },
+    {
+        id: 'autoparts',
+        name: 'Repuestos',
+        icon: '🚗',
+        url: '/demo/autoparts',
+        brand: 'MOTOPARTS',
+        desc: 'Repuestos y Accesorios',
+    },
+    {
+        id: 'grocery',
+        name: 'Bodegón',
+        icon: '🛒',
+        url: '/demo/grocery',
+        brand: 'BODEGÓN',
+        desc: 'Víveres y Delicatessen',
+    },
 ];
 
 const currentTemplate = templates.find((t) => t.id === activeTemplate) || templates[0];

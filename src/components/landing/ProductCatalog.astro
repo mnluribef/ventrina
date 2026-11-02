@@ -1,14 +1,14 @@
 ---
+import { getStarterProducts } from '../../config/starter-products';
+import defaultStoreConfig from '../../config/store.config';
 // ProductCatalog.astro
 // Carga productos de la API y renderiza el catálogo + carrito dinámico.
 import type { StoreConfig } from '../../types/store.types';
-import defaultStoreConfig from '../../config/store.config';
-import { getStarterProducts } from '../../config/starter-products';
 import '../../styles/catalog.css';
 
 export interface Props {
-  config?: StoreConfig;
-  isDemo?: boolean;
+    config?: StoreConfig;
+    isDemo?: boolean;
 }
 
 const { config = defaultStoreConfig, isDemo = false } = Astro.props;

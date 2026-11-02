@@ -1,2 +1,2 @@
 // functions/api/v1/products.ts
-export { onRequestGet, onRequestPost, onRequestPut, onRequestDelete, onRequestPatch } from "../products";
+export { onRequestDelete, onRequestGet, onRequestPatch, onRequestPost, onRequestPut } from '../products';
