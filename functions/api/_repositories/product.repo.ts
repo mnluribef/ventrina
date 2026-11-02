@@ -214,134 +214,69 @@ export class ProductRepository {
      * Inserta un nuevo producto
      */
     async insert(product: Record<string, unknown>, tenantId: string): Promise<void> {
-        try {
-            await this.db
-                .prepare(`
-                INSERT INTO products (
-                    id, name, type_id, category, description, price, compare_at_price,
-                    icon, badge, image_url, sizes, template, active, tenant_id, brand, model, sku, stock
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            `)
-                .bind(
-                    product.id,
-                    product.name,
-                    product.category,
-                    product.category,
-                    product.description ?? '',
-                    product.price,
-                    product.compare_at_price ?? 0,
-                    product.icon ?? 'package',
-                    product.badge ?? '',
-                    product.image_url ?? '/assets/favicon.svg',
-                    product.sizes ?? null,
-                    product.template ?? 'restaurant',
-                    product.active ?? 1,
-                    tenantId,
-                    product.brand ?? null,
-                    product.model ?? null,
-                    product.sku ?? '',
-                    product.stock ?? -1,
-                )
-                .run();
-        } catch (dbErr: unknown) {
-            if (String(dbErr).includes('no such column')) {
-                await this.db
-                    .prepare(`
-                    INSERT INTO products (
-                        id, name, type_id, category, description, price, icon, image_url,
-                        sizes, template, active, tenant_id, brand, model, stock
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                `)
-                    .bind(
-                        product.id,
-                        product.name,
-                        product.category,
-                        product.category,
-                        product.description ?? '',
-                        product.price,
-                        product.icon ?? 'package',
-                        product.image_url ?? '/assets/favicon.svg',
-                        product.sizes ?? null,
-                        product.template ?? 'restaurant',
-                        product.active ?? 1,
-                        tenantId,
-                        product.brand ?? null,
-                        product.model ?? null,
-                        product.stock ?? -1,
-                    )
-                    .run();
-            } else {
-                throw dbErr;
-            }
-        }
+        await this.db
+            .prepare(`
+            INSERT INTO products (
+                id, name, type_id, category, description, price, compare_at_price,
+                icon, badge, image_url, sizes, template, active, tenant_id, brand, model, sku, stock
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `)
+            .bind(
+                product.id,
+                product.name,
+                product.category,
+                product.category,
+                product.description ?? '',
+                product.price,
+                product.compare_at_price ?? 0,
+                product.icon ?? 'package',
+                product.badge ?? '',
+                product.image_url ?? '/assets/favicon.svg',
+                product.sizes ?? null,
+                product.template ?? 'restaurant',
+                product.active ?? 1,
+                tenantId,
+                product.brand ?? null,
+                product.model ?? null,
+                product.sku ?? '',
+                product.stock ?? -1,
+            )
+            .run();
     }
 
     /**
      * Actualiza un producto existente
      */
     async update(id: string, product: Record<string, unknown>, tenantId: string): Promise<void> {
-        try {
-            await this.db
-                .prepare(`
-                UPDATE products SET
-                    name = ?, type_id = ?, category = ?, description = ?, price = ?,
-                    compare_at_price = ?, icon = ?, badge = ?, image_url = ?, sizes = ?,
-                    template = ?, active = ?, brand = ?, model = ?, sku = ?, stock = ?
-                WHERE id = ? AND tenant_id = ?
-            `)
-                .bind(
-                    product.name,
-                    product.category,
-                    product.category,
-                    product.description ?? '',
-                    product.price,
-                    product.compare_at_price ?? 0,
-                    product.icon ?? 'package',
-                    product.badge ?? '',
-                    product.image_url ?? '/assets/favicon.svg',
-                    product.sizes ?? null,
-                    product.template ?? 'restaurant',
-                    product.active ?? 1,
-                    product.brand ?? null,
-                    product.model ?? null,
-                    product.sku ?? '',
-                    product.stock ?? -1,
-                    id,
-                    tenantId,
-                )
-                .run();
-        } catch (dbErr: unknown) {
-            if (String(dbErr).includes('no such column')) {
-                await this.db
-                    .prepare(`
-                    UPDATE products SET
-                        name = ?, type_id = ?, category = ?, description = ?, price = ?,
-                        icon = ?, image_url = ?, sizes = ?, template = ?, active = ?,
-                        brand = ?, model = ?, stock = ?
-                    WHERE id = ? AND tenant_id = ?
-                `)
-                    .bind(
-                        product.name,
-                        product.category,
-                        product.category,
-                        product.description ?? '',
-                        product.price,
-                        product.icon ?? 'package',
-                        product.image_url ?? '/assets/favicon.svg',
-                        product.sizes ?? null,
-                        product.template ?? 'restaurant',
-                        product.active ?? 1,
-                        product.brand ?? null,
-                        product.model ?? null,
-                        product.stock ?? -1,
-                        id,
-                        tenantId,
-                    )
-                    .run();
-            } else {
-                throw dbErr;
-            }
-        }
+        await this.db
+            .prepare(`
+            UPDATE products SET
+                name = ?, type_id = ?, category = ?, description = ?, price = ?,
+                compare_at_price = ?, icon = ?, badge = ?, image_url = ?, sizes = ?,
+                template = ?, active = ?, brand = ?, model = ?, sku = ?, stock = ?
+            WHERE id = ? AND tenant_id = ?
+        `)
+            .bind(
+                product.name,
+                product.category,
+                product.category,
+                product.description ?? '',
+                product.price,
+                product.compare_at_price ?? 0,
+                product.icon ?? 'package',
+                product.badge ?? '',
+                product.image_url ?? '/assets/favicon.svg',
+                product.sizes ?? null,
+                product.template ?? 'restaurant',
+                product.active ?? 1,
+                product.brand ?? null,
+                product.model ?? null,
+                product.sku ?? '',
+                product.stock ?? -1,
+                id,
+                tenantId,
+            )
+            .run();
     }
 
     /**

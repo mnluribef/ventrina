@@ -226,8 +226,7 @@ export async function getTenantByIdCached(
     const primaryKey = getTenantKvKey(tenantId);
     if (kv) {
         try {
-            // Intentar con prefijo v1 estructurado; fallback a clave legacy para transición suave
-            const cached = (await kv.get(primaryKey, 'json')) || (await kv.get(`tenant:${tenantId}`, 'json'));
+            const cached = await kv.get(primaryKey, 'json');
             if (cached) return cached as TenantRow;
         } catch {}
     }
@@ -267,7 +266,7 @@ export async function getTenantByDomainCached(
     const primaryKey = getDomainKvKey(domain);
     if (kv) {
         try {
-            const cached = (await kv.get(primaryKey, 'json')) || (await kv.get(`domain:${domain}`, 'json'));
+            const cached = await kv.get(primaryKey, 'json');
             if (cached) return cached as TenantRow;
         } catch {}
     }
@@ -283,7 +282,7 @@ export async function getTenantByDomainCached(
 }
 
 /**
- * Invalida la caché de un tenant en Cloudflare KV (limpia keys versionadas y legacy) (E-06)
+ * Invalida la caché canónica de un tenant en Cloudflare KV (E-06)
  */
 export async function invalidateTenantCache(
     kv: KVNamespace | undefined,
@@ -292,10 +291,9 @@ export async function invalidateTenantCache(
 ): Promise<void> {
     if (!kv) return;
     try {
-        const promises = [kv.delete(getTenantKvKey(tenantId)), kv.delete(`tenant:${tenantId}`)];
+        const promises = [kv.delete(getTenantKvKey(tenantId))];
         if (domain) {
             promises.push(kv.delete(getDomainKvKey(domain)));
-            promises.push(kv.delete(`domain:${domain}`));
         }
         await Promise.all(promises);
     } catch {}

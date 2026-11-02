@@ -201,7 +201,7 @@ describe('Tenant Resolution Logic (_tenant.ts)', () => {
             expect(mockKv.put).toHaveBeenCalledWith('v1:ent-store:tenant', expect.any(String), { expirationTtl: 1800 });
         });
 
-        it('invalidates both structured and legacy KV keys', async () => {
+        it('invalidates canonical KV keys', async () => {
             const { invalidateTenantCache } = await import('../functions/api/_tenant');
             const mockKv = {
                 delete: vi.fn().mockResolvedValue(undefined),
@@ -209,9 +209,8 @@ describe('Tenant Resolution Logic (_tenant.ts)', () => {
 
             await invalidateTenantCache(mockKv, 'fogon', 'fogon.com');
             expect(mockKv.delete).toHaveBeenCalledWith('v1:fogon:tenant');
-            expect(mockKv.delete).toHaveBeenCalledWith('tenant:fogon');
             expect(mockKv.delete).toHaveBeenCalledWith('v1:domain:fogon.com');
-            expect(mockKv.delete).toHaveBeenCalledWith('domain:fogon.com');
+            expect(mockKv.delete).not.toHaveBeenCalledWith('tenant:fogon');
         });
     });
 });

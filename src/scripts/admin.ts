@@ -44,7 +44,6 @@ let soundEnabled = localStorage.getItem('admin_sound_enabled') !== 'false';
 // Paginación State
 let ordersPage = 1;
 let ordersTotalPages = 1;
-let _ordersTotalCount = 0;
 let productsPage = 1;
 let productsTotalPages = 1;
 let productsTotalCount = 0;
@@ -127,19 +126,6 @@ function escapeHtml(str: any): string {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
-}
-
-// --- HASHING DE CONTRASEÑA ---
-/**
- * Hashea una contraseña usando SHA-256 nativo del navegador (hexadecimal)
- * @param {string} password
- */
-async function _sha256(password: string): Promise<string> {
-    const msgBuffer = new TextEncoder().encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
-    return hashHex;
 }
 
 // --- SISTEMA DE TOASTS (NOTIFICACIONES) ---
@@ -803,12 +789,10 @@ async function loadOrders(page = 1) {
 
         if (responseData.meta) {
             ordersTotalPages = responseData.meta.totalPages || 1;
-            _ordersTotalCount = responseData.meta.total ?? (responseData.data ? responseData.data.length : 0);
             ordersList = responseData.data || [];
         } else {
             ordersTotalPages = 1;
             ordersList = Array.isArray(responseData) ? responseData : responseData.data || [];
-            _ordersTotalCount = ordersList.length;
         }
 
         // Detección de nuevo pedido para reproducir sonido y notificar

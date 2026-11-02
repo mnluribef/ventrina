@@ -183,44 +183,13 @@ export const onRequestPost: PagesHandler<Env> = async (context) => {
             return jsonResponse({ error: 'Credenciales inválidas o tienda no encontrada.' }, 401);
         }
 
-        let isMatch = false;
-
         if (!user.password_salt) {
-            // Caso 1: Usuario legacy con SHA-256 plano
-            const legacyHash = await hashSHA256(password);
-            isMatch = user.password_hash === legacyHash;
-
-            if (isMatch) {
-                // Migrar automáticamente al nuevo formato PBKDF2 directo (Fix #5)
-                const newSalt = generateSalt();
-                const newHash = await hashPasswordPBKDF2(password, newSalt);
-
-                await db
-                    .prepare('UPDATE users SET password_hash = ?, password_salt = ? WHERE id = ?')
-                    .bind(newHash, newSalt, user.id)
-                    .run();
-            }
-        } else {
-            // Caso 2: Usuario con PBKDF2 directo (Fix #5)
-            const directHash = await hashPasswordPBKDF2(password, user.password_salt);
-            if (user.password_hash === directHash) {
-                isMatch = true;
-            } else {
-                // Caso 2b: Compatibilidad hacia atrás con hash previo PBKDF2(SHA256(password), salt)
-                const legacySha = await hashSHA256(password);
-                const legacyHash = await hashPasswordPBKDF2(legacySha, user.password_salt);
-                if (user.password_hash === legacyHash) {
-                    isMatch = true;
-                    // Auto-migrar silenciosamente a PBKDF2 directo
-                    const newSalt = generateSalt();
-                    const newHash = await hashPasswordPBKDF2(password, newSalt);
-                    await db
-                        .prepare('UPDATE users SET password_hash = ?, password_salt = ? WHERE id = ?')
-                        .bind(newHash, newSalt, user.id)
-                        .run();
-                }
-            }
+            await rateLimitService.recordFailure(clientIp, { maxAttempts: MAX_ATTEMPTS, windowMs: LOCKOUT_TIME_MS });
+            return jsonResponse({ error: 'Credenciales inválidas.' }, 401);
         }
+
+        const directHash = await hashPasswordPBKDF2(password, user.password_salt);
+        const isMatch = user.password_hash === directHash;
 
         if (!isMatch) {
             await rateLimitService.recordFailure(clientIp, { maxAttempts: MAX_ATTEMPTS, windowMs: LOCKOUT_TIME_MS });
@@ -327,21 +296,14 @@ export const onRequestPut: PagesHandler<Env> = async (context) => {
             return unauthorizedResponse();
         }
 
-        // Verificar contraseña actual con soporte retroactivo (Fix #5)
-        let currentMatch = false;
+        // Verificar contraseña actual
         if (!user.password_salt) {
-            const currentSha = await hashSHA256(currentPassword);
-            currentMatch = user.password_hash === currentSha;
-        } else {
-            const directHash = await hashPasswordPBKDF2(currentPassword, user.password_salt);
-            if (user.password_hash === directHash) {
-                currentMatch = true;
-            } else {
-                const legacySha = await hashSHA256(currentPassword);
-                const legacyHash = await hashPasswordPBKDF2(legacySha, user.password_salt);
-                currentMatch = user.password_hash === legacyHash;
-            }
+            await rateLimitService.recordFailure(clientIp, { maxAttempts: MAX_ATTEMPTS, windowMs: LOCKOUT_TIME_MS });
+            return jsonResponse({ error: 'La contraseña actual es incorrecta.' }, 400);
         }
+
+        const directHash = await hashPasswordPBKDF2(currentPassword, user.password_salt);
+        const currentMatch = user.password_hash === directHash;
 
         if (!currentMatch) {
             await rateLimitService.recordFailure(clientIp, { maxAttempts: MAX_ATTEMPTS, windowMs: LOCKOUT_TIME_MS });

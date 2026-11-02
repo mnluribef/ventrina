@@ -177,18 +177,6 @@ export class OrderRepository {
     }
 
     /**
-     * Obtiene todos los productos básicos del tenant (uso legado/admin).
-     * Preferir findTenantProductsByIds en el flujo de checkout.
-     */
-    async findTenantProducts(tenantId: string): Promise<ProductShortRow[]> {
-        const { results } = await this.db
-            .prepare('SELECT id, name, price, stock FROM products WHERE tenant_id = ?')
-            .bind(tenantId)
-            .all<ProductShortRow>();
-        return results || [];
-    }
-
-    /**
      * Obtiene las variantes activas asociadas a una lista de IDs de productos (Fix Oportunidad 2)
      */
     async findVariantsByProductIds(tenantId: string, productIds: string[]): Promise<ProductVariantRow[]> {

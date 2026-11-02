@@ -332,12 +332,8 @@ export class OrderService {
         }
 
         // 4. Cargar solo los productos referenciados en el carrito (Fix #10: evita cargar todo el catálogo en memoria)
-        // Intentamos resolver por id, key o nombre; priorizamos id/key para la query.
         const requestedIds = items.flatMap((item) => [item.id, item.key].filter(Boolean) as string[]);
-        const dbProducts =
-            requestedIds.length > 0
-                ? await this.repo.findTenantProductsByIds(tenantId, requestedIds)
-                : await this.repo.findTenantProducts(tenantId); // fallback si solo vienen nombres
+        const dbProducts = await this.repo.findTenantProductsByIds(tenantId, requestedIds);
         const productMap = new Map(dbProducts.map((p) => [p.id, p]));
 
         // Cargar variantes asociadas a los productos del carrito (Oportunidad 2)

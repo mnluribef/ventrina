@@ -255,7 +255,7 @@ export class CatalogController {
                         .join('');
                 }
 
-                const legacySizesHtml =
+                const sizesOptionsHtml =
                     p.sizes && (!p.attributes || p.attributes.length === 0)
                         ? `<div class="attribute-options-group"><label>Opciones:</label><div class="attribute-selector" data-attribute="opcion" data-label="Opción" data-product="${p.id}">${p.sizes
                               .split(',')
@@ -312,7 +312,7 @@ export class CatalogController {
               ${badgesHtml}
               <div class="product-price">${priceDisplay}</div>
               <p class="product-desc">${p.description || ''}</p>
-              ${attributesHtml}${legacySizesHtml}
+              ${attributesHtml}${sizesOptionsHtml}
               <div class="product-actions">
                 ${
                     isOutOfStock
