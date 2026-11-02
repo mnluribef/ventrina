@@ -258,6 +258,11 @@ export const techTemplate: StoreConfig = {
       email: 'pagos@nexustech.com',
       titular: 'NEXUS TECH SOLUTIONS C.A.',
     },
+    binancePay: {
+      payId: '284719302',
+      merchantName: 'NexusTech',
+      email: 'binance@nexustech.com',
+    },
     efectivo: true,
     punto: true,
   },

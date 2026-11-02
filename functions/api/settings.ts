@@ -87,6 +87,13 @@ export const pagoMovilAccountSchema = z.object({
     isDefault: z.boolean().optional(),
 });
 
+export const binancePaySchema = z.object({
+    payId: z.string().max(50).optional(),
+    email: z.string().max(100).optional(),
+    qrImage: safeImageString.optional(),
+    merchantName: z.string().max(100).optional(),
+});
+
 export const paymentSettingsSchema = z.object({
     pagoMovil: z.object({
         banco: z.string().max(100).optional(),
@@ -99,6 +106,7 @@ export const paymentSettingsSchema = z.object({
         email: z.string().max(100).optional(),
         titular: z.string().max(100).optional(),
     }).optional(),
+    binancePay: binancePaySchema.optional(),
     efectivo: z.boolean().optional(),
     punto: z.boolean().optional(),
 });

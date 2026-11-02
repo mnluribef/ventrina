@@ -207,6 +207,13 @@ export interface PagoMovilAccount {
   isDefault?: boolean;
 }
 
+export interface BinancePayConfig {
+  payId?: string;
+  email?: string;
+  qrImage?: string;
+  merchantName?: string;
+}
+
 export interface StorePaymentConfig {
   pagoMovil?: {
     banco: string;
@@ -219,6 +226,7 @@ export interface StorePaymentConfig {
     email: string;
     titular: string;
   };
+  binancePay?: BinancePayConfig;
   efectivo?: boolean;
   punto?: boolean;
 }

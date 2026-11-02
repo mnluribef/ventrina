@@ -152,6 +152,31 @@ export function applyFullTenantConfig(
         if (el) el.textContent = z.titular;
     }
 
+    // Actualizar datos de Binance Pay en el DOM
+    const bp = cfg.payment?.binancePay;
+    if (bp?.payId) {
+        const el = document.getElementById('binance-data-payid');
+        if (el) el.textContent = bp.payId;
+    }
+    if (bp?.merchantName) {
+        const el = document.getElementById('binance-data-merchant');
+        if (el) el.textContent = bp.merchantName;
+        const item = document.getElementById('binance-data-merchant-item');
+        if (item) item.classList.remove('d-none');
+    }
+    if (bp?.email) {
+        const el = document.getElementById('binance-data-email');
+        if (el) el.textContent = bp.email;
+        const item = document.getElementById('binance-data-email-item');
+        if (item) item.classList.remove('d-none');
+    }
+    if (bp?.qrImage) {
+        const qrImg = document.getElementById('binance-data-qr') as HTMLImageElement | null;
+        const qrBox = document.getElementById('binance-qr-container');
+        if (qrImg) qrImg.src = bp.qrImage;
+        if (qrBox) qrBox.classList.remove('d-none');
+    }
+
     if (cartController) {
         cartController.render();
     }

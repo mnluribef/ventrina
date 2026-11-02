@@ -70,37 +70,66 @@
             </div>
             
             <div class="billing-methods-grid">
+                <!-- Pago Móvil -->
                 <div class="billing-card">
                     <h4 class="billing-method-title">
-                        <i data-lucide="landmark" class="billing-icon-success"></i> Pago Móvil
+                        <i data-lucide="landmark" class="billing-icon-success"></i> 📱 Pago Móvil (Bs)
                     </h4>
                     <div class="billing-info-list">
                         <div>Banco: <strong id="pay-bank">Banesco (0134)</strong></div>
                         <div>Teléfono: <strong id="pay-phone">0414-1234567</strong></div>
                         <div>RIF/Cédula: <strong id="pay-id">J-12345678-9</strong></div>
                     </div>
+                    <button type="button" class="billing-copy-btn" id="btn-copy-billing-pm">
+                        <i data-lucide="copy"></i> Copiar Datos
+                    </button>
                 </div>
 
+                <!-- Binance Pay -->
                 <div class="billing-card">
+                    <div class="billing-badge-crypto">⚡ Cero Comisión de Red</div>
                     <h4 class="billing-method-title">
-                        <i data-lucide="wallet" class="billing-icon-warning"></i> Cripto / Internacional
+                        <i data-lucide="wallet" class="billing-icon-binance"></i> 🟡 Binance Pay (USDT)
                     </h4>
                     <div class="billing-info-list">
-                        <div>Binance Pay: <strong id="pay-binance">pagos@ventrina.app</strong></div>
-                        <div>Zelle: <strong id="pay-zelle">pagos@ventrina.app</strong></div>
+                        <div>Pay ID: <strong id="pay-binance-id">284719302</strong></div>
+                        <div>Comercio / Nick: <strong id="pay-binance-merchant">VentrinaSaaS</strong></div>
+                        <div>Correo: <strong id="pay-binance">pagos@ventrina.app</strong></div>
+                    </div>
+                    <button type="button" class="billing-copy-btn" id="btn-copy-billing-binance">
+                        <i data-lucide="copy"></i> Copiar Pay ID
+                    </button>
+                    <div id="billing-binance-qr-wrap" class="billing-qr-box d-none">
+                        <img id="billing-binance-qr-img" src="" alt="QR Binance Pay Ventrina" class="billing-qr-img" />
+                        <p class="billing-qr-caption">Escanea desde tu app Binance</p>
                     </div>
                 </div>
+
+                <!-- Zelle -->
+                <div class="billing-card">
+                    <h4 class="billing-method-title">
+                        <i data-lucide="dollar-sign" class="billing-icon-primary"></i> 🇺🇸 Zelle (USD)
+                    </h4>
+                    <div class="billing-info-list">
+                        <div>Correo: <strong id="pay-zelle">pagos@ventrina.app</strong></div>
+                        <div>Titular: <strong id="pay-zelle-titular">Ventrina Software C.A.</strong></div>
+                    </div>
+                    <button type="button" class="billing-copy-btn" id="btn-copy-billing-zelle">
+                        <i data-lucide="copy"></i> Copiar Correo
+                    </button>
+                </div>
                 
+                <!-- Mensualidad y Reporte -->
                 <div class="billing-card billing-card-highlight">
                     <h4 class="billing-method-title">
-                        Mensualidad
+                        <i data-lucide="calendar"></i> Mensualidad
                     </h4>
                     <div class="billing-price-box">
                         $<span id="pay-amount">15</span> <span class="billing-price-period">/ mes</span>
                     </div>
-                    <p class="billing-price-note">Renovación automática los días 1 de cada mes.</p>
+                    <p class="billing-price-note">Renovación mensual. Envía tu comprobante o Pay ID para mantener tu tienda activa.</p>
                     <button class="btn-action primary btn-full-width" id="btn-report-payment">
-                        <i data-lucide="send"></i> Reportar Pago
+                        <i data-lucide="send"></i> Reportar Pago por WhatsApp
                     </button>
                 </div>
             </div>

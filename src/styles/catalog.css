@@ -815,6 +815,41 @@
     gap: 0.2rem;
 }
 
+.cart-binance-qr-box {
+    margin-top: 0.75rem;
+    text-align: center;
+    padding: 0.75rem;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.cart-binance-qr-img {
+    max-width: 160px;
+    max-height: 160px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+    border-radius: 6px;
+    object-fit: contain;
+}
+
+.cart-binance-qr-hint {
+    margin: 0.45rem 0 0 0;
+    font-size: 0.75rem;
+    color: var(--text-light, #64748b);
+}
+
+.cart-payment-usdt-amount {
+    color: #d97706;
+    font-size: 1.05rem;
+}
+
+.d-none {
+    display: none !important;
+}
+
 .cart-receipt-dropzone {
     border: 2px dashed var(--border-focus, var(--primary));
     border-radius: 10px;

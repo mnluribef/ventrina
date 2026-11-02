@@ -60,11 +60,15 @@ export const onRequestGet: PagesHandler<Env> = async (context) => {
         // Datos para Pagos Manuales (B2B Venezuela)
         const paymentInfo = {
             method: env.PAYMENT_METHOD || "Transferencia Bancaria / Pago Móvil",
-            bank: env.PAYMENT_BANK || "Banesco",
-            phone: env.PAYMENT_PHONE || "No disponible",
-            id: env.PAYMENT_ID || "No disponible",
+            bank: env.PAYMENT_BANK || "Banesco (0134)",
+            phone: env.PAYMENT_PHONE || "0412-4756191",
+            id: env.PAYMENT_ID || "J-50123984",
             binancePay: env.PAYMENT_BINANCE || "pagos@ventrina.app",
+            binancePayId: env.PAYMENT_BINANCE_PAY_ID || "284719302",
+            binanceMerchant: env.PAYMENT_BINANCE_MERCHANT || "VentrinaSaaS",
+            binanceQr: env.PAYMENT_BINANCE_QR || "",
             zelle: env.PAYMENT_ZELLE || "pagos@ventrina.app",
+            zelleTitular: env.PAYMENT_ZELLE_TITULAR || "Ventrina Software C.A.",
             monthlyPriceUsd: planDetails.monthlyPriceUsd
         };
 

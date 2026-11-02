@@ -166,6 +166,7 @@ export class CartUIController {
         const totalAmount = document.getElementById('cart-total-amount');
         const totalBsEl = document.getElementById('cart-total-bs');
         const pagoMovilBs = document.getElementById('pago-movil-bs-amount');
+        const binanceUsdt = document.getElementById('binance-usdt-amount');
         if (!totalAmount) return;
 
         const deliveryType = this.getSelectedDeliveryType();
@@ -177,6 +178,7 @@ export class CartUIController {
             totalAmount.textContent = 'A consultar';
             if (totalBsEl) totalBsEl.textContent = '';
             if (pagoMovilBs) pagoMovilBs.textContent = 'Bs. 0,00';
+            if (binanceUsdt) binanceUsdt.textContent = '$0.00 USDT';
             return;
         }
 
@@ -216,6 +218,9 @@ export class CartUIController {
         }
         if (pagoMovilBs) {
             pagoMovilBs.textContent = `Bs. ${totalBs.toFixed(2)}`;
+        }
+        if (binanceUsdt) {
+            binanceUsdt.textContent = `$${finalTotal.toFixed(2)} USDT`;
         }
     }
 
@@ -389,11 +394,22 @@ export class CartUIController {
             const refContainer = document.getElementById('payment-reference-container');
             const infoPagoMovil = document.getElementById('payment-info-pago-movil');
             const infoZelle = document.getElementById('payment-info-zelle');
+            const infoBinance = document.getElementById('payment-info-binance-pay');
 
             if (infoPagoMovil) infoPagoMovil.style.display = method === 'pago_movil' ? 'block' : 'none';
             if (infoZelle) infoZelle.style.display = method === 'zelle' ? 'block' : 'none';
+            if (infoBinance) infoBinance.style.display = method === 'binance_pay' ? 'block' : 'none';
             if (refContainer) {
-                refContainer.style.display = method === 'pago_movil' || method === 'zelle' ? 'block' : 'none';
+                refContainer.style.display = (method === 'pago_movil' || method === 'zelle' || method === 'binance_pay') ? 'block' : 'none';
+            }
+
+            const refInput = document.getElementById('payment-reference') as HTMLInputElement | null;
+            if (refInput) {
+                if (method === 'binance_pay') {
+                    refInput.placeholder = 'Ej. 248910284 (Order ID o Pay ID)';
+                } else {
+                    refInput.placeholder = 'Ej. 123456';
+                }
             }
         });
 
@@ -440,6 +456,24 @@ export class CartUIController {
                 setTimeout(() => { btn.innerHTML = originalHtml; }, 2000);
             } catch (err) {
                 this.toastService.show('❌ Error al copiar los datos');
+            }
+        });
+
+        // Copy Binance Pay Data
+        document.getElementById('copy-binance-btn')?.addEventListener('click', async (e) => {
+            const payId = document.getElementById('binance-data-payid')?.textContent?.trim() || '';
+            const merchant = document.getElementById('binance-data-merchant')?.textContent?.trim() || '';
+            const copyText = `Binance Pay ID: ${payId}${merchant ? `\nComercio: ${merchant}` : ''}`;
+            
+            try {
+                await navigator.clipboard.writeText(copyText);
+                const btn = e.currentTarget as HTMLButtonElement;
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '✅ ¡Copiado!';
+                this.toastService.show('Datos de Binance Pay copiados');
+                setTimeout(() => { btn.innerHTML = originalHtml; }, 2000);
+            } catch (err) {
+                this.toastService.show('❌ Error al copiar datos de Binance Pay');
             }
         });
 
@@ -579,8 +613,11 @@ export class CartUIController {
             return;
         }
 
-        if ((paymentMethod === 'pago_movil' || paymentMethod === 'zelle') && !paymentReference) {
-            this.toastService.show('⚠️ Ingresa el número de referencia del pago.');
+        if ((paymentMethod === 'pago_movil' || paymentMethod === 'zelle' || paymentMethod === 'binance_pay') && !paymentReference) {
+            const msg = paymentMethod === 'binance_pay'
+                ? '⚠️ Ingresa el Order ID o ID de transacción de Binance Pay.'
+                : '⚠️ Ingresa el número de referencia del pago.';
+            this.toastService.show(msg);
             paymentRefInput?.focus();
             return;
         }
@@ -639,9 +676,11 @@ export class CartUIController {
             const refContainer = document.getElementById('payment-reference-container');
             const infoPagoMovil = document.getElementById('payment-info-pago-movil');
             const infoZelle = document.getElementById('payment-info-zelle');
+            const infoBinance = document.getElementById('payment-info-binance-pay');
             if (refContainer) refContainer.style.display = 'none';
             if (infoPagoMovil) infoPagoMovil.style.display = 'none';
             if (infoZelle) infoZelle.style.display = 'none';
+            if (infoBinance) infoBinance.style.display = 'none';
 
             this.toggleCart();
             this.toastService.show(`🎉 ¡Pedido #${orderId} registrado con éxito!`);

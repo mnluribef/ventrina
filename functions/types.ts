@@ -21,7 +21,11 @@ export interface Env {
     PAYMENT_PHONE?: string;
     PAYMENT_ID?: string;
     PAYMENT_BINANCE?: string;
+    PAYMENT_BINANCE_PAY_ID?: string;
+    PAYMENT_BINANCE_MERCHANT?: string;
+    PAYMENT_BINANCE_QR?: string;
     PAYMENT_ZELLE?: string;
+    PAYMENT_ZELLE_TITULAR?: string;
     ASSETS?: { fetch: typeof fetch };
 }
 

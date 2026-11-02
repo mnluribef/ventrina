@@ -316,6 +316,7 @@ const { business, contact, features } = config;
                 </option>
                 <option value="pago_movil">📱 Pago Móvil</option>
                 <option value="zelle">🇺🇸 Zelle</option>
+                <option value="binance_pay">🟡 Binance Pay (USDT)</option>
                 <option value="efectivo">💵 Efectivo (Divisas / Bs)</option>
                 <option value="punto">💳 Punto de Venta (Sólo Retiro)</option>
             </select>
@@ -386,6 +387,48 @@ const { business, contact, features } = config;
                     <strong>Titular:</strong> <span id="zelle-data-titular">{config.payment?.zelle?.titular || business.name}</span>
                 </li>
             </ul>
+        </div>
+
+        <div
+            id="payment-info-binance-pay"
+            class="cart-payment-info-box"
+        >
+            <div class="cart-payment-info-header">
+                <p class="cart-payment-info-title">Datos para Binance Pay:</p>
+                <button type="button" id="copy-binance-btn" class="cart-copy-btn">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Copiar Pay ID
+                </button>
+            </div>
+            <ul class="cart-payment-data-list">
+                <li>
+                    <strong>Binance Pay ID:</strong> <span id="binance-data-payid">{config.payment?.binancePay?.payId || "123456789"}</span>
+                </li>
+                <li id="binance-data-merchant-item" class={config.payment?.binancePay?.merchantName ? "" : "d-none"}>
+                    <strong>Comercio / Nick:</strong> <span id="binance-data-merchant">{config.payment?.binancePay?.merchantName || ""}</span>
+                </li>
+                <li id="binance-data-email-item" class={config.payment?.binancePay?.email ? "" : "d-none"}>
+                    <strong>Correo Binance:</strong> <span id="binance-data-email">{config.payment?.binancePay?.email || ""}</span>
+                </li>
+            </ul>
+            <div id="binance-qr-container" class={config.payment?.binancePay?.qrImage ? "cart-binance-qr-box" : "cart-binance-qr-box d-none"}>
+                <img
+                    id="binance-data-qr"
+                    src={config.payment?.binancePay?.qrImage || ""}
+                    alt="Código QR Binance Pay"
+                    class="cart-binance-qr-img"
+                />
+                <p class="cart-binance-qr-hint">Escanea el código QR desde la App de Binance para pagar</p>
+            </div>
+            <div class="cart-payment-total-box">
+                <div>
+                    <span class="cart-payment-label">Monto Exacto a Transferir:</span>
+                    <strong id="binance-usdt-amount" class="cart-payment-usdt-amount">$0.00 USDT</strong>
+                </div>
+                <span class="cart-payment-bcv-sub">
+                    Moneda de pago: USDT (Tether) vía Binance Pay
+                </span>
+            </div>
         </div>
 
         <div

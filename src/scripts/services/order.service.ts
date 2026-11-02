@@ -111,6 +111,7 @@ export class OrderService implements IOrderService {
         const paymentLabels: Record<string, string> = {
             pago_movil: '📱 Pago Móvil',
             zelle: '🇺🇸 Zelle',
+            binance_pay: '🟡 Binance Pay (USDT)',
             efectivo: '💵 Efectivo',
             punto: '💳 Punto de Venta',
         };
@@ -121,7 +122,8 @@ export class OrderService implements IOrderService {
         }
         msg += `\n*Pago:* ${paymentDisplay}`;
         if (data.paymentReference) {
-            msg += `\n*Referencia:* ${data.paymentReference}`;
+            const refLabel = data.paymentMethod === 'binance_pay' ? 'Binance Pay Order ID / Ref' : 'Referencia';
+            msg += `\n*${refLabel}:* ${data.paymentReference}`;
         }
 
         if (data.paymentReceipt) {

@@ -156,5 +156,56 @@ describe('Multi-Account Pago Móvil Feature Tests', () => {
             expect(decoded).toContain('*Pago:* 📱 Pago Móvil');
             expect(decoded).toContain('*Referencia:* 123456');
         });
+
+        it('formats WhatsApp message with Binance Pay (USDT) and Order ID', () => {
+            const orderService = new OrderService(mockConfig, mockCurrencyService);
+
+            const submissionData: OrderSubmissionData = {
+                clientName: 'Andrea Rojas',
+                clientPhone: '0414-1122334',
+                deliveryType: 'retiro',
+                deliveryAddress: '',
+                paymentMethod: 'binance_pay',
+                paymentReference: '284719302941',
+                paymentReceipt: null,
+            };
+
+            const items: CartItem[] = [
+                {
+                    id: 'prod_crypto',
+                    key: 'prod_crypto',
+                    name: 'Mouse Gamer RGB',
+                    price: 25.0,
+                    qty: 1,
+                    icon: 'package',
+                    options: {},
+                },
+            ];
+
+            const waUrl = orderService.buildWhatsAppUrl('VEN-10293', submissionData, items);
+            const decoded = decodeURIComponent(waUrl);
+
+            expect(decoded).toContain('*Pago:* 🟡 Binance Pay (USDT)');
+            expect(decoded).toContain('*Binance Pay Order ID / Ref:* 284719302941');
+        });
+    });
+
+    describe('Binance Pay Settings Schema', () => {
+        it('validates binancePay settings with payId, merchantName and email', () => {
+            const payload = {
+                binancePay: {
+                    payId: '123456789',
+                    merchantName: 'CryptoTienda',
+                    email: 'crypto@tienda.com',
+                },
+            };
+
+            const result = paymentSettingsSchema.safeParse(payload);
+            expect(result.success).toBe(true);
+            if (result.success) {
+                expect(result.data.binancePay?.payId).toBe('123456789');
+                expect(result.data.binancePay?.merchantName).toBe('CryptoTienda');
+            }
+        });
     });
 });

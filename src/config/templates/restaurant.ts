@@ -259,6 +259,11 @@ export const restaurantTemplate: StoreConfig = {
       email: 'contacto@fogon.ve',
       titular: 'FOGÓN C.A.',
     },
+    binancePay: {
+      payId: '891024561',
+      merchantName: 'FogonRestaurant',
+      email: 'binance@fogon.ve',
+    },
     efectivo: true,
     punto: true,
   },

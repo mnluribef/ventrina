@@ -1364,6 +1364,62 @@ select option {
 .billing-price-note { font-size: 0.82rem; color: var(--text-secondary); margin: 0.5rem 0 1.25rem 0; }
 .btn-full-width { width: 100%; justify-content: center; }
 
+.billing-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--primary-light, rgba(79, 70, 229, 0.08));
+    border: 1px solid rgba(79, 70, 229, 0.15);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 0.6rem;
+}
+.billing-copy-btn:hover {
+    background: var(--primary);
+    color: #ffffff;
+}
+.billing-qr-box {
+    margin-top: 0.75rem;
+    padding: 0.6rem;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+.billing-qr-img {
+    max-width: 140px;
+    max-height: 140px;
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 6px;
+    object-fit: contain;
+}
+.billing-qr-caption {
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    margin-top: 0.4rem;
+}
+.billing-icon-binance {
+    color: #f59e0b;
+}
+.billing-badge-crypto {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: rgba(245, 158, 11, 0.12);
+    color: #d97706;
+    margin-bottom: 0.5rem;
+}
+
 /* Product Image Upload Component */
 .product-image-uploader {
     display: flex;

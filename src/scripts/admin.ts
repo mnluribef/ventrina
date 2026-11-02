@@ -719,8 +719,23 @@ async function loadBillingData() {
                 const pp = document.getElementById('pay-phone'); if (pp) pp.textContent = data.billing.phone;
                 const pid = document.getElementById('pay-id'); if (pid) pid.textContent = data.billing.id;
                 const pb = document.getElementById('pay-binance'); if (pb) pb.textContent = data.billing.binancePay;
+                const pbid = document.getElementById('pay-binance-id'); if (pbid) pbid.textContent = data.billing.binancePayId || '284719302';
+                const pbm = document.getElementById('pay-binance-merchant'); if (pbm) pbm.textContent = data.billing.binanceMerchant || 'VentrinaSaaS';
                 const pz = document.getElementById('pay-zelle'); if (pz) pz.textContent = data.billing.zelle;
+                const pzt = document.getElementById('pay-zelle-titular'); if (pzt) pzt.textContent = data.billing.zelleTitular || 'Ventrina Software C.A.';
                 const pa = document.getElementById('pay-amount'); if (pa) pa.textContent = data.billing.monthlyPriceUsd;
+
+                // QR Binance Pay en Facturación
+                const qrWrap = document.getElementById('billing-binance-qr-wrap');
+                const qrImg = document.getElementById('billing-binance-qr-img') as HTMLImageElement | null;
+                if (qrWrap && qrImg) {
+                    if (data.billing.binanceQr) {
+                        qrImg.src = data.billing.binanceQr;
+                        qrWrap.classList.remove('d-none');
+                    } else {
+                        qrWrap.classList.add('d-none');
+                    }
+                }
             }
         } else {
             currentTenantPlanKey = 'basic';
@@ -1059,6 +1074,7 @@ async function loadAnalytics() {
                     const name = pm.payment_method?.startsWith('pago_movil') ? `Pago Móvil${pm.payment_method.includes(':') ? ` (${pm.payment_method.split(':')[1]})` : ''}` :
                                  pm.payment_method === 'efectivo' ? 'Efectivo' :
                                  pm.payment_method === 'zelle' ? 'Zelle' :
+                                 pm.payment_method === 'binance_pay' ? 'Binance Pay' :
                                  pm.payment_method === 'punto' ? 'Punto de Venta' : pm.payment_method;
                     html += `
                         <div class="breakdown-item">
@@ -1594,6 +1610,7 @@ async function viewOrderDetails(orderId: string) {
         const paymentLabels = {
             pago_movil: '📱 Pago Móvil',
             zelle: '🇺🇸 Zelle',
+            binance_pay: '🟡 Binance Pay',
             efectivo: '💵 Efectivo',
             punto: '💳 Punto de Venta'
         };
@@ -3551,7 +3568,8 @@ function handleUpgradePlan() {
 function handleReportPayment() {
     const domain = document.getElementById('billing-tenant-domain')?.textContent || 'mi tienda';
     const amount = document.getElementById('pay-amount')?.textContent || '15';
-    const msg = `¡Hola Ventrina Soporte! Adjunto mi comprobante de pago de suscripción ($${amount} USD) para la tienda (${domain}).`;
+    const planName = document.getElementById('billing-plan-name')?.textContent || 'Básico';
+    const msg = `¡Hola Ventrina Soporte! 👋 Adjunto mi comprobante de pago de suscripción ($${amount} USD) para la tienda (${domain}) correspondiente al Plan ${planName}.`;
     const supportPhone = document.getElementById('pay-phone')?.textContent?.replace(/[^\d]/g, '') || '584141234567';
     let cleanPhone = supportPhone.startsWith('0') ? '58' + supportPhone.slice(1) : supportPhone;
     window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
@@ -3735,6 +3753,48 @@ document.addEventListener('click', (e) => {
     // Billing Report Payment
     if (t.closest('#btn-report-payment')) {
         handleReportPayment();
+        return;
+    }
+
+    // Copiar datos de Pago Móvil en Facturación
+    if (t.closest('#btn-copy-billing-pm')) {
+        const banco = document.getElementById('pay-bank')?.textContent?.trim() || '';
+        const telefono = document.getElementById('pay-phone')?.textContent?.trim() || '';
+        const id = document.getElementById('pay-id')?.textContent?.trim() || '';
+        const text = `Pago Móvil Ventrina SaaS\nBanco: ${banco}\nTeléfono: ${telefono}\nRIF/Cédula: ${id}`;
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Datos de Pago Móvil copiados al portapapeles', 'success');
+            }).catch(() => {
+                showToast('Error al copiar datos', 'error');
+            });
+        }
+        return;
+    }
+
+    // Copiar Pay ID de Binance en Facturación
+    if (t.closest('#btn-copy-billing-binance')) {
+        const payId = document.getElementById('pay-binance-id')?.textContent?.trim() || '';
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(payId).then(() => {
+                showToast(`Binance Pay ID (${payId}) copiado al portapapeles`, 'success');
+            }).catch(() => {
+                showToast('Error al copiar Pay ID', 'error');
+            });
+        }
+        return;
+    }
+
+    // Copiar correo de Zelle en Facturación
+    if (t.closest('#btn-copy-billing-zelle')) {
+        const email = document.getElementById('pay-zelle')?.textContent?.trim() || '';
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(email).then(() => {
+                showToast('Correo Zelle copiado al portapapeles', 'success');
+            }).catch(() => {
+                showToast('Error al copiar correo', 'error');
+            });
+        }
         return;
     }
 
@@ -4685,6 +4745,7 @@ async function loadStoreSettings() {
         const p = cfg.payment || {};
         const pm = p.pagoMovil || {};
         const z = p.zelle || {};
+        const bp = p.binancePay || {};
         const l = cfg.labels || {};
 
 function updateStoreUrls(tenant: any) {
@@ -4825,6 +4886,11 @@ function updateStoreUrls(tenant: any) {
 
         setVal('cfg-zelle-email', z.email || '');
         setVal('cfg-zelle-titular', z.titular || '');
+
+        setVal('cfg-binance-payid', bp.payId || '');
+        setVal('cfg-binance-merchant', bp.merchantName || '');
+        setVal('cfg-binance-email', bp.email || '');
+        setVal('cfg-binance-qr', bp.qrImage || '');
 
         setVal('cfg-delivery-name', l.deliveryOptionName || '');
         setVal('cfg-delivery-price', l.deliveryOptionPrice !== undefined ? l.deliveryOptionPrice : '');
@@ -5151,6 +5217,12 @@ if (storeSettingsForm) {
                 zelle: {
                     email: $val('cfg-zelle-email') || undefined,
                     titular: $val('cfg-zelle-titular') || undefined,
+                },
+                binancePay: {
+                    payId: $val('cfg-binance-payid') || undefined,
+                    merchantName: $val('cfg-binance-merchant') || undefined,
+                    email: $val('cfg-binance-email') || undefined,
+                    qrImage: $val('cfg-binance-qr') || undefined,
                 }
             },
             labels: {
