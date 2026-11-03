@@ -293,8 +293,8 @@ nav {
 .logo svg,
 .logo i {
     margin-right: 0.45rem;
-    color: var(--gold-light);
-    filter: drop-shadow(0 0 6px rgba(196, 150, 58, 0.5));
+    color: var(--theme-accent, var(--gold, #D4AF37));
+    filter: drop-shadow(0 0 6px var(--theme-accent-light, rgba(196, 150, 58, 0.4)));
 }
 
 .logo-text {
@@ -309,7 +309,7 @@ nav {
 }
 
 .logo-secondary {
-    color: var(--gold-light, #F5E6C8);
+    color: var(--theme-accent, var(--gold, #D4AF37));
     font-style: italic;
     margin-left: 2px;
 }
@@ -349,12 +349,12 @@ nav {
     left: 0;
     width: 0;
     height: 1px;
-    background: var(--gold-light);
+    background: var(--theme-accent, var(--gold, #D4AF37));
     transition: width 0.35s var(--ease-smooth);
 }
 
 .nav-links a:hover {
-    color: var(--gold-light);
+    color: var(--theme-accent, var(--gold, #D4AF37));
 }
 
 .nav-links a:hover::after {
