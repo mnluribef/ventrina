@@ -115,6 +115,11 @@ body {
     gap: 0.8rem;
     padding: 0.9rem 1.2rem;
     color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
     border-radius: 12px;
     font-weight: 500;
     font-size: 0.95rem;

@@ -10,7 +10,7 @@ export interface Props {
 const { config = defaultStoreConfig } = Astro.props;
 const { testimonials } = config.landing;
 
-const StarSVG = `<svg viewBox="0 0 24 24" class="star-svg"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>`;
+const StarSVG = `<svg viewBox="0 0 24 24" class="star-svg" aria-hidden="true"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>`;
 ---
 
 <section id="testimonios">
@@ -26,7 +26,7 @@ const StarSVG = `<svg viewBox="0 0 24 24" class="star-svg"><path d="M12 .587l3.6
         const avatarImg = t.avatar && (t.avatar.startsWith('http') || t.avatar.startsWith('/')) ? t.avatar : `/${t.avatar || 'assets/favicon.svg'}`;
         return (
           <div class="testimonial-card reveal">
-            <div class="stars" set:html={starsHtml} />
+            <div class="stars" role="img" aria-label={`Calificación: ${rating} de 5 estrellas`} set:html={starsHtml} />
             <p class="review">{t.review}</p>
             <div class="client-info">
               <div class="client-avatar">

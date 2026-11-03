@@ -180,7 +180,7 @@ html {
     color: var(--light-text-heading);
     font-weight: 700;
     margin-bottom: 1rem;
-    font-family: "Outfit", sans-serif;
+    font-family: var(--font-heading);
 }
 
 .price {
@@ -189,7 +189,7 @@ html {
     color: var(--light-text-heading);
     line-height: 1;
     margin-bottom: 0.5rem;
-    font-family: "Outfit", sans-serif;
+    font-family: var(--font-heading);
     letter-spacing: -0.03em;
 }
 
@@ -302,7 +302,7 @@ html {
     font-size: clamp(2rem, 4vw, 2.8rem);
     color: var(--light-text-heading);
     margin-bottom: 4rem;
-    font-family: "Outfit", sans-serif;
+    font-family: var(--font-heading);
     font-weight: 800;
 }
 

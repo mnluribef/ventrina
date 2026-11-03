@@ -1,0 +1,30 @@
+---
+// src/components/common/CookieNotice.astro
+// Banner informativo de almacenamiento local y cookies técnicas esenciales
+import '../../styles/cookie-notice.css';
+---
+
+<aside id="cookie-notice" class="cookie-notice-container" role="dialog" aria-labelledby="cookie-title" aria-describedby="cookie-desc">
+  <div class="cookie-notice-header">
+    <svg class="cookie-notice-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5" />
+      <path d="M8.5 8.5v.01" />
+      <path d="M16 15.5v.01" />
+      <path d="M12 12v.01" />
+      <path d="M11 17v.01" />
+      <path d="M7 14v.01" />
+    </svg>
+    <h3 id="cookie-title" class="cookie-notice-title">Privacidad y Almacenamiento</h3>
+  </div>
+  <p id="cookie-desc" class="cookie-notice-text">
+    Usamos almacenamiento local para el catálogo, carrito y tu sesión. Sin cookies de rastreo publicitario. Consulta nuestra <a href="/privacidad" class="cookie-notice-link" target="_blank" rel="noopener">Política de Privacidad</a>.
+  </p>
+  <div class="cookie-notice-actions">
+    <button type="button" id="cookie-accept-btn" class="cookie-notice-btn cookie-notice-btn-accept">Entendido</button>
+  </div>
+</aside>
+
+<script>
+  import '../../scripts/cookie-notice.ts';
+</script>
+

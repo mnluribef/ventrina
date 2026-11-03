@@ -16,6 +16,9 @@
         "db:migrate:remote": "wrangler d1 migrations apply ventrina-db --remote",
         "create-admin": "node scripts/generate-admin.js",
         "test": "vitest run",
+        "preflight": "node scripts/preflight-check.mjs",
+        "worker:deploy": "wrangler deploy -c workers/wrangler.toml",
+        "cron:deploy": "wrangler deploy -c workers/cron-wrangler.toml",
         "lint": "biome check .",
         "lint:fix": "biome check --write .",
         "format": "biome format --write ."

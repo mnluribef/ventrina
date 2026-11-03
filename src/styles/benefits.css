@@ -81,7 +81,7 @@
 }
 
 .benefit-card h3 {
-    font-family: "Outfit", sans-serif;
+    font-family: var(--font-heading);
     font-size: 1.15rem;
     font-weight: 600;
     color: var(--text-heading);

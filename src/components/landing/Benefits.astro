@@ -16,7 +16,7 @@ const { benefits } = config.landing;
 <section id="nosotros">
   <div class="container">
     <div class="section-header reveal">
-      <h2>{benefits.title} <span>{benefits.titleHighlight}</span>?</h2>
+      <h2>{benefits.title} <span>{benefits.titleHighlight}</span>{benefits.title?.startsWith('¿') && !benefits.titleHighlight?.endsWith('?') ? '?' : ''}</h2>
       <p>{benefits.subtitle}</p>
     </div>
     <div class="benefits-grid">

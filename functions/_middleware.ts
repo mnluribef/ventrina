@@ -73,7 +73,12 @@ export const onRequest = async (context: PagesContext<Env>): Promise<Response> =
             const mainDomain = isLocal ? `localhost:${url.port || '8788'}` : 'ventrina.app';
             const protocol = url.protocol;
 
-            if (pathname === '/register' || pathname === '/terminos' || pathname === '/precios') {
+            if (
+                pathname === '/register' ||
+                pathname === '/terminos' ||
+                pathname === '/privacidad' ||
+                pathname === '/precios'
+            ) {
                 return Response.redirect(`${protocol}//${mainDomain}${pathname}`, 302);
             }
 

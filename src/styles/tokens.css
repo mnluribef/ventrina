@@ -1,8 +1,7 @@
 /* =====================================================
    VENTRINA — Design System Tokens
    Archivo: src/styles/tokens.css
-   Identidad visual artesanal — Ventrina Atelier
-   Royal Iris × Burnished Bronze × Warm Alabaster
+   Sistema visual minimalista: Royal Iris & Warm Amber
    ===================================================== */
 
 /* ── Fuentes ─────────────────────────────────────── */
@@ -85,7 +84,7 @@
 
     /* ── Transiciones de Alta Precisión ──────────────── */
     --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: var(--ease-smooth);
     --ease-out: cubic-bezier(0, 0, 0.2, 1);
     --transition: all 0.25s var(--ease-smooth);
 

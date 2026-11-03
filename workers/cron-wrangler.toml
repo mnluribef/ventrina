@@ -1,0 +1,10 @@
+name = "ventrina-cron-cleanup"
+main = "cron-cleanup.js"
+compatibility_date = "2026-05-02"
+
+[triggers]
+crons = ["0 4 * * *"] # Ejecutar diariamente a las 04:00 UTC (medianoche hora local)
+
+[vars]
+APP_BASE_URL = "https://ventrina.app"
+

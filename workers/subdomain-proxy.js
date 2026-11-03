@@ -2,27 +2,28 @@
  * Cloudflare Worker: Proxy Wildcard para Subdominios de Ventrina
  *
  * Enrutamiento: *.ventrina.app/*
- * Destino: ventrina.app (Backend en Cloudflare Pages)
+ * Destino: Backend en Cloudflare Pages (configurable por PAGES_TARGET_HOST)
  */
 
 export default {
-    async fetch(request) {
+    async fetch(request, env) {
         const url = new URL(request.url);
         const originalHost = url.hostname.toLowerCase();
 
-        // 1. Si la petición ya es el dominio raíz o www, permitir que continúe
+        // 1. Si la petición ya es el dominio raíz o www, permitir que continúe directamente
         if (originalHost === 'ventrina.app' || originalHost === 'www.ventrina.app') {
             return fetch(request);
         }
 
-        // 2. Destino real de Cloudflare Pages
-        url.hostname = 'vendly-20w.pages.dev';
+        // 2. Destino real de Cloudflare Pages (configurable vía variable de entorno o fallback a ventrina.pages.dev)
+        const targetHost = env?.PAGES_TARGET_HOST || 'ventrina.pages.dev';
+        url.hostname = targetHost;
 
         // 3. Clonar y preparar cabeceras para que el middleware identifique la tienda
         const newHeaders = new Headers(request.headers);
         newHeaders.set('X-Forwarded-Host', originalHost);
         newHeaders.set('X-Forwarded-Proto', url.protocol.replace(':', '') || 'https');
-        newHeaders.set('Host', 'vendly-20w.pages.dev');
+        newHeaders.set('Host', targetHost);
 
         // 4. Construir la petición modificada preservando método y body (excepto GET/HEAD)
         const hasBody = request.method !== 'GET' && request.method !== 'HEAD';

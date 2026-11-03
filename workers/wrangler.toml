@@ -5,3 +5,6 @@ compatibility_date = "2026-05-02"
 routes = [
   { pattern = "*.ventrina.app/*", zone_name = "ventrina.app" }
 ]
+
+[vars]
+PAGES_TARGET_HOST = "ventrina.pages.dev"

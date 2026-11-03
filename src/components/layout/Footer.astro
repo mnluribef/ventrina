@@ -55,7 +55,7 @@ const isSaas = business.logoTextPrimary === 'VENTRINA' || business.name === 'Ven
           <span class="logo-text">{business.logoTextPrimary}<span>{business.logoTextSecondary || ''}</span></span>
         </div>
         <p>{business.description}</p>
-        <p class="footer-hours">🕐 {contact.hours}</p>
+        {contact.hours && <p class="footer-hours">🕐 {contact.hours}</p>}
         {contact.instagram && (
           <div class="footer-social">
             <a href={contact.instagram} target="_blank" rel="noopener" aria-label="Instagram">
@@ -68,7 +68,7 @@ const isSaas = business.logoTextPrimary === 'VENTRINA' || business.name === 'Ven
       </div>
 
       <div class="footer-links">
-        <div class="footer-col-title">Navegación</div>
+        <h3 class="footer-col-title">Navegación</h3>
         <ul>
           {nav.links.map((link) => (
             <li><a href={link.href}>{link.label}</a></li>
@@ -77,7 +77,7 @@ const isSaas = business.logoTextPrimary === 'VENTRINA' || business.name === 'Ven
       </div>
 
       <div class="footer-links">
-        <div class="footer-col-title">Contacto</div>
+        <h3 class="footer-col-title">Contacto</h3>
         <ul>
           {contact.whatsapp && (
             <li>
@@ -111,9 +111,9 @@ const isSaas = business.logoTextPrimary === 'VENTRINA' || business.name === 'Ven
       <div class="footer-legal-col">
         <p class="footer-copyright">&copy; {currentYear} {business.name}. Todos los derechos reservados.</p>
         {isSaas ? (
-          <p class="footer-disclaimer">Plataforma tecnológica para catálogos interactivos y gestión ágil de pedidos por WhatsApp. <a href="/terminos" class="footer-terms-link" target="_blank" rel="noopener">Términos, Condiciones & Política Anti-Fraude</a></p>
+          <p class="footer-disclaimer"><a href="/terminos" class="footer-terms-link" target="_blank" rel="noopener">Términos de Servicio y Prevención de Fraude</a> &middot; <a href="/privacidad" class="footer-terms-link" target="_blank" rel="noopener">Política de Privacidad</a></p>
         ) : (
-          <p class="footer-disclaimer">Tecnología SaaS provista por Ventrina. Ventrina no es parte de la venta ni custodia fondos de compras minoristas. <a href="https://ventrina.app/terminos" class="footer-terms-link" target="_blank" rel="noopener">Términos, Condiciones & Política Anti-Fraude</a></p>
+          <p class="footer-disclaimer">Tecnología provista por Ventrina. Ventrina no intermedia pagos ni custodia inventarios de comercios independientes. <a href="https://ventrina.app/terminos" class="footer-terms-link" target="_blank" rel="noopener">Términos</a> &middot; <a href="https://ventrina.app/privacidad" class="footer-terms-link" target="_blank" rel="noopener">Privacidad</a></p>
         )}
       </div>
     </div>

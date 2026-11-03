@@ -23,16 +23,6 @@ footer::before {
     background: linear-gradient(to right, transparent, var(--gold), transparent);
 }
 
-/* Decoración de fondo */
-footer::after {
-    content: "";
-    position: absolute;
-    bottom: -1.5rem;
-    right: 3%;
-    pointer-events: none;
-    user-select: none;
-}
-
 .footer-content {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
@@ -104,7 +94,7 @@ footer::after {
 
 .footer-links h4,
 .footer-links .footer-col-title {
-    font-family: "Outfit", sans-serif;
+    font-family: var(--font-heading);
     font-size: 0.82rem;
     font-weight: 700;
     text-transform: uppercase;

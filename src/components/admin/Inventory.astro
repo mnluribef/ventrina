@@ -5,9 +5,9 @@
     <div class="content-card">
         <div class="card-header">
             <div>
-                <h2>Gestión de Catálogo Multinegocio</h2>
+                <h2>Catálogo de Productos</h2>
                 <p class="section-desc">
-                    Catálogo separado por plantilla: Restaurante, Ferretería, Moda y Tecnología
+                    Administra tus artículos, precios, variantes y disponibilidad.
                 </p>
             </div>
             <div class="card-actions">
@@ -84,12 +84,12 @@
                                 id="prod-template"
                                 class="form-control"
                             >
-                                <option value="restaurant">🍽️ Restaurante (Gastronomía)</option>
-                                <option value="hardware">🔨 Ferretería (Herramientas/Construcción)</option>
-                                <option value="autoparts">🚗 Repuestos (Autopartes)</option>
-                                <option value="fashion">👗 Moda & Ropa (Boutique/Calzado)</option>
-                                <option value="tech">⚡ Tecnología (Gaming/PC/Equipos)</option>
-                                <option value="grocery">🛒 Bodegón & Supermercado (Víveres/Alimentos)</option>
+                                <option value="restaurant">Restaurante</option>
+                                <option value="hardware">Ferretería</option>
+                                <option value="autoparts">Repuestos y Autopartes</option>
+                                <option value="fashion">Moda y Ropa</option>
+                                <option value="tech">Tecnología y Equipos</option>
+                                <option value="grocery">Bodegón y Supermercado</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -274,17 +274,17 @@
                                 type="number"
                                 id="prod-stock"
                                 class="form-control"
-                                placeholder="-1 para ilimitado, o >= 0"
+                                placeholder="-1 para ilimitado, o cantidad"
                                 value="-1"
                                 min="-1"
                             />
                             <span class="field-hint">
-                                -1 = Stock infinito. O define las unidades reales en existencia.
+                                -1 = sin límite. O ingresa unidades disponibles.
                             </span>
                         </div>
                         <div class="form-group">
                             <label for="prod-active">
-                                Disponibilidad en Menú
+                                Disponibilidad
                             </label>
                             <select
                                 id="prod-active"
@@ -336,7 +336,7 @@
         <!-- Barra de Filtros por Plantilla -->
         <div class="filter-tabs" id="template-filter-tabs">
             <span class="filter-badge-label">
-                <i data-lucide="filter" class="icon-14"></i> Filtrar por Plantilla:
+                <i data-lucide="filter" class="icon-14"></i> Plantilla:
             </span>
             <button type="button" class="filter-tab-btn active" data-filter="all">
                 📦 Todas (<span id="count-all">0</span>)

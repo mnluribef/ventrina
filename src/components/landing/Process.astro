@@ -32,12 +32,14 @@ const { process } = config.landing;
 
 <style is:global>
 /* ===================== PROCESS ===================== */
+#como-pedir,
 #proceso {
     background: var(--white);
     position: relative;
     overflow: hidden;
 }
 
+#como-pedir::before,
 #proceso::before {
     content: '';
     position: absolute;
@@ -97,7 +99,7 @@ const { process } = config.landing;
 }
 
 .process-step h3 {
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-heading);
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-heading);

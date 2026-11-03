@@ -81,7 +81,7 @@ import Modal from '../common/Modal.astro';
                 <button type="button" class="btn-action secondary btn-view-receipt" id="btn-view-receipt-modal">
                     <i data-lucide="eye"></i> Ver Comprobante Completo
                 </button>
-                <span class="field-hint">Click para ampliar captura</span>
+                <span class="field-hint">Clic para ver imagen completa</span>
             </div>
         </div>
     </div>
@@ -127,7 +127,7 @@ import Modal from '../common/Modal.astro';
                 <button type="button" class="btn-action secondary btn-view-receipt" id="btn-view-payment-receipt">
                     <i data-lucide="eye"></i> Ver Comprobante Completo
                 </button>
-                <span class="field-hint">Verifica el capture antes de confirmar</span>
+                <span class="field-hint">Verifica el comprobante antes de confirmar</span>
             </div>
         </div>
     </div>
@@ -272,7 +272,7 @@ import Modal from '../common/Modal.astro';
 <!-- 6. Modal Edición Rápida de Producto -->
 <Modal
     id="quick-edit-modal"
-    title="⚡ Edición Rápida de Producto"
+    title="Edición Rápida de Producto"
     closeBtnId="btn-close-quick-edit-modal"
     size="md"
     formId="quick-edit-form"
@@ -322,7 +322,7 @@ import Modal from '../common/Modal.astro';
     contentClass="modal-categories"
 >
     <div slot="header" class="modal-title-with-badge">
-        <h3>🏷️ Gestor Central de Categorías</h3>
+        <h3>Gestor de Categorías</h3>
         <span class="badge-count" id="categories-count-badge">0 categorías</span>
     </div>
 
@@ -420,7 +420,7 @@ import Modal from '../common/Modal.astro';
     <input type="hidden" id="rename-cat-old-slug" />
     <div class="alert-info-box">
         <i data-lucide="info" class="icon-18"></i>
-        <p>Renombrar el identificador actualizará atómicamente la categoría de todos los productos vinculados sin afectar tus ventas.</p>
+        <p>Renombrar el identificador actualizará automáticamente la categoría de todos los productos vinculados.</p>
     </div>
     <div class="form-group">
         <label>Categoría Actual</label>
@@ -468,7 +468,7 @@ import Modal from '../common/Modal.astro';
 <!-- 9. Modal Eliminar / Reasignar Categoría -->
 <Modal
     id="category-delete-modal"
-    title="🗑️ Eliminar Categoría"
+    title="Eliminar Categoría"
     closeBtnId="btn-close-cat-delete-modal"
     size="md"
     formId="form-delete-category"
@@ -513,7 +513,7 @@ import Modal from '../common/Modal.astro';
     <!-- Stand / Hablador Imprimible -->
     <div class="qr-printable-stand" id="qr-printable-stand">
         <div class="qr-stand-header">
-            <span class="qr-stand-badge">✨ Catálogo Digital & Pedidos</span>
+            <span class="qr-stand-badge">Catálogo Digital y Pedidos</span>
             <h2 class="qr-stand-title" id="modal-qr-business-name">Mi Tienda</h2>
             <p class="qr-stand-tagline" id="modal-qr-tagline">Escanea con tu cámara y haz tu pedido</p>
         </div>

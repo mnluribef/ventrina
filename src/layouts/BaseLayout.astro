@@ -1,4 +1,5 @@
 ---
+import CookieNotice from '../components/common/CookieNotice.astro';
 import defaultStoreConfig from '../config/store.config';
 // BaseLayout.astro - Layout principal configurable
 import type { StoreConfig } from '../types/store.types';
@@ -234,5 +235,6 @@ const themeCss = `
 </head>
 <body>
   <slot />
+  <CookieNotice />
 </body>
 </html>

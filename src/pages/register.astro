@@ -75,52 +75,52 @@ import '../styles/register.css';
                             <input type="text" id="tenantSlug" name="tenantSlug" class="with-prefix with-suffix" required placeholder="mitienda" pattern="^[a-z0-9\-]+$" title="Solo minúsculas, números y guiones">
                             <span class="addon suffix" id="domain-suffix">.ventrina.app</span>
                         </div>
-                        <small>Esta será la URL directa de tu tienda (ej: mitienda.ventrina.app). No podrás cambiarla luego.</small>
+                        <small>Identificador permanente de tu tienda.</small>
                     </div>
 
                     <div class="form-group">
-                        <label>Tipo de Negocio (Plantilla)</label>
+                        <label>Tipo de Negocio</label>
                         <div class="template-selector">
                             <label class="template-card">
                                 <input type="radio" name="template" value="restaurant" checked>
                                 <div class="card-content">
                                     <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path></svg>
-                                    <span class="name">Restaurante / Comida</span>
+                                    <span class="name">Restaurante</span>
                                 </div>
                             </label>
                             <label class="template-card">
                                 <input type="radio" name="template" value="hardware">
                                 <div class="card-content">
                                     <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-                                    <span class="name">Ferretería / Herramientas</span>
+                                    <span class="name">Ferretería</span>
                                 </div>
                             </label>
                             <label class="template-card">
                                 <input type="radio" name="template" value="autoparts">
                                 <div class="card-content">
                                     <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon"><circle cx="12" cy="12" r="8"></circle><path d="m21.17 6.83-2.83 2.83"></path><path d="m17.17 14.17-2.83-2.83"></path><path d="m9.83 9.83-2.83-2.83"></path><path d="m2.83 17.17 2.83-2.83"></path><path d="m17.17 9.83-2.83 2.83"></path><path d="m9.83 14.17-2.83 2.83"></path></svg>
-                                    <span class="name">Repuestos Automotrices</span>
+                                    <span class="name">Repuestos</span>
                                 </div>
                             </label>
                             <label class="template-card">
                                 <input type="radio" name="template" value="fashion">
                                 <div class="card-content">
                                     <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M20.38 3.46 16 2a8 8 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
-                                    <span class="name">Ropa / Moda</span>
+                                    <span class="name">Moda</span>
                                 </div>
                             </label>
                             <label class="template-card">
                                 <input type="radio" name="template" value="tech">
                                 <div class="card-content">
                                     <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon"><rect width="14" height="8" x="5" y="2" rx="2"></rect><rect width="20" height="8" x="2" y="14" rx="2"></rect><path d="M6 18h2"></path><path d="M12 18h6"></path></svg>
-                                    <span class="name">Tecnología / Gadgets</span>
+                                    <span class="name">Tecnología</span>
                                 </div>
                             </label>
                             <label class="template-card">
                                 <input type="radio" name="template" value="grocery">
                                 <div class="card-content">
                                     <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
-                                    <span class="name">Bodegón / Supermercado</span>
+                                    <span class="name">Supermercado</span>
                                 </div>
                             </label>
                         </div>
@@ -145,7 +145,6 @@ import '../styles/register.css';
                     <div class="form-group">
                         <label for="email">Correo Electrónico</label>
                         <input type="email" id="email" name="email" required placeholder="tu@correo.com" autocomplete="email">
-                        <small>Utilizarás este correo para acceder como administrador a tu panel.</small>
                     </div>
 
                     <div class="form-group">
@@ -159,20 +158,18 @@ import '../styles/register.css';
                                 </svg>
                             </button>
                         </div>
-                        <small>Usa al menos 8 caracteres para proteger tu cuenta.</small>
                     </div>
 
                     <div class="form-group">
-                        <label for="whatsapp">WhatsApp (Para recibir pedidos)</label>
+                        <label for="whatsapp">WhatsApp para Pedidos</label>
                         <input type="tel" id="whatsapp" name="whatsapp" placeholder="Ej: +584141234567">
-                        <small>Los pedidos de tus clientes llegarán a este número.</small>
                     </div>
 
                     <div class="form-group terms-checkbox-group">
                         <label class="terms-checkbox-label" for="acceptTerms">
                             <input type="checkbox" id="acceptTerms" name="acceptTerms" required class="terms-checkbox">
                             <span class="terms-text">
-                                He leído y acepto los <a href="/terminos" target="_blank" rel="noopener" class="terms-link">Términos y Condiciones de Servicio y Política Anti-Fraude</a> de Ventrina.
+                                Acepto los <a href="/terminos" target="_blank" rel="noopener" class="terms-link">Términos de Servicio</a> y la <a href="/privacidad" target="_blank" rel="noopener" class="terms-link">Política de Privacidad</a> de Ventrina.
                             </span>
                         </label>
                     </div>

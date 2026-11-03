@@ -10,20 +10,9 @@ export interface Props {
     fill?: string;
     stroke?: string;
     class?: string;
-    style?: string;
 }
 
-const {
-    name,
-    size = 24,
-    width = size,
-    height = size,
-    strokeWidth,
-    fill,
-    stroke,
-    class: className,
-    style,
-} = Astro.props;
+const { name, size = 24, width = size, height = size, strokeWidth, fill, stroke, class: className } = Astro.props;
 
 const iconDef = getIcon(name);
 const finalStroke = stroke || iconDef.stroke || 'currentColor';
@@ -43,6 +32,5 @@ const viewBox = iconDef.viewBox || '0 0 24 24';
   stroke-linecap="round"
   stroke-linejoin="round"
   class={className}
-  style={style}
   set:html={iconDef.body}
 />
