@@ -27,3 +27,8 @@ dist/
 .astro/preview.json
 .astro/preview.log
 .env.example
+/.agents
+/.github/agents
+/.github
+/.impeccable
+/.kiro

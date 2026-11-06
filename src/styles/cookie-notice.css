@@ -12,8 +12,8 @@
     background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(226, 232, 240, 0.9);
-    border-radius: 1rem;
+    border: 1px solid var(--light-border);
+    border-radius: 14px;
     box-shadow:
         0 20px 35px -8px rgba(0, 0, 0, 0.12),
         0 4px 12px rgba(0, 0, 0, 0.05);
@@ -48,26 +48,26 @@
 .cookie-notice-icon {
     width: 22px;
     height: 22px;
-    color: var(--color-primary, #5850c8);
+    color: var(--color-primary);
     flex-shrink: 0;
 }
 
 .cookie-notice-title {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--light-text-heading);
     margin: 0;
 }
 
 .cookie-notice-text {
     font-size: 0.85rem;
     line-height: 1.55;
-    color: #475569;
+    color: var(--light-text-muted);
     margin: 0 0 1rem 0;
 }
 
 .cookie-notice-link {
-    color: var(--color-primary, #5850c8);
+    color: var(--color-primary);
     text-decoration: underline;
     text-underline-offset: 3px;
     font-weight: 600;
@@ -75,7 +75,7 @@
 }
 
 .cookie-notice-link:hover {
-    color: var(--color-primary-hover, #463ea7);
+    color: var(--color-primary-hover);
 }
 
 .cookie-notice-actions {
@@ -94,19 +94,19 @@
     font-size: 0.85rem;
     font-weight: 600;
     padding: 0.5rem 1.1rem;
-    border-radius: 0.5rem;
+    border-radius: 10px;
     transition: all 0.15s ease;
 }
 
 .cookie-notice-btn-accept {
-    background: var(--color-primary, #5850c8);
+    background: var(--color-primary);
     color: #ffffff;
-    box-shadow: 0 2px 8px var(--color-primary-glow, rgba(88, 80, 200, 0.22));
+    box-shadow: 0 2px 8px var(--color-primary-glow);
 }
 
 .cookie-notice-btn-accept:hover {
-    background: var(--color-primary-hover, #463ea7);
-    box-shadow: 0 4px 12px var(--color-primary-glow, rgba(88, 80, 200, 0.35));
+    background: var(--color-primary-hover);
+    box-shadow: 0 4px 12px var(--color-primary-glow);
     transform: translateY(-1px);
 }
 

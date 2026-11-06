@@ -58,7 +58,7 @@
     text-align: center;
     padding: 4rem 1.5rem;
     background: var(--bg-card, #ffffff);
-    border-radius: 20px;
+    border-radius: 18px;
     border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
 }
 
@@ -79,7 +79,7 @@
 }
 
 .pdp-error-icon {
-    font-size: 3rem;
+    font-size: 3.5rem;
     margin-bottom: 1rem;
 }
 
@@ -105,7 +105,7 @@
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
-    border-radius: 20px;
+    border-radius: 18px;
     overflow: hidden;
     background: var(--bg-section, #f8fafc);
     border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
@@ -202,7 +202,7 @@
 
 .pdp-title {
     font-family: var(--font-heading, "Outfit", sans-serif);
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 800;
     color: var(--text-heading, #0f172a);
     line-height: 1.2;
@@ -212,7 +212,7 @@
 /* Precios */
 .pdp-price-card {
     padding: 1.25rem 1.5rem;
-    border-radius: 16px;
+    border-radius: 18px;
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
@@ -235,7 +235,7 @@
 }
 
 .pdm-price-original {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: var(--text-muted, #94a3b8);
     text-decoration: line-through;
@@ -247,19 +247,19 @@
     color: #dc2626;
     background: #fee2e2;
     padding: 0.2rem 0.6rem;
-    border-radius: 8px;
+    border-radius: 6px;
     letter-spacing: 0.03em;
 }
 
 .pdm-price-main {
-    font-size: 1.85rem;
+    font-size: 2rem;
     font-weight: 800;
     color: var(--primary, #c9748a);
     font-family: var(--font-heading, "Outfit", sans-serif);
 }
 
 .pdm-price-sub {
-    font-size: 1.05rem;
+    font-size: 1rem;
     color: var(--text-muted, #64748b);
     font-weight: 600;
 }
@@ -282,7 +282,7 @@
     text-transform: uppercase;
     letter-spacing: 0.08em;
     padding: 0.3rem 0.75rem;
-    border-radius: 50px;
+    border-radius: 9999px;
     background: rgba(201, 116, 138, 0.12);
     color: var(--primary, #c9748a);
 }
@@ -316,7 +316,7 @@
 
 .attribute-options-group label {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-heading, #0f172a);
     margin-bottom: 0.4rem;
@@ -457,7 +457,7 @@
     display: inline-flex;
     align-items: center;
     border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.12));
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
     background: var(--bg-card, #ffffff);
 }
@@ -470,7 +470,7 @@
     justify-content: center;
     background: var(--bg-section, #f8fafc);
     border: none;
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--text-heading, #0f172a);
     cursor: pointer;
@@ -543,7 +543,7 @@
     background: rgba(37, 211, 102, 0.08);
     border: 1.5px solid #25d366;
     color: #128c7e;
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 700;
     text-decoration: none;
     transition: all 0.2s ease;
@@ -599,7 +599,7 @@
 }
 
 .pdm-description-text {
-    font-size: 0.95rem;
+    font-size: 1rem;
     line-height: 1.6;
     color: var(--text-body, #334155);
     margin: 0;
@@ -666,7 +666,7 @@
 .pdp-sticky-thumb {
     width: 44px;
     height: 44px;
-    border-radius: 8px;
+    border-radius: 6px;
     object-fit: cover;
     border: 1px solid rgba(0, 0, 0, 0.08);
     background: #f8fafc;
@@ -696,7 +696,7 @@
 }
 
 .pdp-sticky-price {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 800;
     color: var(--primary, #c9748a);
 }
@@ -715,7 +715,7 @@
     color: #ffffff;
     border: none;
     padding: 0.65rem 1.15rem;
-    border-radius: 12px;
+    border-radius: 10px;
     font-size: 0.88rem;
     font-weight: 700;
     cursor: pointer;
@@ -752,7 +752,7 @@
     }
 
     .pdp-title {
-        font-size: 1.75rem;
+        font-size: 2rem;
     }
 
     .pdp-sticky-bar {

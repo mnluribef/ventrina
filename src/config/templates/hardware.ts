@@ -75,9 +75,9 @@ export const hardwareTemplate: StoreConfig = {
 
         // Fuentes
         fontHeading: "'Outfit', sans-serif",
-        fontBody: "'Inter', sans-serif",
+        fontBody: "'Outfit', sans-serif",
         googleFontsUrl:
-            'https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@300;400;500;600&display=swap',
+            'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap',
     },
     landing: {
         hero: {

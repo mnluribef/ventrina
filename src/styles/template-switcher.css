@@ -1,5 +1,6 @@
 /* src/styles/template-switcher.css */
 /* Barra flotante y Bottom Sheet móvil para alternar entre plantillas demo de Ventrina SaaS */
+@import "./tokens.css";
 
 /* =====================================================
    1. CONTENEDOR RAÍZ
@@ -22,11 +23,11 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.45rem 0.75rem;
-    background: rgba(15, 17, 23, 0.9);
+    background: rgba(18, 17, 24, 0.92);
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 50px;
+    border-radius: 9999px;
     box-shadow:
         0 12px 32px rgba(0, 0, 0, 0.45),
         0 0 0 1px rgba(255, 255, 255, 0.06);
@@ -104,11 +105,11 @@
     align-items: center;
     gap: 0.38rem;
     padding: 0.45rem 0.85rem;
-    border-radius: 30px;
+    border-radius: 9999px;
     text-decoration: none;
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     font-weight: 500;
-    color: #cbd5e1;
+    color: var(--dark-text-body, #c4bdd8);
     background: transparent;
     transition: all 0.2s ease;
     white-space: nowrap;
@@ -124,21 +125,21 @@
 
 .template-pill.active {
     color: #ffffff;
-    background: var(--theme-primary, var(--themePrimary, #3b82f6));
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+    background: var(--theme-primary, var(--color-primary));
+    box-shadow: 0 3px 12px rgba(18, 17, 24, 0.3);
     font-weight: 600;
 }
 
 .pill-icon {
-    font-size: 0.95rem;
+    font-size: 1rem;
     line-height: 1;
 }
 
 .pill-active-indicator {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     background: rgba(255, 255, 255, 0.25);
     padding: 0.1rem 0.4rem;
-    border-radius: 12px;
+    border-radius: 9999px;
     margin-left: 0.2rem;
     font-weight: 600;
     letter-spacing: 0.02em;
@@ -204,14 +205,14 @@
         left: 1.25rem;
         z-index: 1050;
         padding: 0.55rem 0.95rem;
-        background: rgba(15, 17, 23, 0.92);
+        background: rgba(18, 17, 24, 0.92);
         backdrop-filter: blur(16px) saturate(180%);
         -webkit-backdrop-filter: blur(16px) saturate(180%);
         border: 1px solid rgba(255, 255, 255, 0.16);
-        border-radius: 50px;
+        border-radius: 9999px;
         color: #ffffff;
         font-family: inherit;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         font-weight: 600;
         cursor: pointer;
         box-shadow:
@@ -227,7 +228,7 @@
 
     .template-mobile-trigger:active {
         transform: scale(0.96);
-        background: rgba(25, 28, 38, 0.98);
+        background: var(--dark-bg-card, #121118);
     }
 
     .mobile-trigger-icon {
@@ -254,7 +255,7 @@
         display: block;
         position: fixed;
         inset: 0;
-        background: rgba(3, 7, 18, 0.65);
+        background: rgba(11, 10, 15, 0.7);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
         z-index: 9998;
@@ -276,11 +277,11 @@
         left: 0;
         right: 0;
         z-index: 9999;
-        background: linear-gradient(180deg, #161a23 0%, #0a0c11 100%);
+        background: linear-gradient(180deg, var(--dark-bg, #0b0a0f) 0%, rgba(11, 10, 15, 0.98) 100%);
         border-top: 1px solid rgba(255, 255, 255, 0.14);
         border-radius: 24px 24px 0 0;
         padding: 0.6rem 1.25rem calc(1.75rem + env(safe-area-inset-bottom, 0px));
-        box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.65);
+        box-shadow: 0 -12px 40px rgba(18, 17, 24, 0.65);
         transform: translateY(105%);
         transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         max-height: 80vh;
@@ -296,7 +297,7 @@
         width: 38px;
         height: 4px;
         background: rgba(255, 255, 255, 0.22);
-        border-radius: 4px;
+        border-radius: 9999px;
         margin: 0.25rem auto 0.85rem;
     }
 
@@ -310,16 +311,16 @@
     }
 
     .template-sheet-tag {
-        font-size: 0.68rem;
+        font-size: 0.75rem;
         font-weight: 700;
-        color: var(--theme-primary, #3b82f6);
+        color: var(--theme-primary, var(--color-primary));
         text-transform: uppercase;
         letter-spacing: 0.08em;
     }
 
     .template-sheet-title {
         margin: 0.15rem 0 0;
-        font-size: 1.15rem;
+        font-size: 1.25rem;
         font-weight: 700;
         color: #ffffff;
         letter-spacing: -0.02em;
@@ -331,7 +332,7 @@
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        color: #cbd5e1;
+        color: var(--dark-text-body, #c4bdd8);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -360,7 +361,7 @@
         padding: 0.85rem;
         background: rgba(255, 255, 255, 0.035);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
+        border-radius: 14px;
         text-decoration: none;
         transition: all 0.2s ease;
         -webkit-tap-highlight-color: transparent;
@@ -373,9 +374,9 @@
 
     .template-sheet-card.active {
         background: rgba(255, 255, 255, 0.08);
-        border-color: var(--theme-primary, #3b82f6);
+        border-color: var(--theme-primary, var(--color-primary));
         box-shadow:
-            0 0 0 1px var(--theme-primary, #3b82f6),
+            0 0 0 1px var(--theme-primary, var(--color-primary)),
             0 4px 16px rgba(0, 0, 0, 0.3);
     }
 
@@ -387,15 +388,15 @@
     }
 
     .sheet-card-icon {
-        font-size: 1.4rem;
+        font-size: 1.25rem;
         line-height: 1;
     }
 
     .sheet-card-badge {
-        font-size: 0.65rem;
+        font-size: 0.75rem;
         font-weight: 700;
         color: #ffffff;
-        background: var(--theme-primary, #3b82f6);
+        background: var(--theme-primary, var(--color-primary));
         padding: 0.15rem 0.45rem;
         border-radius: 10px;
         letter-spacing: 0.02em;
@@ -415,8 +416,8 @@
     }
 
     .sheet-card-brand {
-        font-size: 0.72rem;
-        color: #94a3b8;
+        font-size: 0.75rem;
+        color: var(--dark-text-body, #c4bdd8);
         line-height: 1.3;
     }
 }

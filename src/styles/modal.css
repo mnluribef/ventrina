@@ -55,9 +55,9 @@
 /* --- TEMAS (LIGHT / ADMIN Y DARK / SUPERADMIN) --- */
 .app-confirm-overlay.theme-admin .app-confirm-card,
 .app-confirm-overlay:not(.theme-dark) .app-confirm-card {
-    background: var(--light-bg-card, #ffffff);
-    border: 1px solid var(--light-border, #e2e8f0);
-    color: var(--light-text-heading, #0f172a);
+    background: var(--light-bg-card);
+    border: 1px solid var(--light-border);
+    color: var(--light-text-heading);
 }
 
 .app-confirm-overlay.theme-dark .app-confirm-card {
@@ -90,7 +90,7 @@
 .app-confirm-icon-box {
     width: 50px;
     height: 50px;
-    border-radius: 16px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -112,48 +112,48 @@
 
 /* Variantes de Color */
 .app-confirm-icon-box.variant-danger {
-    background: rgba(239, 68, 68, 0.14);
-    color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.18);
+    background: var(--color-danger-bg);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger-border);
+    box-shadow: 0 4px 14px var(--color-danger-border);
 }
 
 .app-confirm-icon-box.variant-warning {
-    background: rgba(245, 158, 11, 0.15);
-    color: #d97706;
-    border: 1px solid rgba(245, 158, 11, 0.32);
-    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.18);
+    background: rgba(217, 119, 6, 0.15);
+    color: var(--color-accent);
+    border: 1px solid rgba(217, 119, 6, 0.32);
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.18);
 }
 
 .app-confirm-icon-box.variant-primary {
-    background: rgba(124, 58, 237, 0.14);
-    color: #7c3aed;
-    border: 1px solid rgba(124, 58, 237, 0.3);
-    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.18);
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary-subtle);
+    box-shadow: 0 4px 14px var(--color-primary-glow);
 }
 
 .app-confirm-icon-box.variant-success {
-    background: rgba(16, 185, 129, 0.14);
-    color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.18);
+    background: rgba(5, 150, 105, 0.14);
+    color: var(--color-wa);
+    border: 1px solid rgba(5, 150, 105, 0.3);
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.18);
 }
 
 /* Dark mode tweaks for icon badge */
 .app-confirm-overlay.theme-dark .app-confirm-icon-box.variant-danger {
-    color: #f87171;
+    color: var(--color-danger);
 }
 
 .app-confirm-overlay.theme-dark .app-confirm-icon-box.variant-warning {
-    color: #fbbf24;
+    color: var(--gold-400);
 }
 
 .app-confirm-overlay.theme-dark .app-confirm-icon-box.variant-primary {
-    color: #a5b4fc;
+    color: var(--brand-300);
 }
 
 .app-confirm-overlay.theme-dark .app-confirm-icon-box.variant-success {
-    color: #34d399;
+    color: var(--color-wa);
 }
 
 /* --- CONTENIDO --- */
@@ -205,7 +205,7 @@
 
 .app-confirm-close-btn:hover {
     opacity: 1;
-    background: rgba(125, 125, 125, 0.14);
+    background: var(--light-bg-elevated);
 }
 
 .app-confirm-close-icon {
@@ -219,7 +219,7 @@
 }
 
 .app-confirm-desc {
-    font-size: 0.94rem;
+    font-size: 0.85rem;
     line-height: 1.6;
     margin: 0;
     word-break: break-word;
@@ -237,7 +237,7 @@
 .app-confirm-btn {
     border-radius: 10px;
     padding: 0.65rem 1.25rem;
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -251,13 +251,13 @@
 
 /* Botón Cancelar */
 .app-confirm-btn-cancel {
-    background: var(--light-bg-elevated, rgba(125, 125, 125, 0.1));
-    border: 1px solid var(--border-color, rgba(125, 125, 125, 0.2));
+    background: var(--light-bg-elevated);
+    border: 1px solid var(--light-border);
     color: inherit;
 }
 
 .app-confirm-btn-cancel:hover {
-    background: rgba(125, 125, 125, 0.18);
+    background: var(--light-bg-subtle);
     transform: translateY(-1px);
 }
 
@@ -267,36 +267,36 @@
 }
 
 .app-confirm-btn-accept.variant-danger {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+    background: var(--color-danger);
+    box-shadow: 0 4px 14px var(--color-danger-border);
 }
 
 .app-confirm-btn-accept.variant-danger:hover {
     filter: brightness(1.1);
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(239, 68, 68, 0.45);
+    box-shadow: 0 6px 18px var(--color-danger-border);
 }
 
 .app-confirm-btn-accept.variant-warning {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+    background: var(--color-accent);
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
 }
 
 .app-confirm-btn-accept.variant-warning:hover {
     filter: brightness(1.1);
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.45);
+    box-shadow: 0 6px 18px rgba(217, 119, 6, 0.45);
 }
 
 .app-confirm-btn-accept.variant-primary {
-    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
-    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+    background: var(--grad-primary);
+    box-shadow: 0 4px 14px var(--color-primary-glow);
 }
 
 .app-confirm-btn-accept.variant-primary:hover {
     filter: brightness(1.1);
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.45);
+    box-shadow: 0 6px 18px var(--color-primary-glow);
 }
 
 .app-confirm-btn-accept.variant-success {

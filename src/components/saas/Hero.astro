@@ -1,0 +1,194 @@
+---
+export interface Props {
+    formattedBcvRate: string;
+    formattedBsTotal: string;
+}
+
+const { formattedBcvRate, formattedBsTotal } = Astro.props;
+---
+
+<section class="hero-light">
+  <div class="hero-ambient-glow"></div>
+
+  <!-- Imagen de Fondo Visual Detrás del Título Hero a Ancho Completo -->
+  <div class="hero-title-backdrop-wrap" aria-hidden="true">
+    <img 
+      src="/assets/hero_title_backdrop.webp" 
+      alt="" 
+      class="hero-title-backdrop-img"
+      width="1920"
+      height="1080"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="hero-title-backdrop-overlay"></div>
+  </div>
+
+  <div class="hero-container">
+    <!-- Floating Pill Badge -->
+    <div class="hero-badge-pill">
+      <span class="pill-dot"></span>
+      <span>SaaS E-commerce 2026 · <strong>0% Comisiones por Venta</strong></span>
+    </div>
+
+    <!-- Titular de Alta Conversión -->
+    <h1 class="hero-headline">
+      Tu Catálogo Online <span class="text-brand-gradient">en Minutos</span>.<br/>
+      Tus Ventas Cerradas por <span class="text-wa">WhatsApp</span>.
+    </h1>
+
+    <!-- Subtítulo Enfocado en Propósito -->
+    <p class="hero-subhead">
+      Catálogo digital ágil, sincronización oficial de tasa BCV y pedidos organizados directamente a tu WhatsApp.
+    </p>
+
+    <!-- Botones CTA Principales -->
+    <div class="hero-cta-group">
+      <a href="/register" class="btn-primary-hero" id="hero-cta-register">
+        <span>Crear mi Tienda Gratis</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+      <a href="#demos" class="btn-secondary-hero" id="hero-cta-demos">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+        <span>Ver Tiendas Demo en Vivo</span>
+      </a>
+    </div>
+
+    <!-- Social Proof Rápido -->
+    <div class="hero-social-proof">
+      <div class="hero-avatar-stack">
+        <img src="/assets/client_ana.webp" alt="Comerciante Ana" class="hero-avatar" width="32" height="32" loading="lazy" />
+        <img src="/assets/client_maria.webp" alt="Comerciante María" class="hero-avatar" width="32" height="32" loading="lazy" />
+        <img src="/assets/client_jose.webp" alt="Comerciante José" class="hero-avatar" width="32" height="32" loading="lazy" />
+        <img src="/assets/client_valentina.webp" alt="Comerciante Valentina" class="hero-avatar" width="32" height="32" loading="lazy" />
+      </div>
+      <div class="hero-social-proof-text">
+        <div class="hero-stars">★★★★★ <strong>4.9/5</strong></div>
+        <span>+500 comercios activos en Venezuela</span>
+      </div>
+    </div>
+
+    <!-- Badges de Confianza Rápidos -->
+    <div class="hero-trust-bullets">
+      <span class="hero-trust-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        Sin tarjeta de crédito
+      </span>
+      <span class="hero-trust-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        Configuración rápida
+      </span>
+      <span class="hero-trust-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        Tasa oficial BCV
+      </span>
+      <span class="hero-trust-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        Optimizado para móviles
+      </span>
+    </div>
+
+    <!-- Showcase Visual Hero (Mockup Dual Dashboard + WhatsApp) -->
+    <div class="hero-showcase">
+      <!-- Mockup Principal Desktop -->
+      <div class="mockup-desktop-card">
+        <div class="mockup-browser-bar">
+          <div class="browser-dots">
+            <span class="browser-dot red"></span>
+            <span class="browser-dot yellow"></span>
+            <span class="browser-dot green"></span>
+          </div>
+          <div class="browser-url-pill">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>https://mitienda.ventrina.app/admin</span>
+          </div>
+        </div>
+
+        <div class="mockup-dashboard-grid">
+          <!-- Sidebar de Navegación -->
+          <aside class="mockup-dash-sidebar">
+            <div class="dash-nav-link active">📊 Panel y Métricas</div>
+            <div class="dash-nav-link">📦 Productos (124)</div>
+            <div class="dash-nav-link">💬 Pedidos WhatsApp</div>
+            <div class="dash-nav-link">🏷️ Cupones y Promos</div>
+            <div class="dash-nav-link">⚙️ Tasa BCV & Pagos</div>
+          </aside>
+
+          <!-- Panel Principal de Ventas -->
+          <div class="mockup-dash-main">
+            <div class="dash-stats-row">
+              <div class="dash-stat-box stat-theme-indigo">
+                <span class="dash-stat-label">Ventas del Mes</span>
+                <div class="dash-stat-number">$3,420.00</div>
+                <span class="dash-stat-badge">↑ +28% vs mes anterior</span>
+              </div>
+              <div class="dash-stat-box stat-theme-emerald">
+                <span class="dash-stat-label">Tasa Oficial BCV</span>
+                <div class="dash-stat-number" id="dash-bcv-rate">{formattedBcvRate} Bs</div>
+                <span class="dash-stat-badge">Sincronizada en vivo</span>
+              </div>
+              <div class="dash-stat-box stat-theme-amber">
+                <span class="dash-stat-label">Pedidos Completados</span>
+                <div class="dash-stat-number">148</div>
+                <span class="dash-stat-badge">98% satisfacción</span>
+              </div>
+            </div>
+
+            <div class="dash-order-feed-heading">
+              <span>Últimos Pedidos Recibidos</span>
+              <span class="dash-order-pill">En Tiempo Real</span>
+            </div>
+
+            <div class="dash-order-item">
+              <div class="dash-order-item-info">
+                <strong>Hamburguesa Gourmet + Papas Trufadas (x2)</strong>
+                <span>Cliente: Valeria Méndez · Pago Móvil Banesco</span>
+              </div>
+              <div class="dash-order-item-status">
+                <span class="dash-order-price">$24.00</span>
+                <span class="dash-order-pill">✓ Confirmado</span>
+              </div>
+            </div>
+
+            <div class="dash-order-item">
+              <div class="dash-order-item-info">
+                <strong>Laptop Ultrabook Pro 16GB + Mouse Gamer</strong>
+                <span>Cliente: Carlos Rivas · Zelle</span>
+              </div>
+              <div class="dash-order-item-status">
+                <span class="dash-order-price">$650.00</span>
+                <span class="dash-order-pill">✓ Despachado</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mockup Móvil Flotante de WhatsApp -->
+      <div class="floating-phone-card">
+        <div class="phone-wa-header">
+          <div class="phone-wa-avatar">V</div>
+          <div class="phone-wa-info">
+            <div class="wa-chat-name">Ventrina Bot · Pedido #1082</div>
+            <span>En línea ahora</span>
+          </div>
+        </div>
+        <div class="phone-wa-body">
+          <div class="wa-speech-bubble">
+            <p>👋 <strong>¡Hola! Quiero confirmar mi pedido:</strong></p>
+            <p>• 1x Vestido Casual Lino (Talla M / Beige)<br/>• 1x Cartera Cuero Nude</p>
+            <p class="wa-bubble-price" id="hero-wa-total">Total: $45.00 ≈ Bs. {formattedBsTotal}</p>
+            <p>📍 <strong>Entrega:</strong> Delivery La Victoria<br/>📱 <strong>Pago:</strong> Pago Móvil (Comprobante adjunto)</p>
+            <span class="wa-bubble-time">14:32 ✓✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+

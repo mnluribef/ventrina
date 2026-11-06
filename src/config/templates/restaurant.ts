@@ -75,9 +75,9 @@ export const restaurantTemplate: StoreConfig = {
 
         // Fuentes
         fontHeading: "'Playfair Display', serif",
-        fontBody: "'Outfit', 'Inter', sans-serif",
+        fontBody: "'Outfit', sans-serif",
         googleFontsUrl:
-            'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap',
+            'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@400;500;600;700;800&display=swap',
     },
     landing: {
         hero: {

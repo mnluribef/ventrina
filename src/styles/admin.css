@@ -134,9 +134,10 @@ body {
 }
 
 .sidebar-link.active {
-    background: linear-gradient(135deg, rgba(124, 58, 237, 0.12) 0%, rgba(245, 158, 11, 0.06) 100%);
-    border-left: 3px solid var(--primary);
+    background: rgba(88, 80, 200, 0.08);
     color: var(--color-primary);
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1px rgba(88, 80, 200, 0.16);
 }
 
 .sidebar-footer {
@@ -1206,9 +1207,8 @@ select option {
 
 .toast {
     background: var(--light-bg-card);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
     border: 1px solid var(--border-color);
-    border-left: 4px solid var(--primary);
     border-radius: 12px;
     padding: 1rem 1.5rem;
     min-width: 280px;
@@ -1222,11 +1222,13 @@ select option {
 }
 
 .toast.success {
-    border-left-color: var(--success);
+    border-color: rgba(5, 150, 105, 0.3);
+    background: linear-gradient(180deg, #ffffff 0%, rgba(5, 150, 105, 0.04) 100%);
 }
 
 .toast.error {
-    border-left-color: var(--danger);
+    border-color: rgba(220, 38, 38, 0.3);
+    background: linear-gradient(180deg, #ffffff 0%, rgba(220, 38, 38, 0.04) 100%);
 }
 
 /* Mobile & Responsive Utilities */
