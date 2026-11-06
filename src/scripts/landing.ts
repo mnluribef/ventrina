@@ -6,7 +6,7 @@ import { initScrollReveal } from './utils/reveal.util';
 document.addEventListener('DOMContentLoaded', () => {
     // 0. Inicialización de Scroll Reveal (Fallback progresivo si no hay CSS Scroll-Driven Animations)
     initScrollReveal(
-        '.reveal, .contrast-card, .feature-box, .demo-card-light, .ticker-item, .comparison-table-wrapper, .pricing-preview-card, .testimonials-grid .testimonial-card, .faq-item-modern, .cta-banner-card, .contrast-header, .demos-header, .features-header, .comparison-header, .pricing-header, .testimonials-header, .faq-header',
+        '.reveal, .contrast-card, .feature-box, .demo-card-light, .ticker-item, .pricing-preview-card, .testimonials-grid .testimonial-card, .faq-item-modern, .cta-banner-card',
     );
 
     // 1. FAQ Accordion Interactivo

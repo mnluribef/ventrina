@@ -97,8 +97,13 @@
 }
 
 html {
-    scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    :root:has(:target) {
+        scroll-behavior: smooth;
+    }
 }
 
 html,
@@ -913,11 +918,15 @@ section {
 
 /* ===================== SCROLL REVEAL ===================== */
 @keyframes scrollRevealFadeUp {
-    from {
+    0% {
         opacity: 0;
-        transform: translateY(28px);
+        transform: translateY(10px);
     }
-    to {
+    60% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
         opacity: 1;
         transform: translateY(0);
     }
@@ -927,11 +936,10 @@ section {
 @supports not (animation-timeline: view()) {
     .reveal {
         opacity: 0;
-        transform: translateY(28px);
+        transform: translateY(10px);
         transition:
-            opacity 0.75s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1)),
-            transform 0.75s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1));
-        will-change: opacity, transform;
+            opacity 0.5s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1)),
+            transform 0.5s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1));
     }
 
     .reveal.active {
@@ -943,10 +951,10 @@ section {
         transition-delay: 0s;
     }
     .hero-content p.reveal {
-        transition-delay: 0.12s;
+        transition-delay: 0.08s;
     }
     .hero-content .hero-buttons.reveal {
-        transition-delay: 0.24s;
+        transition-delay: 0.16s;
     }
 
     /* Stagger para grids en fallback */
@@ -960,16 +968,16 @@ section {
     .product-grid .product-card:nth-child(2).reveal,
     .testimonials-grid .testimonial-card:nth-child(2).reveal,
     .faq-grid .faq-card:nth-child(2).reveal {
-        transition-delay: 0.1s;
+        transition-delay: 0.06s;
     }
     .benefits-grid .benefit-card:nth-child(3).reveal,
     .product-grid .product-card:nth-child(3).reveal,
     .testimonials-grid .testimonial-card:nth-child(3).reveal,
     .faq-grid .faq-card:nth-child(3).reveal {
-        transition-delay: 0.2s;
+        transition-delay: 0.12s;
     }
     .product-grid .product-card:nth-child(4).reveal {
-        transition-delay: 0.3s;
+        transition-delay: 0.18s;
     }
 }
 
@@ -978,7 +986,7 @@ section {
     .reveal {
         animation: scrollRevealFadeUp linear both;
         animation-timeline: view();
-        animation-range: entry 0% cover 25%;
+        animation-range: entry 0% cover 14%;
     }
 
     .hero-content h1.reveal,
@@ -987,33 +995,33 @@ section {
         animation: none;
     }
 
-    /* Stagger en grids mediante rangos de entrada en el viewport */
+    /* Stagger ultra-compacto en grids para máxima fluidez */
     .benefits-grid .benefit-card:nth-child(1).reveal,
     .product-grid .product-card:nth-child(1).reveal,
     .testimonials-grid .testimonial-card:nth-child(1).reveal,
     .faq-grid .faq-card:nth-child(1).reveal {
-        animation-range: entry 0% cover 24%;
+        animation-range: entry 0% cover 13%;
     }
     .benefits-grid .benefit-card:nth-child(2).reveal,
     .product-grid .product-card:nth-child(2).reveal,
     .testimonials-grid .testimonial-card:nth-child(2).reveal,
     .faq-grid .faq-card:nth-child(2).reveal {
-        animation-range: entry 4% cover 28%;
+        animation-range: entry 1.5% cover 14.5%;
     }
     .benefits-grid .benefit-card:nth-child(3).reveal,
     .product-grid .product-card:nth-child(3).reveal,
     .testimonials-grid .testimonial-card:nth-child(3).reveal,
     .faq-grid .faq-card:nth-child(3).reveal {
-        animation-range: entry 8% cover 32%;
+        animation-range: entry 3% cover 16%;
     }
     .product-grid .product-card:nth-child(4).reveal {
-        animation-range: entry 12% cover 36%;
+        animation-range: entry 4.5% cover 17.5%;
     }
     .product-grid .product-card:nth-child(5).reveal {
-        animation-range: entry 16% cover 40%;
+        animation-range: entry 6% cover 19%;
     }
     .product-grid .product-card:nth-child(6).reveal {
-        animation-range: entry 20% cover 44%;
+        animation-range: entry 7.5% cover 20.5%;
     }
 }
 

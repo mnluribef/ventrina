@@ -764,11 +764,15 @@
    CSS SCROLL-DRIVEN ANIMATIONS (Native & Progressive)
    ===================================================== */
 @keyframes scrollRevealFadeUpProduct {
-    from {
+    0% {
         opacity: 0;
-        transform: translateY(28px);
+        transform: translateY(10px);
     }
-    to {
+    60% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
         opacity: 1;
         transform: translateY(0);
     }
@@ -778,11 +782,10 @@
     .pdp-related-section .reveal,
     .pdp-related-grid .product-card.reveal {
         opacity: 0;
-        transform: translateY(28px);
+        transform: translateY(10px);
         transition:
-            opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-            transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
-        will-change: opacity, transform;
+            opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .pdp-related-section .reveal.active,
@@ -795,13 +798,13 @@
         transition-delay: 0s;
     }
     .pdp-related-grid .product-card:nth-child(2).reveal {
-        transition-delay: 0.08s;
+        transition-delay: 0.06s;
     }
     .pdp-related-grid .product-card:nth-child(3).reveal {
-        transition-delay: 0.16s;
+        transition-delay: 0.12s;
     }
     .pdp-related-grid .product-card:nth-child(4).reveal {
-        transition-delay: 0.24s;
+        transition-delay: 0.18s;
     }
 }
 
@@ -810,20 +813,20 @@
     .pdp-related-grid .product-card.reveal {
         animation: scrollRevealFadeUpProduct linear both;
         animation-timeline: view();
-        animation-range: entry 0% cover 25%;
+        animation-range: entry 0% cover 14%;
     }
 
     .pdp-related-grid .product-card:nth-child(1).reveal {
-        animation-range: entry 0% cover 24%;
+        animation-range: entry 0% cover 13%;
     }
     .pdp-related-grid .product-card:nth-child(2).reveal {
-        animation-range: entry 4% cover 28%;
+        animation-range: entry 1.5% cover 14.5%;
     }
     .pdp-related-grid .product-card:nth-child(3).reveal {
-        animation-range: entry 8% cover 32%;
+        animation-range: entry 3% cover 16%;
     }
     .pdp-related-grid .product-card:nth-child(4).reveal {
-        animation-range: entry 12% cover 36%;
+        animation-range: entry 4.5% cover 17.5%;
     }
 }
 

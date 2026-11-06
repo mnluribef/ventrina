@@ -1631,11 +1631,15 @@
    CSS SCROLL-DRIVEN ANIMATIONS (Native & Progressive)
    ===================================================== */
 @keyframes scrollRevealFadeUpCatalog {
-    from {
+    0% {
         opacity: 0;
-        transform: translateY(28px);
+        transform: translateY(10px);
     }
-    to {
+    60% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
         opacity: 1;
         transform: translateY(0);
     }
@@ -1645,11 +1649,10 @@
 @supports not (animation-timeline: view()) {
     .reveal {
         opacity: 0;
-        transform: translateY(28px);
+        transform: translateY(10px);
         transition:
-            opacity 0.75s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1)),
-            transform 0.75s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1));
-        will-change: opacity, transform;
+            opacity 0.5s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1)),
+            transform 0.5s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1));
     }
 
     .reveal.active {
@@ -1661,54 +1664,48 @@
         transition-delay: 0s;
     }
     .product-grid .product-card:nth-child(2).reveal {
-        transition-delay: 0.08s;
+        transition-delay: 0.06s;
     }
     .product-grid .product-card:nth-child(3).reveal {
-        transition-delay: 0.16s;
+        transition-delay: 0.12s;
     }
     .product-grid .product-card:nth-child(4).reveal {
-        transition-delay: 0.24s;
+        transition-delay: 0.18s;
     }
 }
 
 /* Soporte Nativo: CSS Scroll-Driven Animations (Off-main-thread) */
 @supports (animation-timeline: view()) {
     .reveal,
-    .section-header.reveal,
-    .search-container.reveal,
-    .category-filters-container.reveal,
     .product-grid .product-card.reveal {
         animation: scrollRevealFadeUpCatalog linear both;
         animation-timeline: view();
-        animation-range: entry 0% cover 25%;
+        animation-range: entry 0% cover 14%;
     }
 
-    /* Stagger en catálogo mediante rangos escalonados en el viewport */
+    /* Stagger ultra-compacto en catálogo para evitar asimetrías */
     .product-grid .product-card:nth-child(1).reveal {
-        animation-range: entry 0% cover 24%;
+        animation-range: entry 0% cover 13%;
     }
     .product-grid .product-card:nth-child(2).reveal {
-        animation-range: entry 4% cover 28%;
+        animation-range: entry 1.5% cover 14.5%;
     }
     .product-grid .product-card:nth-child(3).reveal {
-        animation-range: entry 8% cover 32%;
+        animation-range: entry 3% cover 16%;
     }
     .product-grid .product-card:nth-child(4).reveal {
-        animation-range: entry 12% cover 36%;
+        animation-range: entry 4.5% cover 17.5%;
     }
     .product-grid .product-card:nth-child(5).reveal {
-        animation-range: entry 16% cover 40%;
+        animation-range: entry 6% cover 19%;
     }
     .product-grid .product-card:nth-child(6).reveal {
-        animation-range: entry 20% cover 44%;
+        animation-range: entry 7.5% cover 20.5%;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .reveal,
-    .section-header.reveal,
-    .search-container.reveal,
-    .category-filters-container.reveal,
     .product-grid .product-card.reveal {
         animation: none !important;
         opacity: 1 !important;

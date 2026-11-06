@@ -16,8 +16,13 @@
 }
 
 html {
-    scroll-behavior: smooth;
     scroll-padding-top: 5.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    :root:has(:target) {
+        scroll-behavior: smooth;
+    }
 }
 
 .pricing-page {
@@ -325,37 +330,43 @@ html {
 
 /* Revelación animada fluida */
 @keyframes preciosFadeUp {
-    from {
+    0% {
         opacity: 0;
-        transform: translateY(24px);
+        transform: translateY(10px);
     }
-    to {
+    60% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
 @keyframes preciosFadeUpPopular {
-    from {
+    0% {
         opacity: 0;
-        transform: scale(1.04) translateY(24px);
+        transform: scale(1.04) translateY(10px);
     }
-    to {
+    60% {
+        opacity: 1;
+        transform: scale(1.04) translateY(0);
+    }
+    100% {
         opacity: 1;
         transform: scale(1.04) translateY(0);
     }
 }
 
-/* Fallback con IntersectionObserver */
 /* Fallback con IntersectionObserver para navegadores sin CSS Scroll-Driven Animations */
 @supports not (animation-timeline: view()) {
     .reveal {
         opacity: 0;
-        transform: translateY(24px);
+        transform: translateY(10px);
         transition:
-            opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-            transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        will-change: opacity, transform;
+            opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .reveal.active {
@@ -364,11 +375,11 @@ html {
     }
 
     .reveal-delay-1 {
-        transition-delay: 0.1s;
+        transition-delay: 0.06s;
     }
 
     .reveal-delay-2 {
-        transition-delay: 0.2s;
+        transition-delay: 0.12s;
     }
 }
 
@@ -377,7 +388,7 @@ html {
     .reveal {
         animation: preciosFadeUp linear both;
         animation-timeline: view();
-        animation-range: entry 0% cover 25%;
+        animation-range: entry 0% cover 14%;
     }
 
     .pricing-card.popular.reveal {
@@ -385,11 +396,11 @@ html {
     }
 
     .reveal-delay-1 {
-        animation-range: entry 10% cover 30%;
+        animation-range: entry 2% cover 15.5%;
     }
 
     .reveal-delay-2 {
-        animation-range: entry 15% cover 35%;
+        animation-range: entry 4% cover 17%;
     }
 
     @media (max-width: 1024px) {

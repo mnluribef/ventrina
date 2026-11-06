@@ -48,8 +48,13 @@
 }
 
 html {
-    scroll-behavior: smooth;
     scroll-padding-top: 5.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    :root:has(:target) {
+        scroll-behavior: smooth;
+    }
 }
 
 section[id] {
@@ -2367,11 +2372,15 @@ a {
    CSS SCROLL-DRIVEN ANIMATIONS (Native & Progressive)
    ===================================================== */
 @keyframes scrollFadeUpLanding {
-    from {
+    0% {
         opacity: 0;
-        transform: translateY(28px);
+        transform: translateY(10px);
     }
-    to {
+    60% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
         opacity: 1;
         transform: translateY(0);
     }
@@ -2384,24 +2393,15 @@ a {
     .feature-box,
     .demo-card-light,
     .ticker-item,
-    .comparison-table-wrapper,
     .pricing-preview-card,
     .testimonials-grid .testimonial-card,
     .faq-item-modern,
-    .cta-banner-card,
-    .contrast-header,
-    .demos-header,
-    .features-header,
-    .comparison-header,
-    .pricing-header,
-    .testimonials-header,
-    .faq-header {
+    .cta-banner-card {
         opacity: 0;
-        transform: translateY(28px);
+        transform: translateY(10px);
         transition:
-            opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-            transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-        will-change: opacity, transform;
+            opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .reveal.active,
@@ -2409,18 +2409,10 @@ a {
     .feature-box.active,
     .demo-card-light.active,
     .ticker-item.active,
-    .comparison-table-wrapper.active,
     .pricing-preview-card.active,
     .testimonials-grid .testimonial-card.active,
     .faq-item-modern.active-reveal,
-    .cta-banner-card.active,
-    .contrast-header.active,
-    .demos-header.active,
-    .features-header.active,
-    .comparison-header.active,
-    .pricing-header.active,
-    .testimonials-header.active,
-    .faq-header.active {
+    .cta-banner-card.active {
         opacity: 1;
         transform: none;
     }
@@ -2433,31 +2425,23 @@ a {
     .feature-box,
     .demo-card-light,
     .ticker-item,
-    .comparison-table-wrapper,
     .pricing-preview-card,
     .testimonials-grid .testimonial-card,
     .faq-item-modern,
-    .cta-banner-card,
-    .contrast-header,
-    .demos-header,
-    .features-header,
-    .comparison-header,
-    .pricing-header,
-    .testimonials-header,
-    .faq-header {
+    .cta-banner-card {
         animation: scrollFadeUpLanding linear both;
         animation-timeline: view();
-        animation-range: entry 0% cover 25%;
+        animation-range: entry 0% cover 14%;
     }
 
-    /* Stagger en grids mediante rangos de entrada en viewport */
+    /* Stagger ultra-compacto en grids para evitar asimetrías en pausas */
     .ticker-item:nth-child(2),
     .contrast-cards-grid .contrast-card:nth-child(2),
     .demos-grid .demo-card-light:nth-child(2),
     .features-grid .feature-box:nth-child(2),
     .pricing-preview-grid .pricing-preview-card:nth-child(2),
     .testimonials-grid .testimonial-card:nth-child(2) {
-        animation-range: entry 3% cover 28%;
+        animation-range: entry 1.5% cover 15.5%;
     }
 
     .ticker-item:nth-child(3),
@@ -2465,20 +2449,20 @@ a {
     .features-grid .feature-box:nth-child(3),
     .pricing-preview-grid .pricing-preview-card:nth-child(3),
     .testimonials-grid .testimonial-card:nth-child(3) {
-        animation-range: entry 6% cover 31%;
+        animation-range: entry 3% cover 17%;
     }
 
     .ticker-item:nth-child(4),
     .features-grid .feature-box:nth-child(4) {
-        animation-range: entry 9% cover 34%;
+        animation-range: entry 4.5% cover 18.5%;
     }
 
     .features-grid .feature-box:nth-child(5) {
-        animation-range: entry 12% cover 37%;
+        animation-range: entry 6% cover 20%;
     }
 
     .features-grid .feature-box:nth-child(6) {
-        animation-range: entry 15% cover 40%;
+        animation-range: entry 7.5% cover 21.5%;
     }
 }
 
@@ -2488,18 +2472,10 @@ a {
     .feature-box,
     .demo-card-light,
     .ticker-item,
-    .comparison-table-wrapper,
     .pricing-preview-card,
     .testimonials-grid .testimonial-card,
     .faq-item-modern,
-    .cta-banner-card,
-    .contrast-header,
-    .demos-header,
-    .features-header,
-    .comparison-header,
-    .pricing-header,
-    .testimonials-header,
-    .faq-header {
+    .cta-banner-card {
         animation: none !important;
         opacity: 1 !important;
         transform: none !important;
