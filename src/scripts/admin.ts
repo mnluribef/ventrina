@@ -1188,11 +1188,11 @@ function renderChart(chartData: any[]) {
                 {
                     label: 'Ingresos (Bs)',
                     data: totals,
-                    borderColor: '#4F46E5',
-                    backgroundColor: 'rgba(79, 70, 229, 0.15)',
+                    borderColor: '#c2410c',
+                    backgroundColor: 'rgba(194, 65, 12, 0.12)',
                     borderWidth: 3,
-                    pointBackgroundColor: '#06B6D4',
-                    pointBorderColor: '#fff',
+                    pointBackgroundColor: '#d97706',
+                    pointBorderColor: '#ffffff',
                     pointBorderWidth: 2,
                     pointRadius: 5,
                     pointHoverRadius: 7,
@@ -1207,10 +1207,10 @@ function renderChart(chartData: any[]) {
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: 'rgba(15, 22, 42, 0.9)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
-                    borderColor: 'rgba(255,255,255,0.1)',
+                    backgroundColor: '#1c1917',
+                    titleColor: '#ffffff',
+                    bodyColor: '#ffffff',
+                    borderColor: 'rgba(28, 25, 23, 0.12)',
                     borderWidth: 1,
                     padding: 12,
                     displayColors: false,
@@ -1222,12 +1222,12 @@ function renderChart(chartData: any[]) {
             scales: {
                 x: {
                     grid: { display: false, drawBorder: false },
-                    ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'Inter' } },
+                    ticks: { color: '#78716c', font: { family: 'Inter' } },
                 },
                 y: {
-                    grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false },
+                    grid: { color: 'rgba(28, 25, 23, 0.06)', drawBorder: false },
                     ticks: {
-                        color: 'rgba(255,255,255,0.5)',
+                        color: '#78716c',
                         font: { family: 'Inter' },
                         callback: (value: any) => `Bs ${value.toLocaleString('es-VE')}`,
                     },
@@ -1262,7 +1262,24 @@ function renderSales() {
     }
 
     if (filteredSales.length === 0) {
-        tableSales.innerHTML = `<tr><td colspan="7" class="table-empty-message">${salesSearchQuery ? 'No se encontraron ventas que coincidan con la búsqueda.' : 'No se han registrado ventas completadas todavía.'}</td></tr>`;
+        if (salesList.length === 0) {
+            tableSales.innerHTML = `
+                <tr>
+                    <td colspan="7" class="table-empty-cell-container">
+                        <div class="admin-empty-state compact">
+                            <div class="empty-state-icon-box compact">
+                                <i data-lucide="receipt" class="empty-state-icon"></i>
+                            </div>
+                            <h4 class="empty-state-title">Aún no hay ventas registradas</h4>
+                            <p class="empty-state-desc">Al marcar un pedido como completado, el registro contable de la venta aparecerá aquí automáticamente.</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        } else {
+            tableSales.innerHTML = `<tr><td colspan="7" class="table-empty-message">${salesSearchQuery ? 'No se encontraron ventas que coincidan con la búsqueda.' : 'No se han registrado ventas completadas todavía.'}</td></tr>`;
+        }
+        if (window.lucide) lucide.createIcons();
         return;
     }
 
@@ -1285,7 +1302,7 @@ function renderSales() {
                 <td><code class="table-code-highlight">${escapeHtml(s.order_id)}</code></td>
                 <td>${escapeHtml(s.client_name)}</td>
                 <td>${escapeHtml(s.client_phone)}</td>
-                <td class="table-amount-success">$${montoVal.toFixed(2)}</td>
+                <td class="table-amount-success table-price-cell text-right">$${montoVal.toFixed(2)}</td>
                 <td><span class="table-badge-payment">${escapeHtml(s.metodo_pago)}</span></td>
                 <td class="table-text-secondary">${dateString}</td>
             </tr>
@@ -1382,7 +1399,28 @@ function renderOrders() {
     if (tableAll) {
         const hasFilters = ordersSearchQuery || ordersStatusFilter || (ordersDateFilter && ordersDateFilter !== 'all');
         if (filteredOrders.length === 0) {
-            tableAll.innerHTML = `<tr><td colspan="7" class="table-empty-message">${hasFilters ? 'No hay pedidos que coincidan con los filtros aplicados.' : 'No hay pedidos en la base de datos.'}</td></tr>`;
+            if (ordersList.length === 0) {
+                tableAll.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="table-empty-cell-container">
+                            <div class="admin-empty-state">
+                                <div class="empty-state-icon-box">
+                                    <i data-lucide="shopping-bag" class="empty-state-icon"></i>
+                                </div>
+                                <h3 class="empty-state-title">Aún no has recibido pedidos</h3>
+                                <p class="empty-state-desc">Comparte el enlace de tu tienda en WhatsApp o redes sociales para comenzar a recibir pedidos directamente de tus clientes.</p>
+                                <div class="empty-state-actions">
+                                    <button type="button" class="btn-action" data-action="empty-share-store">
+                                        <i data-lucide="share-2"></i> Compartir enlace de tu tienda
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tableAll.innerHTML = `<tr><td colspan="8" class="table-empty-message">${hasFilters ? 'No hay pedidos que coincidan con los filtros aplicados.' : 'No hay pedidos en la base de datos.'}</td></tr>`;
+            }
         } else {
             tableAll.innerHTML = filteredOrders.map((o) => createOrderRowMarkup(o)).join('');
         }
@@ -1391,7 +1429,19 @@ function renderOrders() {
     // 2. Render en tabla recientes (máximo 5)
     if (tableRecent) {
         if (ordersList.length === 0) {
-            tableRecent.innerHTML = `<tr><td colspan="7" class="table-empty-message">No hay pedidos recientes.</td></tr>`;
+            tableRecent.innerHTML = `
+                <tr>
+                    <td colspan="8" class="table-empty-cell-container">
+                        <div class="admin-empty-state compact">
+                            <div class="empty-state-icon-box compact">
+                                <i data-lucide="inbox" class="empty-state-icon"></i>
+                            </div>
+                            <h4 class="empty-state-title">Sin pedidos registrados todavía</h4>
+                            <p class="empty-state-desc">Los nuevos pedidos recibidos se mostrarán aquí en tiempo real.</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
         } else {
             const recent = ordersList.slice(0, 5);
             tableRecent.innerHTML = recent.map((o) => createOrderRowMarkup(o, false)).join('');
@@ -1446,11 +1496,11 @@ function createOrderRowMarkup(order: any, includeStatusSelector: boolean = true)
             <td><strong>#${escapeHtml(order.id)}</strong>${receiptBadge}</td>
             <td>${escapeHtml(order.client_name)}</td>
             <td>${escapeHtml(order.client_phone)}</td>
-            <td>${escapeHtml(order.total_items)}</td>
-            <td class="table-code-highlight">${priceText}</td>
+            <td class="text-center">${escapeHtml(order.total_items)}</td>
+            <td class="table-code-highlight table-price-cell text-right">${priceText}</td>
             <td class="table-text-xs-secondary">${dateString}</td>
             <td>${statusSelector}</td>
-            <td>
+            <td class="text-right">
                 <div class="table-actions-group">
                     <button class="action-icon-btn edit" data-action="view-order" data-id="${escapeHtml(order.id)}" title="Ver Detalles">
                         <i data-lucide="eye" class="table-action-icon"></i>
@@ -2013,12 +2063,34 @@ function renderProductsTable() {
     }
 
     if (filteredProducts.length === 0) {
-        const emptyMsg = productsSearchQuery
-            ? 'No se encontraron productos que coincidan con la búsqueda.'
-            : activeStockFilter !== 'all'
-              ? 'No hay productos en esta categoría de stock.'
-              : 'No hay productos registrados en esta plantilla. Agrega uno nuevo arriba.';
-        tableProducts.innerHTML = `<tr><td colspan="11" class="table-empty-message">${emptyMsg}</td></tr>`;
+        if (productsList.length === 0) {
+            tableProducts.innerHTML = `
+                <tr>
+                    <td colspan="11" class="table-empty-cell-container">
+                        <div class="admin-empty-state">
+                            <div class="empty-state-icon-box">
+                                <i data-lucide="package-plus" class="empty-state-icon"></i>
+                            </div>
+                            <h3 class="empty-state-title">Tu catálogo está esperando</h3>
+                            <p class="empty-state-desc">Comienza a vender registrando tu primer producto en pocos pasos con fotos, precios y disponibilidad.</p>
+                            <div class="empty-state-actions">
+                                <button type="button" class="btn-action" data-action="empty-new-product">
+                                    <i data-lucide="plus"></i> Registrar tu primer producto
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        } else {
+            const emptyMsg = productsSearchQuery
+                ? 'No se encontraron productos que coincidan con la búsqueda.'
+                : activeStockFilter !== 'all'
+                  ? 'No hay productos en esta categoría de stock.'
+                  : 'No hay productos registrados en esta plantilla. Agrega uno nuevo arriba.';
+            tableProducts.innerHTML = `<tr><td colspan="11" class="table-empty-message">${emptyMsg}</td></tr>`;
+        }
+        if (window.lucide) lucide.createIcons();
         return;
     }
 
@@ -2089,11 +2161,11 @@ function renderProductsTable() {
                 </td>
                 <td>${badge}</td>
                 <td><span class="table-badge-category">${escapeHtml(categoryLabel)}</span></td>
-                <td>${priceHtml}</td>
+                <td class="table-price-cell text-right">${priceHtml}</td>
                 <td>${stockHtml}</td>
                 <td class="table-text-secondary">${escapeHtml(sizesText)}</td>
                 <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                <td>
+                <td class="text-right">
                     <div class="table-actions-group">
                         <button class="action-icon-btn quick-edit" data-action="quick-edit-product" data-id="${escapeHtml(p.id)}" title="Edición Rápida (Precio y Stock)">
                             <i data-lucide="zap" class="table-action-icon"></i>
@@ -3712,6 +3784,45 @@ function handleReportPayment() {
 document.addEventListener('click', (e) => {
     const t = e.target as HTMLElement | null;
     if (!t) return;
+
+    // Empty state: Registrar primer producto
+    const btnEmptyNewProd = t.closest('[data-action="empty-new-product"]') as HTMLElement | null;
+    if (btnEmptyNewProd) {
+        const inventoryTab = document.querySelector('.sidebar-link[data-target="section-inventory"]') as HTMLElement | null;
+        if (inventoryTab && !inventoryTab.classList.contains('active')) {
+            inventoryTab.click();
+        }
+        const collapseEl = document.getElementById('product-form-collapse');
+        if (collapseEl && !collapseEl.classList.contains('expanded')) {
+            const toggleBtn = document.getElementById('btn-toggle-product-form');
+            toggleBtn?.click();
+        }
+        const nameInput = document.getElementById('prod-name') as HTMLInputElement | null;
+        if (nameInput) {
+            nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => nameInput.focus(), 300);
+        }
+        return;
+    }
+
+    // Empty state: Compartir enlace de tienda
+    const btnEmptyShare = t.closest('[data-action="empty-share-store"]') as HTMLElement | null;
+    if (btnEmptyShare) {
+        const storeLink = (document.getElementById('btn-header-view-store') as HTMLAnchorElement | null)?.href || window.location.origin;
+        if (navigator.clipboard?.writeText) {
+            navigator.clipboard
+                .writeText(storeLink)
+                .then(() => {
+                    showToast('¡Enlace de tu tienda copiado al portapapeles! Compártelo con tus clientes.', 'success');
+                })
+                .catch(() => {
+                    prompt('Copia este enlace de tu tienda para compartir:', storeLink);
+                });
+        } else {
+            prompt('Copia este enlace de tu tienda para compartir:', storeLink);
+        }
+        return;
+    }
 
     // Navegar a Facturación desde tarjetas de analíticas bloqueadas (Plan Básico / Gratis)
     if (t.closest('.go-to-billing-btn')) {
@@ -5757,7 +5868,7 @@ async function renderQrToCanvas(canvas: HTMLCanvasElement | null, url: string, s
             width: size,
             margin: 2,
             color: {
-                dark: '#0f172a',
+                dark: '#1c1917',
                 light: '#ffffff',
             },
             errorCorrectionLevel: 'H',

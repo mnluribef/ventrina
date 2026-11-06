@@ -1,5 +1,5 @@
 // src/scripts/product-page.ts
-// Controlador de la Página Dedicada de Producto
+// Controlador de la Página Dedicada de Producto (PDP) — Ventrina SaaS
 
 import { BcvCurrencyService } from './services/bcv.service';
 import { CartService } from './services/cart.service';
@@ -154,7 +154,7 @@ class ProductPageController {
             errBackBtn.href = storeUrl;
         }
 
-        // Float cart button click -> redirige a la tienda con ancla o carrito
+        // Float cart button click -> redirige a la tienda con ancla al catálogo
         document.getElementById('cart-btn')?.addEventListener('click', () => {
             window.location.href = `${storeUrl}#menu`;
         });
@@ -200,7 +200,7 @@ class ProductPageController {
         const crumbTitle = document.getElementById('pdp-crumb-title');
         if (crumbTitle) crumbTitle.textContent = product.name;
 
-        // Imagen
+        // Imagen Principal
         const imgEl = document.getElementById('pdp-img') as HTMLImageElement | null;
         if (imgEl) {
             imgEl.src = product.image_url
@@ -211,8 +211,11 @@ class ProductPageController {
             imgEl.alt = product.name;
         }
 
-        // Badges
+        // Badges y Stock Status Visual
         const badgesEl = document.getElementById('pdp-badges');
+        const stockPill = document.querySelector('.pdp-stock-status-pill');
+        const stockText = document.getElementById('pdp-stock-text');
+
         if (badgesEl) {
             let bHtml = '';
             if (product.badge) {
@@ -233,6 +236,25 @@ class ProductPageController {
             badgesEl.innerHTML = bHtml;
         }
 
+        if (product.stock === 0) {
+            if (stockPill) {
+                stockPill.classList.add('is-out-of-stock');
+                stockPill.classList.remove('is-low-stock');
+            }
+            if (stockText) stockText.textContent = 'Agotado temporalmente';
+        } else if (product.stock !== undefined && product.stock > 0 && product.stock <= 5) {
+            if (stockPill) {
+                stockPill.classList.add('is-low-stock');
+                stockPill.classList.remove('is-out-of-stock');
+            }
+            if (stockText) stockText.textContent = `¡Últimas ${product.stock} unidades disponibles!`;
+        } else {
+            if (stockPill) {
+                stockPill.classList.remove('is-out-of-stock', 'is-low-stock');
+            }
+            if (stockText) stockText.textContent = 'Disponible para entrega inmediata';
+        }
+
         // Título y Categoría
         const catBadge = document.getElementById('pdp-category-badge');
         if (catBadge) catBadge.textContent = product.category || 'General';
@@ -249,7 +271,7 @@ class ProductPageController {
             brandModelEl.textContent = parts.join(' · ');
         }
 
-        // Precios y Descuento
+        // Precios y Descuento con Jerarquía Visual Sólida
         const priceUsdEl = document.getElementById('pdp-price-usd');
         if (priceUsdEl) {
             priceUsdEl.textContent =
@@ -267,7 +289,7 @@ class ProductPageController {
             }
             if (discountBadgeEl) {
                 const pct = Math.round(((comparePrice - currentPrice) / comparePrice) * 100);
-                discountBadgeEl.textContent = `-${pct}% OFF`;
+                discountBadgeEl.textContent = `-${pct}% AHORRO`;
                 discountBadgeEl.classList.remove('store-meta-hidden');
             }
         } else {
@@ -275,6 +297,7 @@ class ProductPageController {
             if (discountBadgeEl) discountBadgeEl.classList.add('store-meta-hidden');
         }
 
+        // Tasa Oficial BCV y Equivalente en Bolívares
         const updateBcvPrice = () => {
             const rate = this.currencyService.getRate();
             const priceBcvEl = document.getElementById('pdp-price-bcv');
@@ -297,14 +320,14 @@ class ProductPageController {
         const stickyPrice = document.getElementById('pdp-sticky-price');
         if (stickyPrice) stickyPrice.textContent = priceUsdEl?.textContent || '$0.00';
 
-        // Descripción
+        // Descripción Completa
         const descEl = document.getElementById('pdp-desc');
         if (descEl) {
             descEl.textContent =
                 product.description || 'Este producto no cuenta con descripción detallada en este momento.';
         }
 
-        // Variantes y Atributos con valor visible en label
+        // Selector de Variantes y Atributos con Chips Táctiles Ergonómicos
         const attrsBox = document.getElementById('pdp-attributes-container');
         if (attrsBox) {
             let html = '';
@@ -320,7 +343,7 @@ class ProductPageController {
                                               .toLowerCase()
                                               .trim()
                                               .replace(/[^a-z0-9]/g, '');
-                                          return `<button type="button" class="color-swatch-btn color-swatch-${slug} ${idx === 0 ? 'active' : ''}" data-value="${val}" title="${val}"></button>`;
+                                          return `<button type="button" class="color-swatch-btn color-swatch-${slug} ${idx === 0 ? 'active' : ''}" data-value="${val}" title="${val}" aria-label="Color ${val}"></button>`;
                                       })
                                       .join('')}</div>`
                                 : `<div class="attribute-selector" data-attribute="${attr.key}" data-label="${attr.label}">${attr.values
@@ -363,7 +386,7 @@ class ProductPageController {
             });
         }
 
-        // Cantidad selector
+        // Selector de Cantidad
         const qtyIn = document.getElementById('pdp-qty-input') as HTMLInputElement | null;
         if (qtyIn) {
             qtyIn.value = '1';
@@ -383,7 +406,7 @@ class ProductPageController {
             if (v < max) qtyIn.value = String(v + 1);
         });
 
-        // WhatsApp directo
+        // WhatsApp Directo Boutique (#059669)
         const btnWa = document.getElementById('pdp-btn-whatsapp') as HTMLAnchorElement | null;
         if (btnWa) {
             const cleanPhone = String(this.whatsappNumber).replace(/[^\d]/g, '');
@@ -391,8 +414,28 @@ class ProductPageController {
             btnWa.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
         }
 
-        // Botón Compartir
-        document.getElementById('pdp-btn-share')?.addEventListener('click', async () => {
+        // Botón Compartir Ficha con Feedback Visual Táctil
+        const btnShare = document.getElementById('pdp-btn-share') as HTMLButtonElement | null;
+        const shareText = document.getElementById('pdp-share-text');
+        const shareIcon = document.getElementById('pdp-share-icon');
+
+        const triggerShareFeedback = () => {
+            if (btnShare) btnShare.classList.add('btn-copied-state');
+            if (shareText) shareText.textContent = '¡Enlace copiado al portapapeles!';
+            if (shareIcon) {
+                shareIcon.innerHTML = '<polyline points="20 6 9 17 4 12"></polyline>';
+            }
+            setTimeout(() => {
+                if (btnShare) btnShare.classList.remove('btn-copied-state');
+                if (shareText) shareText.textContent = 'Compartir Ficha del Producto';
+                if (shareIcon) {
+                    shareIcon.innerHTML =
+                        '<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line>';
+                }
+            }, 2000);
+        };
+
+        btnShare?.addEventListener('click', async () => {
             const shareUrl = window.location.href;
             if (navigator.share) {
                 try {
@@ -401,19 +444,21 @@ class ProductPageController {
                         text: `Mira ${product.name} en ${this.businessName}`,
                         url: shareUrl,
                     });
+                    triggerShareFeedback();
                     return;
                 } catch {}
             }
 
             try {
                 await navigator.clipboard.writeText(shareUrl);
+                triggerShareFeedback();
                 this.toastService.show('¡Enlace del producto copiado al portapapeles!');
             } catch {
                 prompt('Copia este enlace directo del producto:', shareUrl);
             }
         });
 
-        // Botón Agregar al Carrito con feedback animado
+        // Botón Agregar al Carrito (Terracota Atelier #c2410c) con Feedback Animado
         const btnAdd = document.getElementById('pdp-btn-add-cart') as HTMLButtonElement | null;
         const btnAddText = document.getElementById('pdp-btn-add-text');
         const stickyBtn = document.getElementById('pdp-sticky-btn') as HTMLButtonElement | null;
@@ -451,14 +496,14 @@ class ProductPageController {
             // Feedback visual en botón principal
             if (btnAdd) {
                 btnAdd.classList.add('btn-added-state');
-                if (btnAddText) btnAddText.textContent = '✓ ¡Añadido!';
+                if (btnAddText) btnAddText.textContent = '✓ ¡Añadido al Carrito!';
                 setTimeout(() => {
                     btnAdd.classList.remove('btn-added-state');
                     if (btnAddText) btnAddText.textContent = 'Agregar al Carrito';
-                }, 1500);
+                }, 1600);
             }
 
-            // Feedback visual en botón sticky
+            // Feedback visual en botón sticky de móvil
             if (stickyBtn) {
                 stickyBtn.classList.add('btn-added-state');
                 const stickyText = document.getElementById('pdp-sticky-btn-text');
@@ -466,7 +511,7 @@ class ProductPageController {
                 setTimeout(() => {
                     stickyBtn.classList.remove('btn-added-state');
                     if (stickyText) stickyText.textContent = 'Añadir';
-                }, 1500);
+                }, 1600);
             }
         };
 
@@ -485,7 +530,7 @@ class ProductPageController {
             stickyBtn.addEventListener('click', handleAddToCartAction);
         }
 
-        // Observador para activar la Sticky Bar en Mobile cuando se hace scroll pasando el botón
+        // Observador de la Sticky Bar en Mobile con Progressive Enhancement
         this.setupStickyBarObserver();
     }
 

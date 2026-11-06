@@ -82,6 +82,29 @@ export class CartUIController {
         if (btn) btn.classList.toggle('visible', total > 0);
     }
 
+    private getEmptyStateHtml(): string {
+        return `
+            <div class="cart-empty-card">
+                <div class="cart-empty-icon-wrap">
+                    <svg class="cart-empty-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                        <path d="M3 6h18" />
+                        <path d="M16 10a4 4 0 0 1-8 0" />
+                    </svg>
+                </div>
+                <h4 class="cart-empty-title">Tu carrito está listo para llenarse</h4>
+                <p class="cart-empty-desc">Explora nuestros productos artesanales, agrégalos a tu orden y finaliza tu pedido por WhatsApp en minutos.</p>
+                <button type="button" id="cart-explore-btn" class="cart-empty-btn">
+                    <span>Explorar Catálogo</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+        `;
+    }
+
     private renderItems(): void {
         const container = document.getElementById('cart-items');
         const totalFixed = document.getElementById('cart-total-fixed');
@@ -91,14 +114,14 @@ export class CartUIController {
         const items = this.cartService.getItems();
 
         if (items.length === 0) {
-            container.innerHTML = `<div class="empty-cart-msg">${this.config.emptyCartEmoji} Tu pedido está vacío</div>`;
+            container.innerHTML = this.getEmptyStateHtml();
             if (nextBtn) nextBtn.disabled = true;
-            if (totalFixed) totalFixed.style.display = 'none';
+            if (totalFixed) totalFixed.classList.add('d-none');
             return;
         }
 
         if (nextBtn) nextBtn.disabled = false;
-        if (totalFixed) totalFixed.style.display = 'flex';
+        if (totalFixed) totalFixed.classList.remove('d-none');
 
         const labels: Record<string, string> = {
             switch: 'Switch',
@@ -140,21 +163,21 @@ export class CartUIController {
                 return `
           <div class="cart-item">
             <div class="cart-item-info">
-              <h4>${item.name}</h4>
+              <h4 class="cart-item-name">${item.name}</h4>
               ${opts ? `<div class="cart-item-options">${opts}</div>` : ''}
+              <div class="cart-item-unit-price">${unitPrice} c/u</div>
             </div>
             <div class="cart-item-actions">
-              <div class="cart-item-price">
-                ${unitPrice}
-                ${item.qty > 1 ? `<div class="cart-item-subtotal">(Subtotal: ${subtotal})</div>` : ''}
+              <div class="cart-item-price-box">
+                <span class="cart-item-subtotal">${subtotal}</span>
               </div>
               <div class="cart-item-controls-row">
-                <div class="qty-control">
-                  <button class="qty-btn" data-action="decrease" data-key="${item.key}">-</button>
-                  <span class="qty-val">${item.qty}</span>
-                  <button class="qty-btn" data-action="increase" data-key="${item.key}">+</button>
+                <div class="qty-control" role="group" aria-label="Cantidad">
+                  <button type="button" class="qty-btn" data-action="decrease" data-key="${item.key}" aria-label="Disminuir cantidad">-</button>
+                  <span class="qty-val" aria-live="polite">${item.qty}</span>
+                  <button type="button" class="qty-btn" data-action="increase" data-key="${item.key}" aria-label="Aumentar cantidad">+</button>
                 </div>
-                <button class="cart-item-remove" data-action="remove" data-key="${item.key}" title="Eliminar plato">
+                <button type="button" class="cart-item-remove" data-action="remove" data-key="${item.key}" title="Eliminar producto" aria-label="Eliminar producto">
                   ${renderIconSvg('trash', { size: 16 })}
                 </button>
               </div>
@@ -168,8 +191,10 @@ export class CartUIController {
     private renderTotals(): void {
         const totalAmount = document.getElementById('cart-total-amount');
         const totalBsEl = document.getElementById('cart-total-bs');
+        const deliveryBadge = document.getElementById('cart-delivery-badge');
         const pagoMovilBs = document.getElementById('pago-movil-bs-amount');
         const binanceUsdt = document.getElementById('binance-usdt-amount');
+        const bcvRateElements = document.querySelectorAll('.bcv-rate-text');
         if (!totalAmount) return;
 
         const deliveryType = this.getSelectedDeliveryType();
@@ -177,9 +202,14 @@ export class CartUIController {
         const { subtotal } = this.cartService.calculateTotal(deliveryType);
         const bcvRate = this.currencyService.getRate();
 
+        bcvRateElements.forEach((el) => {
+            el.textContent = bcvRate > 0 ? bcvRate.toFixed(2) : '--';
+        });
+
         if (subtotal === 0) {
-            totalAmount.textContent = 'A consultar';
-            if (totalBsEl) totalBsEl.textContent = '';
+            totalAmount.textContent = '$0.00';
+            if (totalBsEl) totalBsEl.textContent = '≈ Bs. 0,00';
+            if (deliveryBadge) deliveryBadge.classList.add('d-none');
             if (pagoMovilBs) pagoMovilBs.textContent = 'Bs. 0,00';
             if (binanceUsdt) binanceUsdt.textContent = '$0.00 USDT';
             return;
@@ -195,32 +225,39 @@ export class CartUIController {
                     discount = Math.min(subtotal, this.appliedCoupon.discountValue);
                 }
                 if (discountLabel) {
-                    discountLabel.style.display = 'block';
+                    discountLabel.classList.remove('d-none');
                     discountLabel.textContent = `Desc. Cupón ${this.appliedCoupon.code}: -$${discount.toFixed(2)}`;
                 }
             } else {
                 if (discountLabel) {
-                    discountLabel.style.display = 'block';
+                    discountLabel.classList.remove('d-none');
                     discountLabel.textContent = `Cupón mín. $${this.appliedCoupon.minOrderAmount.toFixed(2)}`;
                 }
             }
         } else {
-            if (discountLabel) discountLabel.style.display = 'none';
+            if (discountLabel) discountLabel.classList.add('d-none');
         }
 
         const discountedSubtotal = Math.max(0, subtotal - discount);
         const finalTotal = discountedSubtotal + (isDelivery ? this.config.deliveryPrice : 0);
         const totalBs = this.currencyService.toBs(finalTotal);
 
-        totalAmount.innerHTML = isDelivery
-            ? `$${finalTotal.toFixed(2)} <span class="cart-delivery-note">(Incl. $${this.config.deliveryPrice} ${this.config.deliveryName})</span>`
-            : `$${finalTotal.toFixed(2)}`;
+        totalAmount.textContent = `$${finalTotal.toFixed(2)}`;
+        if (deliveryBadge) {
+            deliveryBadge.classList.toggle('d-none', !isDelivery);
+            deliveryBadge.textContent = `Incluye delivery ($${this.config.deliveryPrice.toFixed(2)})`;
+        }
+
+        const formattedBs = new Intl.NumberFormat('es-VE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(totalBs);
 
         if (totalBsEl) {
-            totalBsEl.innerHTML = `≈ Bs. ${totalBs.toFixed(2)} <span class="cart-bcv-note">(BCV: ${bcvRate.toFixed(2)})</span>`;
+            totalBsEl.textContent = `≈ Bs. ${formattedBs}`;
         }
         if (pagoMovilBs) {
-            pagoMovilBs.textContent = `Bs. ${totalBs.toFixed(2)}`;
+            pagoMovilBs.textContent = `Bs. ${formattedBs}`;
         }
         if (binanceUsdt) {
             binanceUsdt.textContent = `$${finalTotal.toFixed(2)} USDT`;
@@ -285,36 +322,53 @@ export class CartUIController {
         const s1 = document.getElementById('cart-step-1');
         const s2 = document.getElementById('cart-step-2');
         const s3 = document.getElementById('cart-step-3');
-        if (s1) s1.style.display = this.currentStep === 1 ? 'flex' : 'none';
-        if (s2) s2.style.display = this.currentStep === 2 ? 'flex' : 'none';
-        if (s3) s3.style.display = this.currentStep === 3 ? 'flex' : 'none';
+        if (s1) {
+            s1.classList.toggle('active', this.currentStep === 1);
+            s1.classList.toggle('d-none', this.currentStep !== 1);
+        }
+        if (s2) {
+            s2.classList.toggle('active', this.currentStep === 2);
+            s2.classList.toggle('d-none', this.currentStep !== 2);
+        }
+        if (s3) {
+            s3.classList.toggle('active', this.currentStep === 3);
+            s3.classList.toggle('d-none', this.currentStep !== 3);
+        }
 
         const title = document.getElementById('cart-title');
         const backBtn = document.getElementById('cart-back-btn');
         const nextBtn = document.getElementById('cart-next-btn');
-        const waBtn = document.getElementById('whatsapp-order-btn');
+        const nextBtnText = nextBtn?.querySelector('.cart-next-btn-text');
+        const waSubmitGroup = document.getElementById('cart-wa-submit-group');
+
+        // Update step pills
+        document.querySelectorAll('.cart-step-pill').forEach((el) => {
+            const stepNum = parseInt(el.getAttribute('data-step') || '0', 10);
+            el.classList.toggle('active', stepNum === this.currentStep);
+            el.classList.toggle('completed', stepNum < this.currentStep);
+        });
 
         if (this.currentStep === 1) {
             if (title) title.innerHTML = '🛒 Tu Pedido';
-            if (backBtn) backBtn.style.display = 'none';
+            if (backBtn) backBtn.classList.add('d-none');
             if (nextBtn) {
-                nextBtn.style.display = 'flex';
-                nextBtn.innerHTML = `Continuar (Datos) ${renderIconSvg('chevron-right', { size: 18 })}`;
+                nextBtn.classList.remove('d-none');
+                if (nextBtnText) nextBtnText.textContent = 'Continuar (Datos)';
             }
-            if (waBtn) waBtn.style.display = 'none';
+            if (waSubmitGroup) waSubmitGroup.classList.add('d-none');
         } else if (this.currentStep === 2) {
-            if (title) title.innerHTML = '📦 Entrega';
-            if (backBtn) backBtn.style.display = 'flex';
+            if (title) title.innerHTML = '📦 Entrega y Contacto';
+            if (backBtn) backBtn.classList.remove('d-none');
             if (nextBtn) {
-                nextBtn.style.display = 'flex';
-                nextBtn.innerHTML = `Continuar al Pago ${renderIconSvg('chevron-right', { size: 18 })}`;
+                nextBtn.classList.remove('d-none');
+                if (nextBtnText) nextBtnText.textContent = 'Continuar al Pago';
             }
-            if (waBtn) waBtn.style.display = 'none';
+            if (waSubmitGroup) waSubmitGroup.classList.add('d-none');
         } else if (this.currentStep === 3) {
-            if (title) title.innerHTML = '💳 Pago';
-            if (backBtn) backBtn.style.display = 'flex';
-            if (nextBtn) nextBtn.style.display = 'none';
-            if (waBtn) waBtn.style.display = 'flex';
+            if (title) title.innerHTML = '💳 Método de Pago';
+            if (backBtn) backBtn.classList.remove('d-none');
+            if (nextBtn) nextBtn.classList.add('d-none');
+            if (waSubmitGroup) waSubmitGroup.classList.remove('d-none');
         }
     }
 
@@ -324,7 +378,7 @@ export class CartUIController {
         document.getElementById('close-cart')?.addEventListener('click', () => this.toggleCart());
         document.getElementById('cart-overlay')?.addEventListener('click', () => this.toggleCart());
 
-        // Step navigation
+        // Step navigation via buttons
         document.getElementById('cart-back-btn')?.addEventListener('click', () => {
             if (this.currentStep > 1) this.goToStep(this.currentStep - 1);
         });
@@ -332,9 +386,29 @@ export class CartUIController {
             if (this.currentStep < 3) this.goToStep(this.currentStep + 1);
         });
 
-        // Cart items event delegation (Single handler for quantity & remove)
+        // Step navigation via header stepper pills
+        document.querySelectorAll('.cart-step-pill').forEach((pill) => {
+            pill.addEventListener('click', () => {
+                const targetStep = parseInt(pill.getAttribute('data-step') || '1', 10);
+                if (targetStep !== this.currentStep) {
+                    this.goToStep(targetStep);
+                }
+            });
+        });
+
+        // Cart items event delegation (Single handler for explore, quantity & remove)
         document.getElementById('cart-items')?.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
+
+            // Explore catalog button handler (empty state)
+            const exploreBtn = target.closest('#cart-explore-btn');
+            if (exploreBtn) {
+                this.toggleCart();
+                const catalogEl = document.getElementById('catalogo') || document.getElementById('catalog-grid') || document.querySelector('.catalog-section');
+                catalogEl?.scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
             const btn = target.closest('[data-action]') as HTMLElement | null;
             if (!btn) return;
 
@@ -368,13 +442,13 @@ export class CartUIController {
             this.toastService.show('Pedido vaciado');
         });
 
-        // Delivery type selection
+        // Delivery type selection (pill-tabs)
         const addressContainer = document.getElementById('delivery-address-container');
         document.querySelectorAll('input[name="delivery-type"]').forEach((radio) => {
             radio.addEventListener('change', (e) => {
                 const isDelivery = (e.target as HTMLInputElement).value === 'delivery';
                 if (addressContainer) {
-                    addressContainer.style.display = isDelivery ? 'block' : 'none';
+                    addressContainer.classList.toggle('d-none', !isDelivery);
                 }
 
                 const paymentSelect = document.getElementById('payment-method') as HTMLSelectElement | null;
@@ -398,12 +472,11 @@ export class CartUIController {
             const infoZelle = document.getElementById('payment-info-zelle');
             const infoBinance = document.getElementById('payment-info-binance-pay');
 
-            if (infoPagoMovil) infoPagoMovil.style.display = method === 'pago_movil' ? 'block' : 'none';
-            if (infoZelle) infoZelle.style.display = method === 'zelle' ? 'block' : 'none';
-            if (infoBinance) infoBinance.style.display = method === 'binance_pay' ? 'block' : 'none';
+            if (infoPagoMovil) infoPagoMovil.classList.toggle('d-none', method !== 'pago_movil');
+            if (infoZelle) infoZelle.classList.toggle('d-none', method !== 'zelle');
+            if (infoBinance) infoBinance.classList.toggle('d-none', method !== 'binance_pay');
             if (refContainer) {
-                refContainer.style.display =
-                    method === 'pago_movil' || method === 'zelle' || method === 'binance_pay' ? 'block' : 'none';
+                refContainer.classList.toggle('d-none', method !== 'pago_movil' && method !== 'zelle' && method !== 'binance_pay');
             }
 
             const refInput = document.getElementById('payment-reference') as HTMLInputElement | null;
@@ -522,8 +595,8 @@ export class CartUIController {
                 };
 
                 if (couponMsg) {
-                    couponMsg.style.display = 'block';
-                    couponMsg.style.color = '#22c55e';
+                    couponMsg.classList.remove('d-none', 'coupon-error');
+                    couponMsg.classList.add('coupon-success');
                     const desc =
                         this.appliedCoupon.discountType === 'percentage'
                             ? `${this.appliedCoupon.discountValue}%`
@@ -536,8 +609,8 @@ export class CartUIController {
             } catch (err: any) {
                 this.appliedCoupon = null;
                 if (couponMsg) {
-                    couponMsg.style.display = 'block';
-                    couponMsg.style.color = '#ef4444';
+                    couponMsg.classList.remove('d-none', 'coupon-success');
+                    couponMsg.classList.add('coupon-error');
                     couponMsg.textContent = `✕ ${err.message || 'Error al validar cupón'}`;
                 }
                 this.toastService.show(`❌ ${err.message || 'Cupón inválido'}`);
@@ -583,8 +656,8 @@ export class CartUIController {
 
                 if (previewImg) previewImg.src = this.uploadedReceiptBase64;
                 if (previewName) previewName.textContent = file.name;
-                if (promptBox) promptBox.style.display = 'none';
-                if (previewBox) previewBox.style.display = 'flex';
+                if (promptBox) promptBox.classList.add('d-none');
+                if (previewBox) previewBox.classList.remove('d-none');
                 this.toastService.show('✅ Comprobante adjuntado correctamente');
             } catch {
                 this.toastService.show('❌ No se pudo procesar la imagen del comprobante.');
@@ -597,8 +670,8 @@ export class CartUIController {
             if (this.receiptFileInput) this.receiptFileInput.value = '';
             const previewBox = document.getElementById('receipt-preview-box');
             const promptBox = document.getElementById('receipt-prompt');
-            if (promptBox) promptBox.style.display = 'block';
-            if (previewBox) previewBox.style.display = 'none';
+            if (promptBox) promptBox.classList.remove('d-none');
+            if (previewBox) previewBox.classList.add('d-none');
             this.toastService.show('Comprobante removido');
         });
     }
@@ -637,9 +710,13 @@ export class CartUIController {
         }
 
         const waBtn = document.getElementById('whatsapp-order-btn') as HTMLButtonElement | null;
+        const waBtnText = waBtn?.querySelector('.cart-wa-btn-text');
         if (waBtn) {
             waBtn.disabled = true;
-            waBtn.innerHTML = 'Registrando Pedido...';
+            waBtn.classList.add('loading');
+            if (waBtnText) {
+                waBtnText.textContent = 'Registrando Pedido...';
+            }
         }
 
         let resolvedPaymentMethod = paymentMethod;
@@ -673,7 +750,10 @@ export class CartUIController {
             const couponInput = document.getElementById('cart-coupon-input') as HTMLInputElement | null;
             if (couponInput) couponInput.value = '';
             const couponMsg = document.getElementById('cart-coupon-msg');
-            if (couponMsg) couponMsg.style.display = 'none';
+            if (couponMsg) {
+                couponMsg.classList.add('d-none');
+                couponMsg.textContent = '';
+            }
 
             if (nameInput) nameInput.value = '';
             if (phoneInput) phoneInput.value = '';
@@ -684,17 +764,17 @@ export class CartUIController {
 
             const previewBox = document.getElementById('receipt-preview-box');
             const promptBox = document.getElementById('receipt-prompt');
-            if (promptBox) promptBox.style.display = 'block';
-            if (previewBox) previewBox.style.display = 'none';
+            if (promptBox) promptBox.classList.remove('d-none');
+            if (previewBox) previewBox.classList.add('d-none');
 
             const refContainer = document.getElementById('payment-reference-container');
             const infoPagoMovil = document.getElementById('payment-info-pago-movil');
             const infoZelle = document.getElementById('payment-info-zelle');
             const infoBinance = document.getElementById('payment-info-binance-pay');
-            if (refContainer) refContainer.style.display = 'none';
-            if (infoPagoMovil) infoPagoMovil.style.display = 'none';
-            if (infoZelle) infoZelle.style.display = 'none';
-            if (infoBinance) infoBinance.style.display = 'none';
+            if (refContainer) refContainer.classList.add('d-none');
+            if (infoPagoMovil) infoPagoMovil.classList.add('d-none');
+            if (infoZelle) infoZelle.classList.add('d-none');
+            if (infoBinance) infoBinance.classList.add('d-none');
 
             this.toggleCart();
             this.toastService.show(`🎉 ¡Pedido #${orderId} registrado con éxito!`);
@@ -710,7 +790,10 @@ export class CartUIController {
         } finally {
             if (waBtn) {
                 waBtn.disabled = false;
-                waBtn.innerHTML = 'Enviar Pedido por WhatsApp';
+                waBtn.classList.remove('loading');
+                if (waBtnText) {
+                    waBtnText.textContent = 'Enviar Pedido a WhatsApp';
+                }
             }
         }
     }

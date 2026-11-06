@@ -120,7 +120,7 @@ const { business, contact, features } = config;
         <div class="cart-header-title-wrap">
             <button
                 id="cart-back-btn"
-                class="cart-back-btn"
+                class="cart-back-btn d-none"
                 aria-label="Volver"
             >
                 <svg
@@ -165,7 +165,7 @@ const { business, contact, features } = config;
                     <line x1="14" x2="14" y1="11" y2="17" />
                 </svg>
             </button>
-            <button id="close-cart" aria-label="Cerrar carrito">
+            <button id="close-cart" class="close-cart-btn" aria-label="Cerrar carrito">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -183,6 +183,24 @@ const { business, contact, features } = config;
             </button>
         </div>
     </div>
+
+    <!-- Stepper Indicator -->
+    <nav class="cart-steps-nav" aria-label="Progreso del pedido">
+        <button type="button" class="cart-step-pill active" data-step="1">
+            <span class="cart-step-num">1</span>
+            <span class="cart-step-label">Pedido</span>
+        </button>
+        <span class="cart-step-sep" aria-hidden="true">›</span>
+        <button type="button" class="cart-step-pill" data-step="2">
+            <span class="cart-step-num">2</span>
+            <span class="cart-step-label">Entrega</span>
+        </button>
+        <span class="cart-step-sep" aria-hidden="true">›</span>
+        <button type="button" class="cart-step-pill" data-step="3">
+            <span class="cart-step-num">3</span>
+            <span class="cart-step-label">Pago</span>
+        </button>
+    </nav>
     <div
         id="cart-step-1"
         class="cart-step cart-step-content active"
@@ -191,108 +209,186 @@ const { business, contact, features } = config;
             id="cart-items"
             class="cart-items cart-items-scrollable"
         >
-            <div class="empty-cart-msg">{config.labels?.emptyCartEmoji || "🛒"} Tu pedido está vacío</div>
+            <div class="cart-empty-card">
+                <div class="cart-empty-icon-wrap">
+                    <svg class="cart-empty-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                        <path d="M3 6h18" />
+                        <path d="M16 10a4 4 0 0 1-8 0" />
+                    </svg>
+                </div>
+                <h4 class="cart-empty-title">Tu carrito está listo para llenarse</h4>
+                <p class="cart-empty-desc">Explora nuestros productos artesanales, agrégalos a tu orden y finaliza tu pedido por WhatsApp en minutos.</p>
+                <button type="button" id="cart-explore-btn" class="cart-empty-btn">
+                    <span>Explorar Catálogo</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
     <div
         id="cart-step-2"
-        class="cart-step cart-step-scrollable"
+        class="cart-step cart-step-scrollable d-none"
     >
-        <h4 class="cart-contact-heading">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="var(--accent)"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            >
-                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-            </svg>
-            Datos de Contacto
-        </h4>
+        <div class="cart-step-section-header">
+            <div class="cart-step-badge">Paso 2</div>
+            <h4 class="cart-contact-heading">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="cart-heading-icon"
+                >
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+                Datos de Contacto
+            </h4>
+        </div>
+        <p class="cart-step-subtext">Información requerida para preparar y coordinar tu orden.</p>
+
         <div class="cart-fields-row">
             <div class="cart-field-col">
                 <label
                     for="client-name"
                     class="cart-field-label"
                 >
-                    Nombre Completo
+                    Nombre Completo <span class="cart-required-star">*</span>
                 </label>
-                <input
-                    type="text"
-                    id="client-name"
-                    placeholder="Ej. María González"
-                    maxlength="100"
-                    class="cart-field-input"
-                />
+                <div class="cart-input-wrapper">
+                    <svg class="cart-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <input
+                        type="text"
+                        id="client-name"
+                        name="client-name"
+                        autocomplete="name"
+                        placeholder="Ej. María González"
+                        maxlength="100"
+                        class="cart-field-input"
+                    />
+                </div>
             </div>
             <div class="cart-field-col">
                 <label
                     for="client-phone"
                     class="cart-field-label"
                 >
-                    Teléfono / WhatsApp
+                    Teléfono / WhatsApp <span class="cart-required-star">*</span>
                 </label>
-                <input
-                    type="tel"
-                    id="client-phone"
-                    placeholder="Ej. +58 424-1230046"
-                    maxlength="30"
-                    class="cart-field-input"
-                />
+                <div class="cart-input-wrapper">
+                    <svg class="cart-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    <input
+                        type="tel"
+                        id="client-phone"
+                        name="client-phone"
+                        autocomplete="tel"
+                        placeholder="Ej. +58 424-1230046"
+                        maxlength="30"
+                        class="cart-field-input"
+                    />
+                </div>
             </div>
         </div>
 
         <div class="cart-delivery-group">
-            <label class="cart-field-label">
-                Opciones de Entrega
-            </label>
-            <div class="cart-radio-options">
-                <label class="cart-radio-label">
+            <div class="cart-delivery-label-row">
+                <label class="cart-field-label">
+                    Método de Entrega <span class="cart-required-star">*</span>
+                </label>
+                <span class="cart-field-hint">Elige cómo deseas recibir tu pedido</span>
+            </div>
+            <div class="cart-delivery-pill-tabs" role="radiogroup" aria-label="Método de Entrega">
+                <label class="cart-delivery-pill-option" for="delivery-type-retiro">
                     <input
                         type="radio"
+                        id="delivery-type-retiro"
                         name="delivery-type"
                         value="retiro"
                         checked
-                        class="cart-radio-input"
-                    />{" "}
-                    🏪 {config.labels?.pickupOptionName || "Retiro en local"}
+                        class="cart-delivery-radio-sr"
+                    />
+                    <div class="cart-delivery-pill-card">
+                        <div class="cart-delivery-pill-header">
+                            <span class="cart-delivery-icon">🏪</span>
+                            <span class="cart-delivery-check-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="cart-delivery-info">
+                            <span class="cart-delivery-title">{config.labels?.pickupOptionName || "Retiro en local"}</span>
+                            <span class="cart-delivery-badge-tag free">Sin costo</span>
+                        </div>
+                    </div>
                 </label>
-                <label class="cart-radio-label">
+                <label class="cart-delivery-pill-option" for="delivery-type-delivery">
                     <input
                         type="radio"
+                        id="delivery-type-delivery"
                         name="delivery-type"
                         value="delivery"
-                        class="cart-radio-input"
-                    />{" "}
-                    🛵 {config.labels?.deliveryOptionName || "Delivery"} (+${config.labels?.deliveryOptionPrice ?? 5})
+                        class="cart-delivery-radio-sr"
+                    />
+                    <div class="cart-delivery-pill-card">
+                        <div class="cart-delivery-pill-header">
+                            <span class="cart-delivery-icon">🛵</span>
+                            <span class="cart-delivery-check-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="cart-delivery-info">
+                            <span class="cart-delivery-title">{config.labels?.deliveryOptionName || "Delivery"}</span>
+                            <span class="cart-delivery-badge-tag fee">+${config.labels?.deliveryOptionPrice ?? 5}</span>
+                        </div>
+                    </div>
                 </label>
             </div>
         </div>
 
         <div
             id="delivery-address-container"
-            class="cart-delivery-address-box"
+            class="cart-delivery-address-box d-none"
         >
             <label
                 for="delivery-address"
                 class="cart-field-label"
             >
-                Dirección de Entrega
+                Dirección de Entrega <span class="cart-required-star">*</span>
             </label>
-            <input
-                type="text"
-                id="delivery-address"
-                placeholder="Ej. Calle 5, Res. Los Mangos, Apto 4"
-                maxlength="300"
-                class="cart-field-input"
-            />
+            <div class="cart-input-wrapper">
+                <svg class="cart-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <input
+                    type="text"
+                    id="delivery-address"
+                    name="delivery-address"
+                    autocomplete="street-address"
+                    placeholder="Ej. Calle 5, Res. Los Mangos, Apto 4 (Punto de referencia)"
+                    maxlength="300"
+                    class="cart-field-input"
+                />
+            </div>
+            <span class="cart-field-subhint">Indica punto de referencia claro para agilizar el despacho</span>
         </div>
     </div>
 
@@ -552,17 +648,25 @@ const { business, contact, features } = config;
         </div>
     </div>
 
-    <div id="cart-total-fixed">
-        <div class="cart-total-label-col">
-            <span>Total:</span>
-            <span id="cart-discount-label" class="cart-discount-label"></span>
-        </div>
-        <div class="cart-total-values">
-            <div id="cart-total-amount">
-                $0.00
+    <div id="cart-total-fixed" class="cart-total-fixed d-none">
+        <div class="cart-total-header">
+            <div class="cart-total-title-wrap">
+                <span class="cart-total-label">Total a Pagar</span>
+                <span id="cart-discount-label" class="cart-discount-label d-none"></span>
             </div>
-            <div id="cart-total-bs">
-                ≈ Bs. 0,00
+            <div class="cart-bcv-pill" title="Calculado con la tasa de cambio oficial del Banco Central de Venezuela">
+                <span class="cart-bcv-pulse-dot" aria-hidden="true"></span>
+                <span class="cart-bcv-pill-text">Tasa Oficial BCV</span>
+                <span class="cart-bcv-pill-rate"><strong class="bcv-rate-text">--</strong> Bs/$</span>
+            </div>
+        </div>
+        <div class="cart-total-amounts">
+            <div class="cart-total-primary-row">
+                <div id="cart-total-amount" class="cart-total-usd">$0.00</div>
+                <span id="cart-delivery-badge" class="cart-delivery-tag d-none">Delivery incluido</span>
+            </div>
+            <div class="cart-total-secondary-row">
+                <div id="cart-total-bs" class="cart-total-bs">≈ Bs. 0,00</div>
             </div>
         </div>
     </div>
@@ -573,7 +677,7 @@ const { business, contact, features } = config;
             class="cta-btn cart-next-btn"
             disabled
         >
-            Continuar (Datos)
+            <span class="cart-next-btn-text">Continuar (Datos)</span>
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"
@@ -584,30 +688,40 @@ const { business, contact, features } = config;
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
+                class="cart-next-btn-icon"
             >
                 <path d="m9 18 6-6-6-6" />
             </svg>
         </button>
-        <button
-            id="whatsapp-order-btn"
-            class="cta-btn whatsapp-btn whatsapp-order-btn-hidden"
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="whatsapp-order-btn-icon"
+        <div id="cart-wa-submit-group" class="cart-wa-submit-group d-none">
+            <button
+                id="whatsapp-order-btn"
+                class="cta-btn cart-wa-btn"
             >
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-            Enviar Pedido por WhatsApp
-        </button>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="cart-wa-btn-icon"
+                >
+                    <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3.1.8.8-3-.2-.3A8 8 0 1 1 12 20zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8.9-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.5c.1-.1.2-.3.2-.4s0-.3-.1-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 2.6 1.1 2.6.7 3.1.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.5-.3z"/>
+                </svg>
+                <span class="cart-wa-btn-text">Enviar Pedido a WhatsApp</span>
+            </button>
+            <p class="cart-wa-trust-note">
+                <svg class="cart-wa-trust-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <path d="m9 12 2 2 4-4"/>
+                </svg>
+                <span>Tu pedido se enviará preformateado y sin comisiones directamente al comercio</span>
+            </p>
+        </div>
     </div>
 </div>
 
