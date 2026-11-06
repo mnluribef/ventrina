@@ -86,8 +86,7 @@ a {
 }
 
 /* ===================== NAVBAR ATELIER TRANSLÚCIDO ===================== */
-.glass-nav.saas-nav,
-.glass-nav {
+.glass-nav.saas-nav {
     background: rgba(250, 250, 248, 0.82);
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
@@ -103,11 +102,11 @@ a {
     transition: all 0.25s var(--lp-ease);
 }
 
-.glass-nav::after {
+.glass-nav.saas-nav::after {
     display: none;
 }
 
-.glass-nav.scrolled {
+.glass-nav.saas-nav.scrolled {
     box-shadow: 0 10px 30px -5px rgba(28, 25, 23, 0.06);
     background: rgba(250, 250, 248, 0.96);
 }
@@ -120,22 +119,22 @@ a {
 }
 
 @supports (animation-timeline: scroll()) {
-    .glass-nav {
+    .glass-nav.saas-nav {
         animation: glassNavScrollLanding linear both;
         animation-timeline: scroll();
         animation-range: 0px 40px;
     }
 }
 
-.glass-nav .container {
+.glass-nav.saas-nav .container {
     max-width: 1280px;
 }
 
-.glass-nav .nav-separator {
+.glass-nav.saas-nav .nav-separator {
     display: none;
 }
 
-.glass-nav .logo {
+.glass-nav.saas-nav .logo {
     color: var(--lp-text-heading);
     font-family: var(--font-heading, "Outfit", sans-serif);
     font-weight: 800;
@@ -146,33 +145,33 @@ a {
     align-items: center;
 }
 
-.glass-nav .logo svg {
+.glass-nav.saas-nav .logo svg {
     color: var(--lp-primary);
     filter: drop-shadow(0 2px 6px rgba(194, 65, 12, 0.25));
 }
 
-.glass-nav .logo-primary {
+.glass-nav.saas-nav .logo-primary {
     color: var(--lp-text-heading);
     font-weight: 800;
 }
 
-.glass-nav .logo-secondary {
+.glass-nav.saas-nav .logo-secondary {
     color: var(--lp-primary);
     font-style: normal;
     font-weight: 800;
     margin-left: 3px;
 }
 
-.glass-nav .nav-links {
+.glass-nav.saas-nav .nav-links {
     gap: 1.6rem;
 }
 
-.glass-nav .nav-links li {
+.glass-nav.saas-nav .nav-links li {
     display: flex;
     align-items: center;
 }
 
-.glass-nav .nav-links a {
+.glass-nav.saas-nav .nav-links a {
     color: var(--lp-text-muted);
     font-family: var(--font-body, "Inter", sans-serif);
     font-weight: 500;
@@ -183,18 +182,18 @@ a {
     transition: color 0.2s ease;
 }
 
-.glass-nav .nav-links a:hover,
-.glass-nav .nav-links a.active {
+.glass-nav.saas-nav .nav-links a:hover,
+.glass-nav.saas-nav .nav-links a.active {
     color: var(--lp-text-heading);
 }
 
-.glass-nav .nav-links a::after {
+.glass-nav.saas-nav .nav-links a::after {
     background: var(--lp-primary);
     box-shadow: 0 0 6px rgba(194, 65, 12, 0.4);
 }
 
 /* Login Link en Navbar */
-.glass-nav .nav-login-link {
+.glass-nav.saas-nav .nav-login-link {
     color: var(--lp-text-heading);
     font-family: var(--font-body, "Inter", sans-serif);
     font-size: 0.88rem;
@@ -206,13 +205,13 @@ a {
     transition: all 0.2s ease;
 }
 
-.glass-nav .nav-login-link:hover {
+.glass-nav.saas-nav .nav-login-link:hover {
     color: var(--lp-primary);
     background: rgba(194, 65, 12, 0.08);
 }
 
 /* Botón CTA en Navbar */
-.glass-nav .nav-cta-btn {
+.glass-nav.saas-nav .nav-cta-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
@@ -230,48 +229,48 @@ a {
     transition: all 0.25s var(--lp-ease);
 }
 
-.glass-nav .nav-cta-btn:hover {
+.glass-nav.saas-nav .nav-cta-btn:hover {
     background: var(--brand-700);
     transform: translateY(-1px);
     box-shadow: 0 6px 18px var(--color-primary-glow);
     color: #ffffff;
 }
 
-.glass-nav .nav-cta-btn svg {
+.glass-nav.saas-nav .nav-cta-btn svg {
     transition: transform 0.2s ease;
 }
 
-.glass-nav .nav-cta-btn:hover svg {
+.glass-nav.saas-nav .nav-cta-btn:hover svg {
     transform: translateX(2px);
 }
 
-.glass-nav #mobile-menu-btn {
+.glass-nav.saas-nav #mobile-menu-btn {
     color: var(--lp-text-heading);
 }
 
-.glass-nav #mobile-menu-btn:hover {
+.glass-nav.saas-nav #mobile-menu-btn:hover {
     background: rgba(28, 25, 23, 0.06);
 }
 
-.glass-nav .nav-links li.mobile-only-action {
+.glass-nav.saas-nav .nav-links li.mobile-only-action {
     display: none;
 }
 
-.glass-nav .desktop-only-action {
+.glass-nav.saas-nav .desktop-only-action {
     display: inline-flex;
 }
 
 @media (max-width: 1024px) {
-    .glass-nav .desktop-only-action {
+    .glass-nav.saas-nav .desktop-only-action {
         display: none;
     }
 
-    .glass-nav .nav-links li.mobile-only-action {
+    .glass-nav.saas-nav .nav-links li.mobile-only-action {
         display: flex;
         width: 100%;
     }
 
-    .glass-nav .nav-links {
+    .glass-nav.saas-nav .nav-links {
         display: none;
         position: absolute;
         top: 100%;
@@ -287,11 +286,11 @@ a {
         align-items: center;
     }
 
-    .glass-nav .nav-links.active {
+    .glass-nav.saas-nav .nav-links.active {
         display: flex;
     }
 
-    .glass-nav .mobile-login-link {
+    .glass-nav.saas-nav .mobile-login-link {
         color: var(--lp-text-heading, #1c1917);
         width: 100%;
         text-align: center;
@@ -300,7 +299,7 @@ a {
         font-weight: 600;
     }
 
-    .glass-nav .mobile-cta-btn {
+    .glass-nav.saas-nav .mobile-cta-btn {
         width: 100%;
         justify-content: center;
         padding: 0.75rem 1.5rem;

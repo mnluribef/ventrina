@@ -1,35 +1,134 @@
 /* =====================================================
-   VENTRINA — Navbar Stylesheet (Atelier Frosted Glass)
+   VENTRINA — Navbar Stylesheet
    Archivo: src/styles/navbar.css
-   Sistema visual minimalista: Terracota Atelier & Warm Amber
+   Soporte dual:
+     1. SaaS Identity: Terracota Atelier & Warm Amber (.glass-nav.saas-nav)
+     2. Store Demos / Storefront: Thematic Dark Glass (.glass-nav.store-nav)
    ===================================================== */
 
 @import "./tokens.css";
 
-/* ===================== NAVBAR EN TEMA ATELIER ===================== */
-.glass-nav.saas-nav,
+/* =====================================================
+   1. COMMON STRUCTURAL BASE (Ambos Navbars)
+   ===================================================== */
 .glass-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
     padding: 0;
+    transition: all 0.3s ease;
+}
+
+.glass-nav .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.glass-nav nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 0;
+    gap: 1.5rem;
+}
+
+.glass-nav .logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    font-family: var(--font-heading, "Outfit", sans-serif);
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+}
+
+.glass-nav .logo svg {
+    margin-right: 0.45rem;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.glass-nav .logo-text {
+    display: inline-flex;
+    align-items: baseline;
+    letter-spacing: inherit;
+}
+
+.glass-nav .logo-primary {
+    font-weight: 800;
+}
+
+.glass-nav .nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.glass-nav .nav-links li {
+    display: flex;
+    align-items: center;
+}
+
+.glass-nav .nav-links a {
+    text-decoration: none;
+    white-space: nowrap;
+    position: relative;
+    padding-bottom: 2px;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.glass-nav .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.glass-nav .desktop-only-action {
+    display: inline-flex;
+}
+
+.glass-nav .mobile-only-action {
+    display: none;
+}
+
+.glass-nav #mobile-menu-btn {
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem;
+    border-radius: 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+/* =====================================================
+   2. SAAS NAVBAR (.glass-nav.saas-nav)
+   Tema: Terracota Atelier & Warm Amber (Lino / Marfil Claro)
+   ===================================================== */
+.glass-nav.saas-nav {
     background: rgba(250, 247, 242, 0.85);
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
     border-bottom: 1px solid var(--light-border);
     box-shadow: 0 4px 20px -2px rgba(28, 25, 23, 0.04);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    transition: all 0.3s ease;
 }
 
-.glass-nav.saas-nav::after,
-.glass-nav::after {
+.glass-nav.saas-nav::after {
     display: none;
 }
 
-.glass-nav.saas-nav.scrolled,
-.glass-nav.scrolled {
+.glass-nav.saas-nav.scrolled {
     padding: 0;
     box-shadow: 0 10px 30px -10px rgba(28, 25, 23, 0.08);
     background: rgba(250, 250, 248, 0.95);
@@ -43,83 +142,43 @@
 }
 
 @supports (animation-timeline: scroll()) {
-    .glass-nav.saas-nav,
-    .glass-nav {
+    .glass-nav.saas-nav {
         animation: glassNavScrollAtelier linear both;
         animation-timeline: scroll();
         animation-range: 0px 40px;
     }
 }
 
-.glass-nav .container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-}
-
-.glass-nav .nav-separator {
-    display: none;
-}
-
-.glass-nav .logo {
+.glass-nav.saas-nav .logo {
     color: var(--light-text-heading);
-    font-family: var(--font-heading);
-    font-weight: 800;
-    font-size: 1.25rem;
-    letter-spacing: -0.02em;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    text-transform: uppercase;
 }
 
-.glass-nav .logo svg {
+.glass-nav.saas-nav .logo svg {
     color: var(--color-primary);
     filter: drop-shadow(0 2px 6px rgba(194, 65, 12, 0.25));
-    margin-right: 0.45rem;
 }
 
-.glass-nav .logo-primary {
+.glass-nav.saas-nav .logo-primary {
     color: var(--light-text-heading);
-    font-weight: 800;
 }
 
-.glass-nav .logo-secondary {
+.glass-nav.saas-nav .logo-secondary {
     color: var(--color-primary);
     font-style: normal;
     font-weight: 800;
     margin-left: 3px;
 }
 
-.glass-nav .nav-links {
-    gap: 1.5rem;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    margin: 0;
-    padding: 0;
-}
-
-.glass-nav .nav-links li {
-    display: flex;
-    align-items: center;
-}
-
-.glass-nav .nav-links a {
+.glass-nav.saas-nav .nav-links a {
     color: var(--light-text-body);
     font-family: var(--font-body);
     font-weight: 600;
     font-size: 0.85rem;
     text-transform: none;
     letter-spacing: normal;
-    white-space: nowrap;
-    text-decoration: none;
-    position: relative;
-    padding-bottom: 2px;
-    transition: color 0.2s ease;
 }
 
-.glass-nav .nav-links a::after {
+.glass-nav.saas-nav .nav-links a::after {
     content: "";
     position: absolute;
     bottom: -2px;
@@ -131,18 +190,17 @@
     border-radius: 9999px;
 }
 
-.glass-nav .nav-links a:hover,
-.glass-nav .nav-links a.active {
+.glass-nav.saas-nav .nav-links a:hover,
+.glass-nav.saas-nav .nav-links a.active {
     color: var(--color-primary);
 }
 
-.glass-nav .nav-links a:hover::after,
-.glass-nav .nav-links a.active::after {
+.glass-nav.saas-nav .nav-links a:hover::after,
+.glass-nav.saas-nav .nav-links a.active::after {
     width: 100%;
 }
 
-/* Login Link en Navbar */
-.glass-nav .nav-login-link {
+.glass-nav.saas-nav .nav-login-link {
     color: var(--light-text-body);
     font-family: var(--font-body);
     font-size: 0.85rem;
@@ -154,13 +212,12 @@
     transition: all 0.2s ease;
 }
 
-.glass-nav .nav-login-link:hover {
+.glass-nav.saas-nav .nav-login-link:hover {
     color: var(--color-primary);
     background: var(--color-primary-light);
 }
 
-/* Botón CTA en Navbar */
-.glass-nav .nav-cta-btn {
+.glass-nav.saas-nav .nav-cta-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
@@ -179,7 +236,7 @@
     transition: all 0.25s ease;
 }
 
-.glass-nav .nav-cta-btn:hover {
+.glass-nav.saas-nav .nav-cta-btn:hover {
     transform: translateY(-1px);
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.25),
@@ -188,38 +245,188 @@
     color: #ffffff;
 }
 
-.glass-nav .nav-cta-btn svg {
+.glass-nav.saas-nav .nav-cta-btn svg {
     transition: transform 0.2s ease;
 }
 
-.glass-nav .nav-cta-btn:hover svg {
+.glass-nav.saas-nav .nav-cta-btn:hover svg {
     transform: translateX(2px);
 }
 
-.glass-nav #mobile-menu-btn {
+.glass-nav.saas-nav #mobile-menu-btn {
     color: var(--light-text-heading);
     background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0.4rem;
-    border-radius: 10px;
-    display: none;
-    align-items: center;
-    justify-content: center;
 }
 
-.glass-nav #mobile-menu-btn:hover {
+.glass-nav.saas-nav #mobile-menu-btn:hover {
     background: var(--light-bg-subtle);
 }
 
-.glass-nav .nav-links li.mobile-only-action {
-    display: none;
+/* =====================================================
+   3. STORE DEMOS NAVBAR (.glass-nav.store-nav)
+   Tema Dinámico: Vidrio Oscuro del Rubro (Bodegón, Fogón, etc.)
+   ===================================================== */
+.glass-nav.store-nav {
+    background: var(--theme-hero-bg, var(--hero-bg, #0B1120));
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
 }
 
-.glass-nav .desktop-only-action {
+.glass-nav.store-nav::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 5%;
+    right: 5%;
+    height: 1px;
+    background: linear-gradient(
+        to right,
+        transparent,
+        var(--theme-primary, var(--rose, #c2410c)),
+        transparent
+    );
+    pointer-events: none;
+}
+
+/* Al scrollear, se mantiene en el color del tema de la tienda con mayor profundidad, NO se vuelve blanco */
+.glass-nav.store-nav.scrolled {
+    padding: 0.1rem 0;
+    background: var(--theme-hero-bg, var(--hero-bg, #0B1120));
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.65);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+@keyframes glassNavScrollStore {
+    to {
+        box-shadow: 0 10px 36px rgba(0, 0, 0, 0.65);
+        border-bottom-color: rgba(255, 255, 255, 0.16);
+    }
+}
+
+@supports (animation-timeline: scroll()) {
+    .glass-nav.store-nav {
+        animation: glassNavScrollStore linear both;
+        animation-timeline: scroll();
+        animation-range: 0px 40px;
+    }
+}
+
+.glass-nav.store-nav .logo {
+    color: #ffffff;
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.glass-nav.store-nav .logo svg {
+    color: var(--theme-accent, var(--gold, #D4AF37));
+    filter: drop-shadow(0 0 8px var(--theme-accent-light, rgba(217, 119, 6, 0.4)));
+}
+
+.glass-nav.store-nav .logo-primary {
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.glass-nav.store-nav .logo-secondary {
+    color: var(--theme-accent, var(--gold, #D4AF37));
+    font-style: italic;
+    font-weight: 800;
+    margin-left: 3px;
+}
+
+.glass-nav.store-nav .nav-links a {
+    color: rgba(255, 255, 255, 0.92);
+    font-family: var(--font-body, 'Outfit', sans-serif);
+    font-weight: 500;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.glass-nav.store-nav .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--theme-accent, var(--gold, #D4AF37));
+    transition: width 0.3s ease;
+    border-radius: 9999px;
+}
+
+.glass-nav.store-nav .nav-links a:hover,
+.glass-nav.store-nav .nav-links a.active {
+    color: var(--theme-accent, var(--gold, #D4AF37));
+}
+
+.glass-nav.store-nav .nav-links a:hover::after,
+.glass-nav.store-nav .nav-links a.active::after {
+    width: 100%;
+}
+
+.glass-nav.store-nav .nav-login-link {
+    font-family: var(--font-body, 'Outfit', sans-serif);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    padding: 0.45rem 0.85rem;
+    border-radius: 10px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.glass-nav.store-nav .nav-login-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.glass-nav.store-nav .nav-cta-btn {
     display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.52rem 1.15rem;
+    border-radius: 9999px;
+    background: var(--theme-grad-cta, var(--grad-cta, var(--theme-primary, var(--rose))));
+    color: #ffffff;
+    font-family: var(--font-body, 'Outfit', sans-serif);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    transition: all 0.25s ease;
 }
 
+.glass-nav.store-nav .nav-cta-btn:hover {
+    background: var(--theme-primary-hover, var(--theme-primary, #9a3412));
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+    color: #ffffff;
+}
+
+.glass-nav.store-nav #mobile-menu-btn {
+    color: #ffffff;
+    background: transparent;
+}
+
+.glass-nav.store-nav #mobile-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* =====================================================
+   4. RESPONSIVE MOBILE NAVIGATION (Ambos)
+   ===================================================== */
 @media (max-width: 1024px) {
     .glass-nav #mobile-menu-btn {
         display: flex;
@@ -240,12 +447,6 @@
         top: 100%;
         left: 0;
         width: 100%;
-        background: rgba(250, 250, 248, 0.98);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-top: 1px solid var(--light-border);
-        border-bottom: 1px solid var(--light-border);
-        box-shadow: 0 20px 40px rgba(28, 25, 23, 0.08);
         flex-direction: column;
         padding: 1.5rem 2rem;
         gap: 0.5rem;
@@ -256,7 +457,17 @@
         display: flex;
     }
 
-    .glass-nav .mobile-login-link {
+    /* Mobile Drawer: SaaS */
+    .glass-nav.saas-nav .nav-links {
+        background: rgba(250, 250, 248, 0.98);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid var(--light-border);
+        border-bottom: 1px solid var(--light-border);
+        box-shadow: 0 20px 40px rgba(28, 25, 23, 0.08);
+    }
+
+    .glass-nav.saas-nav .mobile-login-link {
         color: var(--light-text-heading);
         width: 100%;
         text-align: center;
@@ -266,10 +477,61 @@
         text-decoration: none;
     }
 
-    .glass-nav .mobile-cta-btn {
+    .glass-nav.saas-nav .mobile-cta-btn {
         width: 100%;
         justify-content: center;
         padding: 0.75rem 1.5rem;
         font-size: 1rem;
+    }
+
+    /* Mobile Drawer: Store Demos */
+    .glass-nav.store-nav .nav-links {
+        background: var(--theme-hero-bg, var(--hero-bg, #0B1120));
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+    }
+
+    .glass-nav.store-nav .nav-links a {
+        font-size: 0.9rem;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        text-align: center;
+        display: block;
+        color: rgba(255, 255, 255, 0.92);
+    }
+
+    .glass-nav.store-nav .nav-links a::after {
+        display: none;
+    }
+
+    .glass-nav.store-nav .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        color: var(--theme-accent, var(--gold, #D4AF37));
+    }
+
+    .glass-nav.store-nav .mobile-login-link {
+        color: #ffffff;
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .glass-nav.store-nav .mobile-cta-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .glass-nav.store-nav .logo {
+        font-size: 1.25rem;
     }
 }
