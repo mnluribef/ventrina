@@ -24,7 +24,7 @@ const contactPrivacyEmail = 'privacidad@ventrina.app';
         <header class="legal-header">
             <div class="legal-header-container">
                 <a href="/" class="legal-brand-link" aria-label="Ir al inicio de Ventrina">
-                    <svg class="legal-brand-logo" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="legal-brand-logo" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
                         <path d="M3 6h18" />
                         <path d="M16 10a4 4 0 0 1-8 0" />
@@ -32,7 +32,7 @@ const contactPrivacyEmail = 'privacidad@ventrina.app';
                     <span>Ventrina</span>
                 </a>
                 <a href="/" class="legal-back-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
@@ -51,7 +51,7 @@ const contactPrivacyEmail = 'privacidad@ventrina.app';
                 </p>
                 <div class="legal-meta-row">
                     <span class="legal-meta-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
                             <line x1="16" y1="2" x2="16" y2="6" />
                             <line x1="8" y1="2" x2="8" y2="6" />
@@ -60,7 +60,7 @@ const contactPrivacyEmail = 'privacidad@ventrina.app';
                         Última actualización: {lastUpdated}
                     </span>
                     <span class="legal-meta-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
                         </svg>
                         Versión Vigente: v1.0
@@ -70,7 +70,7 @@ const contactPrivacyEmail = 'privacidad@ventrina.app';
 
             <!-- Aviso de Roles de Tratamiento -->
             <div class="legal-callout legal-callout-safeharbor">
-                <svg class="legal-callout-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="legal-callout-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="12" y1="16" x2="12" y2="12"></line>
                     <line x1="12" y1="8" x2="12.01" y2="8"></line>
@@ -83,161 +83,391 @@ const contactPrivacyEmail = 'privacidad@ventrina.app';
                 </div>
             </div>
 
-            <!-- Tarjeta Central -->
-            <article class="legal-card">
-                <!-- Índice Rápido -->
-                <nav class="legal-toc" aria-label="Tabla de contenidos">
-                    <div class="legal-toc-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="8" y1="6" x2="21" y2="6"></line>
-                            <line x1="8" y1="12" x2="21" y2="12"></line>
-                            <line x1="8" y1="18" x2="21" y2="18"></line>
-                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                        </svg>
-                        Índice de la Política
+            <!-- Índice Móvil Deslizable Horizontal (Chips) -->
+            <nav class="legal-mobile-toc" aria-label="Navegación rápida de privacidad">
+                <div class="legal-mobile-chips-wrapper">
+                    <span class="legal-mobile-chips-label">Secciones:</span>
+                    <div class="legal-mobile-chips-scroll" role="tablist">
+                        <a href="#privacidad-1" class="legal-toc-chip active" role="tab">1. Datos</a>
+                        <a href="#privacidad-2" class="legal-toc-chip" role="tab">2. Finalidad</a>
+                        <a href="#privacidad-3" class="legal-toc-chip" role="tab">3. No Venta</a>
+                        <a href="#privacidad-4" class="legal-toc-chip" role="tab">4. Infraestructura</a>
+                        <a href="#privacidad-5" class="legal-toc-chip" role="tab">5. Cookies & Local</a>
+                        <a href="#privacidad-6" class="legal-toc-chip" role="tab">6. Seguridad</a>
+                        <a href="#privacidad-7" class="legal-toc-chip" role="tab">7. Retención</a>
+                        <a href="#privacidad-8" class="legal-toc-chip" role="tab">8. Derechos ARCO</a>
+                        <a href="#privacidad-9" class="legal-toc-chip" role="tab">9. Contacto</a>
                     </div>
-                    <ul class="legal-toc-grid">
-                        <li><a href="#privacidad-1">1. Datos Recopilados</a></li>
-                        <li><a href="#privacidad-2">2. Finalidad del Tratamiento</a></li>
-                        <li><a href="#privacidad-3">3. No Comercialización de Datos</a></li>
-                        <li><a href="#privacidad-4">4. Subencargados e Infraestructura</a></li>
-                        <li><a href="#privacidad-5">5. Almacenamiento Local y Cookies</a></li>
-                        <li><a href="#privacidad-6">6. Medidas de Seguridad</a></li>
-                        <li><a href="#privacidad-7">7. Retención y Eliminación</a></li>
-                        <li><a href="#privacidad-8">8. Derechos del Usuario</a></li>
-                        <li><a href="#privacidad-9">9. Contacto y Reclamaciones</a></li>
-                    </ul>
-                </nav>
+                </div>
+            </nav>
 
-                <!-- Sección 1 -->
-                <section class="legal-clause" id="privacidad-1">
-                    <h2 class="legal-clause-title">
-                        <span class="legal-clause-num">1</span>
-                        Categorías de Datos Recopilados
-                    </h2>
-                    <p>Ventrina recopila únicamente la información estrictamente necesaria para la prestación del servicio:</p>
-                    <ul>
-                        <li><strong>Datos de Comerciantes:</strong> Nombre o razón social, correo electrónico, identificador de tenant/subdominio, contraseña debidamente salada y cifrada con PBKDF2, número de WhatsApp para contacto comercial y datos bancarios opcionales para facturación de planes.</li>
-                        <li><strong>Datos de Compradores en Catálogos:</strong> Nombre de contacto, número telefónico (para enlace de WhatsApp), dirección o método de entrega, detalle del carrito de compras y comprobante de pago subido voluntariamente por el usuario.</li>
-                        <li><strong>Datos Técnicos de Navegación:</strong> Dirección IP anonimizada, identificador único de correlación por petición (Correlation ID), registro de tiempo de respuesta y agentes de usuario para protección contra ataques de denegación de servicio (DDoS) y detección de fraude.</li>
-                    </ul>
-                </section>
-
-                <!-- Sección 2 -->
-                <section class="legal-clause" id="privacidad-2">
-                    <h2 class="legal-clause-title">
-                        <span class="legal-clause-num">2</span>
-                        Finalidad del Tratamiento
-                    </h2>
-                    <p>Los datos recopilados se procesan para los siguientes propósitos legítimos:</p>
-                    <ol>
-                        <li>Autenticación y administración de las tiendas online dentro de la plataforma multi-tenant.</li>
-                        <li>Enrutamiento y formateo de pedidos para su envío directo al WhatsApp del comercio.</li>
-                        <li>Envío de notificaciones transaccionales legítimas por correo electrónico (bienvenida a la plataforma, confirmación de pedidos).</li>
-                        <li>Prevención de abusos, mitigación de ataques por bots y cumplimiento de límites de tasa (rate limiting).</li>
-                    </ol>
-                </section>
-
-                <!-- Sección 3 -->
-                <section class="legal-clause" id="privacidad-3">
-                    <h2 class="legal-clause-title">
-                        <span class="legal-clause-num">3</span>
-                        Compromiso de No Comercialización ni Venta de Datos
-                    </h2>
-                    <p>
-                        <strong>Ventrina no vende, no alquila, no monetiza ni comercializa bases de datos o listas de clientes o compradores bajo ninguna circunstancia.</strong> Toda información procesada en la tienda de un comerciante pertenece estrictamente a dicho comercio.
-                    </p>
-                </section>
-
-                <!-- Sección 4 -->
-                <section class="legal-clause" id="privacidad-4">
-                    <h2 class="legal-clause-title">
-                        <span class="legal-clause-num">4</span>
-                        Subencargados de Infraestructura en la Nube
-                    </h2>
-                    <p>Para operar de forma global con alta disponibilidad y baja latencia, Ventrina utiliza proveedores líderes que cumplen con estrictos estándares de seguridad y certificación (SOC 2, ISO 27001):</p>
-                    <ul>
-                        <li><strong>Cloudflare, Inc.:</strong> Red perimetral (Edge CDN), base de datos D1, almacenamiento de objetos R2 y caché distribuida KV.</li>
-                        <li><strong>Resend / Proveedores de Email:</strong> Transmisión de correos transaccionales directos.</li>
-                    </ul>
-                </section>
-
-                <!-- Sección 5 -->
-                <section class="legal-clause" id="privacidad-5">
-                    <h2 class="legal-clause-title">
-                        <span class="legal-clause-num">5</span>
-                        Almacenamiento Local (Local Storage) y Cookies
-                    </h2>
-                    <p>
-                        Ventrina <strong>no utiliza cookies de rastreo publicitario de terceros</strong>. Empleamos tecnologías de almacenamiento local en el navegador (<code>localStorage</code>) estrictamente esenciales:
-                    </p>
-                    <ul>
-                        <li><code>admin_token</code>: Token de sesión seguro para el panel de gestión del comerciante.</li>
-                        <li><code>admin_sound_enabled</code> / preferencias de tema: Configuración de conveniencia de la interfaz.</li>
-                        <li><code>ventrina_cookie_consent</code>: Registro de confirmación de conocimiento de políticas.</li>
-                    </ul>
-                </section>
-
-                <!-- Sección 6 -->
-                <section class="legal-clause" id="privacidad-6">
-                    <h2 class="legal-clause-title">
-                        <span class="legal-clause-num">6</span>
-                        Medidas de Seguridad de la Información
-                    </h2>
-                    <p>Aplicamos defensas técnicas y organizativas para salvaguardar la integridad y confidencialidad:</p>
-                    <ul>
-                        <li>Cifrado en tránsito universal mediante TLS 1.3 / HTTPS.</li>
-                        <li>Cifrado irreversible de credenciales con algoritmo PBKDF2 (100.000 iteraciones y sal criptográfica individual).</li>
-                        <li>Cabeceras de blindaje perimetral: Content Security Policy (CSP), X-Content-Type-Options: nosniff, X-Frame-Options: DENY.</li>
-                        <li>Aislamiento estricto de datos multi-tenant mediante verificación a nivel de repositorio y clave foránea <code>tenant_id</code>.</li>
-                    </ul>
-                </section>
-
-                <!-- Sección 7 -->
-                <section class="legal-clause" id="privacidad-7">
-                    <h2 class="legal-clause-title">
-                        <span class="legal-clause-num">7</span>
-                        Retención y Eliminación Programada
-                    </h2>
-                    <p>
-                        Los datos se conservan únicamente mientras la cuenta del comercio permanezca activa. El sistema ejecuta rutinas periódicas automáticas de depuración para eliminar tokens revocados, sesiones expiradas y registros temporales de limitación de tasa.
-                    </p>
-                </section>
-
-                <!-- Sección 8 -->
-                <section class="legal-clause" id="privacidad-8">
-                    <h2 class="legal-clause-title">
-                        <span class="legal-clause-num">8</span>
-                        Derechos de los Titulares (ARCO)
-                    </h2>
-                    <p>
-                        Los usuarios y comerciantes pueden ejercer en cualquier momento sus derechos de Acceso, Rectificación, Cancelación u Oposición sobre sus datos personales enviando una solicitud formal a <a href={`mailto:${contactPrivacyEmail}`}>{contactPrivacyEmail}</a>.
-                    </p>
-                </section>
-
-                <!-- Sección 9 -->
-                <section class="legal-clause" id="privacidad-9">
-                    <h2 class="legal-clause-title">
-                        <span class="legal-clause-num">9</span>
-                        Canal Oficial de Contacto
-                    </h2>
-                    <p>Para consultas, aclaratorias o notificaciones relativas a privacidad y protección de datos:</p>
-                    <div class="legal-contact-box">
-                        <p><strong>Oficina de Privacidad y Seguridad — Ventrina SaaS</strong></p>
-                        <p>Correo electrónico: <a href={`mailto:${contactPrivacyEmail}`}>{contactPrivacyEmail}</a></p>
-                        <p>Plataforma: <a href="https://ventrina.app">https://ventrina.app</a></p>
+            <!-- Layout Principal con Sidebar Flotante -->
+            <div class="legal-layout">
+                <!-- Barra Lateral Sticky Desktop -->
+                <aside class="legal-sidebar" aria-label="Tabla de contenidos lateral">
+                    <div class="legal-sidebar-sticky">
+                        <div class="legal-sidebar-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect width="18" height="18" x="3" y="3" rx="2" />
+                                <path d="M9 3v18" />
+                            </svg>
+                            <span>Índice de Privacidad</span>
+                        </div>
+                        <nav class="legal-sidebar-nav">
+                            <a href="#privacidad-1" class="legal-sidebar-link active">
+                                <span class="legal-sidebar-dot"></span>
+                                <span>1. Datos Recopilados</span>
+                            </a>
+                            <a href="#privacidad-2" class="legal-sidebar-link">
+                                <span class="legal-sidebar-dot"></span>
+                                <span>2. Finalidad del Tratamiento</span>
+                            </a>
+                            <a href="#privacidad-3" class="legal-sidebar-link">
+                                <span class="legal-sidebar-dot"></span>
+                                <span>3. No Comercialización</span>
+                            </a>
+                            <a href="#privacidad-4" class="legal-sidebar-link">
+                                <span class="legal-sidebar-dot"></span>
+                                <span>4. Subencargados Cloud</span>
+                            </a>
+                            <a href="#privacidad-5" class="legal-sidebar-link">
+                                <span class="legal-sidebar-dot"></span>
+                                <span>5. Almacenamiento Local</span>
+                            </a>
+                            <a href="#privacidad-6" class="legal-sidebar-link">
+                                <span class="legal-sidebar-dot"></span>
+                                <span>6. Medidas de Seguridad</span>
+                            </a>
+                            <a href="#privacidad-7" class="legal-sidebar-link">
+                                <span class="legal-sidebar-dot"></span>
+                                <span>7. Retención y Borrado</span>
+                            </a>
+                            <a href="#privacidad-8" class="legal-sidebar-link">
+                                <span class="legal-sidebar-dot"></span>
+                                <span>8. Derechos del Usuario</span>
+                            </a>
+                            <a href="#privacidad-9" class="legal-sidebar-link">
+                                <span class="legal-sidebar-dot"></span>
+                                <span>9. Contacto y Reclamos</span>
+                            </a>
+                        </nav>
+                        <div class="legal-sidebar-footer">
+                            <a href={`mailto:${contactPrivacyEmail}`} class="legal-sidebar-help">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z" />
+                                    <polyline points="15,9 18,9 18,11" />
+                                    <path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2v0" />
+                                    <line x1="6" y1="10" x2="7" y2="10" />
+                                </svg>
+                                <span>Oficina de Privacidad</span>
+                            </a>
+                        </div>
                     </div>
-                </section>
-            </article>
+                </aside>
+
+                <!-- Tarjeta Central de Política de Privacidad -->
+                <article class="legal-card">
+                    <!-- Sección 1 -->
+                    <section class="legal-clause" id="privacidad-1">
+                        <div class="legal-clause-header">
+                            <span class="legal-clause-number">SECCIÓN 01</span>
+                            <h2 class="legal-clause-title">
+                                <button type="button" class="legal-clause-anchor-btn" data-anchor="privacidad-1" title="Copiar enlace permanente a esta sección" aria-label="Copiar enlace permanente a Categorías de Datos Recopilados">
+                                    <span>Categorías de Datos Recopilados</span>
+                                    <svg class="legal-copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                    <svg class="legal-check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>
+                            </h2>
+                        </div>
+                        <p class="legal-clause-text">
+                            Ventrina recopila únicamente la información estrictamente necesaria para la prestación y optimización del servicio:
+                        </p>
+                        <ul class="legal-clause-list">
+                            <li><strong>Datos de Comerciantes:</strong> Nombre o razón social, correo electrónico, identificador de subdominio (slug de tienda), contraseña salada y cifrada criptográficamente mediante PBKDF2, número de WhatsApp para contacto comercial y datos de facturación de planes.</li>
+                            <li><strong>Datos de Compradores en Catálogos:</strong> Nombre de contacto, número telefónico para enlace de mensajería, dirección o modalidad de despacho, resumen del pedido seleccionado y comprobante de transferencia bancaria cargado voluntariamente por el usuario.</li>
+                            <li><strong>Datos Técnicos de Navegación:</strong> Dirección IP anonimizada, identificador único de correlación por petición (Correlation ID), tiempos de respuesta de servidor y cabeceras de usuario para mitigación de ataques distribuidos (DDoS) y detección de fraude.</li>
+                        </ul>
+                    </section>
+
+                    <!-- Sección 2 -->
+                    <section class="legal-clause" id="privacidad-2">
+                        <div class="legal-clause-header">
+                            <span class="legal-clause-number">SECCIÓN 02</span>
+                            <h2 class="legal-clause-title">
+                                <button type="button" class="legal-clause-anchor-btn" data-anchor="privacidad-2" title="Copiar enlace permanente a esta sección" aria-label="Copiar enlace permanente a Finalidad del Tratamiento de Datos">
+                                    <span>Finalidad del Tratamiento de Datos</span>
+                                    <svg class="legal-copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                    <svg class="legal-check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>
+                            </h2>
+                        </div>
+                        <p class="legal-clause-text">
+                            Los datos recopilados se procesan para los siguientes fines legítimos:
+                        </p>
+                        <ul class="legal-clause-list">
+                            <li>Autenticación segura y gestión de las tiendas online dentro de la arquitectura multi-inquilino (multi-tenant).</li>
+                            <li>Enrutamiento y formateo ágil del mensaje del carrito de compras hacia el número de WhatsApp oficial del comercio.</li>
+                            <li>Transmisión de correos transaccionales esenciales (bienvenida a la plataforma, confirmación de pagos de suscripción).</li>
+                            <li>Prevención de abusos tecnológicos, defensa perimetral frente a bots maliciosos y cumplimiento de límites de peticiones (rate limiting).</li>
+                        </ul>
+                    </section>
+
+                    <!-- Sección 3 -->
+                    <section class="legal-clause" id="privacidad-3">
+                        <div class="legal-clause-header">
+                            <span class="legal-clause-number">SECCIÓN 03</span>
+                            <h2 class="legal-clause-title">
+                                <button type="button" class="legal-clause-anchor-btn" data-anchor="privacidad-3" title="Copiar enlace permanente a esta sección" aria-label="Copiar enlace permanente a Compromiso de No Comercialización ni Venta de Datos">
+                                    <span>Compromiso de No Comercialización ni Venta de Datos</span>
+                                    <svg class="legal-copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                    <svg class="legal-check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>
+                            </h2>
+                        </div>
+
+                        <!-- Resumen Clave Privacidad 1 -->
+                        <aside class="legal-summary-callout" aria-label="Resumen Clave">
+                            <svg class="legal-summary-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <div class="legal-summary-body">
+                                <span class="legal-summary-badge">En Pocas Palabras</span>
+                                <p class="legal-summary-text">
+                                    <strong>En resumen:</strong> Ventrina no vende ni alquila tus datos a terceros. Toda tu información comercial te pertenece estrictamente a ti.
+                                </p>
+                            </div>
+                        </aside>
+
+                        <p class="legal-clause-text">
+                            <strong>Ventrina no comercializa, no vende, no transfiere ni alquila listas de clientes, bases de datos ni historiales comerciales bajo ningún concepto.</strong> Toda la información procesada dentro del catálogo de un comercio es de propiedad y dominio exclusivo de dicho comercio.
+                        </p>
+                    </section>
+
+                    <!-- Sección 4 -->
+                    <section class="legal-clause" id="privacidad-4">
+                        <div class="legal-clause-header">
+                            <span class="legal-clause-number">SECCIÓN 04</span>
+                            <h2 class="legal-clause-title">
+                                <button type="button" class="legal-clause-anchor-btn" data-anchor="privacidad-4" title="Copiar enlace permanente a esta sección" aria-label="Copiar enlace permanente a Subencargados de Infraestructura en la Nube">
+                                    <span>Subencargados de Infraestructura en la Nube</span>
+                                    <svg class="legal-copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                    <svg class="legal-check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>
+                            </h2>
+                        </div>
+                        <p class="legal-clause-text">
+                            Para prestar un servicio global de alta disponibilidad y resiliencia perimetral, Ventrina se apoya en proveedores de nivel empresarial que cuentan con certificaciones internacionales de seguridad (SOC 2 Tipo II, ISO/IEC 27001):
+                        </p>
+                        <ul class="legal-clause-list">
+                            <li><strong>Cloudflare, Inc.:</strong> Red de entrega perimetral (Edge CDN), base de datos relacional serverless D1, almacenamiento de objetos protegidos R2 y almacén clave-valor distribuido KV.</li>
+                            <li><strong>Resend / Plataformas SMTP:</strong> Entrega transaccional segura de correos electrónicos del sistema.</li>
+                        </ul>
+                    </section>
+
+                    <!-- Sección 5 -->
+                    <section class="legal-clause" id="privacidad-5">
+                        <div class="legal-clause-header">
+                            <span class="legal-clause-number">SECCIÓN 05</span>
+                            <h2 class="legal-clause-title">
+                                <button type="button" class="legal-clause-anchor-btn" data-anchor="privacidad-5" title="Copiar enlace permanente a esta sección" aria-label="Copiar enlace permanente a Almacenamiento Local y Cero Rastreo">
+                                    <span>Almacenamiento Local (Local Storage) y Cero Rastreo Publicitario</span>
+                                    <svg class="legal-copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                    <svg class="legal-check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>
+                            </h2>
+                        </div>
+
+                        <!-- Resumen Clave Privacidad 2 -->
+                        <aside class="legal-summary-callout" aria-label="Resumen Clave">
+                            <svg class="legal-summary-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="m4.93 4.93 4.24 4.24"></path>
+                                <path d="m14.83 9.17 4.24-4.24"></path>
+                                <path d="m14.83 14.83 4.24 4.24"></path>
+                                <path d="m9.17 14.83-4.24 4.24"></path>
+                            </svg>
+                            <div class="legal-summary-body">
+                                <span class="legal-summary-badge">En Pocas Palabras</span>
+                                <p class="legal-summary-text">
+                                    <strong>En resumen:</strong> No utilizamos cookies de rastreo publicitario de terceros ni píxeles invasivos.
+                                </p>
+                            </div>
+                        </aside>
+
+                        <p class="legal-clause-text">
+                            Ventrina <strong>no implementa cookies publicitarias, trackers de comportamiento cruzado ni herramientas invasivas de fingerprinting</strong>. Empleamos únicamente el almacenamiento local del navegador (<code>localStorage</code>) con propósitos técnicos estrictamente indispensables:
+                        </p>
+                        <ul class="legal-clause-list">
+                            <li><code>admin_token</code>: Credencial de sesión de autenticación para el panel administrativo.</li>
+                            <li><code>admin_sound_enabled</code> / tema: Parámetros de conveniencia y preferencia visual de interfaz.</li>
+                            <li><code>ventrina_cookie_consent</code>: Registro temporal de notificación sobre el uso del servicio.</li>
+                        </ul>
+                    </section>
+
+                    <!-- Sección 6 -->
+                    <section class="legal-clause" id="privacidad-6">
+                        <div class="legal-clause-header">
+                            <span class="legal-clause-number">SECCIÓN 06</span>
+                            <h2 class="legal-clause-title">
+                                <button type="button" class="legal-clause-anchor-btn" data-anchor="privacidad-6" title="Copiar enlace permanente a esta sección" aria-label="Copiar enlace permanente a Medidas de Cifrado y Seguridad">
+                                    <span>Medidas de Cifrado y Seguridad de la Información</span>
+                                    <svg class="legal-copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                    <svg class="legal-check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>
+                            </h2>
+                        </div>
+
+                        <!-- Resumen Clave Privacidad 3 -->
+                        <aside class="legal-summary-callout" aria-label="Resumen Clave">
+                            <svg class="legal-summary-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
+                            </svg>
+                            <div class="legal-summary-body">
+                                <span class="legal-summary-badge">En Pocas Palabras</span>
+                                <p class="legal-summary-text">
+                                    <strong>En resumen:</strong> Tus credenciales están cifradas criptográficamente con PBKDF2 y todas las conexiones utilizan TLS 1.3 seguro.
+                                </p>
+                            </div>
+                        </aside>
+
+                        <p class="legal-clause-text">
+                            Implementamos medidas de salvaguarda técnicas y organizativas rigurosas:
+                        </p>
+                        <ul class="legal-clause-list">
+                            <li>Cifrado en tránsito obligatorio mediante TLS 1.3 con certificados de alta seguridad.</li>
+                            <li>Almacenamiento irreversible de credenciales con función de derivación de claves PBKDF2 (100.000 iteraciones con sal individual criptográfica).</li>
+                            <li>Cabeceras perimetrales de seguridad estricta: Content Security Policy (CSP), X-Content-Type-Options: nosniff y X-Frame-Options: DENY.</li>
+                            <li>Aislamiento de bases de datos por tenant mediante restricciones forzadas de clave foránea <code>tenant_id</code>.</li>
+                        </ul>
+                    </section>
+
+                    <!-- Sección 7 -->
+                    <section class="legal-clause" id="privacidad-7">
+                        <div class="legal-clause-header">
+                            <span class="legal-clause-number">SECCIÓN 07</span>
+                            <h2 class="legal-clause-title">
+                                <button type="button" class="legal-clause-anchor-btn" data-anchor="privacidad-7" title="Copiar enlace permanente a esta sección" aria-label="Copiar enlace permanente a Retención y Eliminación Programada">
+                                    <span>Retención y Eliminación Programada</span>
+                                    <svg class="legal-copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                    <svg class="legal-check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>
+                            </h2>
+                        </div>
+                        <p class="legal-clause-text">
+                            Los datos de las tiendas se retienen exclusivamente durante el período en que la suscripción o cuenta permanezca vigente. El sistema ejecuta tareas automatizadas periódicas de limpieza para purgar sesiones vencidas, registros efímeros de limitación de tasa y datos de catálogos expresamente dados de baja.
+                        </p>
+                    </section>
+
+                    <!-- Sección 8 -->
+                    <section class="legal-clause" id="privacidad-8">
+                        <div class="legal-clause-header">
+                            <span class="legal-clause-number">SECCIÓN 08</span>
+                            <h2 class="legal-clause-title">
+                                <button type="button" class="legal-clause-anchor-btn" data-anchor="privacidad-8" title="Copiar enlace permanente a esta sección" aria-label="Copiar enlace permanente a Derechos del Usuario ARCO">
+                                    <span>Derechos del Usuario (Acceso, Rectificación, Cancelación y Oposición)</span>
+                                    <svg class="legal-copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                    <svg class="legal-check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>
+                            </h2>
+                        </div>
+                        <p class="legal-clause-text">
+                            Todo titular de datos puede solicitar en cualquier momento el ejercicio de sus derechos de Acceso, Rectificación, Cancelación y Oposición (ARCO) sobre sus datos de cuenta enviando una solicitud formal a <a href={`mailto:${contactPrivacyEmail}`}>{contactPrivacyEmail}</a>.
+                        </p>
+                    </section>
+
+                    <!-- Sección 9 -->
+                    <section class="legal-clause" id="privacidad-9">
+                        <div class="legal-clause-header">
+                            <span class="legal-clause-number">SECCIÓN 09</span>
+                            <h2 class="legal-clause-title">
+                                <button type="button" class="legal-clause-anchor-btn" data-anchor="privacidad-9" title="Copiar enlace permanente a esta sección" aria-label="Copiar enlace permanente a Canal Oficial de Contacto de Privacidad">
+                                    <span>Canal Oficial de Contacto y Reclamaciones</span>
+                                    <svg class="legal-copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                    <svg class="legal-check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>
+                            </h2>
+                        </div>
+                        <p class="legal-clause-text">
+                            Para consultas, solicitudes de portabilidad o notificaciones sobre protección de datos:
+                        </p>
+                        <div class="legal-contact-box">
+                            <p><strong>Oficina de Privacidad y Seguridad — Ventrina SaaS</strong></p>
+                            <p>Correo electrónico: <a href={`mailto:${contactPrivacyEmail}`}>{contactPrivacyEmail}</a></p>
+                            <p>Plataforma: <a href="https://ventrina.app">https://ventrina.app</a></p>
+                        </div>
+                    </section>
+                </article>
+            </div>
         </main>
+
+        <!-- Toast Flotante de Confirmación -->
+        <div class="legal-toast" id="legal-toast" role="status" aria-live="polite">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span class="legal-toast-msg">Enlace copiado al portapapeles</span>
+        </div>
 
         <!-- Pie de Página Legal -->
         <footer class="legal-footer">
-            <p>&copy; {new Date().getFullYear()} Ventrina SaaS. Todos los derechos reservados. <a href="/terminos">Términos y Condiciones</a></p>
+            <div class="legal-footer-links">
+                <a href="/">Inicio</a>
+                <a href="/precios">Planes y Precios</a>
+                <a href="/terminos">Términos y Condiciones</a>
+                <a href="/register">Crear Tienda</a>
+                <a href={`mailto:${contactPrivacyEmail}`}>Contacto Privacidad</a>
+            </div>
+            <p>&copy; {new Date().getFullYear()} Ventrina SaaS. Todos los derechos reservados.</p>
         </footer>
     </div>
+
+    <!-- Script interactivo de índice y copia de enlaces -->
+    <script src="../scripts/legal.ts"></script>
 </body>
 </html>
-

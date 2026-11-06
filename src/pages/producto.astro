@@ -1,18 +1,26 @@
 ---
 import Footer from '../components/layout/Footer.astro';
 import Header from '../components/layout/Header.astro';
-import defaultStoreConfig from '../config/store.config';
+import { createStoreConfig } from '../config/store.config';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/product.css';
+import type { StoreTemplateType } from '../types/store.types';
 
-const config = defaultStoreConfig;
+const validTemplates: StoreTemplateType[] = ['restaurant', 'hardware', 'autoparts', 'fashion', 'tech', 'grocery'];
+const templateParam = Astro.url.searchParams.get('template') as StoreTemplateType | null;
+const activeTemplate = templateParam && validTemplates.includes(templateParam) ? templateParam : 'restaurant';
+const isDemo = Boolean(templateParam) || Astro.url.pathname.startsWith('/demo/');
+const config = createStoreConfig(activeTemplate);
 const { business, contact } = config;
+
+const backLinkUrl = isDemo ? `/demo/${activeTemplate}#menu` : '/#menu';
+const backLinkText = isDemo ? `Volver a ${config.business.name}` : 'Volver a la Tienda';
 ---
 
 <BaseLayout 
   config={config} 
-  title="Detalle de Producto | Ventrina" 
-  description="Consulta especificaciones, disponibilidad y pide directamente este producto por WhatsApp."
+  title={`Detalle de Producto | ${business.name}`} 
+  description={`Consulta especificaciones, disponibilidad y pide directamente este producto por WhatsApp en ${business.name}.`}
 >
   <Header config={config} />
 
@@ -20,11 +28,11 @@ const { business, contact } = config;
     <!-- Breadcrumb de Navegación -->
     <div class="container pdp-breadcrumb-wrapper">
       <nav class="pdp-breadcrumb" aria-label="Migas de pan">
-        <a href="/" class="pdp-back-link" id="pdp-back-link">
+        <a href={backLinkUrl} class="pdp-back-link" id="pdp-back-link">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m15 18-6-6 6-6"></path>
           </svg>
-          <span id="pdp-back-text">Volver a la Tienda</span>
+          <span id="pdp-back-text">{backLinkText}</span>
         </a>
         <span class="pdp-crumb-sep">/</span>
         <span id="pdp-crumb-category" class="pdp-crumb-text">Catálogo</span>
@@ -46,7 +54,7 @@ const { business, contact } = config;
         <div class="pdp-error-icon">🔍</div>
         <h2>Producto no encontrado</h2>
         <p>El producto solicitado no está disponible en este momento o fue dado de baja del catálogo.</p>
-        <a href="/" class="pdm-btn-primary pdp-error-btn" id="pdp-error-back-btn">Explorar Catálogo Completo</a>
+        <a href={backLinkUrl} class="pdm-btn-primary pdp-error-btn" id="pdp-error-back-btn">Explorar Catálogo Completo</a>
       </div>
 
       <!-- Layout de 2 Columnas -->

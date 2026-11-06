@@ -13,35 +13,116 @@ export interface Props {
 
 const {
     config = defaultStoreConfig,
-    title = config.seo.title,
-    description = config.seo.description,
-    ogImage = config.business.ogImage,
+    title: propTitle,
+    description: propDescription,
+    ogImage: propOgImage,
 } = Astro.props;
 
+// Detectar si la ruta actual es una demo vertical de tienda
+const isDemo = Astro.url.pathname.startsWith('/demo/') || Boolean(Astro.params?.template);
+
+// URL base y URL Canónica
 const siteUrl = config.business.siteUrl || 'https://ventrina.pages.dev';
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
-const fullOgImage = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteUrl).toString();
 
-// Generar Schema.org dinámico según el tipo de tienda
-const schemaOrgData = {
-    '@context': 'https://schema.org',
-    '@type': config.seo.schemaType || 'Store',
-    name: config.business.name,
-    description: config.business.description,
-    url: siteUrl,
-    telephone: config.contact.phone || `+${config.contact.whatsapp}`,
-    address: {
-        '@type': 'PostalAddress',
-        streetAddress: config.contact.address,
-        addressLocality: config.contact.addressLocality || 'La Victoria',
-        addressRegion: config.contact.addressRegion || 'Aragua',
-        addressCountry: config.contact.addressCountry || 'VE',
-    },
-    openingHours: config.contact.hours,
-    priceRange: config.seo.priceRange || '$$',
-    ...(config.seo.servesCuisine ? { servesCuisine: config.seo.servesCuisine } : {}),
-    ...(config.template === 'restaurant' ? { hasMenu: `${siteUrl}#menu` } : {}),
+// 1. Título dinámico por vertical
+const defaultStoreTitle = `${config.business.name} | Catálogo Virtual y Pedidos por WhatsApp`;
+const metaTitle = propTitle || (isDemo ? defaultStoreTitle : (config.seo.title || defaultStoreTitle));
+const ogTitle = isDemo ? defaultStoreTitle : (propTitle || config.seo.title || defaultStoreTitle);
+const twitterTitle = ogTitle;
+
+// 2. Descripción dinámica por vertical
+const storeDescription = config.seo.description || config.business.description;
+const metaDescription = propDescription || storeDescription;
+const ogDescription = isDemo ? storeDescription : (propDescription || storeDescription);
+const twitterDescription = ogDescription;
+
+// 3. Imagen dinámica (Hero image / OG image por vertical)
+const configuredHeroImage = config.landing?.hero?.slides?.[0]?.image;
+const rawOgImage = isDemo
+    ? (config.business.ogImage || configuredHeroImage || propOgImage || '/assets/og_image.webp')
+    : (propOgImage || config.business.ogImage || configuredHeroImage || '/assets/og_image.webp');
+
+const resolveAbsoluteUrl = (pathOrUrl: string, base: string) => {
+    if (!pathOrUrl) return base;
+    if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
+        return pathOrUrl;
+    }
+    const cleanPath = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
+    return new URL(cleanPath, base).toString();
 };
+
+const fullOgImage = resolveAbsoluteUrl(rawOgImage, siteUrl);
+
+// Dimensiones de imagen según proporción
+const isSquareImage = rawOgImage.includes('taladro') || rawOgImage.includes('laptop');
+const ogImageWidth = isSquareImage ? '1024' : '1376';
+const ogImageHeight = isSquareImage ? '1024' : '768';
+
+// 4. Schema.org / JSON-LD dinámico y tipado según vertical
+const schemaType = config.seo.schemaType || 'Store';
+
+const schemaOrgData: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': schemaType,
+    name: config.business.name,
+    description: storeDescription,
+    url: canonicalUrl,
+    image: fullOgImage,
+};
+
+if (schemaType === 'SoftwareApplication') {
+    schemaOrgData.applicationCategory = 'BusinessApplication';
+    schemaOrgData.operatingSystem = 'Web, Mobile';
+    schemaOrgData.offers = {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+        priceRange: config.seo.priceRange || '$',
+    };
+    if (config.contact.email) {
+        schemaOrgData.email = config.contact.email;
+    }
+    if (config.contact.address) {
+        schemaOrgData.address = {
+            '@type': 'PostalAddress',
+            streetAddress: config.contact.address,
+            addressLocality: config.contact.addressLocality || 'La Victoria',
+            addressRegion: config.contact.addressRegion || 'Aragua',
+            addressCountry: config.contact.addressCountry || 'VE',
+        };
+    }
+} else {
+    // Negocios locales / Tiendas / Restaurantes
+    const telephone = config.contact.phone || (config.contact.whatsapp ? `+${config.contact.whatsapp}` : undefined);
+    if (telephone) {
+        schemaOrgData.telephone = telephone;
+    }
+
+    if (config.contact.address) {
+        schemaOrgData.address = {
+            '@type': 'PostalAddress',
+            streetAddress: config.contact.address,
+            addressLocality: config.contact.addressLocality || 'La Victoria',
+            addressRegion: config.contact.addressRegion || 'Aragua',
+            addressCountry: config.contact.addressCountry || 'VE',
+        };
+    }
+
+    if (config.contact.hours) {
+        schemaOrgData.openingHours = config.contact.hours;
+    }
+
+    schemaOrgData.priceRange = config.seo.priceRange || '$$';
+
+    if (config.seo.servesCuisine || schemaType === 'Restaurant' || config.template === 'restaurant') {
+        schemaOrgData.servesCuisine = config.seo.servesCuisine || 'Venezuelan';
+    }
+
+    if (schemaType === 'Restaurant' || config.template === 'restaurant') {
+        schemaOrgData.hasMenu = `${canonicalUrl.replace(/\/$/, '')}#menu`;
+    }
+}
 
 // Generar CSS con todas las variables del tema de forma directa y garantizada
 const theme = config.theme;
@@ -191,8 +272,8 @@ const themeCss = `
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{title}</title>
-  <meta name="description" content={description}>
+  <title>{metaTitle}</title>
+  <meta name="description" content={metaDescription}>
   <meta name="keywords" content={config.seo.keywords}>
   <meta name="author" content={config.business.name}>
   <link rel="canonical" href={canonicalUrl}>
@@ -202,23 +283,27 @@ const themeCss = `
   <link rel="apple-touch-icon" href="/assets/favicon.svg">
 
   <!-- Open Graph / Social Media -->
-  <meta property="og:type" content={config.template === 'restaurant' ? 'restaurant' : 'website'}>
+  <meta property="og:type" content={schemaType === 'Restaurant' ? 'restaurant.restaurant' : 'website'}>
+  <meta property="og:site_name" content={config.business.name}>
   <meta property="og:url" content={canonicalUrl}>
-  <meta property="og:title" content={title}>
-  <meta property="og:description" content={description}>
+  <meta property="og:title" content={ogTitle}>
+  <meta property="og:description" content={ogDescription}>
   <meta property="og:image" content={fullOgImage}>
   <meta property="og:image:secure_url" content={fullOgImage}>
-  <meta property="og:image:width" content="1376">
-  <meta property="og:image:height" content="768">
+  <meta property="og:image:width" content={ogImageWidth}>
+  <meta property="og:image:height" content={ogImageHeight}>
+  <meta property="og:image:alt" content={config.landing?.hero?.slides?.[0]?.alt || config.business.name}>
+  <meta property="og:locale" content="es_VE">
 
   <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content={canonicalUrl}>
-  <meta property="twitter:title" content={title}>
-  <meta property="twitter:description" content={description}>
-  <meta property="twitter:image" content={fullOgImage}>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content={canonicalUrl}>
+  <meta name="twitter:title" content={twitterTitle}>
+  <meta name="twitter:description" content={twitterDescription}>
+  <meta name="twitter:image" content={fullOgImage}>
+  <meta name="twitter:image:alt" content={config.landing?.hero?.slides?.[0]?.alt || config.business.name}>
 
-  <!-- Structured Data Dinámico -->
+  <!-- Structured Data Dinámico (JSON-LD) -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaOrgData)} />
 
   <!-- Google Fonts Dinámico por Plantilla -->

@@ -12,7 +12,7 @@ export const techTemplate: StoreConfig = {
         logoTextPrimary: 'NEXUS',
         logoTextSecondary: 'TECH',
         siteUrl: 'https://nexustech.pages.dev',
-        ogImage: '/assets/og_image_tech.webp',
+        ogImage: '/assets/product_laptop.webp',
     },
     contact: {
         whatsapp: '584241230046',

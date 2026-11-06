@@ -177,9 +177,115 @@ export class CatalogController {
                         .split('-')
                         .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
                         .join(' ');
-                return `<button class="category-filter-btn ${this.activeCategory === type ? 'active' : ''}" data-category="${type}">${name}</button>`;
+                const isActive = this.activeCategory === type;
+                return `<button type="button" class="category-filter-btn ${isActive ? 'active' : ''}" data-category="${type}" role="tab" aria-selected="${isActive ? 'true' : 'false'}">${name}</button>`;
             })
             .join('');
+    }
+
+    private renderEmptyState(): string {
+        const cleanPhone = String(this.config.whatsappNumber).replace(/[^\d]/g, '');
+        const query = this.searchQuery.trim();
+        const storeName = this.config.businessName || 'la tienda';
+
+        let waMsg = `¡Hola! Estuve viendo el catálogo de ${storeName} y quisiera consultar la disponibilidad de productos.`;
+        if (query) {
+            waMsg = `¡Hola! Estuve buscando "${query}" en el catálogo de ${storeName} pero no encontré resultados. ¿Tienen disponibilidad o productos similares?`;
+        }
+        const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMsg)}`;
+
+        return `
+            <div id="catalog-empty-state" class="catalog-empty-state" data-testid="no-results">
+                <div id="no-results" class="catalog-empty-inner">
+                    <div class="catalog-empty-visual" aria-hidden="true">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 160 160"
+                            class="catalog-empty-svg"
+                            fill="none"
+                        >
+                            <defs>
+                                <radialGradient id="emptyLensGlow" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="var(--color-primary, #c2410c)" stop-opacity="0.16" />
+                                    <stop offset="100%" stop-color="var(--color-primary, #c2410c)" stop-opacity="0" />
+                                </radialGradient>
+                                <linearGradient id="emptyLensRim" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="var(--color-primary, #c2410c)" />
+                                    <stop offset="100%" stop-color="var(--color-accent, #d97706)" />
+                                </linearGradient>
+                                <linearGradient id="emptyHandleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="var(--color-accent, #d97706)" />
+                                    <stop offset="100%" stop-color="var(--color-primary, #c2410c)" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="80" cy="74" r="62" class="empty-svg-orbit outer" />
+                            <circle cx="80" cy="74" r="46" class="empty-svg-orbit inner" />
+                            <circle cx="74" cy="68" r="38" fill="url(#emptyLensGlow)" />
+                            <path d="M124 38 L126 44 L132 46 L126 48 L124 54 L122 48 L116 46 L122 44 Z" class="empty-svg-sparkle main" />
+                            <path d="M36 82 L37.5 86 L41.5 87.5 L37.5 89 L36 93 L34.5 89 L30.5 87.5 L34.5 86 Z" class="empty-svg-sparkle sub" />
+                            <circle cx="42" cy="42" r="3" class="empty-svg-dot" />
+                            <circle cx="126" cy="98" r="2.5" class="empty-svg-dot" />
+                            <circle cx="74" cy="68" r="28" stroke="url(#emptyLensRim)" stroke-width="4.5" class="empty-svg-lens" />
+                            <path d="M58 54 A20 20 0 0 1 88 52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" class="empty-svg-glass-reflect" />
+                            <circle cx="74" cy="68" r="7" stroke="var(--color-accent, #d97706)" stroke-width="2" stroke-dasharray="3 3" />
+                            <path d="M94 88 L122 116" stroke="url(#emptyHandleGrad)" stroke-width="6.5" stroke-linecap="round" />
+                            <line x1="102" y1="96" x2="108" y2="102" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3 class="catalog-empty-heading">No encontramos productos con ese término</h3>
+                    <p class="catalog-empty-desc">Prueba con otra palabra clave o restablece los filtros para ver todo el catálogo.</p>
+                    <div class="catalog-empty-actions">
+                        <button type="button" id="btn-reset-filters" class="catalog-empty-btn-reset">
+                            ${renderIconSvg('repeat', { size: 18, class: 'catalog-empty-btn-icon' })}
+                            <span>Restablecer filtros y ver todo</span>
+                        </button>
+                        <a href="${waUrl}" target="_blank" rel="noopener" class="catalog-empty-btn-wa">
+                            ${renderIconSvg('whatsapp', { size: 18, class: 'catalog-empty-btn-icon' })}
+                            <span>Consultar disponibilidad por WhatsApp</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    public resetFiltersAndQuery(): void {
+        const searchInput = document.getElementById('product-search') as HTMLInputElement | null;
+        const clearSearchBtn = document.getElementById('clear-search');
+
+        if (searchInput) {
+            searchInput.value = '';
+        }
+        if (clearSearchBtn) {
+            clearSearchBtn.classList.remove('is-visible');
+        }
+
+        this.searchQuery = '';
+        this.activeCategory = 'all';
+
+        // Actualizar botones de categoría
+        const filterBtns = document.querySelectorAll('.category-filter-btn');
+        filterBtns.forEach((btn) => {
+            if (btn.getAttribute('data-category') === 'all') {
+                btn.classList.add('active');
+                btn.setAttribute('aria-selected', 'true');
+                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            } else {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            }
+        });
+
+        this.visibleCount = this.pageSize;
+        this.renderProducts();
+
+        const catalogSection = document.getElementById('menu') || document.getElementById('catalog-container');
+        if (catalogSection) {
+            catalogSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        if (searchInput) {
+            searchInput.focus();
+        }
     }
 
     private renderProducts(): void {
@@ -200,21 +306,17 @@ export class CatalogController {
         }
 
         if (filtered.length === 0) {
-            container.innerHTML = `
-                <div class="catalog-empty-state">
-                    <div class="catalog-empty-icon-wrap">
-                        ${renderIconSvg('search', { size: 30, class: 'catalog-empty-icon' })}
-                    </div>
-                    <p class="catalog-empty-msg">No se encontraron productos que coincidan con tu búsqueda.</p>
-                </div>`;
-            if (loadMoreContainer) loadMoreContainer.style.display = 'none';
+            container.innerHTML = this.renderEmptyState();
+            if (loadMoreContainer) {
+                loadMoreContainer.classList.remove('is-visible');
+            }
             return;
         }
 
         const paginated = filtered.slice(0, this.visibleCount);
 
         if (loadMoreContainer) {
-            loadMoreContainer.style.display = filtered.length > this.visibleCount ? 'block' : 'none';
+            loadMoreContainer.classList.toggle('is-visible', filtered.length > this.visibleCount);
         }
 
         const currentBcvRate = this.currencyService.getRate();
@@ -479,7 +581,7 @@ export class CatalogController {
         // Botón Compartir
         const btnShare = document.getElementById('pdm-btn-share');
         if (btnShare) {
-            btnShare.style.display = this.config.productDetailShareBtn === 'disabled' ? 'none' : 'flex';
+            btnShare.classList.toggle('d-none', this.config.productDetailShareBtn === 'disabled');
         }
 
         // Botón Agregar al carrito estado de stock
@@ -503,7 +605,7 @@ export class CatalogController {
 
         modal.classList.add('active');
         modal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
+        document.body.classList.add('modal-open');
 
         // URL history update
         const url = new URL(window.location.href);
@@ -516,7 +618,7 @@ export class CatalogController {
         if (!modal) return;
         modal.classList.remove('active');
         modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
+        document.body.classList.remove('modal-open');
         this.currentModalProduct = null;
 
         const url = new URL(window.location.href);
@@ -584,7 +686,7 @@ export class CatalogController {
             if (!pId && modal.classList.contains('active')) {
                 modal.classList.remove('active');
                 modal.setAttribute('aria-hidden', 'true');
-                document.body.style.overflow = '';
+                document.body.classList.remove('modal-open');
                 this.currentModalProduct = null;
             } else if (pId) {
                 const product = this.products.find((p) => p.id === pId);
@@ -745,6 +847,14 @@ export class CatalogController {
 
                 const optList = Object.values(options).filter(Boolean);
                 this.toastService.show(`¡Añadido ${qty}x ${name}${optList.length ? ` (${optList.join(', ')})` : ''}!`);
+                return;
+            }
+
+            // Botón de recuperación en estado vacío: "Restablecer filtros y ver todo"
+            const resetBtn = target.closest('#btn-reset-filters, .catalog-empty-btn-reset');
+            if (resetBtn) {
+                this.resetFiltersAndQuery();
+                return;
             }
         });
 
@@ -753,8 +863,13 @@ export class CatalogController {
             const btn = (e.target as HTMLElement).closest('.category-filter-btn') as HTMLElement | null;
             if (!btn) return;
             this.activeCategory = btn.getAttribute('data-category')!;
-            document.querySelectorAll('.category-filter-btn').forEach((b) => b.classList.remove('active'));
+            document.querySelectorAll('.category-filter-btn').forEach((b) => {
+                b.classList.remove('active');
+                b.setAttribute('aria-selected', 'false');
+            });
             btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+            btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             this.visibleCount = this.pageSize;
             this.renderProducts();
         });
@@ -766,7 +881,7 @@ export class CatalogController {
         searchInput?.addEventListener('input', (e) => {
             this.searchQuery = (e.target as HTMLInputElement).value;
             if (clearSearchBtn) {
-                clearSearchBtn.style.display = this.searchQuery.length > 0 ? 'flex' : 'none';
+                clearSearchBtn.classList.toggle('is-visible', this.searchQuery.length > 0);
             }
             this.visibleCount = this.pageSize;
             this.renderProducts();
@@ -776,7 +891,7 @@ export class CatalogController {
             if (searchInput) {
                 searchInput.value = '';
                 this.searchQuery = '';
-                clearSearchBtn.style.display = 'none';
+                clearSearchBtn.classList.remove('is-visible');
                 this.visibleCount = this.pageSize;
                 this.renderProducts();
                 searchInput.focus();

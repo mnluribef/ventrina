@@ -12,7 +12,7 @@ export const groceryTemplate: StoreConfig = {
         logoTextPrimary: 'BODEGÓN',
         logoTextSecondary: 'EXPRESS',
         siteUrl: 'https://bodegon.pages.dev',
-        ogImage: '/assets/og_image_grocery.webp',
+        ogImage: '/assets/hero_grocery.jpg',
     },
     contact: {
         whatsapp: '584241230046',

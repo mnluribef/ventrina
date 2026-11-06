@@ -12,7 +12,7 @@ export const restaurantTemplate: StoreConfig = {
         logoTextPrimary: 'FOG',
         logoTextSecondary: 'ÓN',
         siteUrl: 'https://fogon.pages.dev',
-        ogImage: '/assets/og_image.webp',
+        ogImage: '/assets/hero_grill.webp',
     },
     contact: {
         whatsapp: '584241230046',
@@ -91,8 +91,8 @@ export const restaurantTemplate: StoreConfig = {
             ctaSecondaryText: 'Hacer Pedido',
             ctaSecondaryLink: 'https://wa.me/584241230046',
             slides: [
+                { image: '/assets/hero_grill.webp', alt: 'Parrilla y Carnes al Fogón FOGÓN' },
                 { image: '/assets/hero_main.webp', alt: 'Pabellón Criollo FOGÓN' },
-                { image: '/assets/hero_grill.webp', alt: 'Parrilla y Carnes al Fogón' },
                 { image: '/assets/hero_postres.webp', alt: 'Postres Artesanales FOGÓN' },
             ],
             stats: [

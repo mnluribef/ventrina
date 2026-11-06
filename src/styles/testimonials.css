@@ -1,7 +1,44 @@
+/* =====================================================
+   VENTRINA — Testimonials & Social Proof Stylesheet
+   Archivo: src/styles/testimonials.css
+   100% libre de CSS inline, completamente modular
+   ===================================================== */
+
 /* ===================== TESTIMONIALS ===================== */
 #testimonios {
-    background-color: var(--blush);
+    background-color: var(--theme-bg-section, #faf7f2);
     position: relative;
+    padding: 5rem 0;
+}
+
+#testimonios .section-header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 3.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+#testimonios .section-header h2 {
+    font-family: var(--theme-font-heading, var(--font-heading));
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 700;
+    color: var(--theme-text-heading, #1c1917);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+}
+
+#testimonios .section-header h2 span {
+    color: var(--theme-accent, var(--gold, #d97706));
+    display: inline-block;
+}
+
+#testimonios .section-header p {
+    font-family: var(--theme-font-body, var(--font-body, 'Outfit', sans-serif));
+    font-size: 1.05rem;
+    color: var(--theme-text-muted, #78716c);
+    line-height: 1.6;
+    margin: 0;
 }
 
 .testimonials-grid {
@@ -11,12 +48,15 @@
 }
 
 .testimonial-card {
-    background: var(--white);
+    background: var(--theme-bg-card, #ffffff);
     padding: 2.5rem 2rem;
     border-radius: var(--radius-lg, 18px);
-    box-shadow: var(--shadow-soft);
-    transition: transform 0.4s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)), box-shadow 0.4s;
-    border: 1px solid var(--border-subtle);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff;
+    border: 1px solid var(--theme-border-subtle, rgba(28, 25, 23, 0.08));
+    transition:
+        transform 0.4s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+        box-shadow 0.4s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+        border-color 0.4s;
     position: relative;
 }
 
@@ -25,16 +65,17 @@
     position: absolute;
     top: 1rem;
     right: 1.5rem;
-    font-family: var(--font-heading, "Outfit", sans-serif);
+    font-family: var(--theme-font-heading, "Outfit", sans-serif);
     font-size: 3.5rem;
-    color: var(--rose-light);
+    color: var(--theme-primary-light, rgba(194, 65, 12, 0.15));
     line-height: 1;
     pointer-events: none;
 }
 
 .testimonial-card:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-rose);
+    box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.1);
+    border-color: var(--theme-border-focus, rgba(194, 65, 12, 0.3));
 }
 
 .stars {
@@ -46,16 +87,16 @@
 .star-svg {
     width: 16px;
     height: 16px;
-    fill: var(--gold);
-    stroke: var(--gold);
+    fill: var(--theme-accent, #d97706);
+    stroke: var(--theme-accent, #d97706);
 }
 
 .review {
-    font-size: 1rem;
-    color: var(--text-body);
+    font-size: 0.95rem;
+    color: var(--theme-text-body, #292524);
     margin-bottom: 1.5rem;
     font-style: italic;
-    line-height: 1.75;
+    line-height: 1.7;
 }
 
 .client-info {
@@ -69,7 +110,7 @@
     height: 46px;
     border-radius: 50%;
     overflow: hidden;
-    border: 2px solid var(--rose-light);
+    border: 2px solid var(--theme-primary-light, rgba(194, 65, 12, 0.2));
     flex-shrink: 0;
 }
 
@@ -80,16 +121,39 @@
 }
 
 .client-info h4 {
-    font-family: var(--font-heading, 'Outfit', sans-serif);
+    font-family: var(--theme-font-heading, 'Outfit', sans-serif);
     font-size: 1rem;
     font-weight: 600;
-    color: var(--text-heading);
+    color: var(--theme-text-heading, #1c1917);
     margin-bottom: 0.1rem;
 }
 
 .client-info p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
+    font-size: 0.82rem;
+    color: var(--theme-text-muted, #78716c);
+}
+
+/* ===================== RESPONSIVE TESTIMONIALS ===================== */
+@media (max-width: 992px) {
+    #testimonios {
+        padding: 4rem 0;
+    }
+}
+
+@media (max-width: 640px) {
+    #testimonios {
+        padding: 3rem 0;
+    }
+
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .testimonial-card {
+        padding: 1.75rem 1.25rem;
+        border-radius: 14px;
+    }
 }
 
 /* =====================================================
@@ -127,4 +191,3 @@
         will-change: auto !important;
     }
 }
-

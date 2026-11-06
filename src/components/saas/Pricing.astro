@@ -5,9 +5,32 @@
 <section id="planes" class="pricing-preview-section">
   <div class="pricing-preview-container">
     <div class="pricing-preview-header">
-      <span class="contrast-tag text-purple">Planes Claros · 0% Comisiones</span>
-      <h2>El poder de escalar, <span class="text-gradient-iris">sin costos ocultos</span></h2>
+      <span class="contrast-tag">Planes Claros · 0% Comisiones</span>
+      <h2>El poder de escalar, <span class="pricing-headline-accent">sin costos ocultos</span></h2>
       <p>Comienza 100% gratis con tu catálogo digital y crece a tu propio ritmo. El 100% de lo que vendes es tuyo.</p>
+
+      <!-- Selector interactivo de facturación Mensual vs Anual -->
+      <div class="billing-switcher-container">
+        <div class="billing-switcher" role="group" aria-label="Frecuencia de facturación">
+          <button
+            type="button"
+            class="billing-toggle-btn active"
+            data-billing-toggle="annual"
+            aria-pressed="true"
+          >
+            Facturación Anual
+            <span class="billing-discount-badge">-20% Ahorro Anual</span>
+          </button>
+          <button
+            type="button"
+            class="billing-toggle-btn"
+            data-billing-toggle="monthly"
+            aria-pressed="false"
+          >
+            Facturación Mensual
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="pricing-preview-grid">
@@ -57,10 +80,10 @@
           <h3>Profesional</h3>
           <div class="plan-price-row">
             <span class="plan-price-currency">$</span>
-            <span class="plan-price-val">15</span>
+            <span class="plan-price-val" data-plan="pro" data-price-annual="15" data-price-monthly="19">15</span>
             <span class="plan-price-period">/mes</span>
           </div>
-          <p class="plan-billing-note">Facturado anualmente o $19 mes a mes</p>
+          <p class="plan-billing-note" data-plan-billing="pro" data-billing-annual="Facturado anualmente ($180/año)" data-billing-monthly="Facturado mes a mes ($19/mes)">Facturado anualmente ($180/año)</p>
         </div>
         <div class="pricing-card-content">
           <p class="plan-summary">El motor definitivo para marcas y negocios activos que quieren automatizar ventas y escalar.</p>
@@ -101,10 +124,10 @@
           <h3>Empresarial</h3>
           <div class="plan-price-row">
             <span class="plan-price-currency">$</span>
-            <span class="plan-price-val">45</span>
+            <span class="plan-price-val" data-plan="enterprise" data-price-annual="39" data-price-monthly="45">39</span>
             <span class="plan-price-period">/mes</span>
           </div>
-          <p class="plan-billing-note">Solución B2B y franquicias</p>
+          <p class="plan-billing-note" data-plan-billing="enterprise" data-billing-annual="Facturado anualmente ($468/año)" data-billing-monthly="Facturado mes a mes ($45/mes)">Facturado anualmente ($468/año)</p>
         </div>
         <div class="pricing-card-content">
           <p class="plan-summary">Infraestructura de alta capacidad, soporte prioritario y marca blanca para operaciones grandes.</p>
@@ -135,6 +158,14 @@
       </div>
     </div>
 
+    <!-- Enlace a matriz comparativa completa -->
+    <div class="pricing-matrix-cta">
+      <a href="/precios#comparativa" class="pricing-matrix-link">
+        <span>Ver matriz comparativa completa de más de 18 funcionalidades</span>
+        <span class="pricing-matrix-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
     <!-- Callout footer hacia la tabla completa -->
     <div class="pricing-preview-footer">
       <div class="pricing-footer-box">
@@ -142,7 +173,7 @@
           <h4>¿Deseas comparar cada funcionalidad punto por punto?</h4>
           <p>Revisa la matriz completa de características, integraciones y límites técnicos en nuestra página de precios.</p>
         </div>
-        <a href="/precios" class="btn-compare-full">
+        <a href="/precios#comparativa" class="btn-compare-full">
           <span>Ver tabla comparativa completa</span>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -160,4 +191,3 @@
     </div>
   </div>
 </section>
-

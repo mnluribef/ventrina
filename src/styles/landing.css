@@ -1051,10 +1051,10 @@ a {
 .wa-bubble-order-items {
     font-size: 0.82rem;
     color: #292524;
-    background: #fcfbf9;
-    padding: 0.45rem 0.6rem;
-    border-radius: 6px;
-    border-left: 3px solid #25d366;
+    background: rgba(37, 211, 102, 0.06);
+    border: 1px solid rgba(37, 211, 102, 0.22);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
     margin-bottom: 0.55rem;
 }
 
@@ -2252,9 +2252,76 @@ a {
     margin: 0;
 }
 
-.text-gradient-iris {
-    color: var(--lp-primary);
+.pricing-headline-accent {
+    color: var(--lp-primary, #c2410c);
     display: inline-block;
+    font-weight: 800;
+}
+
+/* Switcher interactivo de facturación (Mensual vs Anual) */
+.billing-switcher-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.billing-switcher {
+    display: inline-flex;
+    align-items: center;
+    background: #f1ede6;
+    border: 1px solid rgba(226, 218, 206, 0.9);
+    border-radius: 9999px;
+    padding: 4px;
+    gap: 4px;
+    box-shadow: inset 0 1px 2px rgba(28, 25, 23, 0.05);
+}
+
+.billing-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    color: var(--lp-text-muted);
+    font-family: var(--font-heading);
+    font-size: 0.92rem;
+    font-weight: 600;
+    padding: 0.6rem 1.25rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+}
+
+.billing-toggle-btn:hover {
+    color: var(--lp-text-heading);
+}
+
+.billing-toggle-btn:focus-visible {
+    outline: 2px solid var(--color-primary, #c2410c);
+    outline-offset: 2px;
+}
+
+.billing-toggle-btn.active {
+    background: #ffffff;
+    color: var(--lp-text-heading);
+    box-shadow:
+        0 2px 8px rgba(28, 25, 23, 0.08),
+        0 0 0 1px rgba(28, 25, 23, 0.04);
+    font-weight: 700;
+}
+
+.billing-discount-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(217, 119, 6, 0.12);
+    color: #b45309;
+    border: 1px solid rgba(217, 119, 6, 0.3);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    letter-spacing: 0.01em;
 }
 
 .pricing-preview-grid {
@@ -2359,6 +2426,7 @@ a {
     align-items: baseline;
     justify-content: center;
     margin-bottom: 0.5rem;
+    font-variant-numeric: tabular-nums;
 }
 
 .plan-price-currency {
@@ -2366,6 +2434,7 @@ a {
     font-weight: 700;
     color: var(--lp-text-heading);
     margin-right: 2px;
+    font-variant-numeric: tabular-nums;
 }
 
 .plan-price-val {
@@ -2375,6 +2444,13 @@ a {
     color: var(--lp-text-heading);
     line-height: 1;
     letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.plan-price-val.price-updating {
+    opacity: 0.2;
+    transform: translateY(-4px);
 }
 
 .plan-price-period {
@@ -2388,6 +2464,8 @@ a {
     font-size: 0.88rem;
     color: var(--lp-text-muted);
     margin: 0;
+    min-height: 1.35rem;
+    transition: opacity 0.15s ease;
 }
 
 .pricing-card-content {
@@ -2474,6 +2552,47 @@ a {
     color: #ffffff;
     transform: translateY(-2px);
     box-shadow: 0 12px 26px -4px var(--color-primary-glow);
+}
+
+.pricing-matrix-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.75rem;
+}
+
+.pricing-matrix-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-primary, #c2410c);
+    text-decoration: none;
+    padding: 0.75rem 1.6rem;
+    border-radius: 9999px;
+    background: var(--color-primary-light, rgba(194, 65, 12, 0.08));
+    border: 1.5px solid rgba(194, 65, 12, 0.24);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 8px rgba(194, 65, 12, 0.06);
+}
+
+.pricing-matrix-link:hover {
+    background: var(--color-primary, #c2410c);
+    color: #ffffff;
+    border-color: var(--color-primary, #c2410c);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -4px var(--color-primary-glow, rgba(194, 65, 12, 0.25));
+}
+
+.pricing-matrix-arrow {
+    font-size: 1.15rem;
+    transition: transform 0.25s ease;
+    line-height: 1;
+}
+
+.pricing-matrix-link:hover .pricing-matrix-arrow {
+    transform: translateX(4px);
 }
 
 .pricing-preview-footer {
@@ -2589,13 +2708,13 @@ a {
 }
 
 .testimonials-container {
-    max-width: 1140px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
 .testimonials-header {
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 3.75rem;
 }
 
 .testimonials-header h2 {
@@ -2622,66 +2741,116 @@ a {
 }
 
 .testimonial-card-light {
-    border-radius: 16px;
-    padding: 2rem;
+    border-radius: 20px;
+    padding: 2.25rem 1.85rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: #ffffff;
-    border: 1px solid var(--lp-border);
+    background: linear-gradient(180deg, #ffffff 0%, #fdfbf7 100%);
+    border: 1px solid rgba(226, 218, 206, 0.85);
     box-shadow:
-        0 1px 3px rgba(28, 25, 23, 0.03),
-        inset 0 1px 0 #ffffff;
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.95),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+        0 2px 4px rgba(28, 25, 23, 0.03),
+        0 12px 24px -6px rgba(28, 25, 23, 0.05);
     transition:
-        transform 0.25s var(--lp-ease),
-        box-shadow 0.25s var(--lp-ease),
-        border-color 0.25s var(--lp-ease);
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
 }
 
 .testimonial-card-light:hover {
-    transform: translateY(-4px);
-    border-color: rgba(194, 65, 12, 0.25);
+    transform: translateY(-5px);
+    border-color: rgba(194, 65, 12, 0.3);
     box-shadow:
-        0 16px 36px -10px rgba(194, 65, 12, 0.12),
-        inset 0 1px 0 #ffffff;
+        inset 0 1px 0 0 #ffffff,
+        inset 0 0 0 1px rgba(255, 255, 255, 0.8),
+        0 20px 40px -12px rgba(194, 65, 12, 0.14),
+        0 4px 12px rgba(28, 25, 23, 0.04);
+}
+
+.test-card-body {
+    display: flex;
+    flex-direction: column;
 }
 
 .test-stars-row {
     display: flex;
+    align-items: center;
     gap: 0.25rem;
-    color: var(--color-accent, #d97706);
-    margin-bottom: 1rem;
-    font-size: 1rem;
+    color: #d97706;
+    margin-bottom: 0.95rem;
+}
+
+.test-star-icon {
+    width: 17px;
+    height: 17px;
+    fill: #d97706;
+    color: #d97706;
+    flex-shrink: 0;
+}
+
+.test-metric-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #9a3412;
+    background: rgba(194, 65, 12, 0.07);
+    border: 1px solid rgba(194, 65, 12, 0.18);
+    border-radius: 9999px;
+    padding: 0.35rem 0.8rem;
+    margin-bottom: 1.15rem;
+    letter-spacing: -0.01em;
+    width: fit-content;
+}
+
+.test-metric-icon {
+    width: 14px;
+    height: 14px;
+    stroke: #c2410c;
+    stroke-width: 2.4;
+    fill: none;
+    flex-shrink: 0;
 }
 
 .test-quote {
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     color: var(--lp-text-body);
     line-height: 1.65;
-    margin: 0 0 1.5rem;
+    margin: 0 0 1.75rem;
     font-style: italic;
 }
 
 .test-author-box {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.85rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(226, 218, 206, 0.6);
 }
 
 .test-avatar {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--lp-border);
-    box-shadow: 0 2px 6px rgba(28, 25, 23, 0.08);
+    border: 2px solid #ffffff;
+    box-shadow:
+        0 0 0 2px #eae4d8,
+        0 0 0 4px #ffffff,
+        0 2px 6px rgba(28, 25, 23, 0.08);
+    flex-shrink: 0;
 }
 
 .test-author-info strong {
     display: block;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     color: var(--lp-text-heading);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .test-badge-city {
@@ -2689,11 +2858,11 @@ a {
     font-size: 0.75rem;
     font-weight: 500;
     color: var(--lp-text-muted);
-    background: #f5f4f0;
-    border: 1px solid var(--lp-border);
-    padding: 0.12rem 0.55rem;
+    background: #f7f5f0;
+    border: 1px solid rgba(226, 218, 206, 0.9);
+    padding: 0.15rem 0.6rem;
     border-radius: 9999px;
-    margin-top: 0.2rem;
+    margin-top: 0.25rem;
 }
 
 /* ===================== FAQ ACCORDION ===================== */

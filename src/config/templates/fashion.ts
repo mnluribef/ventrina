@@ -12,7 +12,7 @@ export const fashionTemplate: StoreConfig = {
         logoTextPrimary: 'AURA',
         logoTextSecondary: 'STUDIO',
         siteUrl: 'https://aurastudio.pages.dev',
-        ogImage: '/assets/og_image_fashion.webp',
+        ogImage: '/assets/hero_fashion.webp',
     },
     contact: {
         whatsapp: '584241230046',
@@ -91,9 +91,9 @@ export const fashionTemplate: StoreConfig = {
             ctaSecondaryText: 'Consultar Tallas',
             ctaSecondaryLink: 'https://wa.me/584241230046',
             slides: [
-                { image: '/assets/product_vestido.webp', alt: 'Colección de temporada AURA' },
+                { image: '/assets/hero_fashion.webp', alt: 'Colección de temporada AURA Studio' },
+                { image: '/assets/product_vestido.webp', alt: 'Vestidos y prendas en tendencia' },
                 { image: '/assets/product_blazer.webp', alt: 'Prendas urbanas y chic' },
-                { image: '/assets/product_jeans.webp', alt: 'Prendas denim y básicos de autor' },
             ],
             stats: [
                 { value: '+1,200', label: 'Outfits Enviados' },

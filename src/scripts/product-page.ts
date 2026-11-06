@@ -15,6 +15,7 @@ class ProductPageController {
     private cartService: CartService;
     private tenantId: string | null = null;
     private template = 'restaurant';
+    private storeUrl = '/';
     private whatsappNumber = '584241230046';
     private businessName = 'Ventrina Store';
 
@@ -83,7 +84,13 @@ class ProductPageController {
             this.businessName = storeMetaEl.dataset.businessName || this.businessName;
         }
 
-        // 3. Injected tenant config
+        // 3. Template param from query string if present
+        const templateParam = url.searchParams.get('template');
+        if (templateParam) {
+            this.template = templateParam;
+        }
+
+        // 4. Injected tenant config
         const injectedScript = document.getElementById('injected-tenant-config');
         if (injectedScript?.textContent) {
             try {
@@ -92,6 +99,19 @@ class ProductPageController {
                 if (config.business?.name) this.businessName = config.business.name;
                 if (config.contact?.whatsapp) this.whatsappNumber = config.contact.whatsapp;
             } catch {}
+        }
+
+        // 5. Store URL computation
+        const isSubdomain =
+            hostname.endsWith('.ventrina.app') || hostname.endsWith('.localhost');
+        if (isSubdomain) {
+            this.storeUrl = '/';
+        } else if (this.tenantId) {
+            this.storeUrl = `/${this.tenantId}`;
+        } else if (templateParam || url.pathname.startsWith('/demo/')) {
+            this.storeUrl = `/demo/${this.template}`;
+        } else {
+            this.storeUrl = '/';
         }
     }
 
@@ -139,24 +159,22 @@ class ProductPageController {
         const backText = document.getElementById('pdp-back-text');
         const errBackBtn = document.getElementById('pdp-error-back-btn') as HTMLAnchorElement | null;
 
-        const isSubdomain =
-            window.location.hostname.endsWith('.ventrina.app') || window.location.hostname.endsWith('.localhost');
-        const storeUrl = isSubdomain ? '/' : this.tenantId ? `/${this.tenantId}` : `/demo/${this.template}`;
+        const targetCatalogUrl = `${this.storeUrl}#menu`;
         const storeLabel = this.businessName ? `Volver a ${this.businessName}` : 'Volver a la Tienda';
 
         if (backLink) {
-            backLink.href = storeUrl;
+            backLink.href = targetCatalogUrl;
         }
         if (backText) {
             backText.textContent = storeLabel;
         }
         if (errBackBtn) {
-            errBackBtn.href = storeUrl;
+            errBackBtn.href = targetCatalogUrl;
         }
 
         // Float cart button click -> redirige a la tienda con ancla al catálogo
         document.getElementById('cart-btn')?.addEventListener('click', () => {
-            window.location.href = `${storeUrl}#menu`;
+            window.location.href = targetCatalogUrl;
         });
     }
 

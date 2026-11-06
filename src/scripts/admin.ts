@@ -3986,6 +3986,17 @@ document.addEventListener('click', (e) => {
         return;
     }
 
+    // Empty State Create Coupon CTA
+    const btnEmptyCoupon = t.closest('[data-action="empty-new-coupon"]') as HTMLElement | null;
+    if (btnEmptyCoupon) {
+        const couponFormCollapse = document.getElementById('coupon-form-collapse');
+        if (couponFormCollapse) {
+            couponFormCollapse.classList.add('expanded');
+            (document.getElementById('coupon-code') as HTMLInputElement | null)?.focus();
+        }
+        return;
+    }
+
     // Print Order Ticket
     if (t.closest('#btn-print-order-ticket')) {
         window.print();
@@ -5701,8 +5712,25 @@ function renderCouponsTable() {
     if (!tableEl) return;
 
     if (couponsList.length === 0) {
-        tableEl.innerHTML =
-            '<tr><td colspan="8" class="table-empty-message">No hay cupones creados aún. Crea el primero arriba.</td></tr>';
+        tableEl.innerHTML = `
+            <tr>
+                <td colspan="8" class="table-empty-cell-container">
+                    <div class="admin-empty-state">
+                        <div class="empty-state-icon-box">
+                            <i data-lucide="ticket" class="empty-state-icon"></i>
+                        </div>
+                        <h3 class="empty-state-title">No hay cupones creados aún</h3>
+                        <p class="empty-state-desc">Crea códigos de descuento por porcentaje o monto fijo para incentivar las ventas en tu tienda.</p>
+                        <div class="empty-state-actions">
+                            <button type="button" class="btn-action" data-action="empty-new-coupon">
+                                <i data-lucide="plus"></i> Crear Primer Cupón
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        `;
+        if (window.lucide) lucide.createIcons();
         return;
     }
 
@@ -5723,14 +5751,14 @@ function renderCouponsTable() {
 
             return `
             <tr>
-                <td><code><strong>${escapeHtml(c.code)}</strong></code></td>
-                <td>${c.discount_type === 'percentage' ? 'Porcentaje' : 'Monto Fijo'}</td>
-                <td><strong class="table-amount-success">${discountText}</strong></td>
-                <td>${minOrderText}</td>
-                <td>${usesText}</td>
-                <td>${expiresText}</td>
-                <td>${statusBadge}</td>
-                <td>
+                <td><code class="coupon-code-badge">${escapeHtml(c.code)}</code></td>
+                <td><span class="table-coupon-type">${c.discount_type === 'percentage' ? 'Porcentaje' : 'Monto Fijo'}</span></td>
+                <td class="text-right"><strong class="table-amount-success tabular-nums">${discountText}</strong></td>
+                <td class="text-right tabular-nums">${minOrderText}</td>
+                <td class="text-center tabular-nums">${usesText}</td>
+                <td class="tabular-nums">${expiresText}</td>
+                <td class="text-center">${statusBadge}</td>
+                <td class="text-right">
                     <div class="table-actions-group">
                         <button class="action-icon-btn edit" data-action="toggle-coupon" data-id="${c.id}" data-active="${c.active}" title="${isActive ? 'Desactivar' : 'Activar'}">
                             <i data-lucide="${isActive ? 'pause' : 'play'}" class="table-action-icon-sm"></i>

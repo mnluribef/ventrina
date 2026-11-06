@@ -159,12 +159,9 @@
 .hero-content h1 em {
     font-style: normal;
     font-weight: 800;
-    background: var(--theme-grad-hero, var(--grad-hero));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--theme-accent, #f59e0b);
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.75), 0 1px 3px rgba(0, 0, 0, 0.9);
     display: inline-block;
-    filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.85));
 }
 
 .hero-content p {

@@ -12,7 +12,7 @@ export const hardwareTemplate: StoreConfig = {
         logoTextPrimary: 'FERRO',
         logoTextSecondary: 'MAX',
         siteUrl: 'https://ferromax.pages.dev',
-        ogImage: '/assets/og_image_hardware.webp',
+        ogImage: '/assets/product_taladro.webp',
     },
     contact: {
         whatsapp: '584241230046',

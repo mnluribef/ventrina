@@ -563,6 +563,10 @@ tr:hover td {
     text-align: center;
 }
 
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+}
+
 /* Columna Artículos en tabla de pedidos (columna 4) */
 #section-orders table th:nth-child(4),
 #table-all-orders td:nth-child(4),
@@ -1653,14 +1657,15 @@ select option {
 }
 
 .billing-card:hover {
-    border-color: var(--primary);
+    border-color: rgba(194, 65, 12, 0.35);
     box-shadow: var(--light-shadow-md);
     transform: translateY(-2px);
 }
 
 .billing-card-highlight {
-    border-color: var(--primary);
-    background: var(--color-primary-soft);
+    border: 1px solid rgba(194, 65, 12, 0.28);
+    background: linear-gradient(180deg, rgba(194, 65, 12, 0.04) 0%, rgba(217, 119, 6, 0.02) 100%);
+    box-shadow: 0 4px 16px -2px rgba(194, 65, 12, 0.06);
 }
 
 .billing-card-header {
@@ -1671,27 +1676,53 @@ select option {
 }
 
 .billing-icon-primary {
-    color: var(--primary);
+    color: #c2410c;
 }
 .billing-icon-info {
-    color: var(--info);
+    color: #c2410c;
 }
 .billing-icon-warning {
-    color: var(--warning);
+    color: #d97706;
 }
 .billing-icon-success {
-    color: var(--success);
+    color: #059669;
 }
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
 .stat-limit {
     font-size: 1.1rem;
     color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
 }
-.stat-domain-badge {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-top: 0.4rem;
-    font-family: monospace;
+
+.stat-domain-badge,
+.billing-plan-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: fit-content;
+    font-size: 0.8rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: #c2410c;
+    background: rgba(194, 65, 12, 0.08);
+    border: 1px solid rgba(194, 65, 12, 0.2);
+    border-radius: 6px;
+    padding: 0.2rem 0.6rem;
+    margin-top: 0.5rem;
+    letter-spacing: 0.02em;
 }
+
 .billing-status-row {
     display: flex;
     justify-content: space-between;
@@ -1700,30 +1731,47 @@ select option {
     font-size: 0.85rem;
     color: var(--text-secondary);
 }
+
+#billing-status {
+    background: rgba(5, 150, 105, 0.1);
+    color: #059669;
+    border: 1px solid rgba(5, 150, 105, 0.24);
+    font-weight: 600;
+}
+
 .progress-track {
     margin-top: 1rem;
-    background: var(--light-border);
-    border-radius: 8px;
+    background: rgba(28, 25, 23, 0.06);
+    border: 1px solid rgba(28, 25, 23, 0.04);
+    border-radius: 9999px;
     height: 8px;
     overflow: hidden;
 }
+
 .progress-bar {
     height: 100%;
     width: 0%;
-    transition: width 0.5s ease;
-    border-radius: 8px;
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 9999px;
 }
+
 .progress-info {
-    background: var(--info);
+    background: linear-gradient(90deg, #c2410c 0%, #ea580c 100%);
+    box-shadow: 0 0 10px rgba(194, 65, 12, 0.25);
 }
+
 .progress-warning {
-    background: var(--warning);
+    background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%);
+    box-shadow: 0 0 10px rgba(217, 119, 6, 0.25);
 }
+
 .progress-percent {
     text-align: right;
     font-size: 0.78rem;
+    font-weight: 500;
     margin-top: 0.4rem;
     color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
 }
 .billing-payment-section {
     margin-top: 2.5rem;
@@ -1837,6 +1885,49 @@ select option {
     background: rgba(245, 158, 11, 0.12);
     color: #d97706;
     margin-bottom: 0.5rem;
+}
+
+/* ==========================================================================
+   Cupones de Descuento (Promociones & Fidelización)
+   ========================================================================== */
+.coupon-code-badge {
+    display: inline-flex;
+    align-items: center;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+    background: rgba(194, 65, 12, 0.08);
+    color: #c2410c;
+    border: 1px dashed rgba(194, 65, 12, 0.32);
+    border-radius: 6px;
+    padding: 0.2rem 0.55rem;
+    transition: var(--transition);
+}
+
+.coupon-code-badge:hover {
+    background: rgba(194, 65, 12, 0.14);
+    border-color: #c2410c;
+}
+
+.table-coupon-type {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.coupons-table th,
+.coupons-table td {
+    vertical-align: middle;
+}
+
+#coupon-code {
+    text-transform: uppercase;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-weight: 600;
+    letter-spacing: 0.05em;
 }
 
 /* Product Image Upload Component */
@@ -3144,6 +3235,7 @@ select option {
     color: var(--text-primary);
     margin: 0;
     line-height: 1;
+    font-variant-numeric: tabular-nums;
 }
 
 .team-summary-icon {
@@ -3155,19 +3247,22 @@ select option {
     justify-content: center;
 }
 
+.team-summary-icon.terracotta,
 .team-summary-icon.purple {
-    background: var(--brand-100);
-    color: var(--brand-700);
+    background: rgba(194, 65, 12, 0.1);
+    color: #c2410c;
 }
 
+.team-summary-icon.amber,
 .team-summary-icon.cyan {
-    background: rgba(6, 182, 212, 0.12);
-    color: #0891b2;
+    background: rgba(217, 119, 6, 0.12);
+    color: #d97706;
 }
 
+.team-summary-icon.emerald,
 .team-summary-icon.blue {
-    background: rgba(59, 130, 246, 0.12);
-    color: #2563eb;
+    background: rgba(5, 150, 105, 0.12);
+    color: #059669;
 }
 
 .status-badge.admin {
