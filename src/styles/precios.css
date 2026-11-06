@@ -328,91 +328,51 @@ html {
     line-height: 1.7;
 }
 
-/* Revelación animada fluida */
-@keyframes preciosFadeUp {
-    0% {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    60% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    100% {
-        opacity: 1;
+/* =====================================================
+   ARQUITECTURA DE REVELACIÓN SCROLL-TRIGGERED (STRIPE / LINEAR)
+   ===================================================== */
+.reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+        opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+
+.reveal.is-revealed,
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+    will-change: auto;
+}
+
+.pricing-card.popular.reveal.is-revealed,
+.pricing-card.popular.reveal.active {
+    transform: scale(1.04) translateY(0);
+}
+
+@media (max-width: 1024px) {
+    .pricing-card.popular.reveal.is-revealed,
+    .pricing-card.popular.reveal.active {
         transform: translateY(0);
     }
 }
 
-@keyframes preciosFadeUpPopular {
-    0% {
-        opacity: 0;
-        transform: scale(1.04) translateY(10px);
-    }
-    60% {
-        opacity: 1;
-        transform: scale(1.04) translateY(0);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1.04) translateY(0);
-    }
+.reveal-delay-1 {
+    transition-delay: 0.08s;
 }
 
-/* Fallback con IntersectionObserver para navegadores sin CSS Scroll-Driven Animations */
-@supports not (animation-timeline: view()) {
-    .reveal {
-        opacity: 0;
-        transform: translateY(10px);
-        transition:
-            opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-            transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .reveal.active {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    .reveal-delay-1 {
-        transition-delay: 0.06s;
-    }
-
-    .reveal-delay-2 {
-        transition-delay: 0.12s;
-    }
-}
-
-/* CSS Scroll-Driven Animations nativo */
-@supports (animation-timeline: view()) {
-    .reveal {
-        animation: preciosFadeUp linear both;
-        animation-timeline: view();
-        animation-range: entry 0% cover 14%;
-    }
-
-    .pricing-card.popular.reveal {
-        animation-name: preciosFadeUpPopular;
-    }
-
-    .reveal-delay-1 {
-        animation-range: entry 2% cover 15.5%;
-    }
-
-    .reveal-delay-2 {
-        animation-range: entry 4% cover 17%;
-    }
-
-    @media (max-width: 1024px) {
-        .pricing-card.popular.reveal {
-            animation-name: preciosFadeUp;
-        }
-    }
+.reveal-delay-2 {
+    transition-delay: 0.16s;
 }
 
 @media (prefers-reduced-motion: reduce) {
     .reveal {
-        transition-duration: 0.01ms;
         animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+        will-change: auto !important;
     }
 }

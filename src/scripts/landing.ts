@@ -4,7 +4,7 @@ import { BcvCurrencyService, formatBsCurrency } from './services/bcv.service';
 import { initScrollReveal } from './utils/reveal.util';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 0. Inicialización de Scroll Reveal (Fallback progresivo si no hay CSS Scroll-Driven Animations)
+    // 0. Inicialización de Scroll Reveal de Alto Rendimiento (Stripe / Linear Model)
     initScrollReveal(
         '.reveal, .contrast-card, .feature-box, .demo-card-light, .ticker-item, .pricing-preview-card, .testimonials-grid .testimonial-card, .faq-item-modern, .cta-banner-card',
     );

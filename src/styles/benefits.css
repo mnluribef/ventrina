@@ -147,64 +147,29 @@
 }
 
 /* =====================================================
-   CSS SCROLL-DRIVEN ANIMATIONS (Native & Progressive)
+   ARQUITECTURA DE REVELACIÓN SCROLL-TRIGGERED (STRIPE / LINEAR)
    ===================================================== */
-@keyframes scrollRevealFadeUpBenefits {
-    0% {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    60% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.benefit-card.reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+        opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
 }
 
-@supports not (animation-timeline: view()) {
-    .benefit-card.reveal {
-        opacity: 0;
-        transform: translateY(10px);
-        transition:
-            opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-            transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .benefit-card.reveal.active {
-        opacity: 1;
-        transform: none;
-    }
-
-    .benefits-grid .benefit-card:nth-child(1).reveal {
-        transition-delay: 0s;
-    }
-    .benefits-grid .benefit-card:nth-child(2).reveal {
-        transition-delay: 0.06s;
-    }
-    .benefits-grid .benefit-card:nth-child(3).reveal {
-        transition-delay: 0.12s;
-    }
+.benefit-card.reveal.is-revealed,
+.benefit-card.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+    will-change: auto;
 }
 
-@supports (animation-timeline: view()) {
-    .benefit-card.reveal {
-        animation: scrollRevealFadeUpBenefits linear both;
-        animation-timeline: view();
-        animation-range: entry 0% cover 14%;
-    }
-
-    .benefits-grid .benefit-card:nth-child(1).reveal {
-        animation-range: entry 0% cover 13%;
-    }
-    .benefits-grid .benefit-card:nth-child(2).reveal {
-        animation-range: entry 1.5% cover 14.5%;
-    }
-    .benefits-grid .benefit-card:nth-child(3).reveal {
-        animation-range: entry 3% cover 16%;
-    }
+.benefits-grid .benefit-card:nth-child(2).reveal {
+    transition-delay: 0.08s;
+}
+.benefits-grid .benefit-card:nth-child(3).reveal {
+    transition-delay: 0.16s;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -213,5 +178,6 @@
         opacity: 1 !important;
         transform: none !important;
         transition: none !important;
+        will-change: auto !important;
     }
 }

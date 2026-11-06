@@ -2369,101 +2369,78 @@ a {
 }
 
 /* =====================================================
-   CSS SCROLL-DRIVEN ANIMATIONS (Native & Progressive)
+   ARQUITECTURA DE REVELACIÓN SCROLL-TRIGGERED (STRIPE / LINEAR)
+   Transiciones inerciales de GPU aceleradas por compositor
    ===================================================== */
-@keyframes scrollFadeUpLanding {
-    0% {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    60% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.reveal,
+.contrast-card,
+.feature-box,
+.demo-card-light,
+.ticker-item,
+.pricing-preview-card,
+.testimonials-grid .testimonial-card,
+.faq-item-modern,
+.cta-banner-card {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+        opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
 }
 
-/* Fallback con IntersectionObserver para navegadores sin CSS Scroll-Driven Animations */
-@supports not (animation-timeline: view()) {
-    .reveal,
-    .contrast-card,
-    .feature-box,
-    .demo-card-light,
-    .ticker-item,
-    .pricing-preview-card,
-    .testimonials-grid .testimonial-card,
-    .faq-item-modern,
-    .cta-banner-card {
-        opacity: 0;
-        transform: translateY(10px);
-        transition:
-            opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-            transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .reveal.active,
-    .contrast-card.active,
-    .feature-box.active,
-    .demo-card-light.active,
-    .ticker-item.active,
-    .pricing-preview-card.active,
-    .testimonials-grid .testimonial-card.active,
-    .faq-item-modern.active-reveal,
-    .cta-banner-card.active {
-        opacity: 1;
-        transform: none;
-    }
+.reveal.is-revealed,
+.reveal.active,
+.contrast-card.is-revealed,
+.contrast-card.active,
+.feature-box.is-revealed,
+.feature-box.active,
+.demo-card-light.is-revealed,
+.demo-card-light.active,
+.ticker-item.is-revealed,
+.ticker-item.active,
+.pricing-preview-card.is-revealed,
+.pricing-preview-card.active,
+.testimonials-grid .testimonial-card.is-revealed,
+.testimonials-grid .testimonial-card.active,
+.faq-item-modern.active-reveal,
+.faq-item-modern.is-revealed,
+.cta-banner-card.is-revealed,
+.cta-banner-card.active {
+    opacity: 1;
+    transform: translateY(0);
+    will-change: auto;
 }
 
-/* Soporte Nativo: CSS Scroll-Driven Animations (Off-main-thread) */
-@supports (animation-timeline: view()) {
-    .reveal,
-    .contrast-card,
-    .feature-box,
-    .demo-card-light,
-    .ticker-item,
-    .pricing-preview-card,
-    .testimonials-grid .testimonial-card,
-    .faq-item-modern,
-    .cta-banner-card {
-        animation: scrollFadeUpLanding linear both;
-        animation-timeline: view();
-        animation-range: entry 0% cover 14%;
-    }
+/* Stagger temporal real en rejillas (cascada fluida de 60/120 fps) */
+.ticker-item:nth-child(2),
+.contrast-cards-grid .contrast-card:nth-child(2),
+.demos-grid .demo-card-light:nth-child(2),
+.features-grid .feature-box:nth-child(2),
+.pricing-preview-grid .pricing-preview-card:nth-child(2),
+.testimonials-grid .testimonial-card:nth-child(2) {
+    transition-delay: 0.08s;
+}
 
-    /* Stagger ultra-compacto en grids para evitar asimetrías en pausas */
-    .ticker-item:nth-child(2),
-    .contrast-cards-grid .contrast-card:nth-child(2),
-    .demos-grid .demo-card-light:nth-child(2),
-    .features-grid .feature-box:nth-child(2),
-    .pricing-preview-grid .pricing-preview-card:nth-child(2),
-    .testimonials-grid .testimonial-card:nth-child(2) {
-        animation-range: entry 1.5% cover 15.5%;
-    }
+.ticker-item:nth-child(3),
+.demos-grid .demo-card-light:nth-child(3),
+.features-grid .feature-box:nth-child(3),
+.pricing-preview-grid .pricing-preview-card:nth-child(3),
+.testimonials-grid .testimonial-card:nth-child(3) {
+    transition-delay: 0.16s;
+}
 
-    .ticker-item:nth-child(3),
-    .demos-grid .demo-card-light:nth-child(3),
-    .features-grid .feature-box:nth-child(3),
-    .pricing-preview-grid .pricing-preview-card:nth-child(3),
-    .testimonials-grid .testimonial-card:nth-child(3) {
-        animation-range: entry 3% cover 17%;
-    }
+.ticker-item:nth-child(4),
+.features-grid .feature-box:nth-child(4) {
+    transition-delay: 0.24s;
+}
 
-    .ticker-item:nth-child(4),
-    .features-grid .feature-box:nth-child(4) {
-        animation-range: entry 4.5% cover 18.5%;
-    }
+.features-grid .feature-box:nth-child(5) {
+    transition-delay: 0.32s;
+}
 
-    .features-grid .feature-box:nth-child(5) {
-        animation-range: entry 6% cover 20%;
-    }
-
-    .features-grid .feature-box:nth-child(6) {
-        animation-range: entry 7.5% cover 21.5%;
-    }
+.features-grid .feature-box:nth-child(6) {
+    transition-delay: 0.4s;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2480,5 +2457,6 @@ a {
         opacity: 1 !important;
         transform: none !important;
         transition: none !important;
+        will-change: auto !important;
     }
 }

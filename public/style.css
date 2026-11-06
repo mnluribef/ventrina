@@ -916,113 +916,60 @@ section {
     box-shadow: 0 4px 14px rgba(255, 77, 77, 0.3);
 }
 
-/* ===================== SCROLL REVEAL ===================== */
-@keyframes scrollRevealFadeUp {
-    0% {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    60% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* ===================== SCROLL REVEAL (STRIPE / LINEAR ARCHITECTURE) ===================== */
+.reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+        opacity 0.65s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1)),
+        transform 0.65s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1));
+    will-change: opacity, transform;
 }
 
-/* Fallback con IntersectionObserver para navegadores sin CSS Scroll-Driven Animations */
-@supports not (animation-timeline: view()) {
-    .reveal {
-        opacity: 0;
-        transform: translateY(10px);
-        transition:
-            opacity 0.5s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1)),
-            transform 0.5s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1));
-    }
-
-    .reveal.active {
-        opacity: 1;
-        transform: none;
-    }
-
-    .hero-content h1.reveal {
-        transition-delay: 0s;
-    }
-    .hero-content p.reveal {
-        transition-delay: 0.08s;
-    }
-    .hero-content .hero-buttons.reveal {
-        transition-delay: 0.16s;
-    }
-
-    /* Stagger para grids en fallback */
-    .benefits-grid .benefit-card:nth-child(1).reveal,
-    .product-grid .product-card:nth-child(1).reveal,
-    .testimonials-grid .testimonial-card:nth-child(1).reveal,
-    .faq-grid .faq-card:nth-child(1).reveal {
-        transition-delay: 0s;
-    }
-    .benefits-grid .benefit-card:nth-child(2).reveal,
-    .product-grid .product-card:nth-child(2).reveal,
-    .testimonials-grid .testimonial-card:nth-child(2).reveal,
-    .faq-grid .faq-card:nth-child(2).reveal {
-        transition-delay: 0.06s;
-    }
-    .benefits-grid .benefit-card:nth-child(3).reveal,
-    .product-grid .product-card:nth-child(3).reveal,
-    .testimonials-grid .testimonial-card:nth-child(3).reveal,
-    .faq-grid .faq-card:nth-child(3).reveal {
-        transition-delay: 0.12s;
-    }
-    .product-grid .product-card:nth-child(4).reveal {
-        transition-delay: 0.18s;
-    }
+.reveal.is-revealed,
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+    will-change: auto;
 }
 
-/* Soporte Nativo: CSS Scroll-Driven Animations (Off-main-thread) */
-@supports (animation-timeline: view()) {
-    .reveal {
-        animation: scrollRevealFadeUp linear both;
-        animation-timeline: view();
-        animation-range: entry 0% cover 14%;
-    }
+.hero-content h1.reveal {
+    transition-delay: 0s;
+}
+.hero-content p.reveal {
+    transition-delay: 0.08s;
+}
+.hero-content .hero-buttons.reveal {
+    transition-delay: 0.16s;
+}
 
-    .hero-content h1.reveal,
-    .hero-content p.reveal,
-    .hero-content .hero-buttons.reveal {
-        animation: none;
-    }
-
-    /* Stagger ultra-compacto en grids para máxima fluidez */
-    .benefits-grid .benefit-card:nth-child(1).reveal,
-    .product-grid .product-card:nth-child(1).reveal,
-    .testimonials-grid .testimonial-card:nth-child(1).reveal,
-    .faq-grid .faq-card:nth-child(1).reveal {
-        animation-range: entry 0% cover 13%;
-    }
-    .benefits-grid .benefit-card:nth-child(2).reveal,
-    .product-grid .product-card:nth-child(2).reveal,
-    .testimonials-grid .testimonial-card:nth-child(2).reveal,
-    .faq-grid .faq-card:nth-child(2).reveal {
-        animation-range: entry 1.5% cover 14.5%;
-    }
-    .benefits-grid .benefit-card:nth-child(3).reveal,
-    .product-grid .product-card:nth-child(3).reveal,
-    .testimonials-grid .testimonial-card:nth-child(3).reveal,
-    .faq-grid .faq-card:nth-child(3).reveal {
-        animation-range: entry 3% cover 16%;
-    }
-    .product-grid .product-card:nth-child(4).reveal {
-        animation-range: entry 4.5% cover 17.5%;
-    }
-    .product-grid .product-card:nth-child(5).reveal {
-        animation-range: entry 6% cover 19%;
-    }
-    .product-grid .product-card:nth-child(6).reveal {
-        animation-range: entry 7.5% cover 20.5%;
-    }
+/* Stagger temporal real en grids */
+.benefits-grid .benefit-card:nth-child(1).reveal,
+.product-grid .product-card:nth-child(1).reveal,
+.testimonials-grid .testimonial-card:nth-child(1).reveal,
+.faq-grid .faq-card:nth-child(1).reveal {
+    transition-delay: 0s;
+}
+.benefits-grid .benefit-card:nth-child(2).reveal,
+.product-grid .product-card:nth-child(2).reveal,
+.testimonials-grid .testimonial-card:nth-child(2).reveal,
+.faq-grid .faq-card:nth-child(2).reveal {
+    transition-delay: 0.08s;
+}
+.benefits-grid .benefit-card:nth-child(3).reveal,
+.product-grid .product-card:nth-child(3).reveal,
+.testimonials-grid .testimonial-card:nth-child(3).reveal,
+.faq-grid .faq-card:nth-child(3).reveal {
+    transition-delay: 0.16s;
+}
+.product-grid .product-card:nth-child(4).reveal {
+    transition-delay: 0.24s;
+}
+.product-grid .product-card:nth-child(5).reveal {
+    transition-delay: 0.32s;
+}
+.product-grid .product-card:nth-child(6).reveal {
+    transition-delay: 0.4s;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1031,6 +978,7 @@ section {
         opacity: 1 !important;
         transform: none !important;
         transition: none !important;
+        will-change: auto !important;
     }
 }
 
