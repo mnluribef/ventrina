@@ -868,27 +868,85 @@ body.modal-open {
 
 /* ===================== CART DRAWER & CHECKOUT ===================== */
 
-/* Floating Cart Button */
-.float-cart {
+/* ===================== FLOATING ACTION BUTTONS (WHATSAPP & CART) ===================== */
+
+/* Floating WhatsApp Button (Anclado inferior derecho) */
+.float-wa {
     position: fixed;
     bottom: 1.75rem;
     right: 1.75rem;
-    z-index: 999;
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
+    background: #25d366;
     border-radius: 50%;
-    background: linear-gradient(135deg, #c2410c 0%, #9a3412 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px -4px rgba(37, 211, 102, 0.45), 0 2px 6px rgba(0, 0, 0, 0.08);
+    z-index: 998;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+        transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 0.2s ease;
+    animation: pulseWa 3s ease-in-out infinite;
+}
+
+.float-wa svg {
+    width: 30px;
+    height: 30px;
+    fill: #ffffff;
+    display: block;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.float-wa:hover {
+    transform: scale(1.08);
+    background: #1ebe57;
+    box-shadow: 0 12px 28px -4px rgba(37, 211, 102, 0.55), 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.float-wa:active {
+    transform: scale(0.96);
+}
+
+@keyframes pulseWa {
+    0%,
+    100% {
+        box-shadow: 0 8px 24px -4px rgba(37, 211, 102, 0.45), 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+    50% {
+        box-shadow:
+            0 8px 24px -4px rgba(37, 211, 102, 0.45),
+            0 0 0 10px rgba(37, 211, 102, 0.14);
+    }
+}
+
+/* Floating Cart Button (Apilado verticalmente sobre el botón de WhatsApp con separación táctil) */
+.float-cart {
+    position: fixed;
+    bottom: calc(1.75rem + 56px + 12px); /* 1.75rem (28px) + 56px (WA) + 12px (gap) = 96px */
+    right: 1.75rem;
+    z-index: 999;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--theme-primary, #c2410c) 0%, var(--theme-primary-hover, #9a3412) 100%);
     color: #ffffff;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 25px -4px rgba(194, 65, 12, 0.4), 0 4px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 25px -4px rgba(194, 65, 12, 0.42), 0 4px 10px rgba(0, 0, 0, 0.08);
     opacity: 0;
-    transform: translateY(16px) scale(0.9);
+    transform: translateY(14px) scale(0.88);
     pointer-events: none;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition:
+        opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .float-cart.visible {
@@ -898,12 +956,12 @@ body.modal-open {
 }
 
 .float-cart:hover {
-    transform: translateY(-2px) scale(1.04);
-    box-shadow: 0 14px 30px -4px rgba(194, 65, 12, 0.5), 0 6px 14px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px) scale(1.06);
+    box-shadow: 0 14px 30px -4px rgba(194, 65, 12, 0.52), 0 6px 14px rgba(0, 0, 0, 0.12);
 }
 
 .float-cart:active {
-    transform: translateY(0) scale(0.97);
+    transform: translateY(0) scale(0.96);
 }
 
 #cart-count {
@@ -913,7 +971,7 @@ body.modal-open {
     background: #d97706;
     color: #ffffff;
     font-family: var(--font-heading, "Outfit", sans-serif);
-    font-size: 0.76rem;
+    font-size: 0.74rem;
     font-weight: 700;
     min-width: 22px;
     height: 22px;
@@ -923,7 +981,8 @@ body.modal-open {
     align-items: center;
     justify-content: center;
     border: 2px solid #ffffff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+    font-variant-numeric: tabular-nums;
 }
 
 /* Cart Overlay */
@@ -2763,6 +2822,26 @@ body.modal-open {
 
     .pdm-price-main {
         font-size: 1.25rem;
+    }
+
+    /* Botones de acción flotantes en móvil (WhatsApp anclado + Carrito apilado sin colisión) */
+    .float-wa {
+        bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+        right: 1.25rem;
+        width: 50px;
+        height: 50px;
+    }
+
+    .float-wa svg {
+        width: 26px;
+        height: 26px;
+    }
+
+    .float-cart {
+        bottom: calc(1.25rem + 50px + 10px + env(safe-area-inset-bottom, 0px)); /* ~1.25rem + 60px */
+        right: 1.25rem;
+        width: 50px;
+        height: 50px;
     }
 }
 
