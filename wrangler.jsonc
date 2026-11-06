@@ -15,13 +15,6 @@
             "migrations_dir": "migrations"
         }
     ],
-    "kv_namespaces": [
-        {
-            "binding": "KV",
-            "id": "ventrina-kv-id",
-            "preview_id": "ventrina-kv-preview"
-        }
-    ],
     "r2_buckets": [
         {
             "binding": "STORAGE",
