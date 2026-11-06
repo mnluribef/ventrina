@@ -2,7 +2,7 @@
 
 Plataforma SaaS multi-plantilla para creación de catálogos virtuales, control de ventas y pedidos directos a WhatsApp, construida para ser rápida y desplegada globalmente en el borde.
 
-Live Demo: https://ventrina.pages.dev
+Live Demo: https://ventrina.app
 
 ## 🛠️ Stack Tecnológico
 
