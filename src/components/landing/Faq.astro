@@ -2,6 +2,7 @@
 import defaultStoreConfig from '../../config/store.config';
 // Faq.astro - Preguntas Frecuentes configurable
 import type { StoreConfig } from '../../types/store.types';
+import '../../styles/faq-store.css';
 
 export interface Props {
     config?: StoreConfig;
@@ -19,77 +20,19 @@ const { faq } = config.landing;
     </div>
     <div class="faq-wrapper">
       {faq.items.map((item) => (
-        <div class="faq-card reveal">
-          <h4>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-icon" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-            {item.q}
-          </h4>
-          <p>{item.a}</p>
-        </div>
+        <details class="faq-accordion-item reveal" name="store-faq">
+          <summary class="faq-accordion-summary">
+            <span class="faq-question">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-icon" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+              <span>{item.q}</span>
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-chevron" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <div class="faq-accordion-content">
+            <p>{item.a}</p>
+          </div>
+        </details>
       ))}
     </div>
   </div>
 </section>
-
-
-<style is:global>
-/* ===================== FAQ ===================== */
-#faq {
-    background: var(--cream);
-    position: relative;
-}
-
-#faq::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(circle, var(--rose-light) 1px, transparent 1px);
-    background-size: 24px 24px;
-    pointer-events: none;
-}
-
-.faq-wrapper {
-    max-width: 800px;
-    margin: 0 auto;
-    position: relative;
-}
-
-.faq-card {
-    background: var(--white);
-    margin-bottom: 1rem;
-    padding: 1.8rem 2rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-subtle);
-    transition: var(--transition);
-}
-
-.faq-card:hover {
-    border-color: var(--rose);
-    box-shadow: var(--shadow-soft);
-    transform: translateX(4px);
-}
-
-.faq-card h4 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-heading);
-    margin-bottom: 0.6rem;
-}
-
-.faq-card p {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    line-height: 1.65;
-}
-
-.faq-container {
-    padding-top: 4rem;
-}
-
-.faq-icon {
-    display: inline;
-    margin-right: 6px;
-    vertical-align: middle;
-}
-</style>

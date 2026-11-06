@@ -1,0 +1,204 @@
+/* =====================================================
+   VENTRINA — Storefront Step Process Flow Stylesheet
+   Archivo: src/styles/process.css
+   100% modular, libre de CSS inline
+   ===================================================== */
+
+/* ── Section Container & Ambient Glow ─────────────────── */
+#como-pedir,
+#proceso {
+    background: var(--theme-bg-page, #ffffff);
+    padding: 5.5rem 0;
+    position: relative;
+    overflow: clip;
+}
+
+#como-pedir::before,
+#proceso::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--theme-accent-light, rgba(217, 119, 6, 0.08)) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+#como-pedir .section-header,
+#proceso .section-header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 4rem;
+    position: relative;
+    z-index: 2;
+}
+
+#como-pedir .section-header h2,
+#proceso .section-header h2 {
+    font-family: var(--theme-font-heading, var(--font-heading));
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 700;
+    color: var(--theme-text-heading, #1c0a00);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+}
+
+#como-pedir .section-header h2 span,
+#proceso .section-header h2 span {
+    color: var(--theme-accent, var(--gold, #d97706));
+    display: inline-block;
+}
+
+#como-pedir .section-header p,
+#proceso .section-header p {
+    font-family: var(--theme-font-body, var(--font-body, 'Outfit', sans-serif));
+    font-size: 1.05rem;
+    color: var(--theme-text-muted, #7a523b);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ── Process Grid & Connecting Timeline Guide ─────────── */
+.process-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ── Process Step Card ────────────────────────────────── */
+.process-step {
+    text-align: center;
+    padding: 3rem 2.2rem 2.5rem;
+    background: var(--theme-bg-card, #ffffff);
+    border-radius: var(--radius-lg, 18px);
+    border: 1px solid var(--theme-border-subtle, rgba(0, 0, 0, 0.08));
+    box-shadow: var(--theme-shadow-card, 0 4px 18px rgba(0, 0, 0, 0.04));
+    position: relative;
+    z-index: 2;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.process-step:hover {
+    transform: translateY(-4px);
+    border-color: var(--theme-accent-light, rgba(217, 119, 6, 0.35));
+    box-shadow: 0 12px 32px -6px var(--theme-accent-light, rgba(217, 119, 6, 0.2));
+}
+
+/* Timeline horizontal conectora entre pasos 1, 2 y 3 (desktop) */
+@media (min-width: 900px) {
+    .process-step:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        top: calc(3rem + 36px); /* Centrado con el centro de process-number (72px / 2 = 36px) */
+        left: calc(50% + 46px);
+        width: calc(100% - 92px + 2.5rem);
+        height: 2px;
+        border-top: 2px dashed var(--theme-accent, var(--gold, #d97706));
+        opacity: 0.38;
+        pointer-events: none;
+        z-index: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    .process-step:hover:not(:last-child)::after {
+        opacity: 0.75;
+    }
+}
+
+/* ── Distinctive Circular Step Numbers ────────────────── */
+.process-number {
+    width: 72px;
+    height: 72px;
+    background: var(--theme-bg-card, #ffffff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.75rem;
+    font-family: var(--theme-font-heading, var(--font-heading));
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--theme-accent, var(--gold, #d97706));
+    border: 2px solid var(--theme-accent-light, rgba(217, 119, 6, 0.28));
+    box-shadow: 0 6px 18px -2px var(--theme-accent-light, rgba(217, 119, 6, 0.22));
+    position: relative;
+    z-index: 3;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                background 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+/* Hover lift and color highlight */
+.process-step:hover .process-number {
+    transform: translateY(-4px);
+    background: var(--theme-accent, var(--gold, #d97706));
+    color: #ffffff;
+    border-color: var(--theme-accent, var(--gold, #d97706));
+    box-shadow: 0 10px 26px -2px var(--theme-accent-light, rgba(217, 119, 6, 0.45));
+}
+
+/* ── Step Headings & Copy ─────────────────────────────── */
+.process-step h3 {
+    font-family: var(--theme-font-heading, var(--font-heading));
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--theme-text-heading, #1c0a00);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.015em;
+    line-height: 1.35;
+}
+
+.process-step p {
+    font-family: var(--theme-font-body, var(--font-body, 'Outfit', sans-serif));
+    font-size: 0.94rem;
+    color: var(--theme-text-muted, #7a523b);
+    line-height: 1.65;
+    margin: 0;
+}
+
+/* ── Responsive Adaptations ───────────────────────────── */
+@media (max-width: 899px) {
+    #como-pedir,
+    #proceso {
+        padding: 4rem 0;
+    }
+
+    .process-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        max-width: 520px;
+    }
+
+    .process-step {
+        padding: 2.4rem 1.8rem 2rem;
+    }
+
+    /* Timeline vertical conectora entre pasos (mobile/tablet) */
+    .process-step:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        bottom: -2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 2px;
+        height: 2rem;
+        border-left: 2px dashed var(--theme-accent, var(--gold, #d97706));
+        opacity: 0.35;
+        pointer-events: none;
+        z-index: 1;
+    }
+}

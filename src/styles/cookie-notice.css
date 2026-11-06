@@ -1,30 +1,38 @@
 /* =====================================================
    VENTRINA — Cookie & Local Storage Banner
    Archivo: src/styles/cookie-notice.css
+   Diseño: Terracota Atelier Craft & Ergonomía Inteligente
    ===================================================== */
 
 .cookie-notice-container {
     position: fixed;
-    bottom: 1.5rem;
+    bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
     left: 1.5rem;
-    right: 1.5rem;
-    max-width: 520px;
+    right: auto;
+    width: calc(100% - 3rem);
+    max-width: 460px;
     background: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--light-border);
-    border-radius: 14px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(194, 65, 12, 0.16);
+    border-radius: 16px;
     box-shadow:
-        0 20px 35px -8px rgba(0, 0, 0, 0.12),
-        0 4px 12px rgba(0, 0, 0, 0.05);
-    padding: 1.25rem 1.5rem;
-    z-index: 9999;
+        0 20px 40px -10px rgba(28, 25, 23, 0.12),
+        0 4px 16px -2px rgba(194, 65, 12, 0.08);
+    padding: 1.25rem 1.35rem;
+    z-index: 1040;
     display: none;
-    animation: cookieSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    box-sizing: border-box;
 }
 
 .cookie-notice-container.cookie-notice-visible {
     display: block;
+    animation: cookieSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.cookie-notice-container.cookie-notice-hiding {
+    animation: cookieSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    pointer-events: none;
 }
 
 @keyframes cookieSlideUp {
@@ -38,44 +46,73 @@
     }
 }
 
+@keyframes cookieSlideDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
 .cookie-notice-header {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: 0.65rem;
     margin-bottom: 0.5rem;
 }
 
+.cookie-notice-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(194, 65, 12, 0.08);
+    border: 1px solid rgba(194, 65, 12, 0.16);
+    color: #c2410c;
+    flex-shrink: 0;
+}
+
 .cookie-notice-icon {
-    width: 22px;
-    height: 22px;
-    color: var(--color-primary);
+    width: 18px;
+    height: 18px;
     flex-shrink: 0;
 }
 
 .cookie-notice-title {
-    font-size: 1rem;
+    font-family: var(--font-heading, "Outfit", sans-serif);
+    font-size: 0.95rem;
     font-weight: 700;
-    color: var(--light-text-heading);
+    color: #1c1917;
     margin: 0;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
 }
 
 .cookie-notice-text {
-    font-size: 0.85rem;
-    line-height: 1.55;
-    color: var(--light-text-muted);
-    margin: 0 0 1rem 0;
+    font-family: var(--font-body, "Outfit", sans-serif);
+    font-size: 0.835rem;
+    line-height: 1.5;
+    color: #57534e;
+    margin: 0 0 0.85rem 0;
 }
 
 .cookie-notice-link {
-    color: var(--color-primary);
+    color: #c2410c;
     text-decoration: underline;
     text-underline-offset: 3px;
+    text-decoration-color: rgba(194, 65, 12, 0.35);
     font-weight: 600;
-    transition: color 0.15s ease;
+    transition: color 0.15s ease, text-decoration-color 0.15s ease;
 }
 
 .cookie-notice-link:hover {
-    color: var(--color-primary-hover);
+    color: #9a3412;
+    text-decoration-color: #9a3412;
 }
 
 .cookie-notice-actions {
@@ -87,34 +124,102 @@
 
 .cookie-notice-btn {
     appearance: none;
-    border: none;
     outline: none;
     cursor: pointer;
-    font-family: inherit;
-    font-size: 0.85rem;
+    font-family: var(--font-body, "Outfit", sans-serif);
+    font-size: 0.84rem;
     font-weight: 600;
-    padding: 0.5rem 1.1rem;
-    border-radius: 10px;
-    transition: all 0.15s ease;
+    letter-spacing: -0.01em;
+    padding: 0.5rem 1.25rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-sizing: border-box;
 }
 
 .cookie-notice-btn-accept {
-    background: var(--color-primary);
+    background: linear-gradient(135deg, #c2410c 0%, #9a3412 100%);
     color: #ffffff;
-    box-shadow: 0 2px 8px var(--color-primary-glow);
+    box-shadow:
+        0 4px 14px -2px rgba(194, 65, 12, 0.35),
+        0 2px 4px rgba(0, 0, 0, 0.04);
+    transition:
+        transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
 }
 
 .cookie-notice-btn-accept:hover {
-    background: var(--color-primary-hover);
-    box-shadow: 0 4px 12px var(--color-primary-glow);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow:
+        0 6px 18px -2px rgba(194, 65, 12, 0.45),
+        0 3px 6px rgba(0, 0, 0, 0.06);
+    filter: brightness(1.03);
 }
 
-@media (max-width: 640px) {
+.cookie-notice-btn-accept:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 2px 8px -1px rgba(194, 65, 12, 0.35);
+    filter: brightness(0.97);
+}
+
+.cookie-notice-btn-accept:focus-visible {
+    outline: 2px solid #c2410c;
+    outline-offset: 2px;
+}
+
+/* =====================================================
+   RESPONSIVE DESIGN & MOBILE ERGONOMICS
+   Acoplamiento limpio sobre botones esquineros móviles:
+   #template-mobile-trigger (bottom-left) y #cart-btn (bottom-right)
+   ===================================================== */
+@media (max-width: 768px) {
     .cookie-notice-container {
         left: 1rem;
         right: 1rem;
-        bottom: 1rem;
-        padding: 1rem 1.25rem;
+        width: auto;
+        max-width: none;
+        bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+        padding: 1rem 1.15rem;
+        border-radius: 14px;
+        box-shadow:
+            0 16px 32px -8px rgba(28, 25, 23, 0.14),
+            0 4px 14px -2px rgba(194, 65, 12, 0.08);
+    }
+}
+
+@media (max-width: 480px) {
+    .cookie-notice-container {
+        left: 0.75rem;
+        right: 0.75rem;
+        bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+        padding: 0.875rem 1rem;
+        border-radius: 12px;
+    }
+
+    .cookie-notice-title {
+        font-size: 0.9rem;
+    }
+
+    .cookie-notice-text {
+        font-size: 0.8rem;
+        line-height: 1.45;
+        margin-bottom: 0.75rem;
+    }
+
+    .cookie-notice-btn-accept {
+        width: 100%;
+        padding: 0.55rem 1rem;
+        font-size: 0.825rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cookie-notice-container.cookie-notice-visible,
+    .cookie-notice-container.cookie-notice-hiding {
+        animation: none;
+    }
+
+    .cookie-notice-container.cookie-notice-hiding {
+        opacity: 0;
     }
 }

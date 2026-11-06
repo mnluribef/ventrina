@@ -436,13 +436,18 @@ export function syncStoreWithSettings(cfg: any): void {
             faqWrapper.innerHTML = fq.items
                 .map(
                     (item: any) => `
-                <div class="faq-card reveal">
-                    <h4>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-icon"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-                        ${item.q || ''}
-                    </h4>
-                    <p>${item.a || ''}</p>
-                </div>
+                <details class="faq-accordion-item reveal" name="store-faq">
+                    <summary class="faq-accordion-summary">
+                        <span class="faq-question">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-icon"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+                            <span>${item.q || ''}</span>
+                        </span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-chevron" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                    </summary>
+                    <div class="faq-accordion-content">
+                        <p>${item.a || ''}</p>
+                    </div>
+                </details>
             `,
                 )
                 .join('');
