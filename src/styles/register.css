@@ -1,4 +1,4 @@
-/* Ventrina Register — Identidad: Royal Iris × Warm Amber (Boutique Atelier) */
+/* Ventrina Register — Identidad: Terracota × Warm Amber (Boutique Atelier) */
 @import "./tokens.css";
 
 :root {
@@ -15,7 +15,7 @@ body {
     margin: 0;
     font-family: var(--font-body);
     color: var(--text);
-    overflow-x: hidden;
+    overflow-x: clip;
 }
 
 .register-container {
@@ -242,7 +242,7 @@ body {
 }
 
 .form-group input:hover {
-    border-color: rgba(88, 80, 200, 0.3);
+    border-color: rgba(194, 65, 12, 0.3);
 }
 
 .form-group input:focus {
@@ -383,7 +383,7 @@ body {
 
 .template-card:hover .card-content {
     background-color: var(--light-bg);
-    border-color: rgba(88, 80, 200, 0.3);
+    border-color: rgba(194, 65, 12, 0.3);
     color: var(--text);
 }
 
@@ -478,7 +478,7 @@ body {
 
 .btn-secondary:hover {
     background-color: var(--light-bg);
-    border-color: rgba(88, 80, 200, 0.25);
+    border-color: rgba(194, 65, 12, 0.25);
 }
 
 .form-actions {

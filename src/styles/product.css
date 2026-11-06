@@ -759,3 +759,80 @@
         display: block;
     }
 }
+
+/* =====================================================
+   CSS SCROLL-DRIVEN ANIMATIONS (Native & Progressive)
+   ===================================================== */
+@keyframes scrollRevealFadeUpProduct {
+    from {
+        opacity: 0;
+        transform: translateY(28px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@supports not (animation-timeline: view()) {
+    .pdp-related-section .reveal,
+    .pdp-related-grid .product-card.reveal {
+        opacity: 0;
+        transform: translateY(28px);
+        transition:
+            opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+    }
+
+    .pdp-related-section .reveal.active,
+    .pdp-related-grid .product-card.reveal.active {
+        opacity: 1;
+        transform: none;
+    }
+
+    .pdp-related-grid .product-card:nth-child(1).reveal {
+        transition-delay: 0s;
+    }
+    .pdp-related-grid .product-card:nth-child(2).reveal {
+        transition-delay: 0.08s;
+    }
+    .pdp-related-grid .product-card:nth-child(3).reveal {
+        transition-delay: 0.16s;
+    }
+    .pdp-related-grid .product-card:nth-child(4).reveal {
+        transition-delay: 0.24s;
+    }
+}
+
+@supports (animation-timeline: view()) {
+    .pdp-related-section .reveal,
+    .pdp-related-grid .product-card.reveal {
+        animation: scrollRevealFadeUpProduct linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 25%;
+    }
+
+    .pdp-related-grid .product-card:nth-child(1).reveal {
+        animation-range: entry 0% cover 24%;
+    }
+    .pdp-related-grid .product-card:nth-child(2).reveal {
+        animation-range: entry 4% cover 28%;
+    }
+    .pdp-related-grid .product-card:nth-child(3).reveal {
+        animation-range: entry 8% cover 32%;
+    }
+    .pdp-related-grid .product-card:nth-child(4).reveal {
+        animation-range: entry 12% cover 36%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pdp-related-section .reveal,
+    .pdp-related-grid .product-card.reveal {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+}

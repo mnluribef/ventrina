@@ -1,8 +1,14 @@
 // src/scripts/landing.ts
 // Lógica de interacción para la Landing Page de Ventrina (FAQ accordion, smooth scroll, etc.)
 import { BcvCurrencyService, formatBsCurrency } from './services/bcv.service';
+import { initScrollReveal } from './utils/reveal.util';
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 0. Inicialización de Scroll Reveal (Fallback progresivo si no hay CSS Scroll-Driven Animations)
+    initScrollReveal(
+        '.reveal, .contrast-card, .feature-box, .demo-card-light, .ticker-item, .comparison-table-wrapper, .pricing-preview-card, .testimonials-grid .testimonial-card, .faq-item-modern, .cta-banner-card, .contrast-header, .demos-header, .features-header, .comparison-header, .pricing-header, .testimonials-header, .faq-header',
+    );
+
     // 1. FAQ Accordion Interactivo
     const faqButtons = document.querySelectorAll('.faq-question-btn');
     faqButtons.forEach((btn) => {

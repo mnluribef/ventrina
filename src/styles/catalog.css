@@ -1626,3 +1626,93 @@
         font-size: 1.25rem;
     }
 }
+
+/* =====================================================
+   CSS SCROLL-DRIVEN ANIMATIONS (Native & Progressive)
+   ===================================================== */
+@keyframes scrollRevealFadeUpCatalog {
+    from {
+        opacity: 0;
+        transform: translateY(28px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Fallback con IntersectionObserver para navegadores sin CSS Scroll-Driven Animations */
+@supports not (animation-timeline: view()) {
+    .reveal {
+        opacity: 0;
+        transform: translateY(28px);
+        transition:
+            opacity 0.75s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1)),
+            transform 0.75s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1));
+        will-change: opacity, transform;
+    }
+
+    .reveal.active {
+        opacity: 1;
+        transform: none;
+    }
+
+    .product-grid .product-card:nth-child(1).reveal {
+        transition-delay: 0s;
+    }
+    .product-grid .product-card:nth-child(2).reveal {
+        transition-delay: 0.08s;
+    }
+    .product-grid .product-card:nth-child(3).reveal {
+        transition-delay: 0.16s;
+    }
+    .product-grid .product-card:nth-child(4).reveal {
+        transition-delay: 0.24s;
+    }
+}
+
+/* Soporte Nativo: CSS Scroll-Driven Animations (Off-main-thread) */
+@supports (animation-timeline: view()) {
+    .reveal,
+    .section-header.reveal,
+    .search-container.reveal,
+    .category-filters-container.reveal,
+    .product-grid .product-card.reveal {
+        animation: scrollRevealFadeUpCatalog linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 25%;
+    }
+
+    /* Stagger en catálogo mediante rangos escalonados en el viewport */
+    .product-grid .product-card:nth-child(1).reveal {
+        animation-range: entry 0% cover 24%;
+    }
+    .product-grid .product-card:nth-child(2).reveal {
+        animation-range: entry 4% cover 28%;
+    }
+    .product-grid .product-card:nth-child(3).reveal {
+        animation-range: entry 8% cover 32%;
+    }
+    .product-grid .product-card:nth-child(4).reveal {
+        animation-range: entry 12% cover 36%;
+    }
+    .product-grid .product-card:nth-child(5).reveal {
+        animation-range: entry 16% cover 40%;
+    }
+    .product-grid .product-card:nth-child(6).reveal {
+        animation-range: entry 20% cover 44%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .section-header.reveal,
+    .search-container.reveal,
+    .category-filters-container.reveal,
+    .product-grid .product-card.reveal {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+}

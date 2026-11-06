@@ -7,6 +7,7 @@ import { LocalStorageCartStorage } from './services/storage.service';
 import { syncStoreWithSettings } from './services/store-sync.service';
 import { ToastService } from './services/toast.service';
 import type { CatalogProduct } from './types/catalog.types';
+import { initScrollReveal } from './utils/reveal.util';
 
 class ProductPageController {
     private toastService: ToastService;
@@ -581,7 +582,7 @@ class ProductPageController {
                           : `/producto?id=${encodeURIComponent(p.id)}&template=${this.template}`;
 
                     return `
-                    <div class="product-card">
+                    <div class="product-card reveal">
                         <a href="${pUrl}" class="product-img">
                             <img src="${img}" alt="${p.name}" loading="lazy">
                         </a>
@@ -598,6 +599,7 @@ class ProductPageController {
                 .join('');
 
             relatedSection.classList.remove('store-meta-hidden');
+            initScrollReveal();
         } catch {}
     }
 }

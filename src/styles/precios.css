@@ -31,7 +31,7 @@ html {
     position: relative;
     text-align: center;
     padding: 10rem 2rem 4rem;
-    overflow: hidden;
+    overflow: clip;
 }
 
 .pricing-hero::before {
@@ -42,7 +42,7 @@ html {
     transform: translateX(-50%);
     width: 80vw;
     height: 80vw;
-    background: radial-gradient(circle, rgba(88, 80, 200, 0.1) 0%, rgba(217, 119, 6, 0.05) 35%, transparent 70%);
+    background: radial-gradient(circle, rgba(194, 65, 12, 0.1) 0%, rgba(217, 119, 6, 0.05) 35%, transparent 70%);
     z-index: 0;
     pointer-events: none;
 }
@@ -347,37 +347,37 @@ html {
 }
 
 /* Fallback con IntersectionObserver */
-.reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition:
-        opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, transform;
-}
+/* Fallback con IntersectionObserver para navegadores sin CSS Scroll-Driven Animations */
+@supports not (animation-timeline: view()) {
+    .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+            opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+    }
 
-.reveal.active {
-    opacity: 1;
-    transform: translateY(0);
-}
+    .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
-.reveal-delay-1 {
-    transition-delay: 0.1s;
-}
+    .reveal-delay-1 {
+        transition-delay: 0.1s;
+    }
 
-.reveal-delay-2 {
-    transition-delay: 0.2s;
+    .reveal-delay-2 {
+        transition-delay: 0.2s;
+    }
 }
 
 /* CSS Scroll-Driven Animations nativo */
 @supports (animation-timeline: view()) {
     .reveal {
-        opacity: 1;
-        transform: none;
-        transition: none;
         animation: preciosFadeUp linear both;
         animation-timeline: view();
-        animation-range: entry 5% cover 25%;
+        animation-range: entry 0% cover 25%;
     }
 
     .pricing-card.popular.reveal {

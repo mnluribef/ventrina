@@ -101,12 +101,16 @@ html {
     -webkit-font-smoothing: antialiased;
 }
 
+html,
+body {
+    overflow-x: clip;
+}
+
 body {
     font-family: var(--font-body, "Inter", sans-serif);
     background-color: var(--cream);
     color: var(--text-body);
     line-height: 1.65;
-    overflow-x: hidden;
     background-image:
         radial-gradient(ellipse 80% 50% at 0% 0%, var(--rose-light, rgba(255, 107, 53, 0.05)) 0%, transparent 60%),
         radial-gradient(ellipse 60% 40% at 100% 100%, var(--gold-light, rgba(212, 130, 42, 0.04)) 0%, transparent 60%);
@@ -911,7 +915,7 @@ section {
 @keyframes scrollRevealFadeUp {
     from {
         opacity: 0;
-        transform: translateY(32px);
+        transform: translateY(28px);
     }
     to {
         opacity: 1;
@@ -920,63 +924,61 @@ section {
 }
 
 /* Fallback con IntersectionObserver para navegadores sin CSS Scroll-Driven Animations */
-.reveal {
-    opacity: 0;
-    transform: translateY(32px);
-    transition:
-        opacity 0.85s var(--ease-enter),
-        transform 0.85s var(--ease-enter);
-    will-change: opacity, transform;
-}
+@supports not (animation-timeline: view()) {
+    .reveal {
+        opacity: 0;
+        transform: translateY(28px);
+        transition:
+            opacity 0.75s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1)),
+            transform 0.75s var(--ease-enter, cubic-bezier(0.16, 1, 0.3, 1));
+        will-change: opacity, transform;
+    }
 
-.reveal.active {
-    opacity: 1;
-    transform: none;
-}
+    .reveal.active {
+        opacity: 1;
+        transform: none;
+    }
 
-.hero-content h1.reveal {
-    transition-delay: 0s;
-}
-.hero-content p.reveal {
-    transition-delay: 0.15s;
-}
-.hero-content .hero-buttons.reveal {
-    transition-delay: 0.3s;
-}
+    .hero-content h1.reveal {
+        transition-delay: 0s;
+    }
+    .hero-content p.reveal {
+        transition-delay: 0.12s;
+    }
+    .hero-content .hero-buttons.reveal {
+        transition-delay: 0.24s;
+    }
 
-/* Stagger para grids en fallback */
-.benefits-grid .benefit-card:nth-child(1).reveal {
-    transition-delay: 0s;
-}
-.benefits-grid .benefit-card:nth-child(2).reveal {
-    transition-delay: 0.12s;
-}
-.benefits-grid .benefit-card:nth-child(3).reveal {
-    transition-delay: 0.24s;
-}
-
-.product-grid .product-card:nth-child(1).reveal {
-    transition-delay: 0s;
-}
-.product-grid .product-card:nth-child(2).reveal {
-    transition-delay: 0.08s;
-}
-.product-grid .product-card:nth-child(3).reveal {
-    transition-delay: 0.16s;
-}
-.product-grid .product-card:nth-child(4).reveal {
-    transition-delay: 0.24s;
+    /* Stagger para grids en fallback */
+    .benefits-grid .benefit-card:nth-child(1).reveal,
+    .product-grid .product-card:nth-child(1).reveal,
+    .testimonials-grid .testimonial-card:nth-child(1).reveal,
+    .faq-grid .faq-card:nth-child(1).reveal {
+        transition-delay: 0s;
+    }
+    .benefits-grid .benefit-card:nth-child(2).reveal,
+    .product-grid .product-card:nth-child(2).reveal,
+    .testimonials-grid .testimonial-card:nth-child(2).reveal,
+    .faq-grid .faq-card:nth-child(2).reveal {
+        transition-delay: 0.1s;
+    }
+    .benefits-grid .benefit-card:nth-child(3).reveal,
+    .product-grid .product-card:nth-child(3).reveal,
+    .testimonials-grid .testimonial-card:nth-child(3).reveal,
+    .faq-grid .faq-card:nth-child(3).reveal {
+        transition-delay: 0.2s;
+    }
+    .product-grid .product-card:nth-child(4).reveal {
+        transition-delay: 0.3s;
+    }
 }
 
 /* Soporte Nativo: CSS Scroll-Driven Animations (Off-main-thread) */
 @supports (animation-timeline: view()) {
     .reveal {
-        opacity: 1;
-        transform: none;
-        transition: none;
         animation: scrollRevealFadeUp linear both;
         animation-timeline: view();
-        animation-range: entry 5% cover 30%;
+        animation-range: entry 0% cover 25%;
     }
 
     .hero-content h1.reveal,
@@ -987,19 +989,40 @@ section {
 
     /* Stagger en grids mediante rangos de entrada en el viewport */
     .benefits-grid .benefit-card:nth-child(1).reveal,
-    .product-grid .product-card:nth-child(1).reveal {
-        animation-range: entry 5% cover 25%;
+    .product-grid .product-card:nth-child(1).reveal,
+    .testimonials-grid .testimonial-card:nth-child(1).reveal,
+    .faq-grid .faq-card:nth-child(1).reveal {
+        animation-range: entry 0% cover 24%;
     }
     .benefits-grid .benefit-card:nth-child(2).reveal,
-    .product-grid .product-card:nth-child(2).reveal {
-        animation-range: entry 10% cover 30%;
+    .product-grid .product-card:nth-child(2).reveal,
+    .testimonials-grid .testimonial-card:nth-child(2).reveal,
+    .faq-grid .faq-card:nth-child(2).reveal {
+        animation-range: entry 4% cover 28%;
     }
     .benefits-grid .benefit-card:nth-child(3).reveal,
-    .product-grid .product-card:nth-child(3).reveal {
-        animation-range: entry 15% cover 35%;
+    .product-grid .product-card:nth-child(3).reveal,
+    .testimonials-grid .testimonial-card:nth-child(3).reveal,
+    .faq-grid .faq-card:nth-child(3).reveal {
+        animation-range: entry 8% cover 32%;
     }
     .product-grid .product-card:nth-child(4).reveal {
-        animation-range: entry 20% cover 40%;
+        animation-range: entry 12% cover 36%;
+    }
+    .product-grid .product-card:nth-child(5).reveal {
+        animation-range: entry 16% cover 40%;
+    }
+    .product-grid .product-card:nth-child(6).reveal {
+        animation-range: entry 20% cover 44%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
     }
 }
 

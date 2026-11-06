@@ -2,25 +2,26 @@
 name: Ventrina SaaS
 description: Plataforma SaaS multi-plantilla para catálogos digitales y pedidos directos a WhatsApp
 colors:
-  primary: "#5850c8"
-  primary-hover: "#463ea7"
-  primary-deep: "#1e1b4b"
+  primary: "#c2410c"
+  primary-hover: "#9a3412"
+  primary-dark: "#7c2d12"
+  primary-deep: "#431407"
   accent: "#d97706"
   accent-hover: "#b45309"
   whatsapp: "#059669"
   whatsapp-dark: "#047857"
-  neutral-bg: "#fafaf8"
-  neutral-bg-subtle: "#f5f4f0"
+  neutral-bg: "#faf7f2"
+  neutral-bg-subtle: "#f5f0e8"
   neutral-bg-card: "#ffffff"
-  neutral-text-heading: "#121118"
-  neutral-text-body: "#3c3946"
-  neutral-text-muted: "#686475"
+  neutral-text-heading: "#1c1917"
+  neutral-text-body: "#44403c"
+  neutral-text-muted: "#78716c"
   neutral-border: "rgba(28, 25, 23, 0.08)"
-  neutral-border-subtle: "rgba(88, 80, 200, 0.08)"
-  dark-bg: "#0b0a0f"
-  dark-bg-card: "rgba(18, 17, 24, 0.85)"
-  dark-text-heading: "#faf9ff"
-  dark-text-body: "#c4bdd8"
+  neutral-border-subtle: "rgba(194, 65, 12, 0.08)"
+  dark-bg: "#0c0a09"
+  dark-bg-card: "rgba(28, 25, 23, 0.88)"
+  dark-text-heading: "#fafaf9"
+  dark-text-body: "#d6d3d1"
 typography:
   display:
     fontFamily: "Outfit, -apple-system, BlinkMacSystemFont, sans-serif"
@@ -121,7 +122,7 @@ components:
 
 **Creative North Star: "The Boutique Atelier"**
 
-Ventrina's visual identity balances the tactile elegance of an artisanal retail showroom with the ultra-fast, high-precision utility of a modern edge application. The system evokes quality through warm linen surfaces (`#fafaf8`), noble Royal Iris accents (`#5850c8`), and deliberate touches of burnished bronze (`#d97706`), communicating warmth, dependability, and craftsmanship to Latin American merchants and their customers.
+Ventrina's visual identity balances the tactile elegance of an artisanal retail showroom with the ultra-fast, high-precision utility of a modern edge application. The system evokes quality through warm linen surfaces (`#faf7f2`), noble Terracotta accents (`#c2410c`), and deliberate touches of burnished bronze (`#d97706`), communicating warmth, dependability, and craftsmanship to Latin American merchants and their customers.
 
 Rather than relying on sterile corporate monochrome or noisy, AI-generated design trends, the interface builds visual authority through meticulous typography, hairline boundaries, and subtle tonal depth. The shopping and administrative experiences feel deliberate, trustworthy, and fast.
 
@@ -129,18 +130,18 @@ The system explicitly rejects generic AI cliches—such as decorative gradient t
 
 **Key Characteristics:**
 - **Warm Atelier Foundations:** Natural linen and alabaster backgrounds layered with whisper-light interior bezels.
-- **Royal Iris & Burnished Bronze:** An authoritative primary iris grounded with restrained, high-value bronze accents.
+- **Terracotta & Burnished Bronze:** An authoritative primary terracotta grounded with restrained, high-value bronze accents.
 - **Organic WhatsApp Conversational Flow:** High-contrast emerald accents reserved specifically for order confirmation and direct merchant chat.
 - **Pure Native Motion:** Smooth, physics-grounded transitions driven by CSS Scroll-Driven Animations rather than heavy client JavaScript.
 
 ## Colors
 
-The palette pairs a distinguished Royal Iris primary with an organic Warm Amber accent, anchored over warm atelier neutrals and an emerald WhatsApp transaction layer.
+The palette pairs a distinguished Terracotta primary with an organic Warm Amber accent, anchored over warm atelier neutrals and an emerald WhatsApp transaction layer.
 
 ### Primary
-- **Royal Iris** (`#5850c8`): The signature brand anchor. Used for primary calls-to-action, key navigation highlights, active tab states, and focused interactive states.
-- **Iris Deep / Hover** (`#463ea7`): The hover and active counterpart to Royal Iris, providing tactile feedback under pointer or press.
-- **Obsidian Iris** (`#1e1b4b`): Deep grounding hue used for dark accents, high-contrast elements, and dark-theme boundaries.
+- **Terracotta Tostado** (`#c2410c`): The signature brand anchor. Used for primary calls-to-action, key navigation highlights, active tab states, and focused interactive states.
+- **Terracotta Deep / Hover** (`#9a3412`): The hover and active counterpart to Terracotta, providing tactile feedback under pointer or press.
+- **Warm Obsidian / Deep** (`#431407`): Deep grounding hue used for dark accents, high-contrast elements, and dark-theme boundaries.
 
 ### Secondary
 - **Warm Amber / Burnished Bronze** (`#d97706`): Warm artisanal metallic accent. Used strictly for high-value triggers: VIP tier badges, pricing highlights, discount tags, and primary conversion signals.
@@ -150,12 +151,12 @@ The palette pairs a distinguished Royal Iris primary with an organic Warm Amber 
 - **WhatsApp Boutique Emerald** (`#059669`): Dedicated conversion color. Used exclusively for WhatsApp order actions, verification badges, and positive payment status confirmations.
 
 ### Neutral
-- **Atelier Linen** (`#fafaf8`): Continuous natural light background providing warmth and reducing eye strain.
-- **Alabaster Subtle** (`#f5f4f0`): Secondary surface for grouped sections, table rows, and subtle container depth.
+- **Atelier Linen** (`#faf7f2`): Continuous natural light background providing warmth and reducing eye strain.
+- **Alabaster Subtle** (`#f5f0e8`): Secondary surface for grouped sections, table rows, and subtle container depth.
 - **Pure Card White** (`#ffffff`): Elevated card and container background providing clean contrast for product imagery and text.
-- **Obsidian Ink** (`#121118`): Dominant high-contrast typography color for headlines, section titles, and primary metrics.
-- **Slate Body** (`#3c3946`): Readable neutral for paragraph prose, field values, and descriptive text.
-- **Muted Slate** (`#686475`): Secondary text for timestamps, table column headers, units, and secondary hints.
+- **Warm Charcoal / Piedra** (`#1c1917`): Dominant high-contrast typography color for headlines, section titles, and primary metrics.
+- **Stone Body** (`#44403c`): Readable neutral for paragraph prose, field values, and descriptive text.
+- **Muted Stone** (`#78716c`): Secondary text for timestamps, table column headers, units, and secondary hints.
 - **Hairline Border** (`rgba(28, 25, 23, 0.08)`): Subtle separation line that structures content without visual clutter.
 
 ### Named Rules
@@ -196,12 +197,12 @@ Ventrina employs a tactile tonal layering model rather than arbitrary drop shado
 ### Shadow Vocabulary
 - **Subtle Surface** (`0 1px 2px rgba(28, 25, 23, 0.04), 0 0 0 1px rgba(28, 25, 23, 0.04)`): Flat resting state for product cards, table containers, and search inputs.
 - **Tactile Card** (`0 4px 16px -2px rgba(28, 25, 23, 0.06), 0 1px 3px rgba(28, 25, 23, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.95)`): Default elevated card shadow with an interior light bezel simulating physical craftsmanship.
-- **Floating Hover** (`0 20px 40px -12px rgba(88, 80, 200, 0.16), 0 2px 8px -2px rgba(28, 25, 23, 0.04), inset 0 1px 0 #ffffff`): Lifted state for hovered cards and prominent callouts.
-- **Primary Glow** (`0 4px 14px rgba(70, 62, 167, 0.28)`): Ambient color glow anchored under primary Iris action buttons.
+- **Floating Hover** (`0 20px 40px -12px rgba(194, 65, 12, 0.16), 0 2px 8px -2px rgba(28, 25, 23, 0.04), inset 0 1px 0 #ffffff`): Lifted state for hovered cards and prominent callouts.
+- **Primary Glow** (`0 4px 14px rgba(194, 65, 12, 0.28)`): Ambient color glow anchored under primary Terracotta action buttons.
 
 ### Named Rules
 **The Tactile Bezel Rule.** Elevated cards in light mode feature an inner light reflection (`inset 0 1px 0 rgba(255, 255, 255, 0.95)`) combined with a hairline border (`rgba(28, 25, 23, 0.08)`) to create physical depth without heavy outlines.
-**The Ambient Glow Rule.** Colored shadows are reserved exclusively for primary interactive buttons (`Royal Iris` or `WhatsApp Emerald`), never for general content containers.
+**The Ambient Glow Rule.** Colored shadows are reserved exclusively for primary interactive buttons (`Terracotta` or `WhatsApp Emerald`), never for general content containers.
 
 ## Shapes
 
@@ -218,14 +219,14 @@ The form language is warm and modern, defined by smooth rounded rectangles and c
 ### Buttons
 - **Primary Button (`.btn-action`, `.btn-primary-hero`):**
   - Shape: 10px radius (inputs/admin) or 12px radius (hero).
-  - Background: Linear gradient from `#5850c8` to `#463ea7`. Text: Solid `#ffffff`, font-weight 600.
-  - Hover: `transform: translateY(-1px)`, brightness 1.05, shadow `0 6px 18px rgba(70, 62, 167, 0.38)`.
+  - Background: Linear gradient from `#c2410c` to `#9a3412`. Text: Solid `#ffffff`, font-weight 600.
+  - Hover: `transform: translateY(-1px)`, brightness 1.05, shadow `0 6px 18px rgba(154, 52, 18, 0.38)`.
   - Padding: `0.6rem 1.2rem` (admin/catalog) or `1rem 2.2rem` (hero).
 - **Secondary Button (`.btn-secondary-hero`, `.btn-action.secondary`):**
   - Shape: 10px-12px radius.
   - Background: Solid `#ffffff` with 1px border `rgba(28, 25, 23, 0.08)`.
-  - Text: Obsidian Ink (`#121118`), font-weight 600.
-  - Hover: Background `#f5f4f0`, border-color `rgba(88, 80, 200, 0.25)`, text color `#5850c8`.
+  - Text: Warm Charcoal (`#1c1917`), font-weight 600.
+  - Hover: Background `#f5f0e8`, border-color `rgba(194, 65, 12, 0.25)`, text color `#c2410c`.
 - **WhatsApp Direct Button (`.btn-whatsapp`):**
   - Shape: 10px-12px radius.
   - Background: Solid `#059669`. Text: Solid `#ffffff`, font-weight 600.
@@ -242,16 +243,16 @@ The form language is warm and modern, defined by smooth rounded rectangles and c
 ### Inputs / Fields
 - **Form Controls (`.form-control`):**
   - Shape: 10px radius.
-  - Background: `#fafaf8` (Atelier Linen).
+  - Background: `#faf7f2` (Atelier Linen).
   - Border: 1px solid `rgba(28, 25, 23, 0.12)`.
-  - Typography: Inter, 0.9rem (14.5px), color `#121118`.
-  - Focus: Border-color `#5850c8`, box-shadow `0 0 0 3px rgba(88, 80, 200, 0.15)`.
+  - Typography: Outfit, 0.9rem (14.5px), color `#1c1917`.
+  - Focus: Border-color `#c2410c`, box-shadow `0 0 0 3px rgba(194, 65, 12, 0.15)`.
 
 ### Navigation
 - **Glass Header (`.glass-nav`):**
   - Background: Translucent frosted glass with backdrop blur.
   - Scroll Interaction: Native CSS scroll animation smoothly transitions background opacity from transparent to solid on scroll.
-  - Logo: Outfit 800 weight, `#121118` in light mode or `#ffffff` on dark banners, paired with Royal Iris accent mark.
+  - Logo: Outfit 800 weight, `#1c1917` in light mode or `#ffffff` on dark banners, paired with Terracotta accent mark.
 
 ### Chips & Badges
 - **Unit & Status Badges (`.product-unit-badge`):**

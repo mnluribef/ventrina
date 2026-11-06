@@ -12,7 +12,11 @@ export function initScrollReveal(selector = '.reveal', threshold = 0.15): void {
         (entries, obs) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
+                    if (entry.target.classList.contains('faq-item-modern')) {
+                        entry.target.classList.add('active-reveal');
+                    } else {
+                        entry.target.classList.add('active');
+                    }
                     obs.unobserve(entry.target);
                 }
             });

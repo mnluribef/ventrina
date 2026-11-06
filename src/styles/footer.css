@@ -6,11 +6,11 @@
 
 /* ===================== FOOTER ===================== */
 footer {
-    background: linear-gradient(160deg, var(--hero-bg) 0%, var(--dark-bg, #0b0a0f) 100%);
+    background: linear-gradient(160deg, #1c1917 0%, var(--dark-bg, #0c0a09) 100%);
     color: rgba(255, 255, 255, 0.75);
     padding: 5rem 0 2.5rem;
     position: relative;
-    overflow: hidden;
+    overflow: clip;
 }
 
 footer::before {
@@ -20,7 +20,7 @@ footer::before {
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    background: linear-gradient(to right, transparent, rgba(194, 65, 12, 0.4) 30%, var(--color-accent, #d97706) 50%, rgba(194, 65, 12, 0.4) 70%, transparent);
 }
 
 .footer-content {
@@ -33,7 +33,7 @@ footer::before {
 .footer-logo {
     font-family: var(--font-heading);
     font-size: 2rem;
-    font-weight: 400;
+    font-weight: 700;
     letter-spacing: 0.04em;
     margin-bottom: 1rem;
     display: flex;
@@ -43,14 +43,17 @@ footer::before {
 
 .footer-logo svg,
 .footer-logo i {
-    margin-right: 0.45rem;
+    margin-right: 0.5rem;
+    color: var(--color-primary, #c2410c);
+    flex-shrink: 0;
 }
 
 .footer-logo span,
 .footer-logo .logo-text span {
-    color: var(--color-accent);
-    font-style: italic;
-    margin-left: 0;
+    color: var(--color-accent, #d97706);
+    font-style: normal;
+    font-weight: 800;
+    margin-left: 0.15rem;
 }
 
 .footer-info > p {
@@ -63,7 +66,7 @@ footer::before {
 
 .footer-hours {
     margin-top: 0.5rem;
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     color: rgba(255, 255, 255, 0.9);
     font-weight: 500;
 }
@@ -87,15 +90,15 @@ footer::before {
 }
 
 .footer-social a:hover {
-    background: var(--rose);
-    border-color: var(--rose);
+    background: var(--color-primary, #c2410c);
+    border-color: var(--color-primary, #c2410c);
     transform: translateY(-3px);
 }
 
 .footer-links h4,
 .footer-links .footer-col-title {
     font-family: var(--font-heading);
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.14em;
@@ -113,7 +116,7 @@ footer::before {
     bottom: -6px;
     width: 22px;
     height: 2px;
-    background: var(--rose, #ffffff);
+    background: var(--color-primary, #c2410c);
     border-radius: 9999px;
 }
 
@@ -168,7 +171,7 @@ a.footer-contact-link:hover {
     gap: 1.5rem;
     padding-top: 2rem;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
-    font-size: 0.84rem;
+    font-size: 0.85rem;
     color: rgba(255, 255, 255, 0.65);
 }
 
@@ -186,7 +189,7 @@ a.footer-contact-link:hover {
 
 .footer-disclaimer {
     margin: 0;
-    font-size: 0.76rem;
+    font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.5);
     line-height: 1.5;
     max-width: 100%;
@@ -199,7 +202,7 @@ a.footer-contact-link:hover {
 }
 
 .footer-terms-link {
-    color: var(--color-primary-light, #c2c0ec);
+    color: var(--brand-300);
     text-decoration: underline;
     margin-left: 0.35rem;
     transition: color 0.2s ease;

@@ -228,7 +228,7 @@
 
     .template-mobile-trigger:active {
         transform: scale(0.96);
-        background: var(--dark-bg-card, #121118);
+        background: var(--dark-bg-card, #1c1917);
     }
 
     .mobile-trigger-icon {

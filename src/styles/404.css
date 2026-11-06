@@ -28,7 +28,7 @@ body.e404-body {
     align-items: center;
     justify-content: center;
     position: relative;
-    overflow-x: hidden;
+    overflow-x: clip;
 }
 
 .e404-bg-glow {
