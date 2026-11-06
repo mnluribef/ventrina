@@ -82,8 +82,8 @@ export const groceryTemplate: StoreConfig = {
     landing: {
         hero: {
             badgeText: '🛒 Bodegón & Minimarket · Delivery Inmediato',
-            headline: 'Tu despensa lista,',
-            headlineHighlight: 'directo a tu mesa.',
+            headline: 'Tu mercado,',
+            headlineHighlight: 'en minutos.',
             subheadline:
                 'Víveres de primera calidad, charcutería fresca rebanada al día, snacks importados y combos de ahorro quincenal. Arma tu pedido y recíbelo en minutos vía WhatsApp.',
             ctaPrimaryText: 'Ver Catálogo',
