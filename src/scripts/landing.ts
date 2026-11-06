@@ -24,9 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 2. Navbar scroll effect
+    // 2. Navbar scroll effect (fallback si el navegador no soporta CSS Scroll-Driven Animations)
     const navbar = document.querySelector('.glass-nav');
-    if (navbar) {
+    const supportsScrollDrivenTimeline =
+        typeof window !== 'undefined' &&
+        window.CSS &&
+        CSS.supports &&
+        CSS.supports('animation-timeline', 'scroll()');
+
+    if (navbar && !supportsScrollDrivenTimeline) {
         window.addEventListener(
             'scroll',
             () => {

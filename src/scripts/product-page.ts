@@ -493,6 +493,18 @@ class ProductPageController {
         const buyButton = document.getElementById('pdp-btn-add-cart');
         if (!stickyBar || !buyButton) return;
 
+        // Si el navegador soporta CSS Scroll-Driven Animations con timeline-scope cruzado,
+        // la animación la gestiona nativamente CSS fuera del hilo principal.
+        if (
+            typeof window !== 'undefined' &&
+            window.CSS &&
+            CSS.supports &&
+            CSS.supports('timeline-scope', '--test') &&
+            CSS.supports('animation-timeline', '--test')
+        ) {
+            return;
+        }
+
         if (typeof IntersectionObserver !== 'undefined') {
             const observer = new IntersectionObserver(
                 (entries) => {

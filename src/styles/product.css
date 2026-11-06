@@ -627,6 +627,34 @@
     transform: translateY(0);
 }
 
+@keyframes pdpStickyBarSlideUp {
+    from {
+        transform: translateY(115%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+:root {
+    timeline-scope: --pdp-buy-btn-timeline;
+}
+
+#pdp-btn-add-cart {
+    view-timeline-name: --pdp-buy-btn-timeline;
+    view-timeline-axis: block;
+}
+
+@supports (timeline-scope: --test) and (animation-timeline: --test) {
+    @media (max-width: 768px) {
+        .pdp-sticky-bar {
+            animation: pdpStickyBarSlideUp ease-out both;
+            animation-timeline: --pdp-buy-btn-timeline;
+            animation-range: exit 0% exit 100%;
+        }
+    }
+}
+
 .pdp-sticky-bar-inner {
     display: flex;
     align-items: center;

@@ -908,6 +908,18 @@ section {
 }
 
 /* ===================== SCROLL REVEAL ===================== */
+@keyframes scrollRevealFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(32px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Fallback con IntersectionObserver para navegadores sin CSS Scroll-Driven Animations */
 .reveal {
     opacity: 0;
     transform: translateY(32px);
@@ -932,7 +944,7 @@ section {
     transition-delay: 0.3s;
 }
 
-/* Stagger para grids */
+/* Stagger para grids en fallback */
 .benefits-grid .benefit-card:nth-child(1).reveal {
     transition-delay: 0s;
 }
@@ -956,6 +968,41 @@ section {
     transition-delay: 0.24s;
 }
 
+/* Soporte Nativo: CSS Scroll-Driven Animations (Off-main-thread) */
+@supports (animation-timeline: view()) {
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+        animation: scrollRevealFadeUp linear both;
+        animation-timeline: view();
+        animation-range: entry 5% cover 30%;
+    }
+
+    .hero-content h1.reveal,
+    .hero-content p.reveal,
+    .hero-content .hero-buttons.reveal {
+        animation: none;
+    }
+
+    /* Stagger en grids mediante rangos de entrada en el viewport */
+    .benefits-grid .benefit-card:nth-child(1).reveal,
+    .product-grid .product-card:nth-child(1).reveal {
+        animation-range: entry 5% cover 25%;
+    }
+    .benefits-grid .benefit-card:nth-child(2).reveal,
+    .product-grid .product-card:nth-child(2).reveal {
+        animation-range: entry 10% cover 30%;
+    }
+    .benefits-grid .benefit-card:nth-child(3).reveal,
+    .product-grid .product-card:nth-child(3).reveal {
+        animation-range: entry 15% cover 35%;
+    }
+    .product-grid .product-card:nth-child(4).reveal {
+        animation-range: entry 20% cover 40%;
+    }
+}
+
 .spin {
     animation: spin 1.2s linear infinite;
 }
@@ -976,6 +1023,7 @@ section {
 @media (prefers-reduced-motion: reduce) {
     .reveal {
         transition-duration: 0.01ms;
+        animation: none !important;
     }
     .slide img {
         animation: none;

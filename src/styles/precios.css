@@ -326,6 +326,29 @@ html {
 }
 
 /* Revelación animada fluida */
+@keyframes preciosFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes preciosFadeUpPopular {
+    from {
+        opacity: 0;
+        transform: scale(1.04) translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1.04) translateY(0);
+    }
+}
+
+/* Fallback con IntersectionObserver */
 .reveal {
     opacity: 0;
     transform: translateY(24px);
@@ -346,4 +369,41 @@ html {
 
 .reveal-delay-2 {
     transition-delay: 0.2s;
+}
+
+/* CSS Scroll-Driven Animations nativo */
+@supports (animation-timeline: view()) {
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+        animation: preciosFadeUp linear both;
+        animation-timeline: view();
+        animation-range: entry 5% cover 25%;
+    }
+
+    .pricing-card.popular.reveal {
+        animation-name: preciosFadeUpPopular;
+    }
+
+    .reveal-delay-1 {
+        animation-range: entry 10% cover 30%;
+    }
+
+    .reveal-delay-2 {
+        animation-range: entry 15% cover 35%;
+    }
+
+    @media (max-width: 1024px) {
+        .pricing-card.popular.reveal {
+            animation-name: preciosFadeUp;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        transition-duration: 0.01ms;
+        animation: none !important;
+    }
 }

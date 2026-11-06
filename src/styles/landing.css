@@ -103,6 +103,21 @@ a {
     background: rgba(18, 15, 42, 0.97);
 }
 
+@keyframes glassNavScrollLanding {
+    to {
+        box-shadow: 0 10px 30px -5px rgba(10, 8, 25, 0.5);
+        background: rgba(18, 15, 42, 0.97);
+    }
+}
+
+@supports (animation-timeline: scroll()) {
+    .glass-nav {
+        animation: glassNavScrollLanding linear both;
+        animation-timeline: scroll();
+        animation-range: 0px 40px;
+    }
+}
+
 .glass-nav .container {
     max-width: 1280px;
 }

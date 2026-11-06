@@ -267,6 +267,21 @@
     background: rgba(18, 15, 42, 0.98);
 }
 
+@keyframes glassNavScrollSaas {
+    to {
+        box-shadow: 0 10px 30px -5px rgba(10, 8, 25, 0.5);
+        background: rgba(18, 15, 42, 0.98);
+    }
+}
+
+@supports (animation-timeline: scroll()) {
+    .glass-nav.saas-nav {
+        animation: glassNavScrollSaas linear both;
+        animation-timeline: scroll();
+        animation-range: 0px 40px;
+    }
+}
+
 .glass-nav.saas-nav .logo {
     color: #ffffff;
 }
