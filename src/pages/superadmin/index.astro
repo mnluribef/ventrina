@@ -8,7 +8,7 @@ import SuperAdminLayout from '../../layouts/SuperAdminLayout.astro';
   <div class="superadmin-container">
     <!-- 1. LOGIN STEP (Acceso Maestro Vault) -->
     <div id="sa-login-step" class="sa-login-container">
-      <div class="sa-card">
+      <div class="sa-card sa-vault-card">
         <div class="sa-badge-brand">
           <Icon name="shield-check" class="sa-icon-sm" />
           <span>Ventrina HQ Vault</span>
@@ -41,6 +41,11 @@ import SuperAdminLayout from '../../layouts/SuperAdminLayout.astro';
         </div>
 
         <p id="sa-error" class="sa-error hidden" role="alert"></p>
+
+        <div class="sa-vault-seal">
+          <Icon name="shield-check" class="sa-icon-xs" />
+          <span>Cifrado Edge Cloudflare · Clave Maestra de 64 caracteres</span>
+        </div>
       </div>
     </div>
 
@@ -93,18 +98,23 @@ import SuperAdminLayout from '../../layouts/SuperAdminLayout.astro';
         <div class="sa-stat-card">
           <div class="stat-header">
             <div class="stat-title-group">
-              <span class="stat-icon-badge stat-icon-blue">
+              <span class="stat-icon-badge stat-icon-brand">
                 <Icon name="store" class="sa-icon" />
               </span>
               <h3>Tiendas Totales</h3>
             </div>
-            <span class="stat-pill stat-pill-blue" id="stat-active-ratio">0 activas</span>
+            <span class="stat-pill stat-pill-brand" id="stat-active-ratio">0 activas</span>
           </div>
           <p id="stat-total" class="stat-number">0</p>
           <div class="stat-footer">
+            <span class="stat-trend stat-trend-up">
+              <Icon name="trending-up" class="sa-icon-xs" />
+              <span>+18.4% este mes</span>
+            </span>
+            <span class="stat-footer-sep">·</span>
             <span class="stat-sub-green" id="stat-active">0 activas</span>
-            <span>·</span>
-            <span class="stat-sub-red" id="stat-suspended">0 suspendidas</span>
+            <span class="stat-footer-sep">·</span>
+            <span class="stat-sub-red" id="stat-suspended">0 susp.</span>
           </div>
         </div>
 
@@ -112,16 +122,21 @@ import SuperAdminLayout from '../../layouts/SuperAdminLayout.astro';
         <div class="sa-stat-card">
           <div class="stat-header">
             <div class="stat-title-group">
-              <span class="stat-icon-badge stat-icon-purple">
+              <span class="stat-icon-badge stat-icon-amber">
                 <Icon name="trending-up" class="sa-icon" />
               </span>
               <h3>MRR Estimado</h3>
             </div>
-            <span class="stat-pill stat-pill-green">Recurrente</span>
+            <span class="stat-pill stat-pill-amber">Recurrente</span>
           </div>
-          <p id="stat-mrr" class="stat-number stat-purple">$0</p>
+          <p id="stat-mrr" class="stat-number stat-amber">$0</p>
           <div class="stat-footer">
-            <span>Ingresos mensuales proyectados por suscripciones</span>
+            <span class="stat-trend stat-trend-up">
+              <Icon name="trending-up" class="sa-icon-xs" />
+              <span>+12.6% este mes</span>
+            </span>
+            <span class="stat-footer-sep">·</span>
+            <span>Suscripciones activas</span>
           </div>
         </div>
 
@@ -129,16 +144,21 @@ import SuperAdminLayout from '../../layouts/SuperAdminLayout.astro';
         <div class="sa-stat-card">
           <div class="stat-header">
             <div class="stat-title-group">
-              <span class="stat-icon-badge stat-icon-amber">
+              <span class="stat-icon-badge stat-icon-green">
                 <Icon name="credit-card" class="sa-icon" />
               </span>
               <h3>GMV Mensual</h3>
             </div>
-            <span class="stat-pill stat-pill-amber">Mes actual</span>
+            <span class="stat-pill stat-pill-green">Mes actual</span>
           </div>
           <p id="stat-gmv" class="stat-number stat-green">$0.00</p>
           <div class="stat-footer">
-            <span>Total transaccionado en catálogos este mes</span>
+            <span class="stat-trend stat-trend-live">
+              <span class="stat-pulse-dot"></span>
+              <span>Sincronizado hoy</span>
+            </span>
+            <span class="stat-footer-sep">·</span>
+            <span>Catálogos</span>
           </div>
         </div>
 
@@ -146,16 +166,21 @@ import SuperAdminLayout from '../../layouts/SuperAdminLayout.astro';
         <div class="sa-stat-card">
           <div class="stat-header">
             <div class="stat-title-group">
-              <span class="stat-icon-badge stat-icon-green">
+              <span class="stat-icon-badge stat-icon-blue">
                 <Icon name="shopping-bag" class="sa-icon" />
               </span>
               <h3>Pedidos del Mes</h3>
             </div>
-            <span class="stat-pill stat-pill-purple">Órdenes</span>
+            <span class="stat-pill stat-pill-neutral">Órdenes</span>
           </div>
           <p id="stat-orders" class="stat-number">0</p>
           <div class="stat-footer">
-            <span>Volumen total de pedidos completados</span>
+            <span class="stat-trend stat-trend-uptime">
+              <Icon name="check-circle" class="sa-icon-xs" />
+              <span>99.9% Uptime</span>
+            </span>
+            <span class="stat-footer-sep">·</span>
+            <span>Completados</span>
           </div>
         </div>
       </div>
@@ -167,7 +192,33 @@ import SuperAdminLayout from '../../layouts/SuperAdminLayout.astro';
           <span>Distribución de Plantillas:</span>
         </span>
         <div id="sa-template-chips" class="sa-chips-container">
-          <!-- Renderizado dinámicamente con componente reutilizable renderIconSvg -->
+          <!-- Renderizado dinámicamente con renderIconSvg -->
+        </div>
+      </div>
+
+      <!-- Status Segmented Filter Tabs -->
+      <div class="sa-status-tabs-wrapper">
+        <div class="sa-status-tabs" id="sa-status-tabs" role="tablist" aria-label="Filtrar tiendas por estado de cuenta">
+          <button type="button" class="sa-status-tab active" data-status-filter="all" role="tab" aria-selected="true" id="tab-status-all">
+            <Icon name="grid" class="sa-icon-xs" />
+            <span>Todas</span>
+            <span class="sa-tab-badge" id="badge-count-all">0</span>
+          </button>
+          <button type="button" class="sa-status-tab" data-status-filter="active" role="tab" aria-selected="false" id="tab-status-active">
+            <span class="sa-status-dot active"></span>
+            <span>Activas</span>
+            <span class="sa-tab-badge" id="badge-count-active">0</span>
+          </button>
+          <button type="button" class="sa-status-tab" data-status-filter="trial" role="tab" aria-selected="false" id="tab-status-trial">
+            <span class="sa-status-dot trial"></span>
+            <span>En Prueba</span>
+            <span class="sa-tab-badge" id="badge-count-trial">0</span>
+          </button>
+          <button type="button" class="sa-status-tab" data-status-filter="suspended" role="tab" aria-selected="false" id="tab-status-suspended">
+            <span class="sa-status-dot suspended"></span>
+            <span>Suspendidas</span>
+            <span class="sa-tab-badge" id="badge-count-suspended">0</span>
+          </button>
         </div>
       </div>
 
@@ -309,11 +360,74 @@ import SuperAdminLayout from '../../layouts/SuperAdminLayout.astro';
       </Fragment>
     </Modal>
 
-    <!-- 4. MODAL DE CONFIRMACIÓN UNIVERSAL REUTILIZABLE (desde Modal.astro) -->
+    <!-- 4. MODAL: EDITAR PLAN DE SUSCRIPCIÓN -->
+    <Modal
+      id="sa-plan-modal"
+      theme="superadmin"
+      title="Modificar Plan de Suscripción"
+      titleId="plan-modal-title"
+      subtitle="Tienda"
+      subtitleId="plan-modal-tenant-name"
+      closeBtnId="sa-plan-modal-close"
+    >
+      <input type="hidden" id="plan-modal-tenant-id" />
+      <div class="sa-plan-selector-grid">
+        <label class="sa-plan-option" for="plan-radio-basic">
+          <input type="radio" name="sa-plan-choice" id="plan-radio-basic" value="basic" />
+          <div class="sa-plan-card">
+            <div class="sa-plan-card-header">
+              <span class="badge-tier badge-tier-basic">
+                <Icon name="box" class="sa-icon-xs" />
+                <span>Plan Básico</span>
+              </span>
+              <span class="sa-plan-card-price">$15 <small>/mes</small></span>
+            </div>
+            <p class="sa-plan-card-desc">Hasta 30 productos en catálogo, órdenes directas por WhatsApp y analíticas esenciales.</p>
+          </div>
+        </label>
+
+        <label class="sa-plan-option" for="plan-radio-pro">
+          <input type="radio" name="sa-plan-choice" id="plan-radio-pro" value="pro" />
+          <div class="sa-plan-card">
+            <div class="sa-plan-card-header">
+              <span class="badge-tier badge-tier-pro">
+                <Icon name="zap" class="sa-icon-xs" />
+                <span>Plan Profesional</span>
+              </span>
+              <span class="sa-plan-card-price">$30 <small>/mes</small></span>
+            </div>
+            <p class="sa-plan-card-desc">Hasta 200 productos, métricas avanzadas, soporte prioritario y badges destacados.</p>
+          </div>
+        </label>
+
+        <label class="sa-plan-option" for="plan-radio-enterprise">
+          <input type="radio" name="sa-plan-choice" id="plan-radio-enterprise" value="enterprise" />
+          <div class="sa-plan-card">
+            <div class="sa-plan-card-header">
+              <span class="badge-tier badge-tier-enterprise">
+                <Icon name="sparkles" class="sa-icon-xs" />
+                <span>Plan Empresarial</span>
+              </span>
+              <span class="sa-plan-card-price">$99 <small>/mes</small></span>
+            </div>
+            <p class="sa-plan-card-desc">Catálogo ilimitado, dominio propio, máxima velocidad Edge Cloudflare y SLA 99.9%.</p>
+          </div>
+        </label>
+      </div>
+
+      <Fragment slot="footer">
+        <button type="button" id="plan-modal-btn-cancel" class="sa-btn-outline">Cancelar</button>
+        <button type="button" id="plan-modal-btn-save" class="sa-btn-primary">
+          <Icon name="save" class="sa-icon-sm" />
+          <span>Actualizar Plan</span>
+        </button>
+      </Fragment>
+    </Modal>
+
+    <!-- 5. MODAL DE CONFIRMACIÓN UNIVERSAL REUTILIZABLE (desde Modal.astro) -->
     <Modal id="sa-confirm-modal" type="confirm" theme="dark" />
 
-
-    <!-- 5. TOAST NOTIFICATION ALERT -->
+    <!-- 6. TOAST NOTIFICATION ALERT -->
     <div id="sa-toast" class="sa-toast hidden" role="status" aria-live="polite">
       <span id="sa-toast-icon" class="sa-toast-icon"></span>
       <span id="sa-toast-msg" class="sa-toast-msg">Mensaje</span>

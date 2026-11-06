@@ -1,5 +1,6 @@
 /* src/styles/template-switcher.css */
 /* Barra flotante y Bottom Sheet móvil para alternar entre plantillas demo de Ventrina SaaS */
+/* Estética: Terracota Atelier & Warm Obsidian Glass */
 @import "./tokens.css";
 
 /* =====================================================
@@ -15,31 +16,32 @@
    ===================================================== */
 .template-bar-desktop {
     position: fixed;
-    bottom: 1.25rem;
+    bottom: 1.5rem;
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.45rem 0.75rem;
-    background: rgba(18, 17, 24, 0.92);
+    gap: 0.65rem;
+    padding: 0.4rem 0.65rem 0.4rem 0.85rem;
+    background: rgba(20, 18, 17, 0.92);
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(194, 65, 12, 0.18);
     border-radius: 9999px;
     box-shadow:
-        0 12px 32px rgba(0, 0, 0, 0.45),
-        0 0 0 1px rgba(255, 255, 255, 0.06);
+        0 16px 40px -8px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 4px 20px -2px rgba(194, 65, 12, 0.15);
     max-width: calc(100vw - 2rem);
     box-sizing: border-box;
-    animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: slideUpFade 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes slideUpFade {
     from {
         opacity: 0;
-        transform: translate(-50%, 20px);
+        transform: translate(-50%, 24px);
     }
     to {
         opacity: 1;
@@ -47,16 +49,16 @@
     }
 }
 
+/* Marca / Logo Ventrina SaaS */
 .template-bar-brand {
     display: flex;
     align-items: center;
     gap: 0.45rem;
-    padding-left: 0.35rem;
-    padding-right: 0.75rem;
+    padding-right: 0.85rem;
     border-right: 1px solid rgba(255, 255, 255, 0.12);
     text-decoration: none;
     flex-shrink: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .template-bar-brand:hover {
@@ -68,8 +70,8 @@
     height: 8px;
     border-radius: 50%;
     background: #10b981;
-    box-shadow: 0 0 8px #10b981;
-    animation: pulseGlow 2s infinite;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+    animation: pulseGlow 2.4s ease-in-out infinite;
     flex-shrink: 0;
 }
 
@@ -91,8 +93,10 @@
     color: #ffffff;
     letter-spacing: -0.01em;
     white-space: nowrap;
+    font-family: var(--font-heading, "Outfit", sans-serif);
 }
 
+/* Pills de Selección de Plantillas */
 .template-bar-pills {
     display: flex;
     align-items: center;
@@ -104,14 +108,21 @@
     display: inline-flex;
     align-items: center;
     gap: 0.38rem;
-    padding: 0.45rem 0.85rem;
+    padding: 0.42rem 0.85rem;
     border-radius: 9999px;
     text-decoration: none;
-    font-size: 0.85rem;
+    font-size: 0.84rem;
     font-weight: 500;
-    color: var(--dark-text-body, #c4bdd8);
+    font-family: var(--font-body, "Outfit", sans-serif);
+    color: var(--dark-text-body, #d6d3d1);
     background: transparent;
-    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    transition:
+        color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     white-space: nowrap;
     flex-shrink: 0;
     user-select: none;
@@ -119,30 +130,115 @@
 
 .template-pill:hover {
     color: #ffffff;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(194, 65, 12, 0.2);
     transform: translateY(-1px);
+}
+
+.template-pill:active {
+    transform: translateY(0);
+    background: rgba(255, 255, 255, 0.12);
 }
 
 .template-pill.active {
     color: #ffffff;
-    background: var(--theme-primary, var(--color-primary));
-    box-shadow: 0 3px 12px rgba(18, 17, 24, 0.3);
     font-weight: 600;
+    background: linear-gradient(180deg, #c2410c 0%, #9a3412 100%);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow:
+        0 2px 10px rgba(194, 65, 12, 0.35),
+        0 0 16px rgba(194, 65, 12, 0.25);
+    transform: none;
 }
 
 .pill-icon {
-    font-size: 1rem;
+    font-size: 0.95rem;
     line-height: 1;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+}
+
+.pill-text {
+    line-height: 1.2;
 }
 
 .pill-active-indicator {
-    font-size: 0.75rem;
-    background: rgba(255, 255, 255, 0.25);
-    padding: 0.1rem 0.4rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.22);
+    padding: 0.1rem 0.42rem;
     border-radius: 9999px;
-    margin-left: 0.2rem;
+    margin-left: 0.15rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+/* Divisor entre pills y CTA de conversión */
+.template-bar-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.12);
+    margin: 0 0.15rem;
+    flex-shrink: 0;
+}
+
+/* CTA de Conversión Directa (Desktop) */
+.template-bar-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 1rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #c2410c 0%, #ea580c 50%, #9a3412 100%);
+    background-size: 200% auto;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-size: 0.82rem;
     font-weight: 600;
-    letter-spacing: 0.02em;
+    font-family: var(--font-body, "Outfit", sans-serif);
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow:
+        0 4px 14px rgba(194, 65, 12, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition:
+        transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+        background-position 0.3s ease;
+}
+
+.template-bar-cta:hover {
+    box-shadow:
+        0 6px 20px rgba(194, 65, 12, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+    background-position: right center;
+}
+
+.template-bar-cta:hover .cta-arrow-icon {
+    transform: translateX(2px);
+}
+
+.template-bar-cta:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(194, 65, 12, 0.35);
+}
+
+.cta-spark-icon {
+    color: #fde68a;
+    filter: drop-shadow(0 0 4px rgba(253, 230, 138, 0.6));
+    flex-shrink: 0;
+}
+
+.cta-text {
+    line-height: 1.2;
+}
+
+.cta-arrow-icon {
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
 }
 
 /* =====================================================
@@ -164,23 +260,27 @@
    4. RESPONSIVE DESIGN (TABLET & MÓVIL)
    ===================================================== */
 
-/* Tablets medianos (769px - 1024px) */
-@media (max-width: 1024px) and (min-width: 769px) {
+/* Tablets (769px - 1080px) */
+@media (max-width: 1080px) and (min-width: 769px) {
     .template-bar-desktop {
         padding: 0.4rem 0.65rem;
         gap: 0.5rem;
+        max-width: calc(100vw - 1.5rem);
+    }
+
+    .template-bar-pills {
         overflow-x: auto;
         scrollbar-width: none;
         -ms-overflow-style: none;
     }
 
-    .template-bar-desktop::-webkit-scrollbar {
+    .template-bar-pills::-webkit-scrollbar {
         display: none;
     }
 
     .template-pill {
-        padding: 0.4rem 0.7rem;
-        font-size: 0.78rem;
+        padding: 0.38rem 0.7rem;
+        font-size: 0.8rem;
     }
 
     .pill-active-indicator {
@@ -195,45 +295,49 @@
         display: none;
     }
 
-    /* 3.1 Botón Discreto Flotante (Bottom-Left) */
+    /* 4.1 Botón Discreto Flotante (Bottom-Left) */
     .template-mobile-trigger {
         display: inline-flex;
         align-items: center;
-        gap: 0.45rem;
+        gap: 0.5rem;
         position: fixed;
         bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
         left: 1.25rem;
         z-index: 1050;
         padding: 0.55rem 0.95rem;
-        background: rgba(18, 17, 24, 0.92);
+        background: rgba(20, 18, 17, 0.92);
         backdrop-filter: blur(16px) saturate(180%);
         -webkit-backdrop-filter: blur(16px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(194, 65, 12, 0.28);
         border-radius: 9999px;
         color: #ffffff;
-        font-family: inherit;
+        font-family: var(--font-body, "Outfit", sans-serif);
         font-size: 0.85rem;
         font-weight: 600;
         cursor: pointer;
         box-shadow:
-            0 8px 24px rgba(0, 0, 0, 0.4),
-            0 0 0 1px rgba(255, 255, 255, 0.06);
+            0 8px 24px rgba(0, 0, 0, 0.45),
+            0 0 0 1px rgba(255, 255, 255, 0.05),
+            0 2px 8px rgba(194, 65, 12, 0.2);
         transition:
-            transform 0.2s ease,
-            background 0.2s ease,
-            box-shadow 0.2s ease;
+            transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+            background-color 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
         user-select: none;
         -webkit-tap-highlight-color: transparent;
     }
 
     .template-mobile-trigger:active {
         transform: scale(0.96);
-        background: var(--dark-bg-card, #1c1917);
+        background: rgba(28, 25, 23, 0.98);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
     .mobile-trigger-icon {
         font-size: 1rem;
         line-height: 1;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
     }
 
     .mobile-trigger-label {
@@ -242,26 +346,28 @@
     }
 
     .mobile-trigger-chevron {
-        color: rgba(255, 255, 255, 0.6);
-        transition: transform 0.25s ease;
+        color: rgba(255, 255, 255, 0.65);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        flex-shrink: 0;
     }
 
     .template-mobile-trigger[aria-expanded="true"] .mobile-trigger-chevron {
         transform: rotate(180deg);
+        color: #ffffff;
     }
 
-    /* 3.2 Overlay translúcido del Bottom Sheet */
+    /* 4.2 Overlay translúcido del Bottom Sheet */
     .template-sheet-overlay {
         display: block;
         position: fixed;
         inset: 0;
-        background: rgba(11, 10, 15, 0.7);
+        background: rgba(12, 10, 9, 0.72);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
         z-index: 9998;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .template-sheet-overlay.is-open {
@@ -269,7 +375,7 @@
         pointer-events: auto;
     }
 
-    /* 3.3 Cajón Inferior (Bottom Sheet Drawer) */
+    /* 4.3 Cajón Inferior (Bottom Sheet Drawer) */
     .template-sheet-drawer {
         display: block;
         position: fixed;
@@ -277,15 +383,18 @@
         left: 0;
         right: 0;
         z-index: 9999;
-        background: linear-gradient(180deg, var(--dark-bg, #0b0a0f) 0%, rgba(11, 10, 15, 0.98) 100%);
-        border-top: 1px solid rgba(255, 255, 255, 0.14);
+        background: linear-gradient(180deg, #161413 0%, #0c0a09 100%);
+        border-top: 1px solid rgba(194, 65, 12, 0.25);
         border-radius: 24px 24px 0 0;
-        padding: 0.6rem 1.25rem calc(1.75rem + env(safe-area-inset-bottom, 0px));
-        box-shadow: 0 -12px 40px rgba(18, 17, 24, 0.65);
+        padding: 0.65rem 1.25rem calc(1.75rem + env(safe-area-inset-bottom, 0px));
+        box-shadow:
+            0 -16px 48px rgba(0, 0, 0, 0.75),
+            0 0 0 1px rgba(194, 65, 12, 0.12);
         transform: translateY(105%);
-        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        max-height: 80vh;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        max-height: 85vh;
         overflow-y: auto;
+        overscroll-behavior: contain;
     }
 
     .template-sheet-drawer.is-open {
@@ -294,11 +403,11 @@
 
     /* Barra de arrastre superior */
     .template-sheet-handle {
-        width: 38px;
+        width: 40px;
         height: 4px;
-        background: rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.24);
         border-radius: 9999px;
-        margin: 0.25rem auto 0.85rem;
+        margin: 0.25rem auto 0.95rem;
     }
 
     /* Encabezado del modal */
@@ -306,20 +415,26 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-bottom: 0.85rem;
+        padding-bottom: 0.95rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
+    .template-sheet-header-text {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+
     .template-sheet-tag {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
-        color: var(--theme-primary, var(--color-primary));
+        color: var(--brand-500, #f97316);
         text-transform: uppercase;
         letter-spacing: 0.08em;
     }
 
     .template-sheet-title {
-        margin: 0.15rem 0 0;
+        margin: 0;
         font-size: 1.25rem;
         font-weight: 700;
         color: #ffffff;
@@ -331,27 +446,28 @@
         height: 32px;
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: var(--dark-text-body, #c4bdd8);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: var(--dark-text-body, #d6d3d1);
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         transition:
-            background 0.2s ease,
-            transform 0.2s ease;
+            background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        touch-action: manipulation;
     }
 
     .template-sheet-close:active {
         transform: scale(0.92);
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.16);
     }
 
     /* Grid de plantillas (2 columnas en móvil) */
     .template-sheet-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 0.65rem;
+        gap: 0.75rem;
         margin-top: 1rem;
     }
 
@@ -363,7 +479,11 @@
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 14px;
         text-decoration: none;
-        transition: all 0.2s ease;
+        transition:
+            background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+            border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+            box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         -webkit-tap-highlight-color: transparent;
     }
 
@@ -373,52 +493,152 @@
     }
 
     .template-sheet-card.active {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: var(--theme-primary, var(--color-primary));
+        background: linear-gradient(135deg, rgba(194, 65, 12, 0.15) 0%, rgba(28, 25, 23, 0.85) 100%);
+        border-color: rgba(194, 65, 12, 0.65);
         box-shadow:
-            0 0 0 1px var(--theme-primary, var(--color-primary)),
-            0 4px 16px rgba(0, 0, 0, 0.3);
+            0 0 0 1px rgba(194, 65, 12, 0.45),
+            0 6px 20px rgba(194, 65, 12, 0.25);
     }
 
     .sheet-card-top {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.5rem;
     }
 
     .sheet-card-icon {
         font-size: 1.25rem;
         line-height: 1;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
     }
 
-    .sheet-card-badge {
-        font-size: 0.75rem;
+    .sheet-card-badges {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .sheet-card-vertical-badge {
+        font-size: 0.65rem;
+        font-weight: 600;
+        color: var(--dark-text-muted, #a8a29e);
+        background: rgba(255, 255, 255, 0.06);
+        padding: 0.15rem 0.4rem;
+        border-radius: 9999px;
+        letter-spacing: 0.02em;
+    }
+
+    .sheet-card-active-badge {
+        font-size: 0.65rem;
         font-weight: 700;
         color: #ffffff;
-        background: var(--theme-primary, var(--color-primary));
+        background: var(--brand-600, #c2410c);
         padding: 0.15rem 0.45rem;
-        border-radius: 10px;
+        border-radius: 9999px;
         letter-spacing: 0.02em;
+        box-shadow: 0 0 8px rgba(194, 65, 12, 0.4);
     }
 
     .sheet-card-body {
         display: flex;
         flex-direction: column;
-        gap: 0.15rem;
+        gap: 0.2rem;
     }
 
     .sheet-card-name {
-        font-size: 0.88rem;
+        font-size: 0.9rem;
         font-weight: 700;
         color: #ffffff;
         letter-spacing: -0.01em;
     }
 
     .sheet-card-brand {
-        font-size: 0.75rem;
-        color: var(--dark-text-body, #c4bdd8);
+        font-size: 0.74rem;
+        color: var(--dark-text-body, #d6d3d1);
+        line-height: 1.35;
+    }
+
+    /* 4.4 CTA de Conversión Directa (Mobile Sheet Footer) */
+    .template-sheet-footer {
+        margin-top: 1.15rem;
+        padding-top: 0.85rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .template-sheet-cta-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.85rem 1rem;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #c2410c 0%, #ea580c 50%, #9a3412 100%);
+        background-size: 200% auto;
+        color: #ffffff;
+        text-decoration: none;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow:
+            0 6px 20px rgba(194, 65, 12, 0.45),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        transition:
+            transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+            box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+            background-position 0.3s ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .template-sheet-cta-btn:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 8px rgba(194, 65, 12, 0.35);
+    }
+
+    .sheet-cta-icon-box {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: #fde68a;
+        filter: drop-shadow(0 0 4px rgba(253, 230, 138, 0.5));
+    }
+
+    .sheet-cta-text-wrap {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .sheet-cta-title {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: -0.01em;
+        line-height: 1.25;
+    }
+
+    .sheet-cta-subtitle {
+        font-size: 0.74rem;
+        color: rgba(255, 255, 255, 0.85);
         line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sheet-cta-arrow {
+        color: #ffffff;
+        flex-shrink: 0;
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .template-sheet-cta-btn:active .sheet-cta-arrow {
+        transform: translateX(3px);
     }
 }
 

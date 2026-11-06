@@ -1,5 +1,5 @@
-/* Premium Pricing SaaS Styles */
-/* Identidad: Violet × Amber — Design System Centralizado */
+/* Premium Pricing SaaS Styles — Ventrina */
+/* Identidad: Terracota Atelier × Warm Amber — Design System Centralizado */
 
 @import "./tokens.css";
 @import "./navbar.css";
@@ -7,7 +7,7 @@
 :root {
     --color-brand-500: var(--brand-500);
     --color-brand-600: var(--color-primary);
-    --color-dark-900: var(--light-bg); /* renombrado semánticamente */
+    --color-dark-900: var(--light-bg);
     --color-dark-800: var(--light-bg-subtle);
     --color-dark-card: var(--light-bg-card);
     --color-text-main: var(--light-text-heading);
@@ -32,17 +32,20 @@ html {
     font-family: var(--font-body);
 }
 
+/* =====================================================
+   HERO & BILLING SWITCHER
+   ===================================================== */
 .pricing-hero {
     position: relative;
     text-align: center;
-    padding: 10rem 2rem 4rem;
+    padding: 9rem 2rem 3rem;
     overflow: clip;
 }
 
 .pricing-hero::before {
     content: "";
     position: absolute;
-    top: -30%;
+    top: -25%;
     left: 50%;
     transform: translateX(-50%);
     width: 80vw;
@@ -55,7 +58,7 @@ html {
 .pricing-hero-content {
     position: relative;
     z-index: 2;
-    max-width: 800px;
+    max-width: 840px;
     margin: 0 auto;
 }
 
@@ -63,7 +66,7 @@ html {
     font-family: var(--font-heading);
     font-size: clamp(2rem, 5vw, 3.5rem);
     color: var(--light-text-heading);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.1;
@@ -76,15 +79,82 @@ html {
 }
 
 .pricing-hero p {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     color: var(--color-text-muted);
-    max-width: 600px;
+    max-width: 620px;
     margin: 0 auto;
     line-height: 1.6;
 }
 
+/* Switcher interactivo de facturación */
+.billing-switcher-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.5rem;
+}
+
+.billing-switcher {
+    display: inline-flex;
+    align-items: center;
+    background: var(--light-bg-subtle);
+    border: 1px solid var(--light-border);
+    border-radius: var(--radius-pill);
+    padding: 5px;
+    gap: 4px;
+    box-shadow: inset 0 1px 2px rgba(28, 25, 23, 0.04);
+}
+
+.billing-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    color: var(--light-text-muted);
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.65rem 1.4rem;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: all 0.2s var(--ease-smooth);
+    user-select: none;
+}
+
+.billing-toggle-btn:hover {
+    color: var(--light-text-heading);
+}
+
+.billing-toggle-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.billing-toggle-btn.active {
+    background: var(--light-bg-card);
+    color: var(--light-text-heading);
+    box-shadow: 0 2px 8px rgba(28, 25, 23, 0.08), 0 0 0 1px rgba(28, 25, 23, 0.04);
+    font-weight: 700;
+}
+
+.billing-discount-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(217, 119, 6, 0.12);
+    color: #b45309;
+    border: 1px solid rgba(217, 119, 6, 0.28);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.01em;
+}
+
+/* =====================================================
+   PRICING CARDS
+   ===================================================== */
 .pricing-cards-section {
-    padding: 2rem 2rem 8rem;
+    padding: 2rem 2rem 6rem;
     max-width: 1200px;
     margin: 0 auto;
     position: relative;
@@ -94,17 +164,17 @@ html {
 .pricing-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2.5rem;
-    align-items: center;
+    gap: 2.25rem;
+    align-items: stretch;
 }
 
 .pricing-card {
     background: var(--color-dark-card);
-    border-radius: 24px;
-    padding: 3rem 2.5rem;
+    border-radius: var(--radius-xl);
+    padding: 3rem 2.25rem;
     border: 1px solid var(--color-border);
     box-shadow: var(--light-shadow-md);
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.25s var(--ease-smooth), box-shadow 0.25s var(--ease-smooth), border-color 0.25s var(--ease-smooth);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -112,7 +182,7 @@ html {
 }
 
 .pricing-card:hover {
-    transform: translateY(-8px);
+    transform: translateY(-6px);
     border-color: var(--color-brand-500);
     box-shadow: var(--light-shadow-hover);
     background: var(--light-bg-card);
@@ -121,7 +191,7 @@ html {
 .pricing-card.popular {
     border: 2px solid var(--color-primary);
     background: var(--light-bg-card);
-    transform: scale(1.04);
+    transform: scale(1.03);
     box-shadow:
         var(--light-shadow-lg),
         0 0 0 1px var(--color-primary-light);
@@ -129,15 +199,16 @@ html {
 }
 
 .pricing-card.popular.reveal {
-    transform: scale(1.04) translateY(24px);
+    transform: scale(1.03) translateY(24px);
 }
 
-.pricing-card.popular.reveal.active {
-    transform: scale(1.04) translateY(0);
+.pricing-card.popular.reveal.active,
+.pricing-card.popular.reveal.is-revealed {
+    transform: scale(1.03) translateY(0);
 }
 
 .pricing-card.popular:hover {
-    transform: scale(1.04) translateY(-8px);
+    transform: scale(1.03) translateY(-6px);
     box-shadow:
         var(--light-shadow-hover),
         0 0 0 1px var(--color-primary);
@@ -146,35 +217,36 @@ html {
 @media (max-width: 1024px) {
     .pricing-card.popular,
     .pricing-card.popular.reveal,
-    .pricing-card.popular.reveal.active {
+    .pricing-card.popular.reveal.active,
+    .pricing-card.popular.reveal.is-revealed {
         transform: none;
     }
     .pricing-card.popular:hover {
-        transform: translateY(-8px);
+        transform: translateY(-6px);
     }
 }
 
 .popular-badge {
     position: absolute;
-    top: -16px;
+    top: -15px;
     left: 50%;
     transform: translateX(-50%);
     background: var(--grad-primary);
     color: white;
-    padding: 0.5rem 1.25rem;
-    border-radius: 9999px;
-    font-size: 0.85rem;
+    padding: 0.45rem 1.25rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.8rem;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    box-shadow: 0 4px 15px var(--color-primary-glow);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 14px var(--color-primary-glow);
+    border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .card-header {
     text-align: center;
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.75rem;
     border-bottom: 1px solid var(--color-border);
 }
 
@@ -182,7 +254,7 @@ html {
     font-size: 1.25rem;
     color: var(--light-text-heading);
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 0.85rem;
     font-family: var(--font-heading);
 }
 
@@ -194,17 +266,39 @@ html {
     margin-bottom: 0.5rem;
     font-family: var(--font-heading);
     letter-spacing: -0.03em;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.price-currency {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-right: 2px;
+}
+
+.price-val {
+    font-variant-numeric: tabular-nums;
+    transition: opacity 0.12s var(--ease-smooth), transform 0.12s var(--ease-smooth);
+}
+
+.price-val.price-updating {
+    opacity: 0.3;
+    transform: scale(0.96);
 }
 
 .period {
     font-size: 1rem;
     color: var(--color-text-muted);
     font-weight: 500;
+    margin-left: 2px;
 }
 
 .billing {
     font-size: 0.85rem;
     color: var(--color-text-muted);
+    min-height: 1.3rem;
 }
 
 .card-body {
@@ -214,9 +308,9 @@ html {
 }
 
 .plan-desc {
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--color-text-muted);
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
     text-align: center;
     line-height: 1.6;
 }
@@ -224,30 +318,30 @@ html {
 .features-list {
     list-style: none;
     padding: 0;
-    margin: 0 0 3rem 0;
+    margin: 0 0 2.5rem 0;
     flex: 1;
 }
 
 .features-list li {
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
-    margin-bottom: 1.25rem;
+    gap: 0.85rem;
+    margin-bottom: 1.15rem;
     color: var(--light-text-body);
-    font-size: 1rem;
+    font-size: 0.95rem;
     line-height: 1.5;
 }
 
 .check-icon {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     fill: none;
     stroke: var(--color-primary);
-    stroke-width: 3;
+    stroke-width: 2.75;
     stroke-linecap: round;
     stroke-linejoin: round;
     flex-shrink: 0;
-    margin-top: 1px;
+    margin-top: 2px;
 }
 
 .btn-primary,
@@ -256,26 +350,27 @@ html {
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding: 1.1rem;
-    border-radius: 14px;
+    padding: 1rem;
+    border-radius: var(--radius-md);
     text-align: center;
-    font-weight: 600;
+    font-family: var(--font-heading);
+    font-weight: 700;
     font-size: 1rem;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: all 0.25s var(--ease-smooth);
 }
 
 .btn-primary {
     background: var(--grad-primary);
     color: white;
     border: none;
-    box-shadow: 0 4px 20px var(--color-primary-glow);
+    box-shadow: 0 4px 18px var(--color-primary-glow);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px var(--color-primary-glow);
-    filter: brightness(1.08);
+    box-shadow: 0 8px 26px var(--color-primary-glow);
+    filter: brightness(1.06);
 }
 
 .btn-outline {
@@ -290,53 +385,496 @@ html {
     transform: translateY(-2px);
 }
 
-.faq-minimal,
-#faq {
-    max-width: 900px;
+/* =====================================================
+   FEATURE COMPARISON MATRIX (TABLA EXHAUSTIVA)
+   ===================================================== */
+.comparison-matrix-section {
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 6rem 2rem 8rem;
+    padding: 4rem 2rem 6rem;
+    position: relative;
+    z-index: 2;
+}
+
+.matrix-header {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 3rem;
+}
+
+.matrix-header h2 {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 800;
+    color: var(--light-text-heading);
+    line-height: 1.15;
+    margin-bottom: 0.85rem;
+    letter-spacing: -0.02em;
+}
+
+.matrix-header p {
+    font-size: 1.1rem;
+    color: var(--light-text-muted);
+    line-height: 1.6;
+}
+
+.comparison-matrix-wrapper {
+    background: var(--light-bg-card);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--light-border);
+    box-shadow: var(--light-shadow-md);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.comparison-matrix-table {
+    width: 100%;
+    min-width: 860px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.matrix-col-feature {
+    width: 37%;
+    padding: 1.5rem 1.75rem;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--light-text-heading);
+    border-bottom: 1px solid var(--light-border);
+    background: var(--light-bg-card);
+}
+
+.matrix-col-plan {
+    width: 21%;
+    text-align: center;
+    padding: 1.5rem 1rem;
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--light-text-heading);
+    border-bottom: 1px solid var(--light-border);
+    background: var(--light-bg-card);
+}
+
+/* Columna destacada (Profesional) con halo sutil Terracota Atelier */
+th.highlight-col {
+    background: rgba(194, 65, 12, 0.05);
+    border-top: 3px solid var(--color-primary);
+    color: var(--color-primary);
+    position: relative;
+    box-shadow: inset 1px 0 0 rgba(194, 65, 12, 0.12), inset -1px 0 0 rgba(194, 65, 12, 0.12);
+}
+
+.matrix-header-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--grad-primary);
+    color: #ffffff;
+    padding: 2px 10px;
+    border-radius: var(--radius-pill);
+    margin-bottom: 6px;
+    box-shadow: 0 2px 8px var(--color-primary-glow);
+}
+
+.matrix-plan-title {
+    display: block;
+}
+
+/* Filas de categorías */
+.matrix-category-row th {
+    background: var(--light-bg-subtle);
+    color: var(--light-text-heading);
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.95rem 1.75rem;
+    border-top: 1px solid var(--light-border);
+    border-bottom: 1px solid var(--light-border);
+}
+
+/* Celdas del cuerpo */
+.comparison-matrix-table td {
+    padding: 1.05rem 1.25rem;
+    border-bottom: 1px solid var(--light-border);
+    vertical-align: middle;
+    font-size: 0.925rem;
+}
+
+.matrix-feature-name {
+    padding-left: 1.75rem;
+}
+
+.matrix-feature-name strong {
+    display: block;
+    font-weight: 600;
+    color: var(--light-text-heading);
+    margin-bottom: 2px;
+}
+
+.matrix-feature-name span {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--light-text-muted);
+}
+
+.matrix-cell {
+    text-align: center;
+}
+
+td.highlight-col {
+    background: rgba(194, 65, 12, 0.025);
+    border-left: 1px solid rgba(194, 65, 12, 0.12);
+    border-right: 1px solid rgba(194, 65, 12, 0.12);
+    font-weight: 600;
+    color: var(--light-text-heading);
+}
+
+/* Pills semánticos */
+.matrix-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    line-height: 1.3;
+}
+
+.matrix-pill.pill-check {
+    background: rgba(16, 185, 129, 0.1);
+    color: #047857;
+    font-weight: 600;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.matrix-check-icon {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+}
+
+.matrix-pill.pill-neutral {
+    color: var(--light-text-muted);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.matrix-pill.pill-text {
+    color: var(--light-text-body);
+    font-weight: 500;
+}
+
+/* Footer de la tabla con CTAs */
+.comparison-matrix-table tfoot td {
+    padding: 1.75rem 1rem;
+    border-bottom: none;
+    background: var(--light-bg-card);
+}
+
+.comparison-matrix-table tfoot td.highlight-col {
+    background: rgba(194, 65, 12, 0.04);
+}
+
+.btn-matrix-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 180px;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s var(--ease-smooth);
+}
+
+.btn-matrix-primary {
+    background: var(--grad-primary);
+    color: #ffffff;
+    box-shadow: 0 4px 14px var(--color-primary-glow);
+}
+
+.btn-matrix-primary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px var(--color-primary-glow);
+}
+
+.btn-matrix-ghost {
+    background: var(--light-bg-subtle);
+    color: var(--light-text-heading);
+    border: 1px solid var(--light-border);
+}
+
+.btn-matrix-ghost:hover {
+    background: #ffffff;
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: translateY(-1px);
+}
+
+/* =====================================================
+   INTERACTIVE FAQ ACCORDION
+   ===================================================== */
+.pricing-faq-section {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 4rem 2rem 8rem;
     position: relative;
     z-index: 2;
     scroll-margin-top: 5.5rem;
 }
 
-.faq-minimal h2 {
+.faq-header {
     text-align: center;
-    font-size: clamp(2rem, 4vw, 3.5rem);
-    color: var(--light-text-heading);
-    margin-bottom: 4rem;
+    margin-bottom: 3.5rem;
+}
+
+.faq-header h2 {
     font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 2.75rem);
     font-weight: 800;
-}
-
-.faq-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 3rem;
-}
-
-.faq-item h4 {
-    font-size: 1.25rem;
     color: var(--light-text-heading);
-    margin-bottom: 1rem;
-    font-weight: 600;
+    line-height: 1.15;
+    margin-bottom: 0.85rem;
+    letter-spacing: -0.02em;
 }
 
-.faq-item p {
-    color: var(--color-text-muted);
+.faq-header p {
+    font-size: 1.1rem;
+    color: var(--light-text-muted);
+    max-width: 620px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.faq-accordion-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.faq-accordion-item {
+    background: var(--light-bg-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--light-border);
+    box-shadow: var(--light-shadow-sm);
+    transition: border-color 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+    overflow: hidden;
+}
+
+.faq-accordion-item:hover {
+    border-color: rgba(194, 65, 12, 0.25);
+    box-shadow: var(--light-shadow-md);
+}
+
+.faq-accordion-item[open] {
+    border-color: var(--color-primary);
+    box-shadow: 0 6px 20px -4px var(--color-primary-glow);
+}
+
+.faq-accordion-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding: 1.35rem 1.75rem;
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--light-text-heading);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    transition: color 0.15s ease;
+}
+
+.faq-accordion-summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq-accordion-summary::marker {
+    display: none;
+}
+
+.faq-accordion-summary:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+    border-radius: var(--radius-md);
+}
+
+.faq-accordion-summary:hover {
+    color: var(--color-primary);
+}
+
+.faq-accordion-chevron {
+    width: 22px;
+    height: 22px;
+    stroke: var(--color-primary);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    flex-shrink: 0;
+    transition: transform 0.25s var(--ease-smooth);
+}
+
+.faq-accordion-item[open] .faq-accordion-chevron {
+    transform: rotate(180deg);
+}
+
+.faq-accordion-content {
+    padding: 0 1.75rem 1.5rem;
+    color: var(--light-text-body);
     font-size: 1rem;
     line-height: 1.7;
+    animation: faqSlideDown 0.2s var(--ease-smooth);
+}
+
+@keyframes faqSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* =====================================================
-   ARQUITECTURA DE REVELACIÓN SCROLL-TRIGGERED (STRIPE / LINEAR)
+   MOBILE STICKY CONVERSION BAR
+   ===================================================== */
+.mobile-sticky-bar {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .pricing-page {
+        padding-bottom: 5.5rem;
+    }
+
+    .mobile-sticky-bar {
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 90;
+        background: rgba(250, 247, 242, 0.94);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(28, 25, 23, 0.1);
+        box-shadow: 0 -4px 20px rgba(28, 25, 23, 0.08);
+        padding: 0.75rem 1.25rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+        animation: stickySlideUp 0.3s var(--ease-smooth);
+    }
+
+    .sticky-bar-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 480px;
+        margin: 0 auto;
+        gap: 1rem;
+    }
+
+    .sticky-bar-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .sticky-plan-badge {
+        font-family: var(--font-heading);
+        font-size: 0.725rem;
+        font-weight: 700;
+        color: var(--color-primary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .sticky-price-display {
+        font-family: var(--font-heading);
+        font-size: 1.25rem;
+        color: var(--light-text-heading);
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .sticky-price-val {
+        font-weight: 800;
+    }
+
+    .sticky-price-period {
+        font-size: 0.8rem;
+        color: var(--light-text-muted);
+        font-weight: 500;
+        margin-left: 2px;
+    }
+
+    .sticky-reassurance {
+        font-size: 0.7rem;
+        color: #047857;
+        font-weight: 600;
+    }
+
+    .sticky-bar-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--grad-primary);
+        color: #ffffff;
+        text-decoration: none;
+        font-family: var(--font-heading);
+        font-size: 0.9rem;
+        font-weight: 700;
+        padding: 0.75rem 1.25rem;
+        border-radius: var(--radius-sm);
+        box-shadow: 0 4px 14px var(--color-primary-glow);
+        white-space: nowrap;
+        transition: transform 0.15s ease;
+    }
+
+    .sticky-bar-cta:active {
+        transform: scale(0.97);
+    }
+}
+
+@keyframes stickySlideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* =====================================================
+   REVELACIÓN SCROLL & PROGRESSIVE ENHANCEMENT
    ===================================================== */
 .reveal {
     opacity: 0;
     transform: translateY(18px);
     transition:
-        opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+        opacity 0.65s var(--ease-smooth),
+        transform 0.65s var(--ease-smooth);
     will-change: opacity, transform;
 }
 
@@ -349,7 +887,7 @@ html {
 
 .pricing-card.popular.reveal.is-revealed,
 .pricing-card.popular.reveal.active {
-    transform: scale(1.04) translateY(0);
+    transform: scale(1.03) translateY(0);
 }
 
 @media (max-width: 1024px) {
@@ -367,8 +905,34 @@ html {
     transition-delay: 0.16s;
 }
 
+/* Scroll-Driven Animations nativas con CSS */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .comparison-matrix-section,
+        .pricing-faq-section {
+            animation: scrollSectionReveal linear both;
+            animation-timeline: view();
+            animation-range: entry 5% cover 25%;
+        }
+    }
+}
+
+@keyframes scrollSectionReveal {
+    from {
+        opacity: 0.35;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
-    .reveal {
+    .reveal,
+    .comparison-matrix-section,
+    .pricing-faq-section,
+    .mobile-sticky-bar {
         animation: none !important;
         opacity: 1 !important;
         transform: none !important;

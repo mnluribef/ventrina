@@ -1,7 +1,44 @@
 ---
 // src/pages/404.astro
-// Página de Error 404 Institucional de Ventrina SaaS
+// Página de Error 404 — Ventrina Atelier (Catálogos Virtuales & Comercio Conversacional)
 import '../styles/404.css';
+
+const currentYear = new Date().getFullYear();
+
+const demoStores = [
+    {
+        href: '/demo/restaurant',
+        emoji: '🍽️',
+        category: 'Gastronomía & Delivery',
+        title: 'Restaurante & Delivery',
+        description: 'Menú digital interactivo con adiciones, combos y pedidos directos a WhatsApp.',
+        icon: 'restaurant',
+    },
+    {
+        href: '/demo/fashion',
+        emoji: '👗',
+        category: 'Boutique & Colecciones',
+        title: 'Moda & Ropa Boutique',
+        description: 'Catálogo visual para indumentaria con selector de tallas, variantes de color y stock.',
+        icon: 'fashion',
+    },
+    {
+        href: '/demo/hardware',
+        emoji: '🔨',
+        category: 'Industrial & Suministros',
+        title: 'Ferretería & Herramientas',
+        description: 'Inventario técnico con filtros ágiles, fichas por código y cálculo de pedidos.',
+        icon: 'hardware',
+    },
+    {
+        href: '/demo/tech',
+        emoji: '⚡',
+        category: 'Electrónica & Equipos',
+        title: 'Tecnología & Gadgets',
+        description: 'Fichas de especificaciones con cotización instantánea y asesoría comercial.',
+        icon: 'tech',
+    },
+];
 ---
 
 <!DOCTYPE html>
@@ -9,36 +46,178 @@ import '../styles/404.css';
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Página no encontrada (404) | Ventrina</title>
-    <meta name="description" content="La página que buscas no existe o ha sido movida. Explora la plataforma Ventrina para crear catálogos virtuales e impulsar tus ventas." />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>404: Escaparate no encontrado | Ventrina</title>
+    <meta name="description" content="La página o tienda que buscas no existe o ha sido trasladada. Explora nuestras tiendas modelo en vivo o crea tu catálogo virtual en Ventrina." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
 </head>
 <body class="e404-body">
-    <div class="e404-bg-glow"></div>
+    <!-- Fondos y Glows de Autor: Terracota Atelier -->
+    <div class="e404-ambient" aria-hidden="true">
+        <div class="e404-glow-primary"></div>
+        <div class="e404-glow-amber"></div>
+    </div>
 
+    <!-- Barra Superior Mínima de Marca -->
+    <header class="e404-header">
+        <div class="e404-header-inner">
+            <a href="/" class="e404-brand" aria-label="Ir al inicio de Ventrina">
+                <svg class="e404-brand-symbol" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="4" />
+                    <path d="M3 9h18" />
+                    <path d="M9 21V9" />
+                    <circle cx="15" cy="15" r="2" />
+                </svg>
+                <span class="e404-brand-text">Vent<span class="e404-brand-accent">rina</span></span>
+            </a>
+            <a href="/login" class="e404-header-admin-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <span>Acceso Admin</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
     <main class="e404-container">
-        <div class="e404-card">
-            <div class="e404-code">404</div>
-            <h1 class="e404-title">Página no encontrada</h1>
+        <!-- Hero Card de Recuperación Emocional -->
+        <article class="e404-card">
+            <!-- Emblema de Escaparate Arquitectónico -->
+            <div class="e404-vitrine-mark" aria-hidden="true">
+                <svg class="e404-vitrine-svg" width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Toldo / Awning Boutique -->
+                    <path d="M8 20C8 16 12 12 16 12H48C52 12 56 16 56 20V24H8V20Z" fill="currentColor" class="e404-svg-terracotta" />
+                    <path d="M8 24C10.5 27 13.5 27 16 24C18.5 27 21.5 27 24 24C26.5 27 29.5 27 32 24C34.5 27 37.5 27 40 24C42.5 27 45.5 27 48 24C50.5 27 53.5 27 56 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="e404-svg-amber" />
+                    <!-- Estructura del Escaparate -->
+                    <rect x="12" y="24" width="40" height="28" rx="2" stroke="currentColor" stroke-width="2" class="e404-svg-outline" />
+                    <line x1="32" y1="24" x2="32" y2="52" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3" class="e404-svg-divider" />
+                    <!-- Pedestal Central / Expositor Vacío -->
+                    <ellipse cx="32" cy="46" rx="8" ry="2.5" fill="currentColor" class="e404-svg-tint" />
+                    <!-- Linterna / Destello Cálido -->
+                    <path d="M32 34L33.5 38.5L38 40L33.5 41.5L32 46L30.5 41.5L26 40L30.5 38.5L32 34Z" fill="currentColor" class="e404-svg-sparkle" />
+                    <!-- Lámpara Farolillo Exterior -->
+                    <path d="M56 26H59V33H56" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="e404-svg-terracotta" />
+                    <circle cx="59" cy="35" r="2" fill="currentColor" class="e404-svg-amber" />
+                </svg>
+            </div>
+
+            <!-- Tipografía 404 Expresiva con Contrarrelieve -->
+            <div class="e404-code-display" aria-label="Código de error 404">
+                <span class="e404-code-text">404</span>
+            </div>
+
+            <!-- Titular Cálido de Escaparate -->
+            <h1 class="e404-title">Escaparate no encontrado</h1>
+
+            <!-- Microcopy de Acompañamiento -->
             <p class="e404-desc">
-                La dirección no existe o ha sido trasladada.
+                La página o producto que buscas no existe o fue movido. Pero puedes explorar nuestras tiendas modelo o crear la tuya en minutos.
             </p>
+
+            <!-- Acciones Primarias y Secundarias -->
             <div class="e404-actions">
                 <a href="/" class="e404-btn e404-btn-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                         <polyline points="9 22 9 12 15 12 15 22" />
                     </svg>
                     <span>Ir al Inicio</span>
                 </a>
-                <a href="/login" class="e404-btn e404-btn-secondary">
-                    <span>Acceso al Panel</span>
+                <a href="/register" class="e404-btn e404-btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" />
+                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                        <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
+                        <path d="M2 7h20" />
+                        <circle cx="12" cy="11" r="2" />
+                    </svg>
+                    <span>Crear mi Tienda Gratis</span>
                 </a>
             </div>
-        </div>
+
+            <!-- Enlace Terciario -->
+            <div class="e404-tertiary-wrap">
+                <a href="/login" class="e404-btn-tertiary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <span>Acceso al Panel Admin</span>
+                </a>
+            </div>
+        </article>
+
+        <!-- Tarjetas Interactivas de Demos (Visual Shortcuts) -->
+        <section class="e404-demos-section" aria-labelledby="demos-heading">
+            <div class="e404-demos-header">
+                <h2 id="demos-heading" class="e404-demos-title">Explora tiendas modelo en vivo</h2>
+                <p class="e404-demos-subtitle">Conoce cómo se ve un catálogo en acción según cada rubro comercial.</p>
+            </div>
+
+            <div class="e404-demos-grid">
+                {demoStores.map((demo) => (
+                    <a href={demo.href} class="e404-demo-card">
+                        <div class="e404-demo-top">
+                            <div class="e404-demo-icon-wrap" aria-hidden="true">
+                                {demo.icon === 'restaurant' && (
+                                    <svg class="e404-demo-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M18 2v20"/>
+                                        <path d="M22 6a4 4 0 0 0-4-4v0a4 4 0 0 0-4 4v7a4 4 0 0 0 4 4h0a4 4 0 0 0 4-4V6z"/>
+                                        <path d="M6 2v7a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V2"/>
+                                        <path d="M8 11v11"/>
+                                    </svg>
+                                )}
+                                {demo.icon === 'fashion' && (
+                                    <svg class="e404-demo-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+                                        <path d="M3 6h18"/>
+                                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                                    </svg>
+                                )}
+                                {demo.icon === 'hardware' && (
+                                    <svg class="e404-demo-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"/>
+                                        <path d="M17.64 15 22 10.64"/>
+                                        <path d="m20.91 3.26-1.57-1.57a2.5 2.5 0 0 0-3.54 0L13.5 4a2 2 0 0 0 0 2.83l3.67 3.67a2 2 0 0 0 2.83 0l2.3-2.3a2.5 2.5 0 0 0 .61-4.94z"/>
+                                    </svg>
+                                )}
+                                {demo.icon === 'tech' && (
+                                    <svg class="e404-demo-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/>
+                                        <path d="M12 18h.01"/>
+                                        <path d="m13 6-3 5h4l-2 5"/>
+                                    </svg>
+                                )}
+                            </div>
+                            <span class="e404-demo-tag">
+                                <span class="e404-demo-emoji">{demo.emoji}</span>
+                                <span>{demo.category}</span>
+                            </span>
+                        </div>
+                        <h3 class="e404-demo-title">{demo.title}</h3>
+                        <p class="e404-demo-desc">{demo.description}</p>
+                        <div class="e404-demo-cta">
+                            <span>Ver demo</span>
+                            <svg class="e404-demo-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M5 12h14" />
+                                <path d="m12 5 7 7-7 7" />
+                            </svg>
+                        </div>
+                    </a>
+                ))}
+            </div>
+        </section>
     </main>
+
+    <!-- Footer Mínimo y Elegante -->
+    <footer class="e404-footer">
+        <p class="e404-footer-text">
+            © {currentYear} Ventrina Atelier • Plataforma para Catálogos y Comercio Conversacional
+        </p>
+    </footer>
 </body>
 </html>

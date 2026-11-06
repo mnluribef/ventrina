@@ -1,4 +1,5 @@
 import { type ConfirmModalOptions, getModalService } from './services/modal.service';
+import { renderIconSvg } from '../components/common/icons';
 
 interface BillingInfo {
     expiresAt?: string | null;
@@ -33,8 +34,6 @@ interface SystemSummary {
     templateBreakdown: Record<string, number>;
 }
 
-import { renderIconSvg } from '../components/common/icons';
-
 function getIconSvg(name: string, extraClass = 'sa-icon-sm'): string {
     return renderIconSvg(name, { class: extraClass });
 }
@@ -43,6 +42,7 @@ function getIconSvg(name: string, extraClass = 'sa-icon-sm'): string {
 let masterToken = sessionStorage.getItem('sa_token') || '';
 let allTenants: TenantItem[] = [];
 let activeTemplateFilter = 'all';
+let activeStatusFilter: 'all' | 'active' | 'trial' | 'suspended' = 'all';
 
 // DOM Elements
 const loginStep = document.getElementById('sa-login-step');
@@ -57,6 +57,13 @@ const refreshBtn = document.getElementById('sa-refresh-btn');
 const cleanupBtn = document.getElementById('sa-cleanup-btn');
 const exportCsvBtn = document.getElementById('sa-export-csv-btn');
 
+// Status Filter Tabs
+const statusTabsContainer = document.getElementById('sa-status-tabs');
+const badgeCountAll = document.getElementById('badge-count-all');
+const badgeCountActive = document.getElementById('badge-count-active');
+const badgeCountTrial = document.getElementById('badge-count-trial');
+const badgeCountSuspended = document.getElementById('badge-count-suspended');
+
 // Search & Filter Elements
 const searchInput = document.getElementById('sa-search-input') as HTMLInputElement | null;
 const searchClearBtn = document.getElementById('sa-search-clear');
@@ -66,7 +73,7 @@ const filterBilling = document.getElementById('sa-filter-billing') as HTMLSelect
 const templateChipsContainer = document.getElementById('sa-template-chips');
 const visibleCountEl = document.getElementById('sa-visible-count');
 
-// Modal Elements
+// Billing Modal Elements
 const billingModal = document.getElementById('sa-billing-modal');
 const modalCloseBtn = document.getElementById('sa-modal-close');
 const modalCancelBtn = document.getElementById('modal-btn-cancel');
@@ -78,6 +85,14 @@ const modalPaymentStatus = document.getElementById('modal-payment-status') as HT
 const modalBillingNotes = document.getElementById('modal-billing-notes') as HTMLTextAreaElement | null;
 const modalPlus30Btn = document.getElementById('modal-btn-plus30');
 const modalPlus365Btn = document.getElementById('modal-btn-plus365');
+
+// Plan Modal Elements
+const planModal = document.getElementById('sa-plan-modal');
+const planModalCloseBtn = document.getElementById('sa-plan-modal-close');
+const planModalCancelBtn = document.getElementById('plan-modal-btn-cancel');
+const planModalSaveBtn = document.getElementById('plan-modal-btn-save');
+const planModalTenantId = document.getElementById('plan-modal-tenant-id') as HTMLInputElement | null;
+const planModalTenantName = document.getElementById('plan-modal-tenant-name');
 
 // Toast Element
 const toastEl = document.getElementById('sa-toast');
@@ -312,6 +327,7 @@ const DEMO_MOCK_TENANTS: TenantItem[] = [
 function loadDemoTenants() {
     allTenants = DEMO_MOCK_TENANTS;
     updateStatsFallback(allTenants);
+    updateStatusTabCounts();
     renderTemplateChips();
     applyFiltersAndRender();
 }
@@ -334,6 +350,7 @@ async function loadTenants() {
                 allTenants = data.tenants || [];
                 updateExecutiveKPIs(data.summary || {});
             }
+            updateStatusTabCounts();
             renderTemplateChips();
             applyFiltersAndRender();
             return;
@@ -380,7 +397,7 @@ function updateExecutiveKPIs(summary: Partial<SystemSummary>) {
 
     if (statTotal) statTotal.textContent = String(total);
     if (statActive) statActive.textContent = `${active} activas`;
-    if (statSuspended) statSuspended.textContent = `${suspended} suspendidas`;
+    if (statSuspended) statSuspended.textContent = `${suspended} susp.`;
     if (statActiveRatio) statActiveRatio.textContent = `${active}/${total} Activas`;
     if (statMrr) statMrr.textContent = `$${mrr.toLocaleString('en-US')}`;
     if (statGmv)
@@ -407,6 +424,18 @@ function updateStatsFallback(tenants: TenantItem[]) {
         totalRevenueMonth: gmv,
         totalOrdersMonth: orders,
     });
+}
+
+function updateStatusTabCounts() {
+    const total = allTenants.length;
+    const active = allTenants.filter((t) => t.active === 1 && t.billing?.paymentStatus !== 'pending').length;
+    const trial = allTenants.filter((t) => !t.billing?.expiresAt || t.billing?.paymentStatus === 'pending').length;
+    const suspended = allTenants.filter((t) => t.active !== 1).length;
+
+    if (badgeCountAll) badgeCountAll.textContent = String(total);
+    if (badgeCountActive) badgeCountActive.textContent = String(active);
+    if (badgeCountTrial) badgeCountTrial.textContent = String(trial);
+    if (badgeCountSuspended) badgeCountSuspended.textContent = String(suspended);
 }
 
 // -------------------------------------------------------------
@@ -462,6 +491,48 @@ templateChipsContainer?.addEventListener('click', (e) => {
 });
 
 // -------------------------------------------------------------
+// Status Filter Tabs Logic (Todas, Activas, En Prueba, Suspendidas)
+// -------------------------------------------------------------
+
+statusTabsContainer?.addEventListener('click', (e) => {
+    const tabBtn = (e.target as HTMLElement)?.closest('.sa-status-tab') as HTMLButtonElement | null;
+    if (!tabBtn) return;
+    const filterVal = (tabBtn.dataset.statusFilter || 'all') as 'all' | 'active' | 'trial' | 'suspended';
+    activeStatusFilter = filterVal;
+
+    // Update active tab styles & ARIA attributes
+    const allTabs = statusTabsContainer.querySelectorAll('.sa-status-tab');
+    allTabs.forEach((tab) => {
+        tab.classList.remove('active');
+        tab.setAttribute('aria-selected', 'false');
+    });
+    tabBtn.classList.add('active');
+    tabBtn.setAttribute('aria-selected', 'true');
+
+    // Sync status dropdown selector
+    if (filterStatus) {
+        if (filterVal === 'active' || filterVal === 'suspended') {
+            filterStatus.value = filterVal;
+        } else {
+            filterStatus.value = 'all';
+        }
+    }
+
+    applyFiltersAndRender();
+});
+
+function updateStatusTabUI() {
+    if (!statusTabsContainer) return;
+    const allTabs = statusTabsContainer.querySelectorAll('.sa-status-tab');
+    allTabs.forEach((tab) => {
+        const btn = tab as HTMLButtonElement;
+        const matches = btn.dataset.statusFilter === activeStatusFilter;
+        btn.classList.toggle('active', matches);
+        btn.setAttribute('aria-selected', matches ? 'true' : 'false');
+    });
+}
+
+// -------------------------------------------------------------
 // Search & Filter Logic
 // -------------------------------------------------------------
 
@@ -482,7 +553,13 @@ searchClearBtn?.addEventListener('click', () => {
     applyFiltersAndRender();
 });
 
-filterStatus?.addEventListener('change', applyFiltersAndRender);
+filterStatus?.addEventListener('change', () => {
+    const val = filterStatus.value;
+    activeStatusFilter = val === 'active' ? 'active' : val === 'suspended' ? 'suspended' : 'all';
+    updateStatusTabUI();
+    applyFiltersAndRender();
+});
+
 filterPlan?.addEventListener('change', applyFiltersAndRender);
 filterBilling?.addEventListener('change', applyFiltersAndRender);
 
@@ -500,7 +577,17 @@ function applyFiltersAndRender() {
             return false;
         }
 
-        // Status filter
+        // Status Tabs filter
+        if (activeStatusFilter === 'active') {
+            if (t.active !== 1 || t.billing?.paymentStatus === 'pending') return false;
+        } else if (activeStatusFilter === 'trial') {
+            const isTrial = !t.billing?.expiresAt || t.billing?.paymentStatus === 'pending';
+            if (!isTrial) return false;
+        } else if (activeStatusFilter === 'suspended') {
+            if (t.active === 1) return false;
+        }
+
+        // Status dropdown filter (granular)
         if (statusVal === 'active' && t.active !== 1) return false;
         if (statusVal === 'suspended' && t.active === 1) return false;
 
@@ -569,10 +656,48 @@ function renderTable(tenants: TenantItem[]) {
         .map((t) => {
             const isActive = t.active === 1;
             const statusBadge = isActive
-                ? `<span class="badge badge-active">${getIconSvg('check-circle', 'sa-icon-sm')} Activo</span>`
-                : `<span class="badge badge-suspended">${getIconSvg('ban', 'sa-icon-sm')} Suspendido</span>`;
+                ? `<span class="badge badge-active">${getIconSvg('check-circle', 'sa-icon-xs')} Activo</span>`
+                : `<span class="badge badge-suspended">${getIconSvg('ban', 'sa-icon-xs')} Suspendido</span>`;
 
             const templateMeta = TEMPLATE_NAMES[t.template] || { label: t.template, iconKey: 'grid' };
+
+            // Plan Tier Badge representation
+            let planBadgeHtml = '';
+            let planLabel = '';
+            let planIconKey = 'box';
+            let planPrice = '$15';
+
+            if (t.plan === 'enterprise') {
+                planLabel = 'Empresarial';
+                planIconKey = 'sparkles';
+                planPrice = '$99';
+                planBadgeHtml = `
+                    <span class="badge-tier badge-tier-enterprise">
+                        ${getIconSvg(planIconKey, 'sa-icon-xs')}
+                        <span>${planLabel}</span>
+                    </span>
+                `;
+            } else if (t.plan === 'pro') {
+                planLabel = 'Profesional';
+                planIconKey = 'zap';
+                planPrice = '$30';
+                planBadgeHtml = `
+                    <span class="badge-tier badge-tier-pro">
+                        ${getIconSvg(planIconKey, 'sa-icon-xs')}
+                        <span>${planLabel}</span>
+                    </span>
+                `;
+            } else {
+                planLabel = 'Básico';
+                planIconKey = 'box';
+                planPrice = '$15';
+                planBadgeHtml = `
+                    <span class="badge-tier badge-tier-basic">
+                        ${getIconSvg(planIconKey, 'sa-icon-xs')}
+                        <span>${planLabel}</span>
+                    </span>
+                `;
+            }
 
             // Usage and limits
             const prodCount = Number(t.product_count || 0);
@@ -583,7 +708,7 @@ function renderTable(tenants: TenantItem[]) {
             const usageBadgeClass = isNearLimit ? 'sa-usage-badge limit-warning' : 'sa-usage-badge';
 
             // Billing status calculation
-            let billingBadgeHtml = `<span class="billing-badge billing-badge-warning">${getIconSvg('alert-triangle', 'sa-icon-sm')} Trial / Sin fecha</span>`;
+            let billingBadgeHtml = `<span class="billing-badge billing-badge-warning">${getIconSvg('alert-triangle', 'sa-icon-xs')} Trial / Sin fecha</span>`;
             let daysRemaining: number | null = null;
 
             if (t.billing?.expiresAt) {
@@ -591,11 +716,11 @@ function renderTable(tenants: TenantItem[]) {
                 daysRemaining = Math.ceil((expDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
                 if (daysRemaining < 0) {
-                    billingBadgeHtml = `<span class="billing-badge billing-badge-overdue">${getIconSvg('alert-circle', 'sa-icon-sm')} Vencido (${Math.abs(daysRemaining)}d)</span>`;
+                    billingBadgeHtml = `<span class="billing-badge billing-badge-overdue">${getIconSvg('alert-circle', 'sa-icon-xs')} Vencido (${Math.abs(daysRemaining)}d)</span>`;
                 } else if (daysRemaining <= 5) {
-                    billingBadgeHtml = `<span class="billing-badge billing-badge-warning">${getIconSvg('alert-triangle', 'sa-icon-sm')} Vence en ${daysRemaining}d</span>`;
+                    billingBadgeHtml = `<span class="billing-badge billing-badge-warning">${getIconSvg('alert-triangle', 'sa-icon-xs')} Vence en ${daysRemaining}d</span>`;
                 } else {
-                    billingBadgeHtml = `<span class="billing-badge billing-badge-active">${getIconSvg('check-circle', 'sa-icon-sm')} Al día (${daysRemaining}d)</span>`;
+                    billingBadgeHtml = `<span class="billing-badge billing-badge-active">${getIconSvg('check-circle', 'sa-icon-xs')} Al día (${daysRemaining}d)</span>`;
                 }
             }
 
@@ -607,7 +732,7 @@ function renderTable(tenants: TenantItem[]) {
                     `Hola ${t.name}, te saludamos de Ventrina SaaS 👋. Te recordamos la cuota mensual de tu catálogo virtual (Plan ${t.plan.toUpperCase()}). ¿Deseas renovar tu servicio hoy? Quedamos atentos.`,
                 );
                 waButtonHtml = `
-                <a href="https://wa.me/${cleanWa}?text=${reminderMsg}" target="_blank" class="btn-mini btn-mini-wa" title="Enviar recordatorio de cobro por WhatsApp">
+                <a href="https://wa.me/${cleanWa}?text=${reminderMsg}" target="_blank" rel="noopener noreferrer" class="btn-mini btn-mini-wa" title="Enviar recordatorio de cobro por WhatsApp" aria-label="Enviar recordatorio de cobro por WhatsApp">
                     ${getIconSvg('whatsapp', 'sa-icon-sm')}
                     <span>Cobrar</span>
                 </a>
@@ -617,16 +742,12 @@ function renderTable(tenants: TenantItem[]) {
             // URLs & Contact
             const storeUrl = t.domain ? `https://${t.domain}` : `https://${t.id}.ventrina.app`;
             const waContactLink = cleanWa
-                ? `<a href="https://wa.me/${cleanWa}" target="_blank" class="whatsapp-link-sm" title="Contactar vía WhatsApp">${getIconSvg('whatsapp', 'sa-icon-sm')} +${cleanWa}</a>`
+                ? `<a href="https://wa.me/${cleanWa}" target="_blank" rel="noopener noreferrer" class="whatsapp-link-sm" title="Contactar vía WhatsApp">${getIconSvg('whatsapp', 'sa-icon-sm')} +${cleanWa}</a>`
                 : '<span class="tenant-meta-sub">Sin WhatsApp</span>';
 
             const ownerEmailDisplay = t.owner_email
                 ? `<span class="owner-email-sm" title="Dueño / Admin">${getIconSvg('mail', 'sa-icon-sm')} ${escapeHtml(t.owner_email)}</span>`
                 : '';
-
-            const btnSuspend = isActive
-                ? `<button class="btn-suspend" data-action="toggle-status" data-tenant-id="${t.id}" data-status="0" title="Suspender acceso a la tienda">${getIconSvg('ban', 'sa-icon-sm')} <span>Suspender</span></button>`
-                : `<button class="btn-suspend activate" data-action="toggle-status" data-tenant-id="${t.id}" data-status="1" title="Reactivar acceso a la tienda">${getIconSvg('power', 'sa-icon-sm')} <span>Activar</span></button>`;
 
             const avatarInitials = getInitials(t.name || t.id);
 
@@ -636,7 +757,7 @@ function renderTable(tenants: TenantItem[]) {
                     <div class="tenant-cell-main">
                         <div class="tenant-avatar">${avatarInitials}</div>
                         <div class="tenant-identity-meta">
-                            <a href="${storeUrl}" target="_blank" class="tenant-link">
+                            <a href="${storeUrl}" target="_blank" rel="noopener noreferrer" class="tenant-link">
                                 <span>${t.id}.ventrina.app</span>
                                 ${getIconSvg('external-link', 'sa-icon-sm')}
                             </a>
@@ -655,25 +776,26 @@ function renderTable(tenants: TenantItem[]) {
                 </td>
                 <td>
                     <span class="badge badge-template">
-                        ${getIconSvg(templateMeta.iconKey, 'sa-icon-sm')}
+                        ${getIconSvg(templateMeta.iconKey, 'sa-icon-xs')}
                         <span>${templateMeta.label}</span>
                     </span>
                 </td>
                 <td>
-                    <select class="action-select" data-action="change-plan" data-tenant-id="${t.id}">
-                        <option value="basic" ${t.plan === 'basic' ? 'selected' : ''}>Básico ($15 / 30 prod)</option>
-                        <option value="pro" ${t.plan === 'pro' ? 'selected' : ''}>PRO ($30 / 200 prod)</option>
-                        <option value="enterprise" ${t.plan === 'enterprise' ? 'selected' : ''}>Enterprise ($99 / Ilimitado)</option>
-                    </select>
-                    <div>
-                        <span class="${usageBadgeClass}">${prodCount} / ${maxProd} prod.</span>
+                    <div class="tenant-plan-col">
+                        <div class="tenant-plan-header">
+                            ${planBadgeHtml}
+                            <span class="tier-price">${planPrice}/m</span>
+                        </div>
+                        <div class="tenant-usage-row">
+                            <span class="${usageBadgeClass}">${prodCount} / ${maxProd} prod.</span>
+                        </div>
                     </div>
                 </td>
                 <td>
                     <div class="billing-cell">
                         ${billingBadgeHtml}
                         <div class="billing-actions-row">
-                            <button type="button" class="btn-mini" data-action="manage-billing" data-tenant-id="${t.id}" title="Configurar fecha de expiración y notas">
+                            <button type="button" class="btn-mini" data-action="manage-billing" data-tenant-id="${t.id}" title="Configurar fecha de expiración y notas" aria-label="Gestionar facturación de ${escapeHtml(t.name)}">
                                 ${getIconSvg('calendar-cog', 'sa-icon-sm')}
                                 <span>Facturación</span>
                             </button>
@@ -692,11 +814,22 @@ function renderTable(tenants: TenantItem[]) {
                 <td>${statusBadge}</td>
                 <td class="sa-table-right">
                     <div class="table-actions-cell">
-                        <button type="button" class="btn-impersonate" data-action="impersonate" data-tenant-id="${t.id}" title="Entrar directamente al panel administrativo de esta tienda">
-                            ${getIconSvg('user-check', 'sa-icon-sm')}
-                            <span>Entrar Admin</span>
+                        <a href="${storeUrl}" target="_blank" rel="noopener noreferrer" class="sa-btn-action sa-btn-view" title="Ver catálogo público de ${escapeHtml(t.name)}" aria-label="Ver tienda pública ${escapeHtml(t.name)}">
+                            ${getIconSvg('external-link', 'sa-icon-xs')}
+                            <span>Ver</span>
+                        </a>
+                        <button type="button" class="sa-btn-action sa-btn-edit-plan" data-action="open-plan-modal" data-tenant-id="${t.id}" data-current-plan="${t.plan}" data-tenant-name="${escapeHtml(t.name)}" title="Editar plan y límites de ${escapeHtml(t.name)}" aria-label="Editar plan de suscripción de ${escapeHtml(t.name)}">
+                            ${getIconSvg('zap', 'sa-icon-xs')}
+                            <span>Plan</span>
                         </button>
-                        ${btnSuspend}
+                        <button type="button" class="sa-btn-action sa-btn-admin" data-action="impersonate" data-tenant-id="${t.id}" title="Acceso de soporte como Administrador a ${escapeHtml(t.name)}" aria-label="Entrar como administrador a ${escapeHtml(t.name)}">
+                            ${getIconSvg('user-check', 'sa-icon-xs')}
+                            <span>Admin</span>
+                        </button>
+                        <button type="button" class="sa-btn-action ${isActive ? 'sa-btn-suspend' : 'sa-btn-activate'}" data-action="toggle-status" data-tenant-id="${t.id}" data-status="${isActive ? 0 : 1}" title="${isActive ? 'Suspender acceso a la tienda' : 'Reactivar acceso a la tienda'}" aria-label="${isActive ? 'Suspender tienda ' + escapeHtml(t.name) : 'Reactivar tienda ' + escapeHtml(t.name)}">
+                            ${getIconSvg(isActive ? 'ban' : 'power', 'sa-icon-xs')}
+                            <span>${isActive ? 'Suspender' : 'Activar'}</span>
+                        </button>
                     </div>
                 </td>
             </tr>
@@ -710,36 +843,22 @@ function renderTable(tenants: TenantItem[]) {
 // -------------------------------------------------------------
 
 if (tbody) {
-    // 1. Plan Change
-    tbody.addEventListener('change', async (e) => {
-        const target = e.target as HTMLElement | null;
-        if (target?.matches('select[data-action="change-plan"]')) {
-            const select = target as unknown as HTMLSelectElement;
-            const tenantId = select.dataset.tenantId;
-            if (!tenantId) return;
-            const newPlan = select.value;
-            const confirmed = await showSuperAdminConfirmModal({
-                title: '¿Cambiar plan de la tienda?',
-                subtitle: `Tienda: ${tenantId}`,
-                message: `¿Cambiar el plan de la tienda "${tenantId}" a ${newPlan.toUpperCase()}? Se ajustarán los límites correspondientes.`,
-                confirmText: 'Cambiar Plan',
-                cancelText: 'Cancelar',
-                variant: 'warning',
-                icon: 'zap',
-            });
-            if (!confirmed) {
-                loadTenants();
-                return;
-            }
-            await updateTenant(tenantId, 'change_plan', newPlan);
-        }
-    });
-
-    // 2. Click Actions (Impersonate, Toggle Status, Manage Billing)
     tbody.addEventListener('click', async (e) => {
         const target = e.target as HTMLElement | null;
 
-        // Toggle Status
+        // 1. Open Plan Modal
+        const btnPlan = target?.closest('button[data-action="open-plan-modal"]') as HTMLButtonElement | null;
+        if (btnPlan) {
+            const tenantId = btnPlan.dataset.tenantId;
+            const currentPlan = btnPlan.dataset.currentPlan || 'basic';
+            const tenantName = btnPlan.dataset.tenantName || tenantId || '';
+            if (tenantId) {
+                openPlanModal(tenantId, currentPlan, tenantName);
+            }
+            return;
+        }
+
+        // 2. Toggle Status (Suspend / Reactivate)
         const btnSuspend = target?.closest('button[data-action="toggle-status"]') as HTMLButtonElement | null;
         if (btnSuspend) {
             const tenantId = btnSuspend.dataset.tenantId;
@@ -760,7 +879,7 @@ if (tbody) {
             return;
         }
 
-        // Impersonate
+        // 3. Impersonate (Admin Session)
         const btnImpersonate = target?.closest('button[data-action="impersonate"]') as HTMLButtonElement | null;
         if (btnImpersonate) {
             const tenantId = btnImpersonate.dataset.tenantId;
@@ -769,7 +888,7 @@ if (tbody) {
             return;
         }
 
-        // Manage Billing
+        // 4. Manage Billing
         const btnBilling = target?.closest('button[data-action="manage-billing"]') as HTMLButtonElement | null;
         if (btnBilling) {
             const tenantId = btnBilling.dataset.tenantId;
@@ -829,6 +948,54 @@ async function updateTenant(tenantId: string, action: string, value: any) {
         showToast('Error de red al actualizar tienda.', 'error');
     }
 }
+
+// -------------------------------------------------------------
+// Plan Management Modal
+// -------------------------------------------------------------
+
+function openPlanModal(tenantId: string, currentPlan: string, tenantName?: string) {
+    if (!planModal) return;
+    if (planModalTenantId) planModalTenantId.value = tenantId;
+    if (planModalTenantName) {
+        planModalTenantName.textContent = tenantName ? `${tenantName} (${tenantId}.ventrina.app)` : tenantId;
+    }
+    const radio = planModal.querySelector(
+        `input[name="sa-plan-choice"][value="${currentPlan}"]`,
+    ) as HTMLInputElement | null;
+    if (radio) {
+        radio.checked = true;
+    }
+    planModal.classList.remove('hidden');
+}
+
+function closePlanModal() {
+    planModal?.classList.add('hidden');
+}
+
+planModalCloseBtn?.addEventListener('click', closePlanModal);
+planModalCancelBtn?.addEventListener('click', closePlanModal);
+
+planModalSaveBtn?.addEventListener('click', async () => {
+    if (!planModalTenantId) return;
+    const tenantId = planModalTenantId.value;
+    const checkedRadio = planModal?.querySelector('input[name="sa-plan-choice"]:checked') as HTMLInputElement | null;
+    if (!checkedRadio) return;
+    const newPlan = checkedRadio.value;
+
+    const confirmed = await showSuperAdminConfirmModal({
+        title: '¿Confirmar cambio de plan?',
+        subtitle: `Tienda: ${tenantId}`,
+        message: `¿Cambiar el plan de "${tenantId}" a ${newPlan.toUpperCase()}? Se actualizarán los límites de catálogo y facturación.`,
+        confirmText: 'Actualizar Plan',
+        cancelText: 'Cancelar',
+        variant: 'warning',
+        icon: 'zap',
+    });
+    if (!confirmed) return;
+
+    closePlanModal();
+    await updateTenant(tenantId, 'change_plan', newPlan);
+});
 
 // -------------------------------------------------------------
 // Billing Management Modal

@@ -63,6 +63,16 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    // Preselección de plantilla por URL query param (?template=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateQuery = urlParams.get('template');
+    if (templateQuery) {
+        const queryRadio = document.querySelector<HTMLInputElement>(`input[name="template"][value="${templateQuery}"]`);
+        if (queryRadio) {
+            queryRadio.checked = true;
+        }
+    }
+
     // Inicializar fondo con el template marcado por defecto
     const initialCheckedTemplate = document.querySelector<HTMLInputElement>('input[name="template"]:checked');
     if (initialCheckedTemplate) {

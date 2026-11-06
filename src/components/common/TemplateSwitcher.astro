@@ -14,6 +14,7 @@ const templates = [
     {
         id: 'restaurant',
         name: 'Restaurante',
+        category: 'Gastronomía',
         icon: '🍽️',
         url: '/demo/restaurant',
         brand: 'FOGÓN',
@@ -22,6 +23,7 @@ const templates = [
     {
         id: 'hardware',
         name: 'Ferretería',
+        category: 'Ferretería & Hogar',
         icon: '🔨',
         url: '/demo/hardware',
         brand: 'FERROMAX',
@@ -30,15 +32,25 @@ const templates = [
     {
         id: 'fashion',
         name: 'Moda & Ropa',
+        category: 'Boutique & Ropa',
         icon: '👗',
         url: '/demo/fashion',
         brand: 'AURA',
         desc: 'Boutique y Colecciones',
     },
-    { id: 'tech', name: 'Tecnología', icon: '⚡', url: '/demo/tech', brand: 'NEXUS', desc: 'Gadgets y Electrónica' },
+    {
+        id: 'tech',
+        name: 'Tecnología',
+        category: 'Gadgets & Audio',
+        icon: '⚡',
+        url: '/demo/tech',
+        brand: 'NEXUS',
+        desc: 'Gadgets y Electrónica',
+    },
     {
         id: 'autoparts',
         name: 'Repuestos',
+        category: 'Repuestos & Taller',
         icon: '🚗',
         url: '/demo/autoparts',
         brand: 'MOTOPARTS',
@@ -47,6 +59,7 @@ const templates = [
     {
         id: 'grocery',
         name: 'Bodegón',
+        category: 'Víveres & Market',
         icon: '🛒',
         url: '/demo/grocery',
         brand: 'BODEGÓN',
@@ -55,17 +68,18 @@ const templates = [
 ];
 
 const currentTemplate = templates.find((t) => t.id === activeTemplate) || templates[0];
+const registerUrl = `/register?template=${activeTemplate}`;
 ---
 
-<div class="ventrina-template-bar template-switcher" id="ventrina-template-bar">
+<aside class="ventrina-template-bar template-switcher" id="ventrina-template-bar" aria-label="Selector de plantilla de demostración">
   <!-- 1. Barra Flotante para Escritorio (Desktop) -->
-  <div class="template-bar-desktop">
+  <div class="template-bar-desktop" role="toolbar" aria-label="Selector de plantillas y registro rápido">
     <a href="/" class="template-bar-brand" title="Volver a Ventrina SaaS">
-      <span class="pulse-dot"></span>
+      <span class="pulse-dot" aria-hidden="true"></span>
       <span class="brand-title">Ventrina SaaS</span>
     </a>
 
-    <div class="template-bar-pills">
+    <div class="template-bar-pills" role="navigation" aria-label="Plantillas disponibles">
       {templates.map((t) => {
         const isActive = activeTemplate === t.id;
         return (
@@ -73,27 +87,47 @@ const currentTemplate = templates.find((t) => t.id === activeTemplate) || templa
             href={t.url}
             class={`template-pill ${isActive ? 'active' : ''}`}
             title={`Ver plantilla de ${t.name} (${t.brand})`}
+            aria-current={isActive ? 'page' : undefined}
           >
-            <span class="pill-icon">{t.icon}</span>
+            <span class="pill-icon" aria-hidden="true">{t.icon}</span>
             <span class="pill-text">{t.name}</span>
             {isActive && <span class="pill-active-indicator">Activo</span>}
           </a>
         );
       })}
     </div>
+
+    <div class="template-bar-divider" aria-hidden="true"></div>
+
+    <!-- Direct Conversion CTA Button (Desktop) -->
+    <a
+      href={registerUrl}
+      class="template-bar-cta"
+      title={`Crear tienda con plantilla ${currentTemplate.name}`}
+    >
+      <svg class="cta-spark-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+      </svg>
+      <span class="cta-text">Usar plantilla</span>
+      <svg class="cta-arrow-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+    </a>
   </div>
 
-  <!-- 2. Botón Flotante Discreto en Móvil (Bottom-Left, libre de carrito y WhatsApp) -->
+  <!-- 2. Botón Flotante Discreto en Móvil (Bottom-Left) -->
   <button
     type="button"
     class="template-mobile-trigger"
     id="template-mobile-trigger"
     aria-label="Abrir selector de plantillas demo"
     aria-expanded="false"
+    aria-controls="template-sheet-drawer"
   >
-    <span class="mobile-trigger-icon">{currentTemplate.icon}</span>
+    <span class="mobile-trigger-icon" aria-hidden="true">{currentTemplate.icon}</span>
     <span class="mobile-trigger-label">{currentTemplate.name}</span>
-    <svg class="mobile-trigger-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <svg class="mobile-trigger-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <polyline points="18 15 12 9 6 15"></polyline>
     </svg>
   </button>
@@ -101,15 +135,15 @@ const currentTemplate = templates.find((t) => t.id === activeTemplate) || templa
   <!-- 3. Bottom Sheet Modal para Móvil -->
   <div class="template-sheet-overlay" id="template-sheet-overlay" aria-hidden="true"></div>
   <div class="template-sheet-drawer" id="template-sheet-drawer" role="dialog" aria-modal="true" aria-labelledby="template-sheet-title">
-    <div class="template-sheet-handle"></div>
+    <div class="template-sheet-handle" aria-hidden="true"></div>
     
     <div class="template-sheet-header">
-      <div>
-        <div class="template-sheet-tag">Demo Ventrina SaaS</div>
-        <h3 class="template-sheet-title" id="template-sheet-title">Cambiar Plantilla</h3>
+      <div class="template-sheet-header-text">
+        <div class="template-sheet-tag">Demos Ventrina SaaS</div>
+        <h3 class="template-sheet-title" id="template-sheet-title">Explorar Plantillas</h3>
       </div>
       <button type="button" class="template-sheet-close" id="template-sheet-close" aria-label="Cerrar selector">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
@@ -123,10 +157,14 @@ const currentTemplate = templates.find((t) => t.id === activeTemplate) || templa
           <a
             href={t.url}
             class={`template-sheet-card ${isActive ? 'active' : ''}`}
+            aria-current={isActive ? 'page' : undefined}
           >
             <div class="sheet-card-top">
-              <span class="sheet-card-icon">{t.icon}</span>
-              {isActive && <span class="sheet-card-badge">Activo</span>}
+              <span class="sheet-card-icon" aria-hidden="true">{t.icon}</span>
+              <div class="sheet-card-badges">
+                <span class="sheet-card-vertical-badge">{t.category}</span>
+                {isActive && <span class="sheet-card-active-badge">Activo</span>}
+              </div>
             </div>
             <div class="sheet-card-body">
               <span class="sheet-card-name">{t.name}</span>
@@ -136,8 +174,27 @@ const currentTemplate = templates.find((t) => t.id === activeTemplate) || templa
         );
       })}
     </div>
+
+    <!-- Direct Conversion CTA Button (Mobile Sheet Footer) -->
+    <div class="template-sheet-footer">
+      <a href={registerUrl} class="template-sheet-cta-btn">
+        <div class="sheet-cta-icon-box" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+          </svg>
+        </div>
+        <div class="sheet-cta-text-wrap">
+          <span class="sheet-cta-title">Crear tienda con esta plantilla</span>
+          <span class="sheet-cta-subtitle">Plantilla activa: {currentTemplate.name} · Sin comisiones</span>
+        </div>
+        <svg class="sheet-cta-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
   </div>
-</div>
+</aside>
 
 <script>
   // Control de apertura y cierre del Bottom Sheet en móvil

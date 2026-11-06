@@ -10,53 +10,236 @@
       <p>No pagues comisiones ocultas ni sufras configurando plataformas que no entienden tus métodos de pago.</p>
     </div>
 
+    <!-- Mobile swipe indicator hint -->
+    <div class="comp-scroll-hint" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8L22 12L18 16"></path>
+        <path d="M2 12H22"></path>
+      </svg>
+      <span>Desliza la tabla para comparar alternativas</span>
+    </div>
+
     <div class="comparison-table-wrapper">
       <table class="comparison-table">
         <thead>
           <tr>
-            <th>Característica</th>
+            <th class="feature-col">Característica</th>
             <th class="highlight-col">
-              <div class="comp-col-badge">Recomendado</div>
-              <span>Ventrina</span>
+              <div class="comp-col-badge">
+                <svg class="comp-badge-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+                </svg>
+                <span>Recomendado</span>
+              </div>
+              <span class="comp-col-title">Ventrina</span>
+              <span class="comp-col-subtitle">Hecho para Venezuela</span>
             </th>
-            <th>Shopify / WooCommerce</th>
-            <th>Vender Manual por Chat</th>
+            <th class="competitor-col">
+              <span class="comp-col-title">Shopify / WooCommerce</span>
+              <span class="comp-col-subtitle">E-commerce tradicional</span>
+            </th>
+            <th class="competitor-col">
+              <span class="comp-col-title">Vender Manual por Chat</span>
+              <span class="comp-col-subtitle">WhatsApp y DMs directos</span>
+            </th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>Comisión por Venta</strong></td>
-            <td class="highlight-col"><span class="comp-check-pill">✓ 0% (Cero comisiones)</span></td>
-            <td><span class="comp-cross-pill">✕ Hasta 2% + pasarelas</span></td>
-            <td><span class="comp-neutral-pill">0% manual</span></td>
+            <td class="feature-cell">
+              <strong>Cero % comisiones por venta</strong>
+              <span class="feature-desc">El 100% de tus ventas va directo a tu cuenta bancaria.</span>
+            </td>
+            <td class="highlight-col">
+              <span class="comp-check-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>✓ 0% comisiones</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-cross-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <span>✕ Hasta 2% + pasarelas</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-neutral-pill">
+                <span>0% manual</span>
+              </span>
+            </td>
           </tr>
+
           <tr>
-            <td><strong>Tasa BCV Automatizada</strong></td>
-            <td class="highlight-col"><span class="comp-check-pill">✓ Nativa en tiempo real</span></td>
-            <td><span class="comp-cross-pill">✕ Requiere plugins caros</span></td>
-            <td><span class="comp-cross-pill">✕ Manual con calculadora</span></td>
+            <td class="feature-cell">
+              <strong>Tasa BCV oficial automatizada</strong>
+              <span class="feature-desc">Actualización diaria en tiempo real para USD y Bolívares.</span>
+            </td>
+            <td class="highlight-col">
+              <span class="comp-check-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>✓ Nativa en tiempo real</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-cross-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <span>✕ Requiere plugins de pago</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-cross-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <span>✕ Manual con calculadora</span>
+              </span>
+            </td>
           </tr>
+
           <tr>
-            <td><strong>Cierre de Pedidos por WhatsApp</strong></td>
-            <td class="highlight-col"><span class="comp-check-pill">✓ Instantáneo con un clic</span></td>
-            <td><span class="comp-cross-pill">✕ Flujos de email lentos</span></td>
-            <td><span class="comp-neutral-pill">✓ Desordenado</span></td>
+            <td class="feature-cell">
+              <strong>Pasarelas sin comisiones extranjeras</strong>
+              <span class="feature-desc">Pago Móvil, Zelle, Efectivo y transferencias bancarias.</span>
+            </td>
+            <td class="highlight-col">
+              <span class="comp-check-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>✓ Nativos sin recargo</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-cross-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <span>✕ No soportados en VE</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-neutral-pill">
+                <span>Manual por chat</span>
+              </span>
+            </td>
           </tr>
+
           <tr>
-            <td><strong>Carga de Comprobante de Pago</strong></td>
-            <td class="highlight-col"><span class="comp-check-pill">✓ Integrada en el checkout</span></td>
-            <td><span class="comp-cross-pill">✕ No disponible por defecto</span></td>
-            <td><span class="comp-cross-pill">✕ Fotos perdidas en chat</span></td>
+            <td class="feature-cell">
+              <strong>Checkout directo a WhatsApp sin intermediarios</strong>
+              <span class="feature-desc">El pedido llega limpio con desglose, datos de envío y total.</span>
+            </td>
+            <td class="highlight-col">
+              <span class="comp-check-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>✓ Instantáneo en 1 clic</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-cross-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <span>✕ Carrito con emails lentos</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-neutral-pill">
+                <span>Desordenado en chat</span>
+              </span>
+            </td>
           </tr>
+
           <tr>
-            <td><strong>Tiempo de Lanzamiento</strong></td>
-            <td class="highlight-col"><span class="comp-check-pill">✓ Menos de 5 minutos</span></td>
-            <td><span class="comp-cross-pill">✕ Semanas de configuración</span></td>
-            <td><span class="comp-neutral-pill">Inmediato pero ineficiente</span></td>
+            <td class="feature-cell">
+              <strong>Carga de comprobante de pago en el pedido</strong>
+              <span class="feature-desc">Captura adjunta directo en el flujo de confirmación.</span>
+            </td>
+            <td class="highlight-col">
+              <span class="comp-check-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>✓ Integrada en checkout</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-cross-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <span>✕ Requiere apps externas</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-cross-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <span>✕ Fotos perdidas en galería</span>
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="feature-cell">
+              <strong>Sin tarjeta de crédito extranjera obligatoria</strong>
+              <span class="feature-desc">Pagas tu suscripción en Bolívares o Pago Móvil sin trabas.</span>
+            </td>
+            <td class="highlight-col">
+              <span class="comp-check-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>✓ Pago Móvil y Bs nativo</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-cross-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <span>✕ Obligatoria en USD mensual</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-neutral-pill">
+                <span>No aplica</span>
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="feature-cell">
+              <strong>Catálogo en bio con variantes (tallas, colores)</strong>
+              <span class="feature-desc">Diseñado para redes sociales con carga en menos de 1 segundo.</span>
+            </td>
+            <td class="highlight-col">
+              <span class="comp-check-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>✓ Ultra rápido (&lt;1s)</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-neutral-pill">
+                <span>Carga pesada en móviles</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-cross-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <span>✕ Fotos sueltas por DM</span>
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="feature-cell">
+              <strong>Tiempo de configuración y lanzamiento</strong>
+              <span class="feature-desc">Sube tus productos y comparte tu catálogo de inmediato.</span>
+            </td>
+            <td class="highlight-col">
+              <span class="comp-check-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>✓ Menos de 5 minutos</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-cross-pill">
+                <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <span>✕ Semanas de configuración</span>
+              </span>
+            </td>
+            <td>
+              <span class="comp-neutral-pill">
+                <span>Inmediato pero ineficiente</span>
+              </span>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 </section>
-

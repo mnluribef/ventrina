@@ -56,13 +56,38 @@ const saasConfig = {
     <Header config={saasConfig} />
     
     <main class="pricing-page">
+        <!-- Hero Section con Switcher Interactivo -->
         <section class="pricing-hero">
             <div class="pricing-hero-content reveal">
                 <h1>El poder de escalar, <br/><span class="highlight">sin comisiones ocultas</span></h1>
                 <p>Comienza completamente gratis y escala a medida que tu negocio crece. Nuestro modelo es transparente: el 100% de tus ventas es tuyo.</p>
+                
+                <!-- Selector de facturación Mensual vs Anual -->
+                <div class="billing-switcher-container">
+                    <div class="billing-switcher" role="group" aria-label="Frecuencia de facturación">
+                        <button
+                            type="button"
+                            class="billing-toggle-btn active"
+                            data-billing-toggle="annual"
+                            aria-pressed="true"
+                        >
+                            Facturación Anual
+                            <span class="billing-discount-badge">-20% Ahorro Anual</span>
+                        </button>
+                        <button
+                            type="button"
+                            class="billing-toggle-btn"
+                            data-billing-toggle="monthly"
+                            aria-pressed="false"
+                        >
+                            Facturación Mensual
+                        </button>
+                    </div>
+                </div>
             </div>
         </section>
 
+        <!-- Tarjetas de Precios -->
         <section class="pricing-cards-section">
             <div class="pricing-grid">
                 
@@ -70,87 +95,497 @@ const saasConfig = {
                 <div class="pricing-card reveal">
                     <div class="card-header">
                         <h3>Básico</h3>
-                        <p class="price">Gratis</p>
-                        <p class="billing">Para siempre. Cero riesgo.</p>
+                        <div class="price">
+                            <span class="price-val">Gratis</span>
+                        </div>
+                        <p class="billing">Para siempre · Cero riesgo</p>
                     </div>
                     <div class="card-body">
                         <p class="plan-desc">Ideal para emprendedores probando su catálogo y recibiendo sus primeros pedidos en WhatsApp.</p>
                         <ul class="features-list">
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> Catálogo digital responsivo</li>
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> Pedidos detallados a WhatsApp</li>
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> Límite de <strong>30 productos</strong></li>
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> Hasta <strong>100 pedidos</strong> al mes</li>
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> Sincronización básica tasa BCV</li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Catálogo digital responsivo</span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Pedidos detallados a WhatsApp</span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Límite de <strong>30 productos</strong> activos</span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Hasta <strong>100 pedidos</strong> al mes</span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Sincronización oficial Tasa BCV</span>
+                            </li>
                         </ul>
                         <a href="/register" class="btn-outline">Comenzar gratis</a>
                     </div>
                 </div>
 
-                <!-- Plan PRO -->
+                <!-- Plan Profesional (Destacado) -->
                 <div class="pricing-card popular reveal reveal-delay-1">
                     <div class="popular-badge">Más elegido</div>
                     <div class="card-header">
                         <h3>Profesional</h3>
-                        <p class="price">$15<span class="period">/mes</span></p>
-                        <p class="billing">Facturado anualmente o $19 mes a mes</p>
+                        <div class="price">
+                            <span class="price-currency">$</span><span class="price-val" data-plan="pro" data-price-annual="15" data-price-monthly="19">15</span><span class="period">/mes</span>
+                        </div>
+                        <p class="billing" data-plan-billing="pro" data-billing-annual="Facturado anualmente ($180/año)" data-billing-monthly="Facturado mes a mes ($19/mes)">Facturado anualmente ($180/año)</p>
                     </div>
                     <div class="card-body">
                         <p class="plan-desc">El motor definitivo para comercios establecidos que buscan automatizar procesos y manejar volumen.</p>
                         <ul class="features-list">
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> Todo el poder del plan Básico</li>
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> Límite de <strong>500 productos</strong></li>
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> <strong>Pedidos ilimitados</strong> mensuales</li>
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> Gestión avanzada de Inventario</li>
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> Analíticas de Conversión</li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Todo el poder del plan Básico</span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Límite de <strong>500 productos</strong> con fotos HD</span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span><strong>Pedidos ilimitados</strong> mensuales</span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Control avanzado de stock e inventario</span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Comprobante de Pago Móvil en checkout</span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Analíticas de ventas y conversión</span>
+                            </li>
                         </ul>
                         <a href="/register" class="btn-primary">Comenzar ahora</a>
                     </div>
                 </div>
 
-                <!-- Plan Enterprise -->
+                <!-- Plan Empresarial -->
                 <div class="pricing-card reveal reveal-delay-2">
                     <div class="card-header">
                         <h3>Empresarial</h3>
-                        <p class="price">$45<span class="period">/mes</span></p>
-                        <p class="billing">Solución B2B y franquicias</p>
+                        <div class="price">
+                            <span class="price-currency">$</span><span class="price-val" data-plan="enterprise" data-price-annual="39" data-price-monthly="45">39</span><span class="period">/mes</span>
+                        </div>
+                        <p class="billing" data-plan-billing="enterprise" data-billing-annual="Facturado anualmente ($468/año)" data-billing-monthly="Facturado mes a mes ($45/mes)">Facturado anualmente ($468/año)</p>
                     </div>
                     <div class="card-body">
                         <p class="plan-desc">Infraestructura dedicada, marca blanca y soporte prioritario para operaciones a gran escala.</p>
                         <ul class="features-list">
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> <strong>Inventario y Pedidos ilimitados</strong></li>
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> Dominio Personalizado (.com/.ve)</li>
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> Remoción de logo "Ventrina"</li>
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> Acceso a API Privada</li>
-                            <li><svg viewBox="0 0 24 24" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg> Soporte Técnico Dedicado 24/7</li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span><strong>Inventario y pedidos 100% ilimitados</strong></span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Dominio personalizado (.com / .ve)</span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Remoción de logo "Ventrina" (White-label)</span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Multialmacén y multi-sucursal</span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Acceso a API privada y webhooks</span>
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" class="check-icon" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Soporte técnico dedicado 24/7 con SLA</span>
+                            </li>
                         </ul>
-                        <a href="/register" class="btn-outline">Contactar Ventas</a>
+                        <a href="/register" class="btn-outline">Elegir Empresarial</a>
                     </div>
                 </div>
 
             </div>
         </section>
-        
-        <section id="faq" class="faq-minimal reveal">
-            <h2>Preguntas Frecuentes</h2>
-            <div class="faq-grid">
-                <div class="faq-item">
-                    <h4>¿Existe alguna comisión oculta por mis ventas?</h4>
-                    <p>Absolutamente no. A diferencia de otras plataformas o marketplaces, en Ventrina el 100% del dinero de tus ventas va directamente a ti, a través de los métodos que tú configures (Pago Móvil, Zelle, Efectivo).</p>
-                </div>
-                <div class="faq-item">
-                    <h4>¿Me exigen tarjeta de crédito para la versión gratuita?</h4>
-                    <p>No. Puedes abrir tu tienda hoy mismo y mantenerla en el plan Básico para siempre sin introducir ningún dato bancario o de tarjeta de crédito.</p>
-                </div>
-                <div class="faq-item">
-                    <h4>¿La tasa BCV se actualiza sola?</h4>
-                    <p>Sí. Nuestro sistema obtiene diariamente la tasa oficial del Banco Central de Venezuela. Tus clientes verán los precios precisos en Bolívares y Dólares sin que tengas que usar la calculadora.</p>
-                </div>
-                <div class="faq-item">
-                    <h4>¿Puedo cambiar o cancelar mi plan?</h4>
-                    <p>Por supuesto. Desde tu panel administrativo podrás subir o bajar de plan en un clic, o cancelar tu suscripción sin ataduras ni contratos forzosos.</p>
-                </div>
+
+        <!-- Feature Comparison Matrix Section (Tabla Exhaustiva) -->
+        <section class="comparison-matrix-section reveal">
+            <div class="matrix-header">
+                <h2>Tabla comparativa exhaustiva</h2>
+                <p>Transparencia absoluta: evalúa en detalle las capacidades técnicas y beneficios de cada nivel de suscripción.</p>
+            </div>
+
+            <div class="comparison-matrix-wrapper">
+                <table class="comparison-matrix-table">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="matrix-col-feature">Funcionalidad</th>
+                            <th scope="col" class="matrix-col-plan">Básico</th>
+                            <th scope="col" class="matrix-col-plan highlight-col">
+                                <div class="matrix-header-badge">Más elegido</div>
+                                <span class="matrix-plan-title">Profesional</span>
+                            </th>
+                            <th scope="col" class="matrix-col-plan">Empresarial</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Categoría 1: Catálogo y Productos -->
+                        <tr class="matrix-category-row">
+                            <th colspan="4" scope="colgroup">Catálogo y Productos</th>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Límite de productos activos</strong>
+                                <span>Capacidad total en tu catálogo público</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">30 productos</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> 500 productos</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Ilimitados</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Fotografías por producto</strong>
+                                <span>Galería visual de alta resolución</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">1 foto</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Hasta 5 fotos HD</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Fotos HD y video ilimitado</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Categorías y colecciones</strong>
+                                <span>Organización de menús y secciones</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">Hasta 3</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Ilimitadas</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Ilimitadas jerárquicas</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Búsqueda y filtros rápidos</strong>
+                                <span>Localización instantánea para compradores</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">Básica</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Instantánea con filtros</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Búsqueda inteligente asistida</span></td>
+                        </tr>
+
+                        <!-- Categoría 2: Pedidos y Checkout WhatsApp -->
+                        <tr class="matrix-category-row">
+                            <th colspan="4" scope="colgroup">Pedidos y Checkout WhatsApp</th>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Volumen mensual de pedidos</strong>
+                                <span>Órdenes enviadas directamente a tu chat</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">100 / mes</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Ilimitados</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Ilimitados</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Comisiones por venta (Take Rate)</strong>
+                                <span>Porcentaje cobrado por la plataforma</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> 0% Comisión</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> 0% Comisión</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> 0% Comisión</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Formato de ticket WhatsApp</strong>
+                                <span>Estructura del mensaje recibido en el chat</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">Estándar</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Personalizado con marca</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Corporativo + Webhook</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Carga de comprobante Pago Móvil</strong>
+                                <span>Captura bancaria adjunta al checkout</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-neutral">—</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Validación visual</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Verificación automatizada</span></td>
+                        </tr>
+
+                        <!-- Categoría 3: Moneda y Tasa BCV -->
+                        <tr class="matrix-category-row">
+                            <th colspan="4" scope="colgroup">Moneda y Tasa BCV</th>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Sincronización oficial Tasa BCV</strong>
+                                <span>Conversión automática de Dólares a Bolívares</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">Manual</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Automática oficial (diaria)</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Automática + API tiempo real</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Visualización dual de precios</strong>
+                                <span>Muestra simultánea en USD ($) y Bs.</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Dual USD / Bs.</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Dual USD / Bs.</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Multimoneda (USD, Bs, EUR, COP)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Reglas de redondeo de precios</strong>
+                                <span>Ajuste comercial inteligente en bolívares</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-neutral">—</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Redondeo comercial</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Reglas a medida por producto</span></td>
+                        </tr>
+
+                        <!-- Categoría 4: Inventario y Variantes -->
+                        <tr class="matrix-category-row">
+                            <th colspan="4" scope="colgroup">Inventario y Variantes</th>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Control de existencias (Stock)</strong>
+                                <span>Descuento de unidades en cada compra</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">Básico</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Avanzado con alertas</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Multialmacén y multi-sucursal</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Variantes de producto</strong>
+                                <span>Talla, color, sabor o presentación</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">Hasta 2 por producto</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Ilimitadas</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Ilimitadas con SKU propio</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Alertas de stock bajo a WhatsApp</strong>
+                                <span>Aviso automático cuando un ítem se agota</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-neutral">—</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Alertas automáticas</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Alertas + Reporte programado</span></td>
+                        </tr>
+
+                        <!-- Categoría 5: Marca y Personalización -->
+                        <tr class="matrix-category-row">
+                            <th colspan="4" scope="colgroup">Marca y Personalización</th>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Dirección web de la tienda</strong>
+                                <span>Enlace para tus clientes y biografía en redes</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">Subdominio ventrina.app</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Subdominio + SEO</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Dominio propio (.com / .ve)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Remoción de marca de agua</strong>
+                                <span>Eliminación de la leyenda "Hecho con Ventrina"</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-neutral">—</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-neutral">—</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Marca blanca 100%</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Colores de marca y banners</strong>
+                                <span>Personalización visual según tu identidad</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">Paleta estándar</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Logo, banner y paleta</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Personalización corporativa</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Código QR para mostrador físico</strong>
+                                <span>Acceso instantáneo para clientes en tienda física</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Estándar</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Alta resolución HD</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Con logo incorporado</span></td>
+                        </tr>
+
+                        <!-- Categoría 6: Soporte y Garantía -->
+                        <tr class="matrix-category-row">
+                            <th colspan="4" scope="colgroup">Soporte y Garantía</th>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Canal de asistencia y soporte</strong>
+                                <span>Acompañamiento ante incidencias técnicas</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">Comunidad y guías</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Chat prioritario WhatsApp</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Soporte dedicado 24/7 con SLA</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Onboarding y configuración inicial</strong>
+                                <span>Puesta en marcha asistida de tu catálogo</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">Autoservicio guiado</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Asistido por chat</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> Llave en mano 1-a-1</span></td>
+                        </tr>
+                        <tr>
+                            <td class="matrix-feature-name">
+                                <strong>Acuerdo de disponibilidad (Uptime)</strong>
+                                <span>Garantía de servicio continuo en la nube</span>
+                            </td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-text">99.5%</span></td>
+                            <td class="matrix-cell highlight-col"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> 99.9% Uptime</span></td>
+                            <td class="matrix-cell"><span class="matrix-pill pill-check"><svg class="matrix-check-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> 99.99% SLA garantizado</span></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="matrix-col-feature"></td>
+                            <td class="matrix-cell">
+                                <a href="/register" class="btn-matrix-action btn-matrix-ghost">Comenzar gratis</a>
+                            </td>
+                            <td class="matrix-cell highlight-col">
+                                <a href="/register" class="btn-matrix-action btn-matrix-primary">Elegir Profesional</a>
+                            </td>
+                            <td class="matrix-cell">
+                                <a href="/register" class="btn-matrix-action btn-matrix-ghost">Elegir Empresarial</a>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
         </section>
+        
+        <!-- Interactive FAQ Accordion Section -->
+        <section id="faq" class="pricing-faq-section reveal">
+            <div class="faq-header">
+                <h2>Preguntas Frecuentes</h2>
+                <p>Resolvemos todas tus inquietudes sobre comisiones, medios de pago venezolanos y gestión de suscripción.</p>
+            </div>
+            
+            <div class="faq-accordion-group">
+                <!-- FAQ 1: Comisiones ocultas -->
+                <details class="faq-accordion-item" name="faq-group" open>
+                    <summary class="faq-accordion-summary">
+                        <span>¿Existe alguna comisión oculta o porcentaje por venta?</span>
+                        <svg class="faq-accordion-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </summary>
+                    <div class="faq-accordion-content">
+                        <p>Absolutamente no. A diferencia de otras plataformas o pasarelas de pago que retienen entre 2% y 5% de cada transacción, en Ventrina el 100% del dinero de tus ventas va directo a ti. Solo pagas la suscripción mensual fija del plan que elijas (o cero si estás en el plan Básico).</p>
+                    </div>
+                </details>
+
+                <!-- FAQ 2: Métodos de pago venezolanos -->
+                <details class="faq-accordion-item" name="faq-group">
+                    <summary class="faq-accordion-summary">
+                        <span>¿Cómo funcionan los métodos de pago venezolanos (Pago Móvil, Zelle, efectivo)?</span>
+                        <svg class="faq-accordion-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </summary>
+                    <div class="faq-accordion-content">
+                        <p>Totalmente integrado para la realidad comercial venezolana. Puedes registrar tus datos de Pago Móvil, transferencias bancarias en bolívares, Zelle y recepción de efectivo en divisas. Durante el checkout, tus clientes ven tus datos bancarios y pueden adjuntar la captura del comprobante de pago antes de enviar el pedido estructurado a tu WhatsApp.</p>
+                    </div>
+                </details>
+
+                <!-- FAQ 3: Tarjeta de crédito para plan gratuito -->
+                <details class="faq-accordion-item" name="faq-group">
+                    <summary class="faq-accordion-summary">
+                        <span>¿Me exigen tarjeta de crédito para activar el plan Básico?</span>
+                        <svg class="faq-accordion-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </summary>
+                    <div class="faq-accordion-content">
+                        <p>No. Puedes abrir tu tienda hoy mismo y usar el plan Básico de por vida sin introducir ninguna tarjeta de crédito ni cuenta bancaria. Solo necesitas un correo electrónico y tu número de WhatsApp para empezar a recibir pedidos inmediatamente.</p>
+                    </div>
+                </details>
+
+                <!-- FAQ 4: Tasa oficial BCV -->
+                <details class="faq-accordion-item" name="faq-group">
+                    <summary class="faq-accordion-summary">
+                        <span>¿La tasa del Banco Central de Venezuela (BCV) se actualiza de manera automática?</span>
+                        <svg class="faq-accordion-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </summary>
+                    <div class="faq-accordion-content">
+                        <p>Sí. Nuestros servidores consultan diariamente la tasa oficial publicada por el Banco Central de Venezuela. Tus clientes verán los precios precisos en Bolívares y Dólares al momento de comprar, ahorrándote el cálculo manual y protegiendo tus márgenes ante fluctuaciones cambiarias.</p>
+                    </div>
+                </details>
+
+                <!-- FAQ 5: Personalización de colores y logo -->
+                <details class="faq-accordion-item" name="faq-group">
+                    <summary class="faq-accordion-summary">
+                        <span>¿Puedo personalizar los colores, banner y logo con mi marca?</span>
+                        <svg class="faq-accordion-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </summary>
+                    <div class="faq-accordion-content">
+                        <p>Sí. Desde el panel administrativo puedes subir tu logotipo en alta resolución, colocar una imagen de banner para la cabecera, definir la paleta de colores de tu identidad corporativa y enlazar tus redes sociales (Instagram, TikTok, ubicación física). En el plan Empresarial además disfrutas de marca blanca completa y dominio propio .com o .ve.</p>
+                    </div>
+                </details>
+
+                <!-- FAQ 6: Cancelación sin penalidad -->
+                <details class="faq-accordion-item" name="faq-group">
+                    <summary class="faq-accordion-summary">
+                        <span>¿Puedo cancelar o cambiar de plan en cualquier momento sin penalidad?</span>
+                        <svg class="faq-accordion-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </summary>
+                    <div class="faq-accordion-content">
+                        <p>Sin ataduras ni letras pequeñas. Si decides pausar o cancelar tu suscripción, puedes hacerlo en cualquier instante con un solo clic desde la sección de facturación en tu panel. No hay contratos forzosos ni comisiones por cancelación.</p>
+                    </div>
+                </details>
+
+                <!-- FAQ 7: Superar límites del plan básico -->
+                <details class="faq-accordion-item" name="faq-group">
+                    <summary class="faq-accordion-summary">
+                        <span>¿Qué sucede si supero el límite de 30 productos o 100 pedidos en el plan Básico?</span>
+                        <svg class="faq-accordion-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </summary>
+                    <div class="faq-accordion-content">
+                        <p>Tu tienda nunca dejará de estar en línea ni perderás clientes. Cuando estés cerca del límite mensual, recibirás una notificación preventiva en tu panel para que puedas ascender al plan Profesional y desbloquear pedidos ilimitados y hasta 500 productos.</p>
+                    </div>
+                </details>
+            </div>
+        </section>
+        
+        <!-- Mobile Sticky Conversion Bar -->
+        <aside class="mobile-sticky-bar" id="mobileStickyBar" aria-label="Suscripción rápida para móviles">
+            <div class="sticky-bar-content">
+                <div class="sticky-bar-info">
+                    <span class="sticky-plan-badge">Profesional</span>
+                    <span class="sticky-price-display">
+                        <strong class="sticky-price-val" data-sticky-price>$15</strong><small class="sticky-price-period">/mes</small>
+                    </span>
+                    <span class="sticky-reassurance">0% comisiones</span>
+                </div>
+                <a href="/register" class="sticky-bar-cta">Comienza gratis hoy</a>
+            </div>
+        </aside>
     </main>
 
     <Footer config={saasConfig} />

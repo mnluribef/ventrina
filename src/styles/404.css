@@ -1,163 +1,666 @@
-/* src/styles/404.css - Página 404 Institucional de Ventrina */
-/* Identidad: Violet × Amber — Design System Centralizado */
+/* ==========================================================================
+   VENTRINA SAAS — 404 ERROR PAGE (ESCAPARATE NO ENCONTRADO)
+   Brand Identity: Terracota Atelier & Warm Amber
+   Zero inline CSS, Zero inline JS, Fully Accessible & Responsive
+   ========================================================================== */
 
 @import "./tokens.css";
 
 :root {
-    --e404-bg: var(--light-bg);
-    --e404-card-bg: var(--light-bg-card);
-    --e404-border: var(--light-border);
-    --e404-text: var(--light-text-body);
-    --e404-text-muted: var(--light-text-muted);
-    --e404-text-heading: var(--light-text-heading);
-    --e404-primary: var(--color-primary);
-    --e404-primary-hover: var(--color-primary-hover);
-    --e404-primary-glow: var(--color-primary-glow);
-    --e404-radius: 18px;
+    /* Superficies y Fondos Atelier Linen */
+    --e404-bg: #faf7f2;
+    --e404-card-bg: #ffffff;
+    --e404-card-elevated: #fbf9f5;
+    --e404-bg-subtle: #f5f0e8;
+
+    /* Terracota Atelier & Warm Amber Palette */
+    --e404-terracotta: #c2410c;
+    --e404-terracotta-bright: #ea580c;
+    --e404-terracotta-deep: #7c2d12;
+    --e404-terracotta-soft: rgba(194, 65, 12, 0.08);
+    --e404-terracotta-glow: rgba(194, 65, 12, 0.22);
+    --e404-terracotta-light: rgba(194, 65, 12, 0.04);
+
+    --e404-amber: #d97706;
+    --e404-amber-hover: #b45309;
+    --e404-amber-soft: rgba(217, 119, 6, 0.08);
+    --e404-amber-glow: rgba(217, 119, 6, 0.24);
+
+    /* Tipografía y Textos */
+    --e404-text-primary: #1c1917;
+    --e404-text-body: #44403c;
+    --e404-text-muted: #78716c;
+    --e404-text-subtle: #a8a29e;
+
+    /* Bordes Hairline */
+    --e404-border: rgba(28, 25, 23, 0.09);
+    --e404-border-subtle: rgba(194, 65, 12, 0.14);
+    --e404-border-hover: rgba(194, 65, 12, 0.35);
+
+    /* Radios */
+    --e404-radius-sm: 10px;
+    --e404-radius-md: 14px;
+    --e404-radius-lg: 20px;
+    --e404-radius-xl: 24px;
+    --e404-radius-pill: 9999px;
+
+    /* Sombras Táctiles con Bisel Interior */
+    --e404-shadow-sm: 0 1px 3px rgba(28, 25, 23, 0.04), 0 0 0 1px rgba(28, 25, 23, 0.04);
+    --e404-shadow-card:
+        0 4px 20px -2px rgba(28, 25, 23, 0.05),
+        0 1px 3px rgba(28, 25, 23, 0.03),
+        inset 0 1px 0 #ffffff;
+    --e404-shadow-card-hover:
+        0 16px 36px -8px rgba(194, 65, 12, 0.14),
+        0 2px 6px -1px rgba(28, 25, 23, 0.04),
+        inset 0 1px 0 #ffffff;
+    --e404-shadow-btn: 0 4px 14px var(--e404-terracotta-glow);
+    --e404-shadow-btn-hover: 0 8px 22px rgba(194, 65, 12, 0.35);
 }
 
+@media (prefers-color-scheme: dark) {
+    :root {
+        --e404-bg: #0c0a09;
+        --e404-card-bg: rgba(28, 25, 23, 0.92);
+        --e404-card-elevated: rgba(41, 37, 36, 0.9);
+        --e404-bg-subtle: #1c1917;
+
+        --e404-text-primary: #fafaf9;
+        --e404-text-body: #d6d3d1;
+        --e404-text-muted: #a8a29e;
+        --e404-text-subtle: #78716c;
+
+        --e404-border: rgba(255, 255, 255, 0.08);
+        --e404-border-subtle: rgba(194, 65, 12, 0.22);
+        --e404-border-hover: rgba(234, 88, 12, 0.45);
+
+        --e404-shadow-card:
+            0 4px 20px -2px rgba(0, 0, 0, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        --e404-shadow-card-hover:
+            0 20px 42px -10px rgba(194, 65, 12, 0.28),
+            0 0 0 1px rgba(194, 65, 12, 0.35);
+    }
+}
+
+/* ── Estructura de Página ─────────────────────────────── */
 body.e404-body {
     background-color: var(--e404-bg);
-    color: var(--e404-text);
+    color: var(--e404-text-body);
     font-family: var(--font-body);
     margin: 0;
     padding: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     position: relative;
     overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
 }
 
-.e404-bg-glow {
+/* ── Brillos Ambientales Cálidos ──────────────────────── */
+.e404-ambient {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, var(--color-primary-subtle) 0%, transparent 70%);
+    inset: 0;
     pointer-events: none;
     z-index: 0;
+    overflow: hidden;
 }
 
+.e404-glow-primary {
+    position: absolute;
+    top: -5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: clamp(380px, 65vw, 850px);
+    height: clamp(380px, 45vw, 620px);
+    background: radial-gradient(
+        ellipse at center,
+        rgba(194, 65, 12, 0.12) 0%,
+        rgba(234, 88, 12, 0.06) 42%,
+        rgba(217, 119, 6, 0.02) 68%,
+        transparent 75%
+    );
+    filter: blur(48px);
+}
+
+.e404-glow-amber {
+    position: absolute;
+    bottom: 5%;
+    right: 8%;
+    width: clamp(280px, 35vw, 520px);
+    height: clamp(280px, 35vw, 520px);
+    background: radial-gradient(
+        circle at center,
+        rgba(217, 119, 6, 0.09) 0%,
+        rgba(194, 65, 12, 0.03) 50%,
+        transparent 70%
+    );
+    filter: blur(54px);
+}
+
+/* ── Encabezado Mínimo de Marca ───────────────────────── */
+.e404-header {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 1.5rem 1.5rem 0.5rem;
+    box-sizing: border-box;
+}
+
+.e404-header-inner {
+    max-width: 1060px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.e404-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+    color: var(--e404-text-primary);
+    transition: opacity 0.2s ease;
+}
+
+.e404-brand:hover {
+    opacity: 0.88;
+}
+
+.e404-brand-symbol {
+    color: var(--e404-terracotta);
+    flex-shrink: 0;
+}
+
+.e404-brand-text {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--e404-text-primary);
+}
+
+.e404-brand-accent {
+    color: var(--e404-terracotta);
+}
+
+.e404-header-admin-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--e404-text-muted);
+    text-decoration: none;
+    padding: 0.5rem 0.9rem;
+    border-radius: var(--e404-radius-sm);
+    border: 1px solid var(--e404-border);
+    background: var(--e404-card-bg);
+    transition: all 0.25s var(--ease-smooth);
+}
+
+.e404-header-admin-link:hover {
+    color: var(--e404-terracotta);
+    border-color: var(--e404-border-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--e404-shadow-sm);
+}
+
+/* ── Contenedor Principal ─────────────────────────────── */
 .e404-container {
     position: relative;
     z-index: 1;
-    max-width: 580px;
-    width: 90%;
-    margin: 2rem auto;
-    text-align: center;
+    max-width: 1060px;
+    width: 92%;
+    margin: 1.5rem auto 3.5rem;
+    display: flex;
+    flex-direction: column;
 }
 
+/* ── Card Hero de Recuperación Emocional ──────────────── */
 .e404-card {
     background: var(--e404-card-bg);
     border: 1px solid var(--e404-border);
-    border-radius: var(--e404-radius);
-    padding: 3.5rem 2.5rem;
-    box-shadow: var(--light-shadow-lg);
+    border-radius: var(--e404-radius-xl);
+    padding: 3.5rem 2.5rem 3rem;
+    box-shadow: var(--e404-shadow-card);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
-.e404-badge {
-    display: inline-block;
-    padding: 0.35rem 1rem;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--color-primary);
-    background: var(--color-primary-light);
-    border: 1px solid var(--color-primary-subtle);
-    border-radius: 9999px;
-    margin-bottom: 1.5rem;
+/* Iluminación sutil superior dentro de la tarjeta */
+.e404-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(194, 65, 12, 0.4) 50%,
+        transparent 100%
+    );
 }
 
-.e404-code {
-    font-size: 3.5rem;
-    font-weight: 800;
+/* ── Emblema de Escaparate Arquitectónico ─────────────── */
+.e404-vitrine-mark {
+    margin: 0 auto 1.5rem;
+    width: 80px;
+    height: 80px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--e404-terracotta-soft);
+    border: 1px solid var(--e404-border-subtle);
+    border-radius: 22px;
+    box-shadow: 0 8px 24px -4px var(--e404-terracotta-glow);
+    transition: transform 0.35s var(--ease-spring);
+}
+
+.e404-card:hover .e404-vitrine-mark {
+    transform: scale(1.04) rotate(-1.5deg);
+}
+
+.e404-vitrine-svg {
+    display: block;
+}
+
+.e404-svg-terracotta {
+    color: var(--e404-terracotta);
+}
+
+.e404-svg-amber {
+    color: var(--e404-amber);
+}
+
+.e404-svg-outline {
+    color: var(--e404-terracotta-deep);
+}
+
+.e404-svg-divider {
+    color: var(--e404-border-hover);
+}
+
+.e404-svg-tint {
+    color: var(--e404-terracotta-soft);
+}
+
+.e404-svg-sparkle {
+    color: var(--e404-amber);
+}
+
+/* ── Tipografía 404 Expresiva con Contrarrelieve ──────── */
+.e404-code-display {
     line-height: 1;
-    letter-spacing: -0.04em;
-    font-family: var(--font-heading);
-    color: var(--e404-primary);
-    margin: 0 0 1rem;
+    margin-bottom: 0.75rem;
 }
 
-.e404-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--e404-text-heading);
+.e404-code-text {
     font-family: var(--font-heading);
+    font-size: clamp(4.8rem, 12vw, 7.8rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    display: inline-block;
+    background: linear-gradient(
+        135deg,
+        #c2410c 0%,
+        #ea580c 48%,
+        #d97706 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 12px 28px rgba(194, 65, 12, 0.22));
+    user-select: none;
+}
+
+/* ── Titular Cálido y Microcopy ───────────────────────── */
+.e404-title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.6rem, 3.8vw, 2.35rem);
+    font-weight: 800;
+    color: var(--e404-text-primary);
     margin: 0 0 1rem;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
 }
 
 .e404-desc {
-    font-size: 1rem;
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 2vw, 1.125rem);
     color: var(--e404-text-muted);
-    line-height: 1.6;
-    margin: 0 0 2.25rem;
+    line-height: 1.65;
+    max-width: 58ch;
+    margin: 0 auto 2.5rem;
+    text-wrap: balance;
 }
 
+/* ── Botones de Acción Primaria & Secundaria ───────────── */
 .e404-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
     justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
 }
 
 .e404-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.85rem 1.6rem;
-    font-size: 1rem;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.875rem 1.75rem;
+    min-height: 50px;
+    font-size: 0.975rem;
     font-weight: 600;
-    border-radius: 10px;
+    border-radius: var(--e404-radius-md);
     text-decoration: none;
-    transition: all 0.2s ease;
+    box-sizing: border-box;
+    transition: transform 0.25s var(--ease-smooth),
+                box-shadow 0.25s var(--ease-smooth),
+                filter 0.2s ease,
+                background-color 0.2s ease,
+                border-color 0.2s ease,
+                color 0.2s ease;
+    cursor: pointer;
 }
 
+/* Botón Primario: Ir al Inicio */
 .e404-btn-primary {
-    background: var(--grad-primary);
+    background: linear-gradient(180deg, var(--e404-terracotta-bright) 0%, var(--e404-terracotta) 100%);
     color: #ffffff;
-    box-shadow: 0 4px 14px var(--e404-primary-glow);
+    box-shadow: var(--e404-shadow-btn);
+    border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .e404-btn-primary:hover {
-    filter: brightness(1.08);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px var(--e404-primary-glow);
+    box-shadow: var(--e404-shadow-btn-hover);
+    filter: brightness(1.06);
 }
 
+.e404-btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Botón Secundario: Crear mi Tienda Gratis */
 .e404-btn-secondary {
-    background: var(--light-bg-elevated);
-    color: var(--e404-text);
+    background: var(--e404-card-elevated);
+    color: var(--e404-text-primary);
     border: 1px solid var(--e404-border);
+    box-shadow: var(--e404-shadow-sm);
 }
 
 .e404-btn-secondary:hover {
-    background: var(--light-bg-subtle);
-    color: var(--color-primary);
-    border-color: var(--color-primary);
+    background: #ffffff;
+    color: var(--e404-terracotta);
+    border-color: var(--e404-border-hover);
     transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(194, 65, 12, 0.12);
 }
 
-.e404-footer-brand {
-    margin-top: 2.5rem;
+.e404-btn-secondary:active {
+    transform: translateY(0);
+}
+
+/* ── Enlace Terciario: Acceso al Panel Admin ──────────── */
+.e404-tertiary-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.e404-btn-tertiary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--e404-text-muted);
+    text-decoration: none;
+    padding: 0.5rem 0.9rem;
+    border-radius: var(--e404-radius-sm);
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.e404-btn-tertiary:hover {
+    color: var(--e404-terracotta);
+    background: var(--e404-terracotta-soft);
+}
+
+/* ── Sección de Demos Interactivas (Shortcuts) ────────── */
+.e404-demos-section {
+    margin-top: 3.5rem;
+}
+
+.e404-demos-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.e404-demos-title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.35rem, 2.8vw, 1.75rem);
+    font-weight: 700;
+    color: var(--e404-text-primary);
+    letter-spacing: -0.025em;
+    margin: 0 0 0.5rem;
+}
+
+.e404-demos-subtitle {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--e404-text-muted);
+    max-width: 58ch;
+    margin: 0 auto;
+    line-height: 1.55;
+    text-wrap: balance;
+}
+
+/* Cuadrícula de 4 Tarjetas */
+.e404-demos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+}
+
+@media (max-width: 992px) {
+    .e404-demos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 580px) {
+    .e404-demos-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Tarjeta Mini Interactiva */
+.e404-demo-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--e404-card-bg);
+    border: 1px solid var(--e404-border);
+    border-radius: var(--e404-radius-lg);
+    padding: 1.5rem 1.4rem;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--e404-shadow-sm);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.25s ease;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.e404-demo-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--e404-border-hover);
+    box-shadow: var(--e404-shadow-card-hover);
+}
+
+/* Cabecera de la tarjeta: Icono + Tag */
+.e404-demo-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 1.1rem;
+}
+
+.e404-demo-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--e404-radius-md);
+    background: var(--e404-terracotta-soft);
+    color: var(--e404-terracotta);
+    border: 1px solid var(--e404-border-subtle);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.25s ease, transform 0.25s var(--ease-spring);
+}
+
+.e404-demo-card:hover .e404-demo-icon-wrap {
+    background: rgba(194, 65, 12, 0.15);
+    transform: scale(1.06);
+}
+
+.e404-demo-svg {
+    display: block;
+}
+
+.e404-demo-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.725rem;
+    font-weight: 600;
+    color: var(--e404-amber);
+    background: var(--e404-amber-soft);
+    border: 1px solid rgba(217, 119, 6, 0.2);
+    border-radius: var(--e404-radius-pill);
+    padding: 0.22rem 0.6rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.e404-demo-emoji {
+    font-size: 0.85rem;
+    line-height: 1;
+}
+
+.e404-demo-title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--e404-text-primary);
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+}
+
+.e404-demo-desc {
+    font-family: var(--font-body);
     font-size: 0.875rem;
     color: var(--e404-text-muted);
+    line-height: 1.55;
+    margin: 0 0 1.5rem;
+    flex-grow: 1;
 }
 
-.e404-footer-brand a {
-    color: var(--color-primary);
-    text-decoration: none;
-    font-weight: 500;
+.e404-demo-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--e404-terracotta);
+    margin-top: auto;
+    transition: color 0.2s ease;
 }
 
-.e404-footer-brand a:hover {
-    text-decoration: underline;
+.e404-demo-card:hover .e404-demo-cta {
+    color: var(--e404-terracotta-bright);
+}
+
+.e404-demo-arrow {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.e404-demo-card:hover .e404-demo-arrow {
+    transform: translateX(5px);
+}
+
+/* ── Pie de Página Mínimo ─────────────────────────────── */
+.e404-footer {
+    position: relative;
+    z-index: 1;
+    margin-top: auto;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    border-top: 1px solid var(--e404-border);
+}
+
+.e404-footer-text {
+    font-size: 0.85rem;
+    color: var(--e404-text-muted);
+    margin: 0;
+}
+
+/* ── Accesibilidad & Enfoque de Teclado ───────────────── */
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--e404-terracotta);
+    outline-offset: 3px;
+}
+
+/* ── Progressive Enhancement: Scroll-Driven Animations ── */
+@supports (animation-timeline: view()) {
+    .e404-demos-section {
+        animation: e404-fade-in linear both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 30%;
+    }
+
+    @keyframes e404-fade-in {
+        from {
+            opacity: 0.85;
+            transform: translateY(12px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+/* ── Ajustes Responsivos Móviles ──────────────────────── */
+@media (max-width: 640px) {
+    .e404-card {
+        padding: 2.5rem 1.25rem 2rem;
+        border-radius: var(--e404-radius-lg);
+    }
+
+    .e404-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .e404-btn {
+        width: 100%;
+    }
+
+    .e404-demos-section {
+        margin-top: 2.75rem;
+    }
 }
